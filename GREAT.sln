@@ -37,6 +37,7 @@ Global
 		$1.TextStylePolicy = $3
 		$3.FileWidth = 180
 		$3.TabsToSpaces = False
+		$3.EolMarker = Unix
 		$3.inheritsSet = VisualStudio
 		$3.inheritsScope = text/plain
 		$3.scope = text/x-csharp
@@ -54,6 +55,7 @@ Global
 		$1.TextStylePolicy = $5
 		$5.FileWidth = 180
 		$5.IndentWidth = 2
+		$5.EolMarker = Unix
 		$5.inheritsSet = VisualStudio
 		$5.inheritsScope = text/plain
 		$5.scope = text/plain
