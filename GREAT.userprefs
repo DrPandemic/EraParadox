@@ -1,10 +1,15 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release|x86" />
   <MonoDevelop.Ide.Workbench ActiveDocument="GREATServer/Main.cs">
     <Files>
       <File FileName="GREATServer/Main.cs" Line="27" Column="38" />
-      <File FileName="../../../../mnt/win/Users/Will/Documents/Visual Studio 2010/Projects/GREAT/GREATClient/Program.cs" Line="22" Column="1" />
+      <File FileName="../../../../mnt/win/Users/Will/Documents/Visual Studio 2010/Projects/GREAT/GREATClient/Program.cs" Line="1" Column="1" />
     </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State expanded="True" selected="True" />
+      </Pad>
+    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
