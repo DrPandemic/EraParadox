@@ -18,24 +18,26 @@
 //
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-using System.Threading;
 using System;
+using System.Threading;
 
 namespace GREATServer
 {
 	class MainClass
 	{
+		static Server server;
+
 		public static void Main(string[] args)
 		{
-			Server s = new Server();
-			s.Start();
+			server = new Server();
+			server.Start();
 
-			while (!Console.KeyAvailable || Console.ReadKey().Key != ConsoleKey.Escape) {
-				s.ExecuteFrame();
+			while (!Console.KeyAvailable || Console.ReadKey().Key != ConsoleKey.Q) {
+				server.ExecuteFrame();
 				Thread.Sleep(1);
 			}
 
-			s.Stop();
+			server.Stop();
 		}
 	}
 }

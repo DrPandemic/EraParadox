@@ -1,5 +1,5 @@
 //
-//  Server.cs
+//  Client.cs
 //
 //  Author:
 //       William Turner <willtur.will@gmail.com>
@@ -21,45 +21,44 @@
 using System;
 using Lidgren.Network;
 
-namespace GREATServer
+namespace GREATClient
 {
-	public class Server
-	{
-		NetServer server;
+    public class Client
+    {
+		NetClient client;
 
-		public Server()
-		{
-			NetPeerConfiguration config = new NetPeerConfiguration("GREATServer");
-			config.EnableMessageType(NetIncomingMessageType.DiscoveryRequest);
-			config.Port = 14242;
+        public Client()
+        {
+			NetPeerConfiguration config = new NetPeerConfiguration("GREATClient");
+			config.EnableMessageType(NetIncomingMessageType.DiscoveryResponse);
 
-			this.server = new NetServer(config);
-		}
+			this.client = new NetClient(config);
+        }
 
 		public void Start()
 		{
-			server.Start();
+			client.DiscoverLocalPeers(14242);
 		}
 
 		public void Stop()
 		{
-			server.Shutdown("I'M DYING D:");
+			client.Disconnect("FUCK OFF!");
 		}
 
 		public void ExecuteFrame()
 		{
 			NetIncomingMessage msg;
-			while ((msg = server.ReadMessage()) != null) {
+			while ((msg = client.ReadMessage()) != null) {
 				switch (msg.MessageType) {
-					case NetIncomingMessageType.DiscoveryRequest:
-						server.SendDiscoveryResponse(null, msg.SenderEndPoint);
+					case NetIncomingMessageType.DiscoveryResponse:
+						client.Connect(msg.SenderEndPoint);
 						break;
 					case NetIncomingMessageType.StatusChanged:
 						NetConnectionStatus status = (NetConnectionStatus)msg.ReadByte();
 						if (status == NetConnectionStatus.Connected) {
 							Console.WriteLine(NetUtility.ToHexString(msg.SenderConnection.RemoteUniqueIdentifier) + " connected!");
-							NetOutgoingMessage sup = server.CreateMessage("Sup?");
-							server.SendMessage(sup, msg.SenderConnection, NetDeliveryMethod.ReliableUnordered);
+							NetOutgoingMessage sup = client.CreateMessage("Sup?");
+							client.SendMessage(sup, msg.SenderConnection, NetDeliveryMethod.ReliableUnordered);
 						}
 						break;
 					case NetIncomingMessageType.VerboseDebugMessage:
@@ -72,9 +71,9 @@ namespace GREATServer
 						Console.WriteLine("Unhandled type: " + msg.MessageType);
 						break;
 				}
-				server.Recycle(msg);
+				client.Recycle(msg);
 			}
 		}
-	}
+    }
 }
 
