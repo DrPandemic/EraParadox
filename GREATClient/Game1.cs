@@ -48,9 +48,13 @@ namespace GREATClient
 		GraphicsDeviceManager graphics;
 		SpriteBatch spriteBatch;
 
+<<<<<<< Upstream, based on origin/master
 		Dictionary<int, int> PlayerCurrentFrame = new Dictionary<int, int>();
 		Dictionary<int, Vec2> PlayerCurrentPositions = null;
 
+=======
+<<<<<<< Upstream, based on origin/master
+>>>>>>> 6b271b3 - yo test 2
 		public Game1()
 		{
 			Console.WriteLine("Game created.");
@@ -59,6 +63,14 @@ namespace GREATClient
 			Content.RootDirectory = "Content";
 			graphics.IsFullScreen = false;
 		}
+=======
+    public Game1()
+    {
+      graphics = new GraphicsDeviceManager(this);
+      Content.RootDirectory = "Content";                
+      graphics.IsFullScreen = false;        
+    }
+>>>>>>> 3c3c996 - yo test 2
 
 		/// <summary>
 		/// Allows the game to perform any initialization it needs to before starting to run.
