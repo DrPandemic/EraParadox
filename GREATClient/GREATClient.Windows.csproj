@@ -10,7 +10,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>GREATClient</RootNamespace>
     <MonoGamePlatform>WindowsGL</MonoGamePlatform>
-    <AssemblyName>GREATClient</AssemblyName>
+    <AssemblyName>GREATClient.Windows</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>True</DebugSymbols>

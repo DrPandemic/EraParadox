@@ -18,6 +18,7 @@
 //
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 using System;
 using Lidgren.Network;
 
@@ -29,15 +30,20 @@ namespace GREATClient
 
         public Client()
         {
-			NetPeerConfiguration config = new NetPeerConfiguration("GREATClient");
+			NetPeerConfiguration config = new NetPeerConfiguration("GREAT");
 			config.EnableMessageType(NetIncomingMessageType.DiscoveryResponse);
+			config.EnableUPnP = true;
 
 			this.client = new NetClient(config);
         }
 
 		public void Start()
 		{
+			this.client.Start();
+			client.UPnP.ForwardPort(client.Port, "GREAT Client");
 			client.DiscoverLocalPeers(14242);
+			// If the discover cluster-fucks on localhost, use that line instead
+			//client.Connect("127.0.0.1", 14242);
 		}
 
 		public void Stop()
@@ -45,12 +51,13 @@ namespace GREATClient
 			client.Disconnect("FUCK OFF!");
 		}
 
-		public void ExecuteFrame()
+		public void Update()
 		{
 			NetIncomingMessage msg;
 			while ((msg = client.ReadMessage()) != null) {
 				switch (msg.MessageType) {
 					case NetIncomingMessageType.DiscoveryResponse:
+						Console.WriteLine("Discover response from {0}", msg.SenderEndPoint);
 						client.Connect(msg.SenderEndPoint);
 						break;
 					case NetIncomingMessageType.StatusChanged:
@@ -65,6 +72,10 @@ namespace GREATClient
 					case NetIncomingMessageType.DebugMessage:
 					case NetIncomingMessageType.WarningMessage:
 					case NetIncomingMessageType.ErrorMessage:
+						Console.WriteLine(msg.ReadString());
+						break;
+					case NetIncomingMessageType.Data:
+						// TODO: Handle packets
 						Console.WriteLine(msg.ReadString());
 						break;
 					default:

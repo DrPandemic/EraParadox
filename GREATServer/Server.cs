@@ -18,6 +18,7 @@
 //
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 using System;
 using Lidgren.Network;
 
@@ -29,9 +30,10 @@ namespace GREATServer
 
 		public Server()
 		{
-			NetPeerConfiguration config = new NetPeerConfiguration("GREATServer");
+			NetPeerConfiguration config = new NetPeerConfiguration("GREAT");
 			config.EnableMessageType(NetIncomingMessageType.DiscoveryRequest);
 			config.Port = 14242;
+			config.EnableUPnP = true;
 
 			this.server = new NetServer(config);
 		}
@@ -39,6 +41,7 @@ namespace GREATServer
 		public void Start()
 		{
 			server.Start();
+			server.UPnP.ForwardPort(server.Port, "GREAT Server");
 		}
 
 		public void Stop()
@@ -46,12 +49,13 @@ namespace GREATServer
 			server.Shutdown("I'M DYING D:");
 		}
 
-		public void ExecuteFrame()
+		public void Update()
 		{
 			NetIncomingMessage msg;
 			while ((msg = server.ReadMessage()) != null) {
 				switch (msg.MessageType) {
 					case NetIncomingMessageType.DiscoveryRequest:
+						Console.WriteLine("Discover request from {0}", msg.SenderEndPoint);
 						server.SendDiscoveryResponse(null, msg.SenderEndPoint);
 						break;
 					case NetIncomingMessageType.StatusChanged:
@@ -66,6 +70,9 @@ namespace GREATServer
 					case NetIncomingMessageType.DebugMessage:
 					case NetIncomingMessageType.WarningMessage:
 					case NetIncomingMessageType.ErrorMessage:
+						Console.WriteLine(msg.ReadString());
+						break;
+					case NetIncomingMessageType.Data:
 						Console.WriteLine(msg.ReadString());
 						break;
 					default:
