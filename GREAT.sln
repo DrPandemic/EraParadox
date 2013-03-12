@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GREATServer", "GREATServer\GREATServer.csproj", "{6371C1C9-ECAE-4BC1-8C1B-82734399C79E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GREATClient", "..\..\..\..\mnt\win\Users\Will\Documents\Visual Studio 2010\Projects\GREAT\GREATClient\GREATClient.csproj", "{0F19250F-56ED-4ADB-80E1-306C9FFA97C7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GREATClient", "GREATClient\GREATClient.csproj", "{0F19250F-56ED-4ADB-80E1-306C9FFA97C7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,7 +23,7 @@ Global
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItems = $0
 		$0.Item = GREATServer\GREATServer.csproj
-		$0.Item = ..\..\..\..\mnt\win\Users\Will\Documents\Visual Studio 2010\Projects\GREAT\GREATClient\GREATClient.csproj
+		$0.Item = GREATClient\GREATClient.csproj
 		Policies = $1
 		$1.DotNetNamingPolicy = $2
 		$2.DirectoryNamespaceAssociation = Hierarchical
