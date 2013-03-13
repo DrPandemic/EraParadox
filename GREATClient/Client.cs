@@ -24,18 +24,18 @@ using Lidgren.Network;
 
 namespace GREATClient
 {
-    public class Client
-    {
+	public class Client
+	{
 		NetClient client;
 
-        public Client()
-        {
+		public Client()
+		{
 			NetPeerConfiguration config = new NetPeerConfiguration("GREAT");
 			config.EnableMessageType(NetIncomingMessageType.DiscoveryResponse);
 			config.EnableUPnP = true;
 
 			this.client = new NetClient(config);
-        }
+		}
 
 		public void Start()
 		{
@@ -85,6 +85,6 @@ namespace GREATClient
 				client.Recycle(msg);
 			}
 		}
-    }
+	}
 }
 

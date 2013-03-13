@@ -42,8 +42,8 @@ namespace GREATClient
 		{
 			client = new Client();
 			graphics = new GraphicsDeviceManager(this);
-			Content.RootDirectory = "Content";                
-			graphics.IsFullScreen = false;        
+			Content.RootDirectory = "Content";
+			graphics.IsFullScreen = false;
 		}
 
 		/// <summary>
@@ -82,7 +82,7 @@ namespace GREATClient
 			if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed) {
 				Exit();
 			}
-			// TODO: Add your update logic here     
+			// TODO: Add your update logic here
 			client.Update();
 			base.Update(gameTime);
 		}
@@ -94,9 +94,9 @@ namespace GREATClient
 		protected override void Draw(GameTime gameTime)
 		{
 			graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
-        
+
 			//TODO: Add your drawing code here
-            
+
 			base.Draw(gameTime);
 		}
 
