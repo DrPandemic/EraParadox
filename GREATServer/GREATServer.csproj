@@ -44,5 +44,9 @@
       <Project>{49BA1C69-6104-41AC-A5D8-B54FA9F696E8}</Project>
       <Name>Lidgren.Network</Name>
     </ProjectReference>
+    <ProjectReference Include="..\GREATLib\GREATLib.csproj">
+      <Project>{74DBBE2A-15FA-4776-B611-9B06EAFE80C0}</Project>
+      <Name>GREATLib</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

@@ -21,11 +21,15 @@
 
 using System;
 using Lidgren.Network;
+using GREATLib;
+using System.Collections.Generic;
 
 namespace GREATClient
 {
 	public class Client
 	{
+		public List<Player> Players { get; set; }
+
 		NetClient client;
 
 		public Client()
@@ -82,14 +86,69 @@ namespace GREATClient
 						Console.WriteLine(msg.ReadString());
 						break;
 					case NetIncomingMessageType.Data:
-						// TODO: Handle packets
-						Console.WriteLine(msg.ReadString());
+						ReadData(msg);
 						break;
 					default:
 						Console.WriteLine("Unhandled type: " + msg.MessageType);
 						break;
 				}
 				client.Recycle(msg);
+			}
+		}
+
+		/// <summary>
+		/// Reads data from a server message.
+		/// </summary>
+		/// <param name="msg">Message.</param>
+		private void ReadData(NetIncomingMessage msg)
+		{
+			try
+			{
+				int serverMsgCode = msg.ReadInt32();
+
+				ServerMessage type = (ServerMessage)serverMsgCode;
+		
+				switch (type)
+				{
+					case ServerMessage.PositionSync:
+						SyncPositions(msg);
+						break;
+
+					default:
+						throw new NotImplementedException("Server message type \"" + type + "\" not implemented.");
+				}
+			}
+			catch(Exception e)
+			{
+				Console.WriteLine("Data not properly formatted: " + msg.ToString() + ", error=" + e.Message);
+			}
+		}
+
+		/// <summary>
+		/// Sends a command to the server. This should be changed later on to
+		/// send a list of commands rather than just one.
+		/// </summary>
+		/// <param name="command">Command.</param>
+		public void SendCommand(ClientMessage command)
+		{
+			//TODO: queue commands and send them in packs rather than everytime a new command happens.
+			NetOutgoingMessage msg = client.CreateMessage();
+			int commandCode = (int)command;
+			msg.Write(commandCode);
+			client.SendMessage(msg, NetDeliveryMethod.ReliableUnordered);
+		}
+
+		/// <summary>
+		/// Synchronizes the positions of the players.
+		/// </summary>
+		/// <param name="msg">Message.</param>
+		private void SyncPositions(NetIncomingMessage msg)
+		{
+			Players = new List<Player>();
+			while (msg.PositionInBytes != msg.LengthBytes) {
+				Vec2 pos = new Vec2();
+				msg.ReadAllProperties(pos);
+				Players.Add(new Player() { Position = pos });
 			}
 		}
 	}

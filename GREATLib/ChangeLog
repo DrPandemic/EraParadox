@@ -1,0 +1,9 @@
+2013-03-18  Jesse  <${AuthorEmail}>
+
+	* Vec2.cs:
+	* Player.cs:
+	* AssemblyInfo.cs:
+	* GREATLib.csproj:
+	* ClientMessage.cs:
+	* ServerMessage.cs: 
+

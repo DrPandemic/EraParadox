@@ -1,0 +1,10 @@
+2013-03-18  Jesse  <${AuthorEmail}>
+
+	* Game1.cs:
+	* Client.cs:
+	* Program.cs:
+	* GameLibHelper.cs:
+	* stand.png:
+	* GREATClient.Linux.csproj:
+	* GREATClient.Windows.csproj: 
+

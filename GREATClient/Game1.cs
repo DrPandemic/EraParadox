@@ -25,6 +25,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Storage;
+using GREATLib;
 
 
 namespace GREATClient
@@ -34,12 +35,19 @@ namespace GREATClient
 	/// </summary>
 	public class Game1 : Game
 	{
+		const int SCREEN_W = 800;
+		const int SCREEN_H = 600;
+
 		Client client;
+
+		Texture2D player;
+
 		GraphicsDeviceManager graphics;
 		SpriteBatch spriteBatch;
 
 		public Game1()
 		{
+			Console.WriteLine("Game created.");
 			client = new Client();
 			graphics = new GraphicsDeviceManager(this);
 			Content.RootDirectory = "Content";
@@ -54,8 +62,12 @@ namespace GREATClient
 		/// </summary>
 		protected override void Initialize()
 		{
-			// TODO: Add your initialization logic here
+			Console.WriteLine("Starting client...");
 			client.Start();
+
+			graphics.PreferredBackBufferWidth = SCREEN_W;
+			graphics.PreferredBackBufferHeight = SCREEN_H;
+
 			base.Initialize();
 		}
 
@@ -65,10 +77,13 @@ namespace GREATClient
 		/// </summary>
 		protected override void LoadContent()
 		{
+			Console.WriteLine("Loading game content...");
 			// Create a new SpriteBatch, which can be used to draw textures.
 			spriteBatch = new SpriteBatch(GraphicsDevice);
 
-			//TODO: use this.Content to load your game content here 
+			player = Content.Load<Texture2D>("stand");
+
+			int h = GraphicsDevice.Viewport.Height;
 		}
 
 		/// <summary>
@@ -82,7 +97,13 @@ namespace GREATClient
 			if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed) {
 				Exit();
 			}
-			// TODO: Add your update logic here
+			KeyboardState ks = Keyboard.GetState();
+
+			if (ks.IsKeyDown(Keys.Left))
+				client.SendCommand(ClientMessage.MoveLeft);
+			if (ks.IsKeyDown(Keys.Right))
+				client.SendCommand(ClientMessage.MoveRight);
+
 			client.Update();
 			base.Update(gameTime);
 		}
@@ -95,7 +116,14 @@ namespace GREATClient
 		{
 			graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
 
-			//TODO: Add your drawing code here
+
+			spriteBatch.Begin();
+
+			if (client.Players != null)
+				foreach (Player p in client.Players)
+					spriteBatch.Draw(player, p.Position.ToVector2(), Color.White);
+
+			spriteBatch.End();
 
 			base.Draw(gameTime);
 		}

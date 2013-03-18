@@ -21,11 +21,17 @@
 
 using System;
 using Lidgren.Network;
+using GREATLib;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace GREATServer
 {
 	public class Server
 	{
+		Dictionary<NetConnection, Player> connections = new Dictionary<NetConnection, Player>();
+		List<Player> players = new List<Player>();
+
 		NetServer server;
 
 		public Server()
@@ -71,6 +77,24 @@ namespace GREATServer
 							Console.WriteLine(NetUtility.ToHexString(msg.SenderConnection.RemoteUniqueIdentifier) + " connected!");
 							NetOutgoingMessage sup = server.CreateMessage("Sup?");
 							server.SendMessage(sup, msg.SenderConnection, NetDeliveryMethod.ReliableUnordered);
+
+
+							//TODO: have a "Game" class that handles a single game instead?
+							// Note: this is temporary, to test different Network architectures
+							Random r = new Random();
+							Player p = 
+								new Player() { 
+									Position = new Vec2(50f+(float)r.NextDouble() * 700f, 50f+(float)r.NextDouble() * 500f) 
+								};
+							players.Add(p);
+							connections.Add(msg.SenderConnection, p);
+							Console.WriteLine("New player joined! (spawned at " + p.Position.ToString() + ")");
+						}
+
+						else if (status == NetConnectionStatus.Disconnecting) {
+							Console.WriteLine("Player left.");
+							players.Remove(connections[msg.SenderConnection]);
+							connections.Remove(msg.SenderConnection);
 						}
 						break;
 					case NetIncomingMessageType.VerboseDebugMessage:
@@ -80,7 +104,7 @@ namespace GREATServer
 						Console.WriteLine(msg.ReadString());
 						break;
 					case NetIncomingMessageType.Data:
-						Console.WriteLine(msg.ReadString());
+						ReadData(msg);
 						break;
 					default:
 						Console.WriteLine("Unhandled type: " + msg.MessageType);
@@ -88,6 +112,63 @@ namespace GREATServer
 				}
 				server.Recycle(msg);
 			}
+
+			SyncPlayers();
+		}
+
+		/// <summary>
+		/// Reads the data from an incomming message.
+		/// </summary>
+		/// <param name="msg">The message</para>
+		private void ReadData(NetIncomingMessage msg)
+		{
+			try
+			{
+				ClientMessage type = (ClientMessage)msg.ReadInt32();
+
+				// TODO: move to the physics system.
+				const float SPEED = 5f;
+				Player p;
+
+				switch (type)
+				{
+					case ClientMessage.MoveLeft:
+						Debug.Assert(connections.ContainsKey(msg.SenderConnection));
+						p = connections[msg.SenderConnection];
+						p.Position -= Vec2.UnitX * SPEED;
+						break;
+
+					case ClientMessage.MoveRight:
+						Debug.Assert(connections.ContainsKey(msg.SenderConnection));
+						p = connections[msg.SenderConnection];
+						p.Position += Vec2.UnitX * SPEED;
+						break;
+						
+					default:
+						throw new NotImplementedException("Client message type not implemented.");
+				}
+			}
+			catch (Exception)
+			{
+				Console.WriteLine("Data not properly formatted: " + msg.ToString());
+			}
+		}
+
+		/// <summary>
+		/// Syncs the states of the players.
+		/// </summary>
+		public void SyncPlayers()
+		{
+			//TODO: send data at bigger intervals (not every frame)
+			NetOutgoingMessage msg = server.CreateMessage();
+			int msgCode = (int)ServerMessage.PositionSync;
+			msg.Write(msgCode);
+
+			//TODO: cleaner way to sync the data?
+			foreach (Player p in players)
+				msg.WriteAllProperties(p.Position);
+
+			server.SendToAll(msg, NetDeliveryMethod.ReliableUnordered);
 		}
 	}
 }
