@@ -79,11 +79,17 @@ namespace GREATServer
 							server.SendMessage(sup, msg.SenderConnection, NetDeliveryMethod.ReliableUnordered);
 
 
+							//TODO: send the player's id differently?
+							int id = NextPlayerId();
+							TellClientHisId(msg.SenderConnection, id);
+
+
 							//TODO: have a "Game" class that handles a single game instead?
 							// Note: this is temporary, to test different Network architectures
 							Random r = new Random();
 							Player p = 
 								new Player() { 
+									Id = id,
 									Position = new Vec2(50f+(float)r.NextDouble() * 700f, 50f+(float)r.NextDouble() * 500f) 
 								};
 							players.Add(p);
@@ -117,6 +123,30 @@ namespace GREATServer
 		}
 
 		/// <summary>
+		/// Tells the client his player's identifier.
+		/// </summary>
+		/// <param name="conn">The client's connection.</param>
+		/// <param name="id">The player's identifier.</param>
+		private void TellClientHisId(NetConnection conn, int id)
+		{
+			NetOutgoingMessage msg = server.CreateMessage();
+			msg.Write((int)ServerMessage.GivePlayerId);
+			msg.Write(id);
+			server.SendMessage(msg, conn, NetDeliveryMethod.ReliableUnordered);
+		}
+
+		/// <summary>
+		/// Finds the next player identifier that a new player should have.
+		/// </summary>
+		/// <returns>The next player's identifier.</returns>
+		private int NextPlayerId()
+		{
+			int id = Player.InvalidId;
+			players.ForEach(p => id = Math.Max(id, p.Id));
+			return id + 1;
+		}
+
+		/// <summary>
 		/// Reads the data from an incomming message.
 		/// </summary>
 		/// <param name="msg">The message</para>
@@ -126,27 +156,25 @@ namespace GREATServer
 			{
 				ClientMessage type = (ClientMessage)msg.ReadInt32();
 
-				// TODO: move to the physics system.
-				const float SPEED = 5f;
-				Player p;
-
 				switch (type)
 				{
 					case ClientMessage.MoveLeft:
 						Debug.Assert(connections.ContainsKey(msg.SenderConnection));
-						p = connections[msg.SenderConnection];
-						p.Position -= Vec2.UnitX * SPEED;
+						Physics.Move(connections[msg.SenderConnection], Direction.Left);
 						break;
 
 					case ClientMessage.MoveRight:
 						Debug.Assert(connections.ContainsKey(msg.SenderConnection));
-						p = connections[msg.SenderConnection];
-						p.Position += Vec2.UnitX * SPEED;
+						Physics.Move(connections[msg.SenderConnection], Direction.Right);
 						break;
 						
 					default:
 						throw new NotImplementedException("Client message type not implemented.");
 				}
+
+				// Acknowledge the command, used for client-side prediction
+				int commandId = msg.ReadInt32();
+				AcknowledgeCommand(msg.SenderConnection, commandId);
 			}
 			catch (Exception)
 			{
@@ -155,9 +183,22 @@ namespace GREATServer
 		}
 
 		/// <summary>
+		/// Acknowledges a client's command.
+		/// </summary>
+		/// <param name="client">Client.</param>
+		/// <param name="commandId">Command identifier (NOT the command itself, but its id).</param>
+		private void AcknowledgeCommand(NetConnection client, int commandId)
+		{
+			NetOutgoingMessage msg = server.CreateMessage();
+			msg.Write((int)ServerMessage.AcknowledgeCommand);
+			msg.Write(commandId);
+			server.SendMessage(msg, client, NetDeliveryMethod.ReliableOrdered);
+		}
+
+		/// <summary>
 		/// Syncs the states of the players.
 		/// </summary>
-		public void SyncPlayers()
+		private void SyncPlayers()
 		{
 			//TODO: send data at bigger intervals (not every frame)
 			NetOutgoingMessage msg = server.CreateMessage();
@@ -165,8 +206,10 @@ namespace GREATServer
 			msg.Write(msgCode);
 
 			//TODO: cleaner way to sync the data?
-			foreach (Player p in players)
+			foreach (Player p in players) {
+				msg.Write(p.Id);
 				msg.WriteAllProperties(p.Position);
+			}
 
 			server.SendToAll(msg, NetDeliveryMethod.ReliableUnordered);
 		}

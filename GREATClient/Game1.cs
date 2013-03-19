@@ -82,8 +82,6 @@ namespace GREATClient
 			spriteBatch = new SpriteBatch(GraphicsDevice);
 
 			player = Content.Load<Texture2D>("stand");
-
-			int h = GraphicsDevice.Viewport.Height;
 		}
 
 		/// <summary>
@@ -99,10 +97,15 @@ namespace GREATClient
 			}
 			KeyboardState ks = Keyboard.GetState();
 
-			if (ks.IsKeyDown(Keys.Left))
-				client.SendCommand(ClientMessage.MoveLeft);
-			if (ks.IsKeyDown(Keys.Right))
-				client.SendCommand(ClientMessage.MoveRight);
+			// Player wants to move left
+			if (ks.IsKeyDown(Keys.Left) || ks.IsKeyDown(Keys.A)) {
+				client.QueueCommand(ClientMessage.MoveLeft);
+			}
+
+			// Player wants to move right
+			if (ks.IsKeyDown(Keys.Right) || ks.IsKeyDown(Keys.D)) {
+				client.QueueCommand(ClientMessage.MoveRight);
+			}
 
 			client.Update();
 			base.Update(gameTime);
@@ -120,7 +123,7 @@ namespace GREATClient
 			spriteBatch.Begin();
 
 			if (client.Players != null)
-				foreach (Player p in client.Players)
+				foreach (Player p in client.Players.Values)
 					spriteBatch.Draw(player, p.Position.ToVector2(), Color.White);
 
 			spriteBatch.End();

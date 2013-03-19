@@ -27,7 +27,18 @@ namespace GREATLib
 	/// </summary>
     public enum ServerMessage
     {
-		PositionSync = 1000
+		/// <summary>
+		/// Sends the positions of all the other players.
+		/// </summary>
+		PositionSync = 1,
+		/// <summary>
+		/// Gives the id of a client's player.
+		/// </summary>
+		GivePlayerId = 2,
+		/// <summary>
+		/// Acknowledges a client's command (used for client-side prediction).
+		/// </summary>
+		AcknowledgeCommand = 3
     }
 }
 

@@ -1,5 +1,13 @@
 2013-03-18  Jesse  <${AuthorEmail}>
 
+	* Player.cs:
+	* Physics.cs:
+	* Direction.cs:
+	* GREATLib.csproj:
+	* ServerMessage.cs: 
+
+2013-03-18  Jesse  <${AuthorEmail}>
+
 	* Vec2.cs:
 	* Player.cs:
 	* AssemblyInfo.cs:

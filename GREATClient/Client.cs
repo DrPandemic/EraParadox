@@ -28,7 +28,19 @@ namespace GREATClient
 {
 	public class Client
 	{
-		public List<Player> Players { get; set; }
+		/// <summary>
+		/// The id of the client's player.
+		/// </summary>
+		public int OurId = Player.InvalidId;
+		/// <summary>
+		/// Gets or sets the players of the game, given by the id (key).
+		/// </summary>
+		/// <value>The players.</value>
+		public Dictionary<int, Player> Players { get; set; }
+
+
+		private List<KeyValuePair<int, ClientMessage>> DesiredCommands = new List<KeyValuePair<int, ClientMessage>>();
+		int CurrentCommandId = 0;
 
 		NetClient client;
 
@@ -110,8 +122,16 @@ namespace GREATClient
 		
 				switch (type)
 				{
+					case ServerMessage.GivePlayerId:
+						OurId = msg.ReadInt32();
+						break;
+
 					case ServerMessage.PositionSync:
-						SyncPositions(msg);
+						SyncPlayers(msg);
+						break;
+
+					case ServerMessage.AcknowledgeCommand:
+						AcknowledgedCommand(msg);
 						break;
 
 					default:
@@ -125,31 +145,86 @@ namespace GREATClient
 		}
 
 		/// <summary>
-		/// Sends a command to the server. This should be changed later on to
-		/// send a list of commands rather than just one.
+		/// The server acknowledged one of our old commands, so we can do some client-side
+		/// prediction.
 		/// </summary>
-		/// <param name="command">Command.</param>
-		public void SendCommand(ClientMessage command)
+		/// <param name="msg">Message.</param>
+		private void AcknowledgedCommand(NetIncomingMessage msg)
 		{
-			//TODO: queue commands and send them in packs rather than everytime a new command happens.
-			NetOutgoingMessage msg = client.CreateMessage();
-			int commandCode = (int)command;
-			msg.Write(commandCode);
-			client.SendMessage(msg, NetDeliveryMethod.ReliableUnordered);
+			int commandId = msg.ReadInt32();
+
+			// Remove all the commands that have been acknowledged.
+			// Since the command we received is the latest acknowledged, 
+			// remove all the commands that happenned before (i.e. lower Id
+			// since higher Id means a command that happenned later).
+			DesiredCommands.RemoveAll(pair => pair.Key <= commandId);
 		}
 
 		/// <summary>
-		/// Synchronizes the positions of the players.
+		/// Take the last acknowledged command and performs the other
+		/// commands locally to predict what will most likely happen.
+		/// </summary>
+		private void ClientSidePrediction()
+		{
+			// Reperform the commands since the last acknowledge to predict
+			foreach (KeyValuePair<int, ClientMessage> pair in DesiredCommands) {
+				switch (pair.Value) {
+					case ClientMessage.MoveLeft:
+						if (Players != null && OurId != Player.InvalidId) 
+							Physics.Move(Players[OurId], Direction.Left);
+						break;
+
+					case ClientMessage.MoveRight:
+						if (Players != null && OurId != Player.InvalidId)
+							Physics.Move(Players[OurId], Direction.Right);
+						break;
+
+				default:
+						throw new NotImplementedException("Client message \"" + pair.Value.ToString() + "\" not implemented while doing client-side prediction.");
+				}
+			}
+		}
+
+		/// <summary>
+		/// Queues a command to later me executed.
+		/// </summary>
+		/// <param name="command">Command.</param>
+		public void QueueCommand(ClientMessage command)
+		{
+			//TODO: send commands in packs rather than everytime a new command happens.
+			NetOutgoingMessage msg = client.CreateMessage();
+			int commandCode = (int)command;
+			msg.Write(commandCode);
+			msg.Write(CurrentCommandId);
+			client.SendMessage(msg, NetDeliveryMethod.ReliableUnordered);
+
+			// Keep the command as a command that we want until it is acknowledged.
+			DesiredCommands.Add(new KeyValuePair<int, ClientMessage>(CurrentCommandId, command));
+			++CurrentCommandId; // move to the next Id
+		}
+
+		/// <summary>
+		/// Synchronizes the players in the game.
 		/// </summary>
 		/// <param name="msg">Message.</param>
-		private void SyncPositions(NetIncomingMessage msg)
+		private void SyncPlayers(NetIncomingMessage msg)
 		{
-			Players = new List<Player>();
+			if (Players == null)
+				Players = new Dictionary<int, Player>();
+
 			while (msg.PositionInBytes != msg.LengthBytes) {
+				int id = msg.ReadInt32();
 				Vec2 pos = new Vec2();
 				msg.ReadAllProperties(pos);
-				Players.Add(new Player() { Position = pos });
+
+				if (!Players.ContainsKey(id))
+					Players.Add(id, new Player() { Id = id, Position = pos });
+				else {
+					Players[id].Position = pos;
+				}
 			}
+
+			ClientSidePrediction();
 		}
 	}
 }
