@@ -93,8 +93,6 @@ namespace GREATClient
 						NetConnectionStatus status = (NetConnectionStatus)msg.ReadByte();
 						if (status == NetConnectionStatus.Connected) {
 							Console.WriteLine(NetUtility.ToHexString(msg.SenderConnection.RemoteUniqueIdentifier) + " connected!");
-							NetOutgoingMessage sup = client.CreateMessage("Sup?");
-							client.SendMessage(sup, msg.SenderConnection, NetDeliveryMethod.ReliableUnordered);
 						}
 						break;
 					case NetIncomingMessageType.VerboseDebugMessage:
@@ -218,15 +216,18 @@ namespace GREATClient
 			if (Players == null)
 				Players = new Dictionary<int, Player>();
 
-			while (msg.PositionInBytes != msg.LengthBytes) {
-				int id = msg.ReadInt32();
+			while (msg.Position != msg.LengthBits) {
 				Vec2 pos = new Vec2();
+				Player p = new Player();
+				msg.ReadAllProperties(p);
 				msg.ReadAllProperties(pos);
+				p.Position = pos;
 
-				if (!Players.ContainsKey(id))
-					Players.Add(id, new Player() { Id = id, Position = pos });
+				if (!Players.ContainsKey(p.Id)) {
+					Players.Add(p.Id, p);
+				}
 				else {
-					Players[id].Position = pos;
+					Players[p.Id] = p;
 				}
 			}
 

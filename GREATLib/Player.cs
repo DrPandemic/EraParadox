@@ -45,10 +45,24 @@ namespace GREATLib
 		/// <value>The identifier.</value>
 		public int Id { get; set; }
 
+		/// <summary>
+		/// Gets or sets the player's animation.
+		/// </summary>
+		/// <value>The animation.</value>
+		public int Animation { get; set; }
+
+		/// <summary>
+		/// Gets or sets a value indicating whether this <see cref="GREATLib.Player"/> is facing left.
+		/// </summary>
+		/// <value><c>true</c> if facing left; otherwise, <c>false</c>.</value>
+		public bool FacingLeft { get; set; }
+
         public Player()
         {
 			Position = new Vec2(0f, 0f);
 			Id = -1;
+			FacingLeft = false;
+			Animation = (int)PlayerAnimation.Standing;
         }
     }
 }

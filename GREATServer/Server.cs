@@ -75,8 +75,6 @@ namespace GREATServer
 						NetConnectionStatus status = (NetConnectionStatus)msg.ReadByte();
 						if (status == NetConnectionStatus.Connected) {
 							Console.WriteLine(NetUtility.ToHexString(msg.SenderConnection.RemoteUniqueIdentifier) + " connected!");
-							NetOutgoingMessage sup = server.CreateMessage("Sup?");
-							server.SendMessage(sup, msg.SenderConnection, NetDeliveryMethod.ReliableUnordered);
 
 
 							//TODO: send the player's id differently?
@@ -90,6 +88,7 @@ namespace GREATServer
 							Player p = 
 								new Player() { 
 									Id = id,
+									// Fear the magic numbers, burn them as soon as you can.
 									Position = new Vec2(50f+(float)r.NextDouble() * 700f, 50f+(float)r.NextDouble() * 500f) 
 								};
 							players.Add(p);
@@ -205,10 +204,14 @@ namespace GREATServer
 			int msgCode = (int)ServerMessage.PositionSync;
 			msg.Write(msgCode);
 
-			//TODO: cleaner way to sync the data?
+			//TODO: cleaner way to sync the data
 			foreach (Player p in players) {
-				msg.Write(p.Id);
+				msg.WriteAllProperties(p);
 				msg.WriteAllProperties(p.Position);
+
+				//TODO: put at a more appropriate place (it has to be after the data has been updated).
+				// reset animation if we were running
+				if (p.Animation == (int)PlayerAnimation.Running) p.Animation = (int)PlayerAnimation.Standing;
 			}
 
 			server.SendToAll(msg, NetDeliveryMethod.ReliableUnordered);

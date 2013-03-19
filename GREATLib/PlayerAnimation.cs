@@ -1,5 +1,5 @@
 //
-//  Physics.cs
+//  PlayerAnimation.cs
 //
 //  Author:
 //       Jesse <${AuthorEmail}>
@@ -22,27 +22,10 @@ using System;
 
 namespace GREATLib
 {
-	/// <summary>
-	/// The game physics.
-	/// </summary>
-    public static class Physics
+    public enum PlayerAnimation
     {
-		/// <summary>
-		/// TODO: Speed depending on the player's class and actual movement speed.
-		/// </summary>
-		private const float PLAYER_SPEED = 5f;
-
-		/// <summary>
-		/// Move the specified player in the specified direction.
-		/// </summary>
-		/// <param name="player">Player.</param>
-		/// <param name="direction">Direction.</param>
-		public static void Move(Player player, Direction direction)
-		{
-			player.Animation = (int)PlayerAnimation.Running;
-			player.FacingLeft = direction == Direction.Left;
-			player.Position += (float)direction * Vec2.UnitX * PLAYER_SPEED;
-		}
+		Standing = 0,
+		Running = 1
     }
 }
 

@@ -39,6 +39,7 @@
     <Compile Include="ClientMessage.cs" />
     <Compile Include="Physics.cs" />
     <Compile Include="Direction.cs" />
+    <Compile Include="PlayerAnimation.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
