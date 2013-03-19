@@ -1,4 +1,4 @@
-
+﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GREATServer", "GREATServer\GREATServer.csproj", "{6371C1C9-ECAE-4BC1-8C1B-82734399C79E}"
@@ -36,8 +36,8 @@ Global
 		{A7C14748-728B-427E-9946-3C6681F14A60}.Release|x86.ActiveCfg = Release|x86
 		{A7C14748-728B-427E-9946-3C6681F14A60}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
-<<<<<<< Upstream, based on origin/master
 	GlobalSection(MonoDevelopProperties) = preSolution
+<<<<<<< HEAD
 <<<<<<< Upstream, based on origin/master
 		StartupItems = $0
 		$0.Item = GREATServer\GREATServer.csproj
@@ -80,9 +80,11 @@ Global
 		$3.inheritsScope = text/x-csharp
 =======
 <<<<<<< Upstream, based on origin/master
+=======
+>>>>>>> Stash
 		StartupItems = $0
 		$0.Item = GREATServer\GREATServer.csproj
-		$0.Item = GREATClient\GREATClient.Linux.csproj
+		$0.Item = GREATClient\GREATClient.Windows.csproj
 		Policies = $1
 		$1.DotNetNamingPolicy = $2
 		$2.DirectoryNamespaceAssociation = Hierarchical
@@ -90,9 +92,9 @@ Global
 		$1.TextStylePolicy = $3
 		$3.FileWidth = 180
 		$3.TabsToSpaces = False
-		$3.EolMarker = Unix
 		$3.inheritsSet = VisualStudio
 		$3.inheritsScope = text/plain
+<<<<<<< HEAD
 =======
 		StartupItem = GREATServer\GREATServer.csproj
 		Policies = $0
@@ -400,5 +402,8 @@ Global
 		$1.ChangeLogPolicy = $36
 		$36.UpdateMode = ProjectRoot
 		$36.inheritsSet = Mono
+=======
+		GlobalSection(MonoDevelopProperties) = preSolution
+>>>>>>> Stash
 	EndGlobalSection
 EndGlobal
