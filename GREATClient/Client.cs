@@ -38,8 +38,14 @@ namespace GREATClient
 		/// <value>The players.</value>
 		public Dictionary<int, Player> Players { get; set; }
 
-
+		/// <summary>
+		/// The set of commands that the player wants to do.
+		/// </summary>
 		private List<KeyValuePair<int, ClientMessage>> DesiredCommands = new List<KeyValuePair<int, ClientMessage>>();
+		/// <summary>
+		/// The current command identifier. This id represents at what position the command was desired 
+		/// (lower = older commands, higher = newer commands).
+		/// </summary>
 		int CurrentCommandId = 0;
 
 		NetClient client;
@@ -123,7 +129,7 @@ namespace GREATClient
 				switch (type)
 				{
 					case ServerMessage.GivePlayerId:
-						OurId = msg.ReadInt32();
+						OurId = msg.ReadInt32(); // the client's player id. This should probably be done differently and thus is temporary
 						break;
 
 					case ServerMessage.PositionSync:
@@ -170,7 +176,7 @@ namespace GREATClient
 			foreach (KeyValuePair<int, ClientMessage> pair in DesiredCommands) {
 				switch (pair.Value) {
 					case ClientMessage.MoveLeft:
-						if (Players != null && OurId != Player.InvalidId) 
+						if (Players != null && OurId != Player.InvalidId) // players are loaded and we know who we are
 							Physics.Move(Players[OurId], Direction.Left);
 						break;
 
@@ -198,7 +204,7 @@ namespace GREATClient
 			msg.Write(CurrentCommandId);
 			client.SendMessage(msg, NetDeliveryMethod.ReliableUnordered);
 
-			// Keep the command as a command that we want until it is acknowledged.
+			// Keep the command as a command that we want to do until it is acknowledged.
 			DesiredCommands.Add(new KeyValuePair<int, ClientMessage>(CurrentCommandId, command));
 			++CurrentCommandId; // move to the next Id
 		}

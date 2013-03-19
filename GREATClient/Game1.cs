@@ -26,6 +26,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Storage;
 using GREATLib;
+using System.Collections.Generic;
 
 
 namespace GREATClient
@@ -38,12 +39,16 @@ namespace GREATClient
 		const int SCREEN_W = 800;
 		const int SCREEN_H = 600;
 
+		const float INTERPOLATION_LERP_FACTOR = 0.1f;
+
 		Client client;
 
 		Texture2D player;
 
 		GraphicsDeviceManager graphics;
 		SpriteBatch spriteBatch;
+
+		Dictionary<int, Vec2> PlayerCurrentPositions = null;
 
 		public Game1()
 		{
@@ -95,20 +100,59 @@ namespace GREATClient
 			if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed) {
 				Exit();
 			}
+
+			CheckInput();
+
+
+			InterpolatePositions();
+
+
+			client.Update();
+			base.Update(gameTime);
+		}
+
+		/// <summary>
+		/// Checks for player input.
+		/// </summary>
+		void CheckInput()
+		{
 			KeyboardState ks = Keyboard.GetState();
 
 			// Player wants to move left
 			if (ks.IsKeyDown(Keys.Left) || ks.IsKeyDown(Keys.A)) {
 				client.QueueCommand(ClientMessage.MoveLeft);
 			}
-
 			// Player wants to move right
 			if (ks.IsKeyDown(Keys.Right) || ks.IsKeyDown(Keys.D)) {
 				client.QueueCommand(ClientMessage.MoveRight);
 			}
+		}
 
-			client.Update();
-			base.Update(gameTime);
+		/// <summary>
+		/// Interpolates the positions of the players to give a more fluid experience to the user.
+		/// </summary>
+		void InterpolatePositions()
+		{
+			if (client.Players != null) { // we *do* have players to show
+				// Never received positions so far, just pick the client's
+				if (PlayerCurrentPositions == null) {
+					PlayerCurrentPositions = new Dictionary<int, Vec2>();
+					foreach (int playerId in client.Players.Keys) {
+						PlayerCurrentPositions.Add(playerId, client.Players[playerId].Position);
+					}
+				}
+
+				foreach (int playerId in client.Players.Keys) {
+					// first time we see this player
+					if (!PlayerCurrentPositions.ContainsKey(playerId)) {
+						PlayerCurrentPositions.Add(playerId, client.Players[playerId].Position);
+					}
+					// we interpolate to the player's position
+					else { 
+						PlayerCurrentPositions[playerId] = Vec2.Lerp(PlayerCurrentPositions[playerId], client.Players[playerId].Position, INTERPOLATION_LERP_FACTOR);
+					}
+				}
+			}
 		}
 
 		/// <summary>
@@ -122,9 +166,15 @@ namespace GREATClient
 
 			spriteBatch.Begin();
 
-			if (client.Players != null)
-				foreach (Player p in client.Players.Values)
-					spriteBatch.Draw(player, p.Position.ToVector2(), Color.White);
+			if (client.Players != null) {
+				foreach (Player p in client.Players.Values) {
+					// Take the interpolated position if we have one, the real one if we don't.
+					Vec2 pos = PlayerCurrentPositions != null && PlayerCurrentPositions.ContainsKey(p.Id) ?
+						PlayerCurrentPositions[p.Id] : p.Position;
+
+					spriteBatch.Draw(player, pos.ToVector2(), Color.White);
+				}
+			}
 
 			spriteBatch.End();
 

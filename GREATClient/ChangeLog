@@ -6,6 +6,11 @@
 2013-03-18  Jesse  <${AuthorEmail}>
 
 	* Game1.cs:
+	* Client.cs: 
+
+2013-03-18  Jesse  <${AuthorEmail}>
+
+	* Game1.cs:
 	* Client.cs:
 	* Program.cs:
 	* GameLibHelper.cs:

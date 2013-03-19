@@ -133,6 +133,17 @@ namespace GREATLib
 		{
 			return lhs * (1f / k);
 		}
+		/// <summary>
+		/// Linear interpolation from a vector to another using a specified factor.
+		/// </summary>
+		/// <param name="start">Start vector.</param>
+		/// <param name="goal">Goal vector.</param>
+		/// <param name="factor">Factor of the linear interpolation.</param>
+		public static Vec2 Lerp(Vec2 start, Vec2 goal, float factor)
+		{
+			return new Vec2(start.X + factor * (goal.X - start.X),
+			                start.Y + factor * (goal.Y - start.Y));
+		}
     }
 }
 
