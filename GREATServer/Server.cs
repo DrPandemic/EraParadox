@@ -22,8 +22,12 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+<<<<<<< Upstream, based on origin/master
 using Lidgren.Network;
 using GREATLib;
+=======
+using Map;
+>>>>>>> e9aeff0 Temporary tilemap (to test physics) with collisions and basic gravity.
 
 namespace GREATServer
 {
@@ -45,6 +49,7 @@ namespace GREATServer
 
 		Dictionary<long, Player> connections = new Dictionary<long, Player>();
 		List<Player> players = new List<Player>();
+		TileMap Map = new TileMap();
 
 		NetServer server;
 
@@ -104,7 +109,7 @@ namespace GREATServer
 								new Player() { 
 								Id = msg.SenderConnection.RemoteUniqueIdentifier,
 									// Fear the magic numbers, burn them as soon as you can.
-									Position = new Vec2(50f+(float)r.NextDouble() * 700f, 50f+(float)r.NextDouble() * 500f) 
+									Position = new Vec2(50f + (float)r.NextDouble() * 700f, 100f) 
 								};
 							players.Add(p);
 							connections.Add(msg.SenderConnection.RemoteUniqueIdentifier, p);
@@ -132,6 +137,7 @@ namespace GREATServer
 				server.Recycle(msg);
 			}
 
+			Physics.ApplyPhysics(players, Map);
 			SyncPlayers();
 		}
 
@@ -177,13 +183,23 @@ namespace GREATServer
 				switch (type)
 				{
 					case ClientMessage.MoveLeft:
+<<<<<<< Upstream, based on origin/master
 						Debug.Assert(connections.ContainsKey(msg.SenderConnection.RemoteUniqueIdentifier));
 						Physics.Move(connections[msg.SenderConnection.RemoteUniqueIdentifier], Direction.Left);
+=======
+						Debug.Assert(connections.ContainsKey(msg.SenderConnection));
+						Physics.Move(connections[msg.SenderConnection], Direction.Left, Map);
+>>>>>>> e9aeff0 Temporary tilemap (to test physics) with collisions and basic gravity.
 						break;
 
 					case ClientMessage.MoveRight:
+<<<<<<< Upstream, based on origin/master
 						Debug.Assert(connections.ContainsKey(msg.SenderConnection.RemoteUniqueIdentifier));
 						Physics.Move(connections[msg.SenderConnection.RemoteUniqueIdentifier], Direction.Right);
+=======
+						Debug.Assert(connections.ContainsKey(msg.SenderConnection));
+						Physics.Move(connections[msg.SenderConnection], Direction.Right, Map);
+>>>>>>> e9aeff0 Temporary tilemap (to test physics) with collisions and basic gravity.
 						break;
 						
 					default:

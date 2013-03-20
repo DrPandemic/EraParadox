@@ -28,6 +28,7 @@ using Microsoft.Xna.Framework.Storage;
 using GREATLib;
 using System.Collections.Generic;
 using Champions;
+using Map;
 
 
 namespace GREATClient
@@ -56,7 +57,15 @@ namespace GREATClient
 		Dictionary<int, Vec2> PlayerCurrentPositions = null;
 
 		ChampionResources resources;
+<<<<<<< Upstream, based on origin/master
 >>>>>>> 8b491dd More structured character resources system along with the concept of "champions".
+=======
+
+
+		//TODO: remove, used for testing purposes (debug-drawing the map).
+		Texture2D pixel;
+
+>>>>>>> e9aeff0 Temporary tilemap (to test physics) with collisions and basic gravity.
 
 		public Game1()
 		{
@@ -100,7 +109,15 @@ namespace GREATClient
 			playerRun = Content.Load<Texture2D>("run");
 =======
 			resources = new ChampionResources(Content);
+<<<<<<< Upstream, based on origin/master
 >>>>>>> 8b491dd More structured character resources system along with the concept of "champions".
+=======
+
+
+			//TODO: remove, simply used for the debug-drawn map
+			pixel = new Texture2D(GraphicsDevice, 1, 1);
+			pixel.SetData(GeneralHelper.MakeList(Color.White).ToArray());
+>>>>>>> e9aeff0 Temporary tilemap (to test physics) with collisions and basic gravity.
 		}
 
 		/// <summary>
@@ -184,7 +201,7 @@ namespace GREATClient
 		{
 			//TODO: use the client's ping to interpolate until the next sync instead
 			//of an arbitrary value.
-			const float INTERPOLATION_LERP_FACTOR = 0.06f;
+			const float INTERPOLATION_LERP_FACTOR = 0.2f;
 
 			if (client.Players != null) { // we *do* have players to show
 				// Never received positions so far, just pick the client's
@@ -216,9 +233,9 @@ namespace GREATClient
 		{
 			graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
 
-
 			spriteBatch.Begin();
 
+<<<<<<< Upstream, based on origin/master
 			if (client.Players != null) {
 				foreach (Player p in client.Players.Values) {
 					// Take the interpolated position if we have one, the real one if we don't.
@@ -231,20 +248,31 @@ namespace GREATClient
 					ChampionTypes champ = (ChampionTypes)p.Champion;
 >>>>>>> 8b491dd More structured character resources system along with the concept of "champions".
 					PlayerAnimation anim = (PlayerAnimation)p.Animation;
+=======
+			DrawMap();
+>>>>>>> e9aeff0 Temporary tilemap (to test physics) with collisions and basic gravity.
 
-					spriteBatch.Draw(resources.GetTexture(champ, anim), pos.ToVector2(), 
-					                 GetSourceRectangle(p), Color.White, 0f, 
-					                 new Vector2(resources.GetFrameWidth(champ, anim)/2f, resources.GetFrameHeight(champ, anim)), // place origin at the feet
-					                 Vector2.One, 
-					                 p.FacingLeft ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0);
-				}
+			//TODO: remove, debugging purposes
+			if (client.Players != null && client.OurId != Player.InvalidId) {
+				Player p = client.Players[client.OurId];
+				Champion champ = ChampionFromType.GetChampion(
+					(ChampionTypes)p.Champion);
+
+				spriteBatch.Draw(pixel, new Rectangle(
+					(int)client.Players[client.OurId].Position.X - champ.CollisionWidth/2,
+					(int)client.Players[client.OurId].Position.Y - champ.CollisionHeight,
+					champ.CollisionWidth, champ.CollisionHeight),
+				                 Color.Green * 0.5f);
 			}
+
+			DrawPlayers();
 
 			spriteBatch.End();
 
 			base.Draw(gameTime);
 		}
 
+<<<<<<< Upstream, based on origin/master
 <<<<<<< Upstream, based on origin/master
 		private Texture2D GetTexture(PlayerAnimation anim)
 		{
@@ -260,6 +288,54 @@ namespace GREATClient
 
 =======
 >>>>>>> 8b491dd More structured character resources system along with the concept of "champions".
+=======
+		/// <summary>
+		/// Draws the map of the game.
+		/// </summary>
+		void DrawMap()
+		{
+			//TODO: temporary, use the real tile ids, etc.
+			//TODO: refactor into its own class, only here for fast testing purposes
+			for (int row = 0; row < client.Map.GetHeightTiles(); ++row) {
+				for (int column = 0; column < client.Map.GetWidthTiles(); ++column) {
+					if (client.Map.GetTile(column, row).Id == Map.TileId.Block)
+						spriteBatch.Draw(pixel, new Rectangle(column * Tile.WIDTH, row * Tile.HEIGHT, Tile.WIDTH, Tile.HEIGHT), Color.Red);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Draws the players in the game.
+		/// </summary>
+		void DrawPlayers()
+		{
+			if (client.Players != null) {
+				foreach (Player p in client.Players.Values) {
+					DrawPlayer(p);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Draws an individual player.
+		/// </summary>
+		/// <param name="p">The player.</param>
+		void DrawPlayer(Player p)
+		{
+			// Take the interpolated position if we have one, the real one if we don't.
+			Vec2 pos = PlayerCurrentPositions != null && PlayerCurrentPositions.ContainsKey(p.Id) ? PlayerCurrentPositions[p.Id] : p.Position;
+			ChampionTypes champ = (ChampionTypes)p.Champion;
+			PlayerAnimation anim = (PlayerAnimation)p.Animation;
+			spriteBatch.Draw(resources.GetTexture(champ, anim), pos.ToVector2(), GetSourceRectangle(p), Color.White, 0f, new Vector2(resources.GetFrameWidth(champ, anim) / 2f, resources.GetFrameHeight(champ, anim)), // place origin at the feet
+			Vector2.One, p.FacingLeft ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0);
+		}
+
+		/// <summary>
+		/// Gets the source rectangle of a player.
+		/// </summary>
+		/// <returns>The source rectangle.</returns>
+		/// <param name="p">The player.</param>
+>>>>>>> e9aeff0 Temporary tilemap (to test physics) with collisions and basic gravity.
 		private Rectangle GetSourceRectangle(Player p)
 		{
 			if (!playerCurrentFrame.ContainsKey(p.Id))

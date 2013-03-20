@@ -1,5 +1,5 @@
 //
-//  StickmanChampion.cs
+//  TileId.cs
 //
 //  Author:
 //       Jesse <${AuthorEmail}>
@@ -20,42 +20,39 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 
-namespace Champions
+namespace Map
 {
 	/// <summary>
-	/// The Stickman champion. Used for test purposes.
+	/// A tile identifier from a tile map.
 	/// </summary>
-    public class StickmanChampion : Champion
+    public enum TileId
     {
-		public override string Name {
-			get {
-				return "Stickman";
-			}
-		}
-
-		public override AnimationInfo StandingAnim {
-			get {
-				return new AnimationInfo(1, 1);
-			}
-		}
-
-		public override AnimationInfo RunningAnim {
-			get {
-				return new AnimationInfo(3, 6);
-			}
-		}
-
-		public override int CollisionHeight {
-			get {
-				return 40;
-			}
-		}
-
-		public override int CollisionWidth {
-			get {
-				return 15;
-			}
-		}
+		Empty = 0,
+		Block = 1
     }
+
+	/// <summary>
+	/// Data about the tiles.
+	/// </summary>
+	public static class TileData
+	{
+		/// <summary>
+		/// Determines if the specified tile is solid.
+		/// </summary>
+		/// <returns><c>true</c> if the tile is solid; otherwise, <c>false</c>.</returns>
+		/// <param name="id">The tile identifier.</param>
+		public static bool IsSolid(TileId id)
+		{
+			switch (id) {
+				case TileId.Empty: 
+					return false;
+
+				case TileId.Block: 
+					return true;
+
+				default: throw new NotImplementedException("Tile id not implemented in IsSolid.");
+			}
+		}
+	}
 }
 

@@ -23,6 +23,7 @@ using System;
 using Lidgren.Network;
 using GREATLib;
 using System.Collections.Generic;
+using Map;
 
 namespace GREATClient
 {
@@ -46,28 +47,46 @@ namespace GREATClient
 		/// The id of the client's player.
 		/// FIXME: We already have client.UniqueIdentifier
 		/// </summary>
+<<<<<<< Upstream, based on origin/master
 		public long OurId
 		{
 			get {
 				return client.UniqueIdentifier;
 			}
 		}
+=======
+		public int OurId { get; private set; }
+>>>>>>> e9aeff0 Temporary tilemap (to test physics) with collisions and basic gravity.
 		/// <summary>
 		/// Gets or sets the players of the game, given by the id (key).
 		/// </summary>
 		/// <value>The players.</value>
+<<<<<<< Upstream, based on origin/master
 		public Dictionary<long, Player> Players { get; set; }
+=======
+		public Dictionary<int, Player> Players { get; private set; }
+>>>>>>> e9aeff0 Temporary tilemap (to test physics) with collisions and basic gravity.
 
 		/// <summary>
 		/// The set of commands that the player wants to do.
 		/// </summary>
+<<<<<<< Upstream, based on origin/master
 		List<KeyValuePair<int, ClientMessage>> DesiredCommands = new List<KeyValuePair<int, ClientMessage>>();
+=======
+		private List<KeyValuePair<int, ClientMessage>> DesiredCommands { get; set; }
+>>>>>>> e9aeff0 Temporary tilemap (to test physics) with collisions and basic gravity.
 		/// <summary>
 		/// The current command identifier. This id represents at what position the command was desired 
 		/// (lower = older commands, higher = newer commands).
 		/// TODO: Lidgren should already be handling this
 		/// </summary>
 		int CurrentCommandId = 0;
+
+		/// <summary>
+		/// Gets or sets the map of the game.
+		/// </summary>
+		/// <value>The map.</value>
+		public TileMap Map { get; private set; }
 
 		NetClient client;
 
@@ -85,6 +104,13 @@ namespace GREATClient
 			#endif
 
 			this.client = new NetClient(config);
+
+
+			DesiredCommands = new List<KeyValuePair<int, ClientMessage>>();
+			//TODO: load an other map object, englobing the tilemap, towers, nexuses, etc.
+			Map = new TileMap();
+			Players = null;
+			OurId = Player.InvalidId;
 		}
 
 		public void Start()
@@ -147,9 +173,18 @@ namespace GREATClient
 		
 				switch (type)
 				{
+<<<<<<< Upstream, based on origin/master
 					//case ServerMessage.GivePlayerId:
 					//	OurId = msg.ReadInt32(); // the client's player id. This should probably be done differently and thus is temporary
 					//	break;
+=======
+					//TODO: message when a new player is added? Could fire an event (the game would listen to it)
+					//TODO: message when we arrive? Would receive the data of all the players and trigger the "PlayerAdded" event
+
+					case ServerMessage.GivePlayerId:
+						OurId = msg.ReadInt32(); // the client's player id. This should probably be done differently and thus is temporary
+						break;
+>>>>>>> e9aeff0 Temporary tilemap (to test physics) with collisions and basic gravity.
 
 					case ServerMessage.PositionSync:
 						SyncPlayers(msg);
@@ -198,17 +233,19 @@ namespace GREATClient
 				foreach (KeyValuePair<int, ClientMessage> pair in DesiredCommands) {
 					switch (pair.Value) {
 						case ClientMessage.MoveLeft:
-							Physics.Move(Players[OurId], Direction.Left);
+							Physics.Move(Players[OurId], Direction.Left, Map);
 							break;
 
 						case ClientMessage.MoveRight:
-							Physics.Move(Players[OurId], Direction.Right);
+							Physics.Move(Players[OurId], Direction.Right, Map);
 							break;
 
 						default:
 							throw new NotImplementedException("Client message \"" + pair.Value.ToString() + "\" not implemented while doing client-side prediction.");
 					}
 				}
+
+				Physics.ApplyPhysics(Players.Values, Map);
 			}
 		}
 
@@ -255,7 +292,7 @@ namespace GREATClient
 				}
 			}
 
-			ClientSidePrediction();
+			//ClientSidePrediction();
 		}
 	}
 }

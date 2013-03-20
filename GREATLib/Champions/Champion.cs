@@ -51,6 +51,18 @@ namespace Champions
 		/// </summary>
 		/// <value>The running animation.</value>
 		public abstract AnimationInfo RunningAnim { get; }
+
+		/// <summary>
+		/// Gets the width of the collision rectangle of the player.
+		/// </summary>
+		/// <value>The width of the collision rectangle.</value>
+		public abstract int CollisionWidth { get; }
+
+		/// <summary>
+		/// Gets the height of the collision rectangle of the player.
+		/// </summary>
+		/// <value>The height of the collision rectangle.</value>
+		public abstract int CollisionHeight { get; }
     }
 }
 

@@ -1,3 +1,13 @@
+2013-03-20  Jesse  <${AuthorEmail}>
+
+	* Physics.cs:
+	* TileId.cs:
+	* TileMap.cs:
+	* GREATLib.csproj:
+	* GeneralHelper.cs:
+	* Champion.cs:
+	* StickmanChampion.cs: 
+
 2013-03-19  Jesse  <${AuthorEmail}>
 
 	* Player.cs:
