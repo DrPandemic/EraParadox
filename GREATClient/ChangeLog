@@ -3,6 +3,18 @@
 	* Game1.cs:
 	* Client.cs:
 	* run.png:
+	* stand.png:
+	* ChampionResources.cs:
+	* Stickman_run.png:
+	* GREATClient.Linux.csproj:
+	* GREATClient.Windows.csproj:
+	* Stickman_stand.png: 
+
+2013-03-19  Jesse  <${AuthorEmail}>
+
+	* Game1.cs:
+	* Client.cs:
+	* run.png:
 	* GREATClient.Linux.csproj:
 	* GREATClient.Windows.csproj: 
 

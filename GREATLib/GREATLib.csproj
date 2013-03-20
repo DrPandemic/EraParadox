@@ -40,6 +40,13 @@
     <Compile Include="Physics.cs" />
     <Compile Include="Direction.cs" />
     <Compile Include="PlayerAnimation.cs" />
+    <Compile Include="Champions\ChampionTypes.cs" />
+    <Compile Include="Champions\Champion.cs" />
+    <Compile Include="Champions\StickmanChampion.cs" />
+    <Compile Include="Champions\AnimationInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Champions\" />
+  </ItemGroup>
 </Project>

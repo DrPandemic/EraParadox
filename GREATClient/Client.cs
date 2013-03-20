@@ -191,21 +191,23 @@ namespace GREATClient
 		/// </summary>
 		private void ClientSidePrediction()
 		{
-			// Reperform the commands since the last acknowledge to predict
-			foreach (KeyValuePair<int, ClientMessage> pair in DesiredCommands) {
-				switch (pair.Value) {
-					case ClientMessage.MoveLeft:
-						if (Players != null && OurId != Player.InvalidId) // players are loaded and we know who we are
+			if (Players != null && OurId != Player.InvalidId) { // players are loaded and we know who we are
+				Physics.UpdateAnimation(Players[OurId]);
+
+				// Reperform the commands since the last acknowledge to predict
+				foreach (KeyValuePair<int, ClientMessage> pair in DesiredCommands) {
+					switch (pair.Value) {
+						case ClientMessage.MoveLeft:
 							Physics.Move(Players[OurId], Direction.Left);
-						break;
+							break;
 
-					case ClientMessage.MoveRight:
-						if (Players != null && OurId != Player.InvalidId)
+						case ClientMessage.MoveRight:
 							Physics.Move(Players[OurId], Direction.Right);
-						break;
+							break;
 
-				default:
-						throw new NotImplementedException("Client message \"" + pair.Value.ToString() + "\" not implemented while doing client-side prediction.");
+						default:
+							throw new NotImplementedException("Client message \"" + pair.Value.ToString() + "\" not implemented while doing client-side prediction.");
+					}
 				}
 			}
 		}

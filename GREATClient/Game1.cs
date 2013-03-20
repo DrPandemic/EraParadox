@@ -27,6 +27,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Storage;
 using GREATLib;
 using System.Collections.Generic;
+using Champions;
 
 
 namespace GREATClient
@@ -42,16 +43,20 @@ namespace GREATClient
 
 		Client client;
 
-		Texture2D player;
-		Texture2D playerRun;
-
 		GraphicsDeviceManager graphics;
 		SpriteBatch spriteBatch;
 
+<<<<<<< Upstream, based on origin/master
 
 		Dictionary<long, int> playerCurrentFrame = new Dictionary<long, int>();
 		Dictionary<long, Vec2> playerCurrentPositions = null;
 
+=======
+		Dictionary<int, int> PlayerCurrentFrame = new Dictionary<int, int>();
+		Dictionary<int, Vec2> PlayerCurrentPositions = null;
+
+		ChampionResources resources;
+>>>>>>> 8b491dd More structured character resources system along with the concept of "champions".
 
 		public Game1()
 		{
@@ -89,9 +94,13 @@ namespace GREATClient
 			// Create a new SpriteBatch, which can be used to draw textures.
 			spriteBatch = new SpriteBatch(GraphicsDevice);
 
+<<<<<<< Upstream, based on origin/master
 			//TODO: put in character resources class and initialize here
 			player = Content.Load<Texture2D>("stand");
 			playerRun = Content.Load<Texture2D>("run");
+=======
+			resources = new ChampionResources(Content);
+>>>>>>> 8b491dd More structured character resources system along with the concept of "champions".
 		}
 
 		/// <summary>
@@ -123,14 +132,28 @@ namespace GREATClient
 		{
 			if (client.Players != null) {
 				foreach (Player p in client.Players.Values) {
+<<<<<<< Upstream, based on origin/master
 					if (!playerCurrentFrame.ContainsKey(p.Id)) // first time we meet the player
 						playerCurrentFrame.Add(p.Id, 0); // start at frame 0
+=======
+					ChampionTypes champ = (ChampionTypes)p.Champion;
+					PlayerAnimation anim = (PlayerAnimation)p.Animation;
+
+					if (!PlayerCurrentFrame.ContainsKey(p.Id)) // first time we meet the player
+						PlayerCurrentFrame.Add(p.Id, 0); // start at frame 0
+>>>>>>> 8b491dd More structured character resources system along with the concept of "champions".
 					else {
 						++playerCurrentFrame[p.Id]; // we add one frame to our count
 
+<<<<<<< Upstream, based on origin/master
 						playerCurrentFrame[p.Id] = 
 							(playerCurrentFrame[p.Id]) % // take our total frame count
 								(GetFrameCount((PlayerAnimation)p.Animation) * GetFrameRate((PlayerAnimation)p.Animation));
+=======
+						PlayerCurrentFrame[p.Id] = 
+							(PlayerCurrentFrame[p.Id]) % // take our total frame count
+								(resources.GetFrameCount(champ, anim) * resources.GetFrameRate(champ, anim));
+>>>>>>> 8b491dd More structured character resources system along with the concept of "champions".
 						// and see if we should go back to frame #1.
 					}
 				}
@@ -159,6 +182,8 @@ namespace GREATClient
 		/// </summary>
 		void InterpolatePositions()
 		{
+			//TODO: use the client's ping to interpolate until the next sync instead
+			//of an arbitrary value.
 			const float INTERPOLATION_LERP_FACTOR = 0.06f;
 
 			if (client.Players != null) { // we *do* have players to show
@@ -197,13 +222,19 @@ namespace GREATClient
 			if (client.Players != null) {
 				foreach (Player p in client.Players.Values) {
 					// Take the interpolated position if we have one, the real one if we don't.
+<<<<<<< Upstream, based on origin/master
 					Vec2 pos = playerCurrentPositions != null && playerCurrentPositions.ContainsKey(p.Id) ?
 						playerCurrentPositions[p.Id] : p.Position;
+=======
+					Vec2 pos = PlayerCurrentPositions != null && PlayerCurrentPositions.ContainsKey(p.Id) ?
+						PlayerCurrentPositions[p.Id] : p.Position;
+					ChampionTypes champ = (ChampionTypes)p.Champion;
+>>>>>>> 8b491dd More structured character resources system along with the concept of "champions".
 					PlayerAnimation anim = (PlayerAnimation)p.Animation;
 
-					spriteBatch.Draw(GetTexture(anim), pos.ToVector2(), 
+					spriteBatch.Draw(resources.GetTexture(champ, anim), pos.ToVector2(), 
 					                 GetSourceRectangle(p), Color.White, 0f, 
-					                 new Vector2(GetFrameWidth(anim)/2f, GetFrameHeight(anim)), // place origin at the feet
+					                 new Vector2(resources.GetFrameWidth(champ, anim)/2f, resources.GetFrameHeight(champ, anim)), // place origin at the feet
 					                 Vector2.One, 
 					                 p.FacingLeft ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0);
 				}
@@ -214,6 +245,7 @@ namespace GREATClient
 			base.Draw(gameTime);
 		}
 
+<<<<<<< Upstream, based on origin/master
 		private Texture2D GetTexture(PlayerAnimation anim)
 		{
 			//TODO: put in a character resources object
@@ -226,13 +258,17 @@ namespace GREATClient
 			}
 		}
 
+=======
+>>>>>>> 8b491dd More structured character resources system along with the concept of "champions".
 		private Rectangle GetSourceRectangle(Player p)
 		{
 			if (!playerCurrentFrame.ContainsKey(p.Id))
 				playerCurrentFrame.Add(p.Id, 0);
 
+			ChampionTypes champ = (ChampionTypes)p.Champion;
 			PlayerAnimation anim = (PlayerAnimation)p.Animation;
 
+<<<<<<< Upstream, based on origin/master
 			//TODO: put in a character resources object
 			return new Rectangle(playerCurrentFrame[p.Id] / GetFrameRate(anim) * GetFrameWidth(anim),
 			                     0,
@@ -277,6 +313,10 @@ namespace GREATClient
 				default:
 					throw new NotImplementedException("Animation not implemented while getting frame framerate.");
 			}
+=======
+			return resources.GetSourceRect(champ, anim, 
+			                               PlayerCurrentFrame[p.Id] / resources.GetFrameRate(champ, anim));
+>>>>>>> 8b491dd More structured character resources system along with the concept of "champions".
 		}
 
 		/// <summary>

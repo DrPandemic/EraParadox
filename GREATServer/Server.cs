@@ -228,9 +228,7 @@ namespace GREATServer
 				msg.WriteAllProperties(p);
 				msg.WriteAllProperties(p.Position);
 
-				//TODO: put at a more appropriate place (it has to be after the data has been updated).
-				// reset animation if we were running
-				if (p.Animation == (int)PlayerAnimation.Running) p.Animation = (int)PlayerAnimation.Standing;
+				Physics.UpdateAnimation(p);
 			}
 
 			server.SendToAll(msg, NetDeliveryMethod.ReliableUnordered);

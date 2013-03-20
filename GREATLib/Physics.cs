@@ -43,6 +43,19 @@ namespace GREATLib
 			player.FacingLeft = direction == Direction.Left;
 			player.Position += (float)direction * Vec2.UnitX * PLAYER_SPEED;
 		}
+
+		/// <summary>
+		/// Update the specified player's animation.
+		/// Note: This must be called before the move calls, because it resets
+		/// an animation state that will be changed right after if it should.
+		/// </summary>
+		/// <param name="player">Player.</param>
+		public static void UpdateAnimation(Player player)
+		{
+			// Assume that we stopped running (we'll receive an other message otherwise).
+			if (player.Animation == (int)PlayerAnimation.Running) 
+				player.Animation = (int)PlayerAnimation.Standing;
+		}
     }
 }
 

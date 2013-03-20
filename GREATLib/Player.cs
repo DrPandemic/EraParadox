@@ -20,6 +20,7 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
+using Champions;
 
 namespace GREATLib
 {
@@ -57,12 +58,19 @@ namespace GREATLib
 		/// <value><c>true</c> if facing left; otherwise, <c>false</c>.</value>
 		public bool FacingLeft { get; set; }
 
+		/// <summary>
+		/// Gets or sets the player's champion.
+		/// </summary>
+		/// <value>The champion.</value>
+		public int Champion { get; set; }
+
         public Player()
         {
 			Position = new Vec2(0f, 0f);
-			Id = -1;
+			Id = InvalidId;
 			FacingLeft = false;
 			Animation = (int)PlayerAnimation.Standing;
+			Champion = (int)ChampionTypes.Stickman; //TODO: let player pick champion
         }
     }
 }

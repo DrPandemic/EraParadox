@@ -3,6 +3,17 @@
 	* Player.cs:
 	* Physics.cs:
 	* GREATLib.csproj:
+	* Champion.cs:
+	* ChampionTypes.cs:
+	* AnimationInfo.cs:
+	* CharacterTypes.cs:
+	* StickmanChampion.cs: 
+
+2013-03-19  Jesse  <${AuthorEmail}>
+
+	* Player.cs:
+	* Physics.cs:
+	* GREATLib.csproj:
 	* PlayerAnimation.cs: 
 
 2013-03-18  Jesse  <${AuthorEmail}>

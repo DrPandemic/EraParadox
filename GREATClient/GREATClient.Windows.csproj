@@ -44,6 +44,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Client.cs" />
     <Compile Include="GameLibHelper.cs" />
+    <Compile Include="ChampionResources.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />
@@ -63,10 +64,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\stand.png">
+    <Content Include="Content\Stickman_run.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\run.png">
+    <Content Include="Content\Stickman_stand.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
