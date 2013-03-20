@@ -14,6 +14,7 @@ namespace GREATClient
 		[STAThread]
 		static void Main()
 		{
+			Console.WriteLine("Creating game...");
 			game = new Game1();
 			game.Run();
 		}

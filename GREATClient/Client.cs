@@ -21,11 +21,33 @@
 
 using System;
 using Lidgren.Network;
+using GREATLib;
+using System.Collections.Generic;
 
 namespace GREATClient
 {
 	public class Client
 	{
+		/// <summary>
+		/// The id of the client's player.
+		/// </summary>
+		public int OurId = Player.InvalidId;
+		/// <summary>
+		/// Gets or sets the players of the game, given by the id (key).
+		/// </summary>
+		/// <value>The players.</value>
+		public Dictionary<int, Player> Players { get; set; }
+
+		/// <summary>
+		/// The set of commands that the player wants to do.
+		/// </summary>
+		private List<KeyValuePair<int, ClientMessage>> DesiredCommands = new List<KeyValuePair<int, ClientMessage>>();
+		/// <summary>
+		/// The current command identifier. This id represents at what position the command was desired 
+		/// (lower = older commands, higher = newer commands).
+		/// </summary>
+		int CurrentCommandId = 0;
+
 		NetClient client;
 
 		public Client()
@@ -71,8 +93,6 @@ namespace GREATClient
 						NetConnectionStatus status = (NetConnectionStatus)msg.ReadByte();
 						if (status == NetConnectionStatus.Connected) {
 							Console.WriteLine(NetUtility.ToHexString(msg.SenderConnection.RemoteUniqueIdentifier) + " connected!");
-							NetOutgoingMessage sup = client.CreateMessage("Sup?");
-							client.SendMessage(sup, msg.SenderConnection, NetDeliveryMethod.ReliableUnordered);
 						}
 						break;
 					case NetIncomingMessageType.VerboseDebugMessage:
@@ -82,8 +102,7 @@ namespace GREATClient
 						Console.WriteLine(msg.ReadString());
 						break;
 					case NetIncomingMessageType.Data:
-						// TODO: Handle packets
-						Console.WriteLine(msg.ReadString());
+						ReadData(msg);
 						break;
 					default:
 						Console.WriteLine("Unhandled type: " + msg.MessageType);
@@ -91,6 +110,128 @@ namespace GREATClient
 				}
 				client.Recycle(msg);
 			}
+		}
+
+		/// <summary>
+		/// Reads data from a server message.
+		/// </summary>
+		/// <param name="msg">Message.</param>
+		private void ReadData(NetIncomingMessage msg)
+		{
+			try
+			{
+				int serverMsgCode = msg.ReadInt32();
+
+				ServerMessage type = (ServerMessage)serverMsgCode;
+		
+				switch (type)
+				{
+					case ServerMessage.GivePlayerId:
+						OurId = msg.ReadInt32(); // the client's player id. This should probably be done differently and thus is temporary
+						break;
+
+					case ServerMessage.PositionSync:
+						SyncPlayers(msg);
+						break;
+
+					case ServerMessage.AcknowledgeCommand:
+						AcknowledgedCommand(msg);
+						break;
+
+					default:
+						throw new NotImplementedException("Server message type \"" + type + "\" not implemented.");
+				}
+			}
+			catch(Exception e)
+			{
+				Console.WriteLine("Data not properly formatted: " + msg.ToString() + ", error=" + e.Message);
+			}
+		}
+
+		/// <summary>
+		/// The server acknowledged one of our old commands, so we can do some client-side
+		/// prediction.
+		/// </summary>
+		/// <param name="msg">Message.</param>
+		private void AcknowledgedCommand(NetIncomingMessage msg)
+		{
+			int commandId = msg.ReadInt32();
+
+			// Remove all the commands that have been acknowledged.
+			// Since the command we received is the latest acknowledged, 
+			// remove all the commands that happenned before (i.e. lower Id
+			// since higher Id means a command that happenned later).
+			DesiredCommands.RemoveAll(pair => pair.Key <= commandId);
+		}
+
+		/// <summary>
+		/// Take the last acknowledged command and performs the other
+		/// commands locally to predict what will most likely happen.
+		/// </summary>
+		private void ClientSidePrediction()
+		{
+			// Reperform the commands since the last acknowledge to predict
+			foreach (KeyValuePair<int, ClientMessage> pair in DesiredCommands) {
+				switch (pair.Value) {
+					case ClientMessage.MoveLeft:
+						if (Players != null && OurId != Player.InvalidId) // players are loaded and we know who we are
+							Physics.Move(Players[OurId], Direction.Left);
+						break;
+
+					case ClientMessage.MoveRight:
+						if (Players != null && OurId != Player.InvalidId)
+							Physics.Move(Players[OurId], Direction.Right);
+						break;
+
+				default:
+						throw new NotImplementedException("Client message \"" + pair.Value.ToString() + "\" not implemented while doing client-side prediction.");
+				}
+			}
+		}
+
+		/// <summary>
+		/// Queues a command to later me executed.
+		/// </summary>
+		/// <param name="command">Command.</param>
+		public void QueueCommand(ClientMessage command)
+		{
+			//TODO: send commands in packs rather than everytime a new command happens.
+			NetOutgoingMessage msg = client.CreateMessage();
+			int commandCode = (int)command;
+			msg.Write(commandCode);
+			msg.Write(CurrentCommandId);
+			client.SendMessage(msg, NetDeliveryMethod.ReliableUnordered);
+
+			// Keep the command as a command that we want to do until it is acknowledged.
+			DesiredCommands.Add(new KeyValuePair<int, ClientMessage>(CurrentCommandId, command));
+			++CurrentCommandId; // move to the next Id
+		}
+
+		/// <summary>
+		/// Synchronizes the players in the game.
+		/// </summary>
+		/// <param name="msg">Message.</param>
+		private void SyncPlayers(NetIncomingMessage msg)
+		{
+			if (Players == null)
+				Players = new Dictionary<int, Player>();
+
+			while (msg.Position != msg.LengthBits) {
+				Vec2 pos = new Vec2();
+				Player p = new Player();
+				msg.ReadAllProperties(p);
+				msg.ReadAllProperties(pos);
+				p.Position = pos;
+
+				if (!Players.ContainsKey(p.Id)) {
+					Players.Add(p.Id, p);
+				}
+				else {
+					Players[p.Id] = p;
+				}
+			}
+
+			ClientSidePrediction();
 		}
 	}
 }
