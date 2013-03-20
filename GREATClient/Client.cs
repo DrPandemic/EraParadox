@@ -28,12 +28,15 @@ namespace GREATClient
 {
 	public class Client
 	{
-		static Client instance;
+		static volatile Client instance;
+		static object syncInstance = new object();
 		public static Client Instance
 		{
 			get {
 				if (instance == null) {
-					instance = new Client();
+					lock (syncInstance) {
+						if (instance == null) instance = new Client();
+					}
 				}
 				return instance;
 			}

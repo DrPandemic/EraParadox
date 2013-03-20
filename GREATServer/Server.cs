@@ -29,13 +29,15 @@ namespace GREATServer
 {
 	public class Server
 	{
-		private static Server instance;
+		static volatile Server instance;
+		static object syncInstance = new object();
 		public static Server Instance
 		{
-			get
-			{
+			get {
 				if (instance == null) {
-					instance = new Server();
+					lock (syncInstance) {
+						if (instance == null) instance = new Server();
+					}
 				}
 				return instance;
 			}
@@ -46,7 +48,7 @@ namespace GREATServer
 
 		NetServer server;
 
-		private Server()
+		Server()
 		{
 			NetPeerConfiguration config = new NetPeerConfiguration("GREAT");
 			config.EnableMessageType(NetIncomingMessageType.DiscoveryRequest);
