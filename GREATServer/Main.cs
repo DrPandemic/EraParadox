@@ -30,7 +30,7 @@ namespace GREATServer
 
 		public static void Main(string[] args)
 		{
-			server = new Server();
+			server = Server.Instance;
 			server.Start();
 
 			while (!Console.KeyAvailable || Console.ReadKey().Key != ConsoleKey.Q) {

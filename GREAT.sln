@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GREATClient.Linux", "GREATC
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GREATClient.Windows", "GREATClient\GREATClient.Windows.csproj", "{0F19250F-56ED-4ADB-80E1-306C9FFA97C7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GREATLib", "GREATLib\GREATLib.csproj", "{74DBBE2A-15FA-4776-B611-9B06EAFE80C0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -25,6 +27,10 @@ Global
 		{6371C1C9-ECAE-4BC1-8C1B-82734399C79E}.Debug|x86.Build.0 = Debug|x86
 		{6371C1C9-ECAE-4BC1-8C1B-82734399C79E}.Release|x86.ActiveCfg = Release|x86
 		{6371C1C9-ECAE-4BC1-8C1B-82734399C79E}.Release|x86.Build.0 = Release|x86
+		{74DBBE2A-15FA-4776-B611-9B06EAFE80C0}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{74DBBE2A-15FA-4776-B611-9B06EAFE80C0}.Debug|x86.Build.0 = Debug|Any CPU
+		{74DBBE2A-15FA-4776-B611-9B06EAFE80C0}.Release|x86.ActiveCfg = Release|Any CPU
+		{74DBBE2A-15FA-4776-B611-9B06EAFE80C0}.Release|x86.Build.0 = Release|Any CPU
 		{A7C14748-728B-427E-9946-3C6681F14A60}.Debug|x86.ActiveCfg = Debug|x86
 		{A7C14748-728B-427E-9946-3C6681F14A60}.Debug|x86.Build.0 = Debug|x86
 		{A7C14748-728B-427E-9946-3C6681F14A60}.Release|x86.ActiveCfg = Release|x86

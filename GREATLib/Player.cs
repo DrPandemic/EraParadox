@@ -43,7 +43,7 @@ namespace GREATLib
 		/// Gets or sets the identifier representing the player.
 		/// </summary>
 		/// <value>The identifier.</value>
-		public int Id { get; set; }
+		public long Id { get; set; }
 
 		/// <summary>
 		/// Gets or sets the player's animation.

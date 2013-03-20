@@ -28,29 +28,47 @@ namespace GREATClient
 {
 	public class Client
 	{
+		static Client instance;
+		public static Client Instance
+		{
+			get {
+				if (instance == null) {
+					instance = new Client();
+				}
+				return instance;
+			}
+		}
+
 		/// <summary>
 		/// The id of the client's player.
+		/// FIXME: We already have client.UniqueIdentifier
 		/// </summary>
-		public int OurId = Player.InvalidId;
+		public long OurId
+		{
+			get {
+				return client.UniqueIdentifier;
+			}
+		}
 		/// <summary>
 		/// Gets or sets the players of the game, given by the id (key).
 		/// </summary>
 		/// <value>The players.</value>
-		public Dictionary<int, Player> Players { get; set; }
+		public Dictionary<long, Player> Players { get; set; }
 
 		/// <summary>
 		/// The set of commands that the player wants to do.
 		/// </summary>
-		private List<KeyValuePair<int, ClientMessage>> DesiredCommands = new List<KeyValuePair<int, ClientMessage>>();
+		List<KeyValuePair<int, ClientMessage>> DesiredCommands = new List<KeyValuePair<int, ClientMessage>>();
 		/// <summary>
 		/// The current command identifier. This id represents at what position the command was desired 
 		/// (lower = older commands, higher = newer commands).
+		/// TODO: Lidgren should already be handling this
 		/// </summary>
 		int CurrentCommandId = 0;
 
 		NetClient client;
 
-		public Client()
+		Client()
 		{
 			NetPeerConfiguration config = new NetPeerConfiguration("GREAT");
 			config.EnableMessageType(NetIncomingMessageType.DiscoveryResponse);
@@ -68,7 +86,7 @@ namespace GREATClient
 
 		public void Start()
 		{
-			this.client.Start();
+			client.Start();
 			client.UPnP.ForwardPort(client.Port, "GREAT Client");
 			client.DiscoverLocalPeers(14242);
 			// If the discover cluster-fucks on localhost, use that line instead
@@ -126,9 +144,9 @@ namespace GREATClient
 		
 				switch (type)
 				{
-					case ServerMessage.GivePlayerId:
-						OurId = msg.ReadInt32(); // the client's player id. This should probably be done differently and thus is temporary
-						break;
+					//case ServerMessage.GivePlayerId:
+					//	OurId = msg.ReadInt32(); // the client's player id. This should probably be done differently and thus is temporary
+					//	break;
 
 					case ServerMessage.PositionSync:
 						SyncPlayers(msg);
@@ -214,7 +232,7 @@ namespace GREATClient
 		private void SyncPlayers(NetIncomingMessage msg)
 		{
 			if (Players == null)
-				Players = new Dictionary<int, Player>();
+				Players = new Dictionary<long, Player>();
 
 			while (msg.Position != msg.LengthBits) {
 				Vec2 pos = new Vec2();

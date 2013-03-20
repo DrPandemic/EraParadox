@@ -20,21 +20,33 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
-using Lidgren.Network;
-using GREATLib;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Lidgren.Network;
+using GREATLib;
 
 namespace GREATServer
 {
 	public class Server
 	{
-		Dictionary<NetConnection, Player> connections = new Dictionary<NetConnection, Player>();
+		private static Server instance;
+		public static Server Instance
+		{
+			get
+			{
+				if (instance == null) {
+					instance = new Server();
+				}
+				return instance;
+			}
+		}
+
+		Dictionary<long, Player> connections = new Dictionary<long, Player>();
 		List<Player> players = new List<Player>();
 
 		NetServer server;
 
-		public Server()
+		private Server()
 		{
 			NetPeerConfiguration config = new NetPeerConfiguration("GREAT");
 			config.EnableMessageType(NetIncomingMessageType.DiscoveryRequest);
@@ -78,8 +90,9 @@ namespace GREATServer
 
 
 							//TODO: send the player's id differently?
-							int id = NextPlayerId();
-							TellClientHisId(msg.SenderConnection, id);
+							// FIXME: clients already have unique IDs
+							//int id = NextPlayerId();
+							//TellClientHisId(msg.SenderConnection, id);
 
 
 							//TODO: have a "Game" class that handles a single game instead?
@@ -87,19 +100,19 @@ namespace GREATServer
 							Random r = new Random();
 							Player p = 
 								new Player() { 
-									Id = id,
+								Id = msg.SenderConnection.RemoteUniqueIdentifier,
 									// Fear the magic numbers, burn them as soon as you can.
 									Position = new Vec2(50f+(float)r.NextDouble() * 700f, 50f+(float)r.NextDouble() * 500f) 
 								};
 							players.Add(p);
-							connections.Add(msg.SenderConnection, p);
+							connections.Add(msg.SenderConnection.RemoteUniqueIdentifier, p);
 							Console.WriteLine("New player joined! (spawned at " + p.Position.ToString() + ")");
 						}
 
 						else if (status == NetConnectionStatus.Disconnecting) {
 							Console.WriteLine("Player left.");
-							players.Remove(connections[msg.SenderConnection]);
-							connections.Remove(msg.SenderConnection);
+							players.Remove(connections[msg.SenderConnection.RemoteUniqueIdentifier]);
+							connections.Remove(msg.SenderConnection.RemoteUniqueIdentifier);
 						}
 						break;
 					case NetIncomingMessageType.VerboseDebugMessage:
@@ -123,27 +136,32 @@ namespace GREATServer
 
 		/// <summary>
 		/// Tells the client his player's identifier.
+		/// FIXME: The client already have a more secure unique ID
 		/// </summary>
 		/// <param name="conn">The client's connection.</param>
 		/// <param name="id">The player's identifier.</param>
-		private void TellClientHisId(NetConnection conn, int id)
+		/*
+		private void TellClientHisId(NetConnection conn, long id)
 		{
 			NetOutgoingMessage msg = server.CreateMessage();
 			msg.Write((int)ServerMessage.GivePlayerId);
 			msg.Write(id);
 			server.SendMessage(msg, conn, NetDeliveryMethod.ReliableUnordered);
 		}
+		*/
 
 		/// <summary>
 		/// Finds the next player identifier that a new player should have.
 		/// </summary>
 		/// <returns>The next player's identifier.</returns>
-		private int NextPlayerId()
+		/*
+		 * private int NextPlayerId()
 		{
 			int id = Player.InvalidId;
 			players.ForEach(p => id = Math.Max(id, p.Id));
 			return id + 1;
 		}
+		*/
 
 		/// <summary>
 		/// Reads the data from an incomming message.
@@ -158,13 +176,13 @@ namespace GREATServer
 				switch (type)
 				{
 					case ClientMessage.MoveLeft:
-						Debug.Assert(connections.ContainsKey(msg.SenderConnection));
-						Physics.Move(connections[msg.SenderConnection], Direction.Left);
+						Debug.Assert(connections.ContainsKey(msg.SenderConnection.RemoteUniqueIdentifier));
+						Physics.Move(connections[msg.SenderConnection.RemoteUniqueIdentifier], Direction.Left);
 						break;
 
 					case ClientMessage.MoveRight:
-						Debug.Assert(connections.ContainsKey(msg.SenderConnection));
-						Physics.Move(connections[msg.SenderConnection], Direction.Right);
+						Debug.Assert(connections.ContainsKey(msg.SenderConnection.RemoteUniqueIdentifier));
+						Physics.Move(connections[msg.SenderConnection.RemoteUniqueIdentifier], Direction.Right);
 						break;
 						
 					default:

@@ -30,15 +30,16 @@ namespace GREATLib
 		/// <summary>
 		/// Sends the positions of all the other players.
 		/// </summary>
-		PositionSync = 1,
+		PositionSync = 0x01,
 		/// <summary>
 		/// Gives the id of a client's player.
+		/// FIXME: No need for that
 		/// </summary>
-		GivePlayerId = 2,
+		//GivePlayerId = 0x02,
 		/// <summary>
 		/// Acknowledges a client's command (used for client-side prediction).
 		/// </summary>
-		AcknowledgeCommand = 3
+		AcknowledgeCommand = 0x03
     }
 }
 

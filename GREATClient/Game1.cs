@@ -43,20 +43,20 @@ namespace GREATClient
 		Client client;
 
 		Texture2D player;
-		Texture2D player_run;
+		Texture2D playerRun;
 
 		GraphicsDeviceManager graphics;
 		SpriteBatch spriteBatch;
 
 
-		Dictionary<int, int> PlayerCurrentFrame = new Dictionary<int, int>();
-		Dictionary<int, Vec2> PlayerCurrentPositions = null;
+		Dictionary<long, int> playerCurrentFrame = new Dictionary<long, int>();
+		Dictionary<long, Vec2> playerCurrentPositions = null;
 
 
 		public Game1()
 		{
 			Console.WriteLine("Game created.");
-			client = new Client();
+			client = Client.Instance;
 			graphics = new GraphicsDeviceManager(this);
 			Content.RootDirectory = "Content";
 			graphics.IsFullScreen = false;
@@ -91,7 +91,7 @@ namespace GREATClient
 
 			//TODO: put in character resources class and initialize here
 			player = Content.Load<Texture2D>("stand");
-			player_run = Content.Load<Texture2D>("run");
+			playerRun = Content.Load<Texture2D>("run");
 		}
 
 		/// <summary>
@@ -123,13 +123,13 @@ namespace GREATClient
 		{
 			if (client.Players != null) {
 				foreach (Player p in client.Players.Values) {
-					if (!PlayerCurrentFrame.ContainsKey(p.Id)) // first time we meet the player
-						PlayerCurrentFrame.Add(p.Id, 0); // start at frame 0
+					if (!playerCurrentFrame.ContainsKey(p.Id)) // first time we meet the player
+						playerCurrentFrame.Add(p.Id, 0); // start at frame 0
 					else {
-						++PlayerCurrentFrame[p.Id]; // we add one frame to our count
+						++playerCurrentFrame[p.Id]; // we add one frame to our count
 
-						PlayerCurrentFrame[p.Id] = 
-							(PlayerCurrentFrame[p.Id]) % // take our total frame count
+						playerCurrentFrame[p.Id] = 
+							(playerCurrentFrame[p.Id]) % // take our total frame count
 								(GetFrameCount((PlayerAnimation)p.Animation) * GetFrameRate((PlayerAnimation)p.Animation));
 						// and see if we should go back to frame #1.
 					}
@@ -163,21 +163,21 @@ namespace GREATClient
 
 			if (client.Players != null) { // we *do* have players to show
 				// Never received positions so far, just pick the client's
-				if (PlayerCurrentPositions == null) {
-					PlayerCurrentPositions = new Dictionary<int, Vec2>();
-					foreach (int playerId in client.Players.Keys) {
-						PlayerCurrentPositions.Add(playerId, client.Players[playerId].Position);
+				if (playerCurrentPositions == null) {
+					playerCurrentPositions = new Dictionary<long, Vec2>();
+					foreach (long playerId in client.Players.Keys) {
+						playerCurrentPositions.Add(playerId, client.Players[playerId].Position);
 					}
 				}
 
-				foreach (int playerId in client.Players.Keys) {
+				foreach (long playerId in client.Players.Keys) {
 					// first time we see this player
-					if (!PlayerCurrentPositions.ContainsKey(playerId)) {
-						PlayerCurrentPositions.Add(playerId, client.Players[playerId].Position);
+					if (!playerCurrentPositions.ContainsKey(playerId)) {
+						playerCurrentPositions.Add(playerId, client.Players[playerId].Position);
 					}
 					// we interpolate to the player's position
 					else { 
-						PlayerCurrentPositions[playerId] = Vec2.Lerp(PlayerCurrentPositions[playerId], client.Players[playerId].Position, INTERPOLATION_LERP_FACTOR);
+						playerCurrentPositions[playerId] = Vec2.Lerp(playerCurrentPositions[playerId], client.Players[playerId].Position, INTERPOLATION_LERP_FACTOR);
 					}
 				}
 			}
@@ -197,8 +197,8 @@ namespace GREATClient
 			if (client.Players != null) {
 				foreach (Player p in client.Players.Values) {
 					// Take the interpolated position if we have one, the real one if we don't.
-					Vec2 pos = PlayerCurrentPositions != null && PlayerCurrentPositions.ContainsKey(p.Id) ?
-						PlayerCurrentPositions[p.Id] : p.Position;
+					Vec2 pos = playerCurrentPositions != null && playerCurrentPositions.ContainsKey(p.Id) ?
+						playerCurrentPositions[p.Id] : p.Position;
 					PlayerAnimation anim = (PlayerAnimation)p.Animation;
 
 					spriteBatch.Draw(GetTexture(anim), pos.ToVector2(), 
@@ -221,20 +221,20 @@ namespace GREATClient
 				case PlayerAnimation.Standing:
 					return player;
 				case PlayerAnimation.Running:
-					return player_run;
+					return playerRun;
 				default: throw new NotImplementedException("Animation not implemented while getting texture.");
 			}
 		}
 
 		private Rectangle GetSourceRectangle(Player p)
 		{
-			if (!PlayerCurrentFrame.ContainsKey(p.Id))
-				PlayerCurrentFrame.Add(p.Id, 0);
+			if (!playerCurrentFrame.ContainsKey(p.Id))
+				playerCurrentFrame.Add(p.Id, 0);
 
 			PlayerAnimation anim = (PlayerAnimation)p.Animation;
 
 			//TODO: put in a character resources object
-			return new Rectangle(PlayerCurrentFrame[p.Id] / GetFrameRate(anim) * GetFrameWidth(anim),
+			return new Rectangle(playerCurrentFrame[p.Id] / GetFrameRate(anim) * GetFrameWidth(anim),
 			                     0,
 			                     GetFrameWidth(anim), 
 			                     GetFrameHeight(anim));
