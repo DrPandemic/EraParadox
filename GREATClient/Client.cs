@@ -89,7 +89,7 @@ namespace GREATClient
 			client.Start();
 			client.UPnP.ForwardPort(client.Port, "GREAT Client");
 			client.DiscoverLocalPeers(14242);
-			// If the discover cluster-fucks on localhost, use that line instead
+			// If the discover cluster-fucks on localhost, use that line instead of the one above
 			//client.Connect("127.0.0.1", 14242);
 		}
 
@@ -110,7 +110,7 @@ namespace GREATClient
 					case NetIncomingMessageType.StatusChanged:
 						NetConnectionStatus status = (NetConnectionStatus)msg.ReadByte();
 						if (status == NetConnectionStatus.Connected) {
-							Console.WriteLine(NetUtility.ToHexString(msg.SenderConnection.RemoteUniqueIdentifier) + " connected!");
+							Console.WriteLine("Connected to " + NetUtility.ToHexString(msg.SenderConnection.RemoteUniqueIdentifier) + "!");
 						}
 						break;
 					case NetIncomingMessageType.VerboseDebugMessage:
@@ -217,6 +217,7 @@ namespace GREATClient
 			NetOutgoingMessage msg = client.CreateMessage();
 			int commandCode = (int)command;
 			msg.Write(commandCode);
+			// TODO: This feels redundant, I don't like it (Will)
 			msg.Write(CurrentCommandId);
 			client.SendMessage(msg, NetDeliveryMethod.ReliableUnordered);
 

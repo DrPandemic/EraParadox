@@ -95,7 +95,7 @@ namespace GREATServer
 							//TellClientHisId(msg.SenderConnection, id);
 
 
-							//TODO: have a "Game" class that handles a single game instead?
+							//TODO: have a "Game" class that handles a single game instead? (Will: Yes, not a single bit of game logic goes in this class, same for Client)
 							// Note: this is temporary, to test different Network architectures
 							Random r = new Random();
 							Player p = 
@@ -108,9 +108,8 @@ namespace GREATServer
 							connections.Add(msg.SenderConnection.RemoteUniqueIdentifier, p);
 							Console.WriteLine("New player joined! (spawned at " + p.Position.ToString() + ")");
 						}
-
 						else if (status == NetConnectionStatus.Disconnecting) {
-							Console.WriteLine("Player left.");
+							Console.WriteLine(NetUtility.ToHexString(msg.SenderConnection.RemoteUniqueIdentifier) + " disconnected!");
 							players.Remove(connections[msg.SenderConnection.RemoteUniqueIdentifier]);
 							connections.Remove(msg.SenderConnection.RemoteUniqueIdentifier);
 						}
