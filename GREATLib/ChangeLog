@@ -1,3 +1,19 @@
+2013-03-28  Jesse  <>
+
+	* Player.cs:
+	* Physics.cs:
+	* Direction.cs:
+	* TileId.cs:
+	* TileMap.cs:
+	* GREATLib.csproj:
+	* ClientMessage.cs:
+	* ServerMessage.cs:
+	* PlayerAnimation.cs:
+	* Champion.cs:
+	* ChampionTypes.cs:
+	* AnimationInfo.cs:
+	* StickmanChampion.cs: 
+
 2013-03-20  Jesse  <${AuthorEmail}>
 
 	* Physics.cs:

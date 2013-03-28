@@ -35,22 +35,8 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Vec2.cs" />
-    <Compile Include="ServerMessage.cs" />
-    <Compile Include="ClientMessage.cs" />
     <Compile Include="Physics.cs" />
-    <Compile Include="Direction.cs" />
-    <Compile Include="PlayerAnimation.cs" />
-    <Compile Include="Champions\ChampionTypes.cs" />
-    <Compile Include="Champions\Champion.cs" />
-    <Compile Include="Champions\StickmanChampion.cs" />
-    <Compile Include="Champions\AnimationInfo.cs" />
-    <Compile Include="Map\TileMap.cs" />
-    <Compile Include="Map\TileId.cs" />
     <Compile Include="GeneralHelper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup>
-    <Folder Include="Champions\" />
-    <Folder Include="Map\" />
-  </ItemGroup>
 </Project>

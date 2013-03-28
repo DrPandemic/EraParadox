@@ -1,3 +1,10 @@
+2013-03-28  Jesse  <>
+
+	* Game1.cs:
+	* Client.cs:
+	* ChampionResources.cs:
+	* GREATClient.Linux.csproj: 
+
 2013-03-20  Jesse  <${AuthorEmail}>
 
 	* Game1.cs:

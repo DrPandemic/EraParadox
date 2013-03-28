@@ -21,9 +21,6 @@
 
 using System;
 using Lidgren.Network;
-using GREATLib;
-using System.Collections.Generic;
-using Map;
 
 namespace GREATClient
 {
@@ -43,54 +40,9 @@ namespace GREATClient
 			}
 		}
 
-		/// <summary>
-		/// The id of the client's player.
-		/// FIXME: We already have client.UniqueIdentifier
-		/// </summary>
-<<<<<<< Upstream, based on origin/master
-		public long OurId
-		{
-			get {
-				return client.UniqueIdentifier;
-			}
-		}
-=======
-		public int OurId { get; private set; }
->>>>>>> e9aeff0 Temporary tilemap (to test physics) with collisions and basic gravity.
-		/// <summary>
-		/// Gets or sets the players of the game, given by the id (key).
-		/// </summary>
-		/// <value>The players.</value>
-<<<<<<< Upstream, based on origin/master
-		public Dictionary<long, Player> Players { get; set; }
-=======
-		public Dictionary<int, Player> Players { get; private set; }
->>>>>>> e9aeff0 Temporary tilemap (to test physics) with collisions and basic gravity.
-
-		/// <summary>
-		/// The set of commands that the player wants to do.
-		/// </summary>
-<<<<<<< Upstream, based on origin/master
-		List<KeyValuePair<int, ClientMessage>> DesiredCommands = new List<KeyValuePair<int, ClientMessage>>();
-=======
-		private List<KeyValuePair<int, ClientMessage>> DesiredCommands { get; set; }
->>>>>>> e9aeff0 Temporary tilemap (to test physics) with collisions and basic gravity.
-		/// <summary>
-		/// The current command identifier. This id represents at what position the command was desired 
-		/// (lower = older commands, higher = newer commands).
-		/// TODO: Lidgren should already be handling this
-		/// </summary>
-		int CurrentCommandId = 0;
-
-		/// <summary>
-		/// Gets or sets the map of the game.
-		/// </summary>
-		/// <value>The map.</value>
-		public TileMap Map { get; private set; }
-
 		NetClient client;
 
-		Client()
+		public Client()
 		{
 			NetPeerConfiguration config = new NetPeerConfiguration("GREAT");
 			config.EnableMessageType(NetIncomingMessageType.DiscoveryResponse);
@@ -104,21 +56,14 @@ namespace GREATClient
 			#endif
 
 			this.client = new NetClient(config);
-
-
-			DesiredCommands = new List<KeyValuePair<int, ClientMessage>>();
-			//TODO: load an other map object, englobing the tilemap, towers, nexuses, etc.
-			Map = new TileMap();
-			Players = null;
-			OurId = Player.InvalidId;
 		}
 
 		public void Start()
 		{
-			client.Start();
+			this.client.Start();
 			client.UPnP.ForwardPort(client.Port, "GREAT Client");
 			client.DiscoverLocalPeers(14242);
-			// If the discover cluster-fucks on localhost, use that line instead of the one above
+			// If the discover cluster-fucks on localhost, use that line instead
 			//client.Connect("127.0.0.1", 14242);
 		}
 
@@ -139,7 +84,7 @@ namespace GREATClient
 					case NetIncomingMessageType.StatusChanged:
 						NetConnectionStatus status = (NetConnectionStatus)msg.ReadByte();
 						if (status == NetConnectionStatus.Connected) {
-							Console.WriteLine("Connected to " + NetUtility.ToHexString(msg.SenderConnection.RemoteUniqueIdentifier) + "!");
+							Console.WriteLine(NetUtility.ToHexString(msg.SenderConnection.RemoteUniqueIdentifier) + " connected!");
 						}
 						break;
 					case NetIncomingMessageType.VerboseDebugMessage:
@@ -149,7 +94,6 @@ namespace GREATClient
 						Console.WriteLine(msg.ReadString());
 						break;
 					case NetIncomingMessageType.Data:
-						ReadData(msg);
 						break;
 					default:
 						Console.WriteLine("Unhandled type: " + msg.MessageType);
@@ -157,142 +101,6 @@ namespace GREATClient
 				}
 				client.Recycle(msg);
 			}
-		}
-
-		/// <summary>
-		/// Reads data from a server message.
-		/// </summary>
-		/// <param name="msg">Message.</param>
-		private void ReadData(NetIncomingMessage msg)
-		{
-			try
-			{
-				int serverMsgCode = msg.ReadInt32();
-
-				ServerMessage type = (ServerMessage)serverMsgCode;
-		
-				switch (type)
-				{
-<<<<<<< Upstream, based on origin/master
-					//case ServerMessage.GivePlayerId:
-					//	OurId = msg.ReadInt32(); // the client's player id. This should probably be done differently and thus is temporary
-					//	break;
-=======
-					//TODO: message when a new player is added? Could fire an event (the game would listen to it)
-					//TODO: message when we arrive? Would receive the data of all the players and trigger the "PlayerAdded" event
-
-					case ServerMessage.GivePlayerId:
-						OurId = msg.ReadInt32(); // the client's player id. This should probably be done differently and thus is temporary
-						break;
->>>>>>> e9aeff0 Temporary tilemap (to test physics) with collisions and basic gravity.
-
-					case ServerMessage.PositionSync:
-						SyncPlayers(msg);
-						break;
-
-					case ServerMessage.AcknowledgeCommand:
-						AcknowledgedCommand(msg);
-						break;
-
-					default:
-						throw new NotImplementedException("Server message type \"" + type + "\" not implemented.");
-				}
-			}
-			catch(Exception e)
-			{
-				Console.WriteLine("Data not properly formatted: " + msg.ToString() + ", error=" + e.Message);
-			}
-		}
-
-		/// <summary>
-		/// The server acknowledged one of our old commands, so we can do some client-side
-		/// prediction.
-		/// </summary>
-		/// <param name="msg">Message.</param>
-		private void AcknowledgedCommand(NetIncomingMessage msg)
-		{
-			int commandId = msg.ReadInt32();
-
-			// Remove all the commands that have been acknowledged.
-			// Since the command we received is the latest acknowledged, 
-			// remove all the commands that happenned before (i.e. lower Id
-			// since higher Id means a command that happenned later).
-			DesiredCommands.RemoveAll(pair => pair.Key <= commandId);
-		}
-
-		/// <summary>
-		/// Take the last acknowledged command and performs the other
-		/// commands locally to predict what will most likely happen.
-		/// </summary>
-		private void ClientSidePrediction()
-		{
-			if (Players != null && OurId != Player.InvalidId) { // players are loaded and we know who we are
-				Physics.UpdateAnimation(Players[OurId]);
-
-				// Reperform the commands since the last acknowledge to predict
-				foreach (KeyValuePair<int, ClientMessage> pair in DesiredCommands) {
-					switch (pair.Value) {
-						case ClientMessage.MoveLeft:
-							Physics.Move(Players[OurId], Direction.Left, Map);
-							break;
-
-						case ClientMessage.MoveRight:
-							Physics.Move(Players[OurId], Direction.Right, Map);
-							break;
-
-						default:
-							throw new NotImplementedException("Client message \"" + pair.Value.ToString() + "\" not implemented while doing client-side prediction.");
-					}
-				}
-
-				Physics.ApplyPhysics(Players.Values, Map);
-			}
-		}
-
-		/// <summary>
-		/// Queues a command to later me executed.
-		/// </summary>
-		/// <param name="command">Command.</param>
-		public void QueueCommand(ClientMessage command)
-		{
-			//TODO: send commands in packs rather than everytime a new command happens.
-			NetOutgoingMessage msg = client.CreateMessage();
-			int commandCode = (int)command;
-			msg.Write(commandCode);
-			// TODO: This feels redundant, I don't like it (Will)
-			msg.Write(CurrentCommandId);
-			client.SendMessage(msg, NetDeliveryMethod.ReliableUnordered);
-
-			// Keep the command as a command that we want to do until it is acknowledged.
-			DesiredCommands.Add(new KeyValuePair<int, ClientMessage>(CurrentCommandId, command));
-			++CurrentCommandId; // move to the next Id
-		}
-
-		/// <summary>
-		/// Synchronizes the players in the game.
-		/// </summary>
-		/// <param name="msg">Message.</param>
-		private void SyncPlayers(NetIncomingMessage msg)
-		{
-			if (Players == null)
-				Players = new Dictionary<long, Player>();
-
-			while (msg.Position != msg.LengthBits) {
-				Vec2 pos = new Vec2();
-				Player p = new Player();
-				msg.ReadAllProperties(p);
-				msg.ReadAllProperties(pos);
-				p.Position = pos;
-
-				if (!Players.ContainsKey(p.Id)) {
-					Players.Add(p.Id, p);
-				}
-				else {
-					Players[p.Id] = p;
-				}
-			}
-
-			//ClientSidePrediction();
 		}
 	}
 }
