@@ -1,8 +1,8 @@
 //
-//  Player.cs
+//  StickmanChampion.cs
 //
 //  Author:
-//       Jesse <${AuthorEmail}>
+//       Jesse <>
 //
 //  Copyright (c) 2013 Jesse
 //
@@ -19,24 +19,18 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
 
-namespace GREATLib
+namespace GREATLib.Entities.Player.Champions
 {
 	/// <summary>
-	/// A player in the game.
+	/// The Stickman champion.
 	/// </summary>
-    public class Player
-	{
-		/// <summary>
-		/// Gets or sets the postion of the player in the world.
-		/// </summary>
-		/// <value>The postion.</value>
-		public Vec2 Position { get; set; }
+    public class StickmanChampion : IChampion
+    {
+		public override string Name { get { return "Stick Man"; } }
 
-        public Player()
+        public StickmanChampion()
         {
-			Position = new Vec2(0f, 0f);
         }
     }
 }

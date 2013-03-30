@@ -1,3 +1,15 @@
+2013-03-30  Jesse  <>
+
+	* Player.cs:
+	* Physics.cs:
+	* GREATLib.csproj:
+	* ISynchronizable.cs:
+	* IEntity.cs:
+	* Player.cs:
+	* PhysicsEntity.cs:
+	* IChampion.cs:
+	* StickmanChampion.cs: 
+
 2013-03-28  Jesse  <>
 
 	* Player.cs:

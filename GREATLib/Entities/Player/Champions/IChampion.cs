@@ -1,8 +1,8 @@
 //
-//  Physics.cs
+//  IChampion.cs
 //
 //  Author:
-//       Jesse <${AuthorEmail}>
+//       Jesse <>
 //
 //  Copyright (c) 2013 Jesse
 //
@@ -19,16 +19,24 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
+using GREATLib.Entities.Physics;
 
-namespace GREATLib
+namespace GREATLib.Entities.Player.Champions
 {
 	/// <summary>
-	/// The game physics.
+	/// Represents a game champion.
 	/// </summary>
-    public static class Physics
+    public abstract class IChampion : PhysicsEntity
     {
-		private static readonly Vec2 GRAVITY = new Vec2(0f, 9f);
+		/// <summary>
+		/// Gets or sets the name of the champion
+		/// </summary>
+		/// <value>The name.</value>
+		public abstract string Name { get; }
+
+        public IChampion()
+        {
+        }
     }
 }
 

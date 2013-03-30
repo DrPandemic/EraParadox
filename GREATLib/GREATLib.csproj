@@ -33,10 +33,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="Player.cs" />
     <Compile Include="Vec2.cs" />
-    <Compile Include="Physics.cs" />
     <Compile Include="GeneralHelper.cs" />
+    <Compile Include="ISynchronizable.cs" />
+    <Compile Include="Entities\IEntity.cs" />
+    <Compile Include="Entities\Physics\PhysicsEntity.cs" />
+    <Compile Include="Entities\Player\Player.cs" />
+    <Compile Include="Entities\Player\Champions\IChampion.cs" />
+    <Compile Include="Entities\Player\Champions\StickmanChampion.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Entities\" />
+    <Folder Include="Entities\Physics\" />
+    <Folder Include="Entities\Player\" />
+    <Folder Include="Entities\Player\Spells\" />
+    <Folder Include="Entities\Player\Champions\" />
+  </ItemGroup>
 </Project>
