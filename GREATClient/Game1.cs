@@ -24,6 +24,10 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using GREATLib.Entities.Physics;
+using GREATLib.Entities.Player.Champions;
+using System.Collections.Generic;
+using GREATLib;
 
 
 namespace GREATClient
@@ -41,6 +45,11 @@ namespace GREATClient
 
 		GraphicsDeviceManager graphics;
 		SpriteBatch spriteBatch;
+
+
+		//TODO: remove. temporary physics tests
+		PhysicsSystem physics = new PhysicsSystem();
+		StickmanChampion champion = new StickmanChampion();
 
 		public Game1()
 		{
@@ -77,6 +86,10 @@ namespace GREATClient
 			Console.WriteLine("Loading game content...");
 			// Create a new SpriteBatch, which can be used to draw textures.
 			spriteBatch = new SpriteBatch(GraphicsDevice);
+
+
+			//TODO: remove. simply testing the physics engine
+			champion.Position = new Vec2(200f, 300f);
 		}
 
 		/// <summary>
@@ -91,6 +104,14 @@ namespace GREATClient
 				Exit();
 			}
 
+			//TODO: remove. testing the physics engine
+			KeyboardState ks = Keyboard.GetState();
+			if (ks.IsKeyDown(Keys.Left)) physics.Move(champion, HorizontalDirection.Left);
+			if (ks.IsKeyDown(Keys.Right)) physics.Move(champion, HorizontalDirection.Right);
+			List<PhysicsEntity> entities = new List<PhysicsEntity>();
+			entities.Add(champion);
+			physics.Update((float)gameTime.ElapsedGameTime.TotalSeconds, entities);
+
 			base.Update(gameTime);
 		}
 
@@ -101,6 +122,18 @@ namespace GREATClient
 		protected override void Draw(GameTime gameTime)
 		{
 			graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
+
+			//TODO: remove. debugging physics
+			Color[] pixelcolors = { Color.White };
+			Texture2D pixel = new Texture2D(GraphicsDevice, 1, 1);
+			pixel.SetData(pixelcolors);
+			spriteBatch.Begin();
+			const int WIDTH = 15;
+			const int HEIGHT = 25;
+			spriteBatch.Draw(pixel, new Rectangle((int)(champion.Position.X - WIDTH/2),
+			                                      (int)(champion.Position.Y - HEIGHT),
+			                                      WIDTH, HEIGHT), Color.Green*0.5f);
+			spriteBatch.End();
 
 			base.Draw(gameTime);
 		}

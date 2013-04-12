@@ -27,7 +27,9 @@ namespace GREATLib.Entities.Physics
 	/// </summary>
     public abstract class PhysicsEntity : IEntity
     {
-		public const float DEFAULT_HORIZONTAL_ACCELERATION = 0.9f;
+		private const float DEFAULT_AIR_ACCELERATION = 0.8f;
+		private const float DEFAULT_HORIZONTAL_ACCELERATION = 0f;
+		private const float DEFAULT_MOVE_SPEED = 250f;
 
 		/// <summary>
 		/// Gets or sets the velocity of the entity.
@@ -36,15 +38,42 @@ namespace GREATLib.Entities.Physics
 		public Vec2 Velocity { get; set; }
 
 		/// <summary>
+		/// Gets or sets the move speed of the entity, in units per second.
+		/// </summary>
+		/// <value>The move speed.</value>
+		public float MoveSpeed { get; set; }
+
+		/// <summary>
+		/// Gets or sets the direction in which the entity wants to move.
+		/// </summary>
+		/// <value>The direction.</value>
+		public HorizontalDirection Direction { get; set; }
+
+		/// <summary>
 		/// Gets or sets the horizontal acceleration of the entity.
+		/// The value represents the percentage of the horizontal force
+		/// that stays in a frame.
+		/// E.g., we keep 0.9 * the horizontal velocity every frame.
 		/// </summary>
 		/// <value>The horizontal acceleration.</value>
 		public float HorizontalAcceleration { get; set; }
+
+		/// <summary>
+		/// Gets or sets the air acceleration.
+		/// The value represents the percentage of the air control that
+		/// we have every frame.
+		/// E.g., we'll move at 0.8 * our movement speed every frame while in air.
+		/// </summary>
+		/// <value>The air acceleration.</value>
+		public float AirAcceleration { get; set; }
 
         public PhysicsEntity()
         {
 			Velocity = new Vec2();
 			HorizontalAcceleration = DEFAULT_HORIZONTAL_ACCELERATION;
+			MoveSpeed = DEFAULT_MOVE_SPEED;
+			AirAcceleration = DEFAULT_AIR_ACCELERATION;
+			Direction = HorizontalDirection.None;
         }
     }
 }

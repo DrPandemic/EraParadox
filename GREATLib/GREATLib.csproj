@@ -41,6 +41,8 @@
     <Compile Include="Entities\Player\Player.cs" />
     <Compile Include="Entities\Player\Champions\IChampion.cs" />
     <Compile Include="Entities\Player\Champions\StickmanChampion.cs" />
+    <Compile Include="Entities\Physics\PhysicsSystem.cs" />
+    <Compile Include="Entities\Physics\HorizontalDirection.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
