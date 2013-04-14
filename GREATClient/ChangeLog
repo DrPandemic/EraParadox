@@ -1,3 +1,16 @@
+2013-04-14  The Parasithe  <bipbip500@hotmail.com>
+
+	* Game1.cs:
+	* testo.png:
+	* IDraw.cs:
+	* TestScreen.cs:
+	* Screen.cs:
+	* DrImage.cs:
+	* Drawable.cs:
+	* Container.cs:
+	* DrRectangle.cs:
+	* GREATClient.Linux.csproj: 
+
 2013-04-12  Jesse  <>
 
 	* Game1.cs: 

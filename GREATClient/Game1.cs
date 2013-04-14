@@ -46,10 +46,8 @@ namespace GREATClient
 		GraphicsDeviceManager graphics;
 		SpriteBatch spriteBatch;
 
+		TestScreen theScreen;
 
-		//TODO: remove. temporary physics tests
-		PhysicsSystem physics = new PhysicsSystem();
-		StickmanChampion champion = new StickmanChampion();
 
 		public Game1()
 		{
@@ -58,6 +56,8 @@ namespace GREATClient
 			graphics = new GraphicsDeviceManager(this);
 			Content.RootDirectory = "Content";
 			graphics.IsFullScreen = false;
+
+			theScreen = new TestScreen(Content);
 		}
 
 		/// <summary>
@@ -71,9 +71,10 @@ namespace GREATClient
 			Console.WriteLine("Starting client...");
 			client.Start();
 
-			graphics.PreferredBackBufferWidth = SCREEN_W;
+			//TODO : pK IL Y AVAIT CA? Tous mes calculs étaient éronnés a cause de ces lignes
+			/*graphics.PreferredBackBufferWidth = SCREEN_W;
 			graphics.PreferredBackBufferHeight = SCREEN_H;
-
+*/
 			base.Initialize();
 		}
 
@@ -85,11 +86,7 @@ namespace GREATClient
 		{
 			Console.WriteLine("Loading game content...");
 			// Create a new SpriteBatch, which can be used to draw textures.
-			spriteBatch = new SpriteBatch(GraphicsDevice);
-
-
-			//TODO: remove. simply testing the physics engine
-			champion.Position = new Vec2(200f, 300f);
+			theScreen.LoadContent(GraphicsDevice);
 		}
 
 		/// <summary>
@@ -99,18 +96,10 @@ namespace GREATClient
 		/// <param name="gameTime">Provides a snapshot of timing values.</param>
 		protected override void Update(GameTime gameTime)
 		{
-			// For Mobile devices, this logic will close the Game when the Back button is pressed
-			if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState(PlayerIndex.One).IsKeyDown(Keys.Escape)) {
-				Exit();
-			}
+			theScreen.Update(gameTime);
 
-			//TODO: remove. testing the physics engine
-			KeyboardState ks = Keyboard.GetState();
-			if (ks.IsKeyDown(Keys.Left)) physics.Move(champion, HorizontalDirection.Left);
-			if (ks.IsKeyDown(Keys.Right)) physics.Move(champion, HorizontalDirection.Right);
-			List<PhysicsEntity> entities = new List<PhysicsEntity>();
-			entities.Add(champion);
-			physics.Update((float)gameTime.ElapsedGameTime.TotalSeconds, entities);
+			if(theScreen.Exit)
+				Exit();
 
 			base.Update(gameTime);
 		}
@@ -123,17 +112,7 @@ namespace GREATClient
 		{
 			graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
 
-			//TODO: remove. debugging physics
-			Color[] pixelcolors = { Color.White };
-			Texture2D pixel = new Texture2D(GraphicsDevice, 1, 1);
-			pixel.SetData(pixelcolors);
-			spriteBatch.Begin();
-			const int WIDTH = 15;
-			const int HEIGHT = 25;
-			spriteBatch.Draw(pixel, new Rectangle((int)(champion.Position.X - WIDTH/2),
-			                                      (int)(champion.Position.Y - HEIGHT),
-			                                      WIDTH, HEIGHT), Color.Green*0.5f);
-			spriteBatch.End();
+			theScreen.Draw();
 
 			base.Draw(gameTime);
 		}
