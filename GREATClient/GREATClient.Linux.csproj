@@ -48,9 +48,9 @@
     <Compile Include="BaseClass\Container.cs" />
     <Compile Include="BaseClass\IDraw.cs" />
     <Compile Include="BaseClass\Screen.cs" />
-    <Compile Include="BaseClass\DrRectangle.cs" />
-    <Compile Include="BaseClass\DrImage.cs" />
     <Compile Include="Test\TestScreen.cs" />
+    <Compile Include="BaseClass\DrawableRectangle.cs" />
+    <Compile Include="BaseClass\DrawableImage.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />

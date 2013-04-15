@@ -1,5 +1,5 @@
 //
-//  DrImage.cs
+//  DrSquare.cs
 //
 //  Author:
 //       The Parasithe <bipbip500@hotmail.com>
@@ -19,50 +19,49 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 
 namespace GREATClient
 {
-    public class DrImage : Drawable
+	/// <summary>
+	/// Dr. Rectangle
+	/// </summary>
+    public class DrawableRectangle : Drawable
     {
-
 		/// <summary>
-		/// Gets the name of the image file.
+		/// Gets or sets the size of the index element.
 		/// </summary>
-		/// <value>The name of the file.</value>
-		public string FileName { get; private set; }
+		/// <value>The size of the index element.</value>
+		public Vector2 Size { get; set; }
 
-        public DrImage(string file) : base()
-        {
-			FileName = file;
-        }
-
-		/// <summary>
-		/// Loads the image of the object.
-		/// </summary>
-		/// <param name="content">Content.</param>
-
-		protected override void OnLoad(ContentManager content, GraphicsDevice gd)
+		public DrawableRectangle(Rectangle rect, Color tint) : this(new Vector2(rect.Width, rect.Height),
+		                                                      new Vector2(rect.X, rect.Y), tint)
 		{
-			if(content != null && gd != null)
-				Texture = content.Load<Texture2D>(FileName);
 		}
 
-		/// <summary>
-		/// Draw the object.
-		/// </summary>
-		/// <param name="batch">The spritebatch used to draw the object.</param>
+		public DrawableRectangle() : this(new Vector2(1,1),new Vector2(0,0),Color.White)
+		{
+
+		}
+		public DrawableRectangle(Vector2 size, Vector2 position, Color tint) : base()
+        {
+			Size = size;
+			Position = position;
+			Tint = tint;
+        }
+		protected override void OnLoad(ContentManager content, GraphicsDevice gd)
+		{
+			Texture = new Texture2D(gd,1,1);
+			Texture.SetData(new Color[] { Tint });
+		}
 		public override void Draw(SpriteBatch batch)
 		{
-			base.Draw(batch);			
-
+			base.Draw(batch);
 			batch.Begin();
-			batch.Draw(Texture,GetAbsolutePosition(),SourceRectangle,Tint,Orientation,
-			           OriginRelative * new Vector2(Texture.Width, Texture.Height),Scale,Effects,0);
+			batch.Draw(Texture,new Rectangle((int)GetAbsolutePosition().X,(int)GetAbsolutePosition().Y,(int)Size.X,(int)Size.Y),Tint);			
 			batch.End();
-
 		}
     }
 }

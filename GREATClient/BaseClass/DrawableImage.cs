@@ -1,5 +1,5 @@
 //
-//  DrSquare.cs
+//  DrImage.cs
 //
 //  Author:
 //       The Parasithe <bipbip500@hotmail.com>
@@ -19,41 +19,52 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework;
 
 namespace GREATClient
 {
-    public class DrRectangle : Drawable
+	/// <summary>
+	/// Dr. image.
+	/// </summary>
+    public class DrawableImage : Drawable
     {
 		/// <summary>
-		/// Gets or sets the size of the index element.
+		/// Gets the name of the image file.
 		/// </summary>
-		/// <value>The size of the index element.</value>
-		public Vector2 Size { get; set; }
+		/// <value>The name of the file.</value>
+		public string FileName { get; private set; }
 
-		public DrRectangle() : this(new Vector2(1,1),new Vector2(0,0),Color.White)
-		{
-
-		}
-		public DrRectangle(Vector2 size, Vector2 position, Color tint) : base()
+        public DrawableImage(string file) : base()
         {
-			Size = size;
-			Position = position;
-			Tint = tint;
+			FileName = file;
         }
+
+		/// <summary>
+		/// Loads the image of the object.
+		/// </summary>
+		/// <param name="content">Content.</param>
+
 		protected override void OnLoad(ContentManager content, GraphicsDevice gd)
 		{
-			Texture = new Texture2D(gd,1,1);
-			Texture.SetData(new Color[] { Tint });
+			if(content != null && gd != null)
+				Texture = content.Load<Texture2D>(FileName);
 		}
+
+		/// <summary>
+		/// Draw the object.
+		/// </summary>
+		/// <param name="batch">The spritebatch used to draw the object.</param>
 		public override void Draw(SpriteBatch batch)
 		{
-			base.Draw(batch);
+			base.Draw(batch);			
+
 			batch.Begin();
-			batch.Draw(Texture,new Rectangle((int)GetAbsolutePosition().X,(int)GetAbsolutePosition().Y,(int)Size.X,(int)Size.Y),Tint);			
+			batch.Draw(Texture,GetAbsolutePosition(),SourceRectangle,Tint,Orientation,
+			           OriginRelative * new Vector2(Texture.Width, Texture.Height),Scale,Effects,0);
 			batch.End();
+
 		}
     }
 }

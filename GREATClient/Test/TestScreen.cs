@@ -32,7 +32,7 @@ namespace GREATClient
     public class TestScreen : Screen
     {
 		Container layer;
-		DrRectangle sq1;
+		DrawableRectangle sq1;
 
 		//TODO: remove. temporary physics tests
 		PhysicsSystem physics = new PhysicsSystem();
@@ -54,17 +54,17 @@ namespace GREATClient
 			layer = new Container(Content);
 			//layer.Position = new Vector2(100,100);
 			
-			DrImage sp2 = new DrImage("testo");
+			DrawableImage sp2 = new DrawableImage("testo");
 			sp2.Position = new Vector2(100,200);
 			
-			DrImage sp1 = new DrImage("Stickman_run");
+			DrawableImage sp1 = new DrawableImage("Stickman_run");
 			sp1.Position = new Vector2(500,400);
 			
 			
 			layer.AddChild(sp2,0);
 			layer2.AddChild(sp1,0);
 			
-			sq1 = new DrRectangle();
+			sq1 = new DrawableRectangle();
 			sq1.Size = new Vector2(50,50);
 			sq1.Tint = Color.Red;
 			

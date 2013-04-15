@@ -44,7 +44,6 @@ namespace GREATClient
 		Client client;
 
 		GraphicsDeviceManager graphics;
-		SpriteBatch spriteBatch;
 
 		TestScreen theScreen;
 

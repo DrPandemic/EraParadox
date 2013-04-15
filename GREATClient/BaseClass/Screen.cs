@@ -76,7 +76,7 @@ namespace GREATClient
 		/// <summary>
 		/// Loads the content.
 		/// </summary>
-		/// <param name="gd">Gd.</param>
+		/// <param name="gd">The graphics device used for the screen.</param>
 		public void LoadContent(GraphicsDevice gd)
 		{
 			Graphics = gd;
