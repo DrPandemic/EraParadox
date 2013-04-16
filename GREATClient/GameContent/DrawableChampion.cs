@@ -1,5 +1,5 @@
 //
-//  StickmanChampion.cs
+//  DrawableChampion.cs
 //
 //  Author:
 //       Jesse <>
@@ -19,20 +19,30 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using GREATClient;
+using GREATLib.Entities.Player.Champions;
+using Microsoft.Xna.Framework;
 
-namespace GREATLib.Entities.Player.Champions
+namespace GameContent
 {
 	/// <summary>
-	/// The Stickman champion.
+	/// Represents a champion in the game.
 	/// </summary>
-    public class StickmanChampion : IChampion
+    public class DrawableChampion : DrawableImage
     {
-		public override string Name { get { return "Stick Man"; } }
-		public override string AssetName { get { return "Stickman"; } }
+		public IChampion Champion { get; set; }
 
-        public StickmanChampion()
+        public DrawableChampion(IChampion champion)
+			: base(champion.AssetName + "_stand") //TODO: handle many animations instead
         {
+			Champion = champion;
+			OriginRelative = new Vector2(0.5f, 1f); // position at the feet
         }
+		public override void Update(Microsoft.Xna.Framework.GameTime dt)
+		{
+			base.Update(dt);
+			Position = Champion.Position.ToVector2();
+		}
     }
 }
 

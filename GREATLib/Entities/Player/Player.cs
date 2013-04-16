@@ -32,7 +32,7 @@ namespace GREATLib.Entities.Player
 		/// Gets or sets the champion of the player.
 		/// </summary>
 		/// <value>The champion.</value>
-		IChampion Champion { get; set; }
+		public IChampion Champion { get; set; }
 
         public Player()
         {

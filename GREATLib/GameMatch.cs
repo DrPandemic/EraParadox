@@ -1,5 +1,5 @@
 //
-//  StickmanChampion.cs
+//  GameMatch.cs
 //
 //  Author:
 //       Jesse <>
@@ -19,19 +19,33 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using GREATLib.World;
+using GREATLib.Entities.Player;
+using System.Collections.Generic;
 
-namespace GREATLib.Entities.Player.Champions
+namespace GREATLib
 {
 	/// <summary>
-	/// The Stickman champion.
+	/// An individual game match, 
 	/// </summary>
-    public class StickmanChampion : IChampion
+    public class GameMatch
     {
-		public override string Name { get { return "Stick Man"; } }
-		public override string AssetName { get { return "Stickman"; } }
+		/// <summary>
+		/// Gets the world behind the game.
+		/// </summary>
+		/// <value>The world.</value>
+		public GameWorld World { get; private set; }
 
-        public StickmanChampion()
+		/// <summary>
+		/// Gets the players of the match.
+		/// </summary>
+		/// <value>The players.</value>
+		public List<Player> Players { get; private set; }
+
+        public GameMatch()
         {
+			World = new GameWorld();
+			Players = new List<Player>();
         }
     }
 }

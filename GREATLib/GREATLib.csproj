@@ -46,6 +46,8 @@
     <Compile Include="World\Tiles\TileMap.cs" />
     <Compile Include="World\Tiles\Tile.cs" />
     <Compile Include="World\Tiles\TileCollision.cs" />
+    <Compile Include="GameMatch.cs" />
+    <Compile Include="World\GameWorld.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

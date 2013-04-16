@@ -52,6 +52,7 @@
     <Compile Include="BaseClass\Screen.cs" />
     <Compile Include="Test\TestScreen.cs" />
     <Compile Include="GameContent\DrawableTileMap.cs" />
+    <Compile Include="GameContent\DrawableChampion.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />

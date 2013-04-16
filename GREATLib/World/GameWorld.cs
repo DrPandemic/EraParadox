@@ -1,5 +1,5 @@
 //
-//  StickmanChampion.cs
+//  GameWorld.cs
 //
 //  Author:
 //       Jesse <>
@@ -19,19 +19,30 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using GREATLib.World.Tiles;
 
-namespace GREATLib.Entities.Player.Champions
+namespace GREATLib.World
 {
 	/// <summary>
-	/// The Stickman champion.
+	/// The game world, holding the various elements that make up
+	/// a match (without the entities).
+	/// For example, the game world holds:
+	/// - The map
+	/// - The lane logic
+	/// - The special objects
+	/// - Objects that can be collected
 	/// </summary>
-    public class StickmanChampion : IChampion
+    public class GameWorld
     {
-		public override string Name { get { return "Stick Man"; } }
-		public override string AssetName { get { return "Stickman"; } }
+		/// <summary>
+		/// Gets or sets the map.
+		/// </summary>
+		/// <value>The map.</value>
+		public TileMap Map { get; private set; }
 
-        public StickmanChampion()
+        public GameWorld()
         {
+			Map = new TileMap();
         }
     }
 }

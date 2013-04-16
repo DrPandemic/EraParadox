@@ -1,3 +1,10 @@
+2013-04-16  Jesse  <>
+
+	* TestScreen.cs:
+	* GREATClient.Linux.csproj:
+	* GREATClient.Windows.csproj:
+	* DrawableChampion.cs: 
+
 2013-04-15  Jesse  <>
 
 	* TestScreen.cs:

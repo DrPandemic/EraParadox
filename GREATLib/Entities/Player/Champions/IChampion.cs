@@ -34,6 +34,13 @@ namespace GREATLib.Entities.Player.Champions
 		/// <value>The name.</value>
 		public abstract string Name { get; }
 
+		/// <summary>
+		/// Gets the name of the asset prefix for the champion.
+		/// By default, this is the name of the champion itself.
+		/// </summary>
+		/// <value>The name of the asset.</value>
+		public virtual string AssetName { get { return Name; } }
+
         public IChampion()
         {
         }

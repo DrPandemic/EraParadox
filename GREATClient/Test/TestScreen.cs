@@ -29,34 +29,32 @@ using GREATLib;
 using Microsoft.Xna.Framework.Graphics;
 using GREATLib.World.Tiles;
 using GameContent;
+using GREATLib.Entities.Player;
 
 namespace GREATClient
 {
     public class TestScreen : Screen
     {
-		DrawableRectangle sq1;
-
 		//TODO: remove. temporary physics tests
 		PhysicsSystem physics = new PhysicsSystem();
-		StickmanChampion champion = new StickmanChampion();
-		TileMap map = new TileMap();
+		GameMatch match;
 
 		public TestScreen(ContentManager content) : base(content)
         {
+			match = new GameMatch();
         }
 		protected override void OnLoadContent()
 		{
+			//TODO: DrawableGameMatch? I personnally like the idea (Jesse)
+			AddChild(new DrawableTileMap(match.World.Map));
+
 			//TODO: remove. simply testing the physics engine
-			champion.Position = new Vec2(200f, 300f);
-
-			sq1 = new DrawableRectangle() {
-				OriginRelative = new Vector2(0.5f, 1f),
-				Tint = Color.Lime,
-				Size = new Vector2(50f, 50f)
-			};
-
-			AddChild(new DrawableTileMap(map));
-			AddChild(sq1);
+			match.Players.Add(new Player() { 
+				Champion = new StickmanChampion() {
+					Position = new Vec2(200f, 50f)
+				}
+			});
+			AddChild(new DrawableChampion(match.Players[0].Champion));
 		}
 
 		public override void Update(GameTime dt)
@@ -68,14 +66,13 @@ namespace GREATClient
 			
 			//TODO: remove. testing the physics engine
 			KeyboardState ks = Keyboard.GetState();
-			if (ks.IsKeyDown(Keys.Left)) physics.Move(champion, HorizontalDirection.Left);
-			if (ks.IsKeyDown(Keys.Right)) physics.Move(champion, HorizontalDirection.Right);
+			if (ks.IsKeyDown(Keys.Left)) physics.Move(match.Players[0].Champion, HorizontalDirection.Left);
+			if (ks.IsKeyDown(Keys.Right)) physics.Move(match.Players[0].Champion, HorizontalDirection.Right);
 			List<PhysicsEntity> entities = new List<PhysicsEntity>();
-			entities.Add(champion);
+			entities.Add(match.Players[0].Champion);
 			physics.Update((float)dt.ElapsedGameTime.TotalSeconds, entities);
 
-			sq1.Position = new Vector2(champion.Position.X, champion.Position.Y);
-
+			base.Update(dt);
 		}
     }
 }
