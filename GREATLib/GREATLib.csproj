@@ -43,6 +43,9 @@
     <Compile Include="Entities\Player\Champions\StickmanChampion.cs" />
     <Compile Include="Entities\Physics\PhysicsSystem.cs" />
     <Compile Include="Entities\Physics\HorizontalDirection.cs" />
+    <Compile Include="World\Tiles\TileMap.cs" />
+    <Compile Include="World\Tiles\Tile.cs" />
+    <Compile Include="World\Tiles\TileCollision.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -51,5 +54,7 @@
     <Folder Include="Entities\Player\" />
     <Folder Include="Entities\Player\Spells\" />
     <Folder Include="Entities\Player\Champions\" />
+    <Folder Include="World\" />
+    <Folder Include="World\Tiles\" />
   </ItemGroup>
 </Project>

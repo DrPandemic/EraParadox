@@ -27,6 +27,8 @@ using GREATLib.Entities.Physics;
 using GREATLib.Entities.Player.Champions;
 using GREATLib;
 using Microsoft.Xna.Framework.Graphics;
+using GREATLib.World.Tiles;
+using GameContent;
 
 namespace GREATClient
 {
@@ -37,6 +39,7 @@ namespace GREATClient
 		//TODO: remove. temporary physics tests
 		PhysicsSystem physics = new PhysicsSystem();
 		StickmanChampion champion = new StickmanChampion();
+		TileMap map = new TileMap();
 
 		public TestScreen(ContentManager content) : base(content)
         {
@@ -46,38 +49,13 @@ namespace GREATClient
 			//TODO: remove. simply testing the physics engine
 			champion.Position = new Vec2(200f, 300f);
 
-			DrawableImage testbigimg = new DrawableImage("testo") { 
-				OriginRelative = Vector2.Zero 
-			};
-			DrawableImage teststickman = new DrawableImage("Stickman_run") {
-				OriginRelative = Vector2.Zero,
-				Position = new Vector2(100f, 0f)
-			};
 			sq1 = new DrawableRectangle() {
 				OriginRelative = new Vector2(0.5f, 1f),
-				Tint = Color.Red,
+				Tint = Color.Lime,
 				Size = new Vector2(50f, 50f)
 			};
-			DrawableRectangle testrect = new DrawableRectangle(new Vector2(50f, 50f),
-			                                                   new Vector2(200f, 0f),
-			                                                   Color.Blue) {
-				OriginRelative = Vector2.Zero
-			};
 
-
-			Container main = new Container(Content);
-			AddChild(main);
-
-			main.AddChild(testbigimg);
-			Container mid = new Container(Content) { Position = new Vector2(150f, 100f) };
-			main.AddChild(mid);
-
-			mid.AddChild(teststickman);
-			Container low = new Container(Content) { Position = new Vector2(100f, 50f) };
-			mid.AddChild(low);
-
-			low.AddChild(testrect);
-
+			AddChild(new DrawableTileMap(map));
 			AddChild(sq1);
 		}
 

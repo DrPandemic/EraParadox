@@ -51,6 +51,7 @@
     <Compile Include="BaseClass\IDraw.cs" />
     <Compile Include="BaseClass\Screen.cs" />
     <Compile Include="Test\TestScreen.cs" />
+    <Compile Include="GameContent\DrawableTileMap.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />
@@ -59,6 +60,7 @@
     <Folder Include="Content\" />
     <Folder Include="BaseClass\" />
     <Folder Include="Test\" />
+    <Folder Include="GameContent\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
