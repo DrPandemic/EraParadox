@@ -44,13 +44,21 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Client.cs" />
     <Compile Include="GameLibHelper.cs" />
-    <Compile Include="ChampionResources.cs" />
+    <Compile Include="BaseClass\Container.cs" />
+    <Compile Include="BaseClass\Drawable.cs" />
+    <Compile Include="BaseClass\DrawableImage.cs" />
+    <Compile Include="BaseClass\DrawableRectangle.cs" />
+    <Compile Include="BaseClass\IDraw.cs" />
+    <Compile Include="BaseClass\Screen.cs" />
+    <Compile Include="Test\TestScreen.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Content\" />
+    <Folder Include="BaseClass\" />
+    <Folder Include="Test\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

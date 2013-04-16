@@ -77,10 +77,11 @@ namespace GREATClient
 		/// Loads the content.
 		/// </summary>
 		/// <param name="gd">The graphics device used for the screen.</param>
-		public void LoadContent(GraphicsDevice gd)
+		/// <param name="batch">The spritebatch used to draw.</para>
+		public void LoadContent(GraphicsDevice gd, SpriteBatch batch)
 		{
 			Graphics = gd;
-			spriteBatch = new SpriteBatch(gd);
+			spriteBatch = batch;
 			OnLoadContent();
 		}
 

@@ -2,6 +2,14 @@
 
 	* Game1.cs:
 	* TestScreen.cs:
+	* IDraw.cs:
+	* Screen.cs:
+	* GREATClient.Windows.csproj: 
+
+2013-04-15  Jesse  <>
+
+	* Game1.cs:
+	* TestScreen.cs:
 	* Screen.cs:
 	* DrImage.cs:
 	* GREATClient.Linux.csproj:

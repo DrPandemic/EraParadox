@@ -37,6 +37,8 @@ namespace GREATClient
 	/// </summary>
 	public class Game1 : Game
 	{
+		/// The screen name
+		const string SCREEN_NAME = "GREAT";
 		/// The screen dimensions
 		const int SCREEN_W = 800;
 		const int SCREEN_H = 600;
@@ -44,7 +46,7 @@ namespace GREATClient
 		Client client;
 
 		GraphicsDeviceManager graphics;
-
+		SpriteBatch spriteBatch;
 		TestScreen theScreen;
 
 
@@ -55,6 +57,12 @@ namespace GREATClient
 			graphics = new GraphicsDeviceManager(this);
 			Content.RootDirectory = "Content";
 			graphics.IsFullScreen = false;
+			Window.Title = SCREEN_NAME;
+
+			Window.AllowUserResizing = true;
+			graphics.PreferredBackBufferWidth = SCREEN_W;
+			graphics.PreferredBackBufferHeight = SCREEN_H;
+			graphics.ApplyChanges();
 
 			theScreen = new TestScreen(Content);
 		}
@@ -70,10 +78,6 @@ namespace GREATClient
 			Console.WriteLine("Starting client...");
 			client.Start();
 
-			//TODO : pK IL Y AVAIT CA? Tous mes calculs étaient éronnés a cause de ces lignes
-			/*graphics.PreferredBackBufferWidth = SCREEN_W;
-			graphics.PreferredBackBufferHeight = SCREEN_H;
-*/
 			base.Initialize();
 		}
 
@@ -84,8 +88,10 @@ namespace GREATClient
 		protected override void LoadContent()
 		{
 			Console.WriteLine("Loading game content...");
+			spriteBatch = new SpriteBatch(GraphicsDevice);
+
 			// Create a new SpriteBatch, which can be used to draw textures.
-			theScreen.LoadContent(GraphicsDevice);
+			theScreen.LoadContent(GraphicsDevice, spriteBatch);
 		}
 
 		/// <summary>

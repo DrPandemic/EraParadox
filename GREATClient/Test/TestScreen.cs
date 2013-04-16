@@ -26,12 +26,12 @@ using System.Collections.Generic;
 using GREATLib.Entities.Physics;
 using GREATLib.Entities.Player.Champions;
 using GREATLib;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace GREATClient
 {
     public class TestScreen : Screen
     {
-		Container layer;
 		DrawableRectangle sq1;
 
 		//TODO: remove. temporary physics tests
@@ -43,36 +43,42 @@ namespace GREATClient
         }
 		protected override void OnLoadContent()
 		{
-
 			//TODO: remove. simply testing the physics engine
 			champion.Position = new Vec2(200f, 300f);
 
-			//Put things in layers
-			Container layer2 = new Container(Content);
-			layer2.Position = new Vector2(-100,-100);
-			
-			layer = new Container(Content);
-			//layer.Position = new Vector2(100,100);
-			
-			DrawableImage sp2 = new DrawableImage("testo");
-			sp2.Position = new Vector2(100,200);
-			
-			DrawableImage sp1 = new DrawableImage("Stickman_run");
-			sp1.Position = new Vector2(500,400);
-			
-			
-			layer.AddChild(sp2,0);
-			layer2.AddChild(sp1,0);
-			
-			sq1 = new DrawableRectangle();
-			sq1.Size = new Vector2(50,50);
-			sq1.Tint = Color.Red;
-			
-			layer.AddChild(layer2);
-			
-			AddChild(layer);
-			
-			AddChild(sq1,1);
+			DrawableImage testbigimg = new DrawableImage("testo") { 
+				OriginRelative = Vector2.Zero 
+			};
+			DrawableImage teststickman = new DrawableImage("Stickman_run") {
+				OriginRelative = Vector2.Zero,
+				Position = new Vector2(100f, 0f)
+			};
+			sq1 = new DrawableRectangle() {
+				OriginRelative = new Vector2(0.5f, 1f),
+				Tint = Color.Red,
+				Size = new Vector2(50f, 50f)
+			};
+			DrawableRectangle testrect = new DrawableRectangle(new Vector2(50f, 50f),
+			                                                   new Vector2(200f, 0f),
+			                                                   Color.Blue) {
+				OriginRelative = Vector2.Zero
+			};
+
+
+			Container main = new Container(Content);
+			AddChild(main);
+
+			main.AddChild(testbigimg);
+			Container mid = new Container(Content) { Position = new Vector2(150f, 100f) };
+			main.AddChild(mid);
+
+			mid.AddChild(teststickman);
+			Container low = new Container(Content) { Position = new Vector2(100f, 50f) };
+			mid.AddChild(low);
+
+			low.AddChild(testrect);
+
+			AddChild(sq1);
 		}
 
 		public override void Update(GameTime dt)

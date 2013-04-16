@@ -49,7 +49,7 @@ namespace GREATClient
 
 		public virtual Vector2 GetAbsolutePosition()
 		{
-			return Position+Parent.Position;
+			return Position+Parent.GetAbsolutePosition();
 		}
 
 		public IDraw() 
