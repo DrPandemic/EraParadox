@@ -29,6 +29,16 @@ namespace GREATLib.Entities.Physics
 	/// </summary>
     public class PhysicsSystem
     {
+		private static readonly Vec2 GRAVITY = new Vec2(0f, 20f);
+		/// <summary>
+		/// The amount of passes to make a movement.
+		/// For example, when set to 3, it will move the entity
+		/// 3 times by 1/3 of its velocity and check for collisions.
+		/// It is mainly used to make sure that no entity goes
+		/// through obstacles when going too fast.
+		/// </summary>
+		private const int PHYSICS_PASSES = 3;
+
 		private CollisionHandler Collisions { get; set; }
 
         public PhysicsSystem()
@@ -60,26 +70,30 @@ namespace GREATLib.Entities.Physics
 		                          GameWorld world,
 		                          PhysicsEntity entity)
 		{
+			ApplyMovement(entity, deltaSeconds);
+
+			// Really apply the desired movement to our position
+			for (int pass = 0; pass < PHYSICS_PASSES; ++pass)
+				entity.Position += (entity.Velocity * deltaSeconds) / PHYSICS_PASSES;
+
+			Collisions.HandleCollisions(entity, world);
+
+			entity.Direction = HorizontalDirection.None; // Reset our moving value
+			// Make the movement fade out over time
+			entity.Velocity.X *= entity.HorizontalAcceleration;
+		}
+
+		static void ApplyMovement(PhysicsEntity entity, float deltaSeconds)
+		{
 			// The minimum speed at which we're supposed to go.
 			float moveXVel = (int)entity.Direction * entity.MoveSpeed;
 			//TODO: implement air drag here
-
 			// Only move if we're not already moving too fast
-			if ((moveXVel < 0 && moveXVel < entity.Velocity.X) ||
-			    (moveXVel > 0 && moveXVel > entity.Velocity.X))
+			if ((moveXVel < 0 && moveXVel < entity.Velocity.X) || (moveXVel > 0 && moveXVel > entity.Velocity.X))
 				entity.Velocity.X = moveXVel;
 
-			//TODO: apply gravity here
-
-			// Apply the movement
-			entity.Position += entity.Velocity * deltaSeconds;
-
-			entity.Direction = HorizontalDirection.None; // Reset our moving value
-
-			// Make the movement fade out over time
-			entity.Velocity.X *= entity.HorizontalAcceleration;
-
-			Collisions.HandleCollisions(entity, world);
+			// Apply gravity
+			entity.Velocity += GRAVITY;
 		}
 
 		/// <summary>
