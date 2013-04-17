@@ -20,6 +20,7 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using GREATLib.World.Tiles;
+using System.Collections.Generic;
 
 namespace GREATLib.World
 {
@@ -44,6 +45,16 @@ namespace GREATLib.World
         {
 			Map = new TileMap();
         }
+
+		/// <summary>
+		/// Gets the touched objects in the world.
+		/// </summary>
+		/// <returns>The touched objects along with their associated collision type.</returns>
+		/// <param name="collidable">Collidable.</param>
+		public List<KeyValuePair<Rect, CollisionType>> GetTouchedObjects(Rect collidable)
+		{
+			return Map.GetTouchedTiles(collidable);
+		}
     }
 }
 

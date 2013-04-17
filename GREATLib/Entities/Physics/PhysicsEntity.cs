@@ -29,8 +29,6 @@ namespace GREATLib.Entities.Physics
     {
 		private const float DEFAULT_AIR_ACCELERATION = 0.8f;
 		private const float DEFAULT_HORIZONTAL_ACCELERATION = 0f;
-		private const float DEFAULT_MOVE_SPEED = 250f;
-
 		/// <summary>
 		/// Gets or sets the velocity of the entity.
 		/// </summary>
@@ -42,6 +40,7 @@ namespace GREATLib.Entities.Physics
 		/// </summary>
 		/// <value>The move speed.</value>
 		public float MoveSpeed { get; set; }
+		protected abstract float StartMoveSpeed { get; }
 
 		/// <summary>
 		/// Gets or sets the direction in which the entity wants to move.
@@ -67,14 +66,46 @@ namespace GREATLib.Entities.Physics
 		/// <value>The air acceleration.</value>
 		public float AirAcceleration { get; set; }
 
+		/// <summary>
+		/// Gets the width of the collision box around the entity (for
+		/// collisions, spells, etc.)
+		/// </summary>
+		/// <value>The width of the collision.</value>
+		public float CollisionWidth { get; set; }
+		protected abstract float DefaultCollisionWidth { get; }
+		/// <summary>
+		/// Gets the height of the collision box around the entity (for
+		/// collisions, spells, etc.)
+		/// </summary>
+		/// <value>The height of the collision.</value>
+		public float CollisionHeight { get; set; }
+		protected abstract float DefaultCollisionHeight { get; }
+
         public PhysicsEntity()
         {
 			Velocity = new Vec2();
 			HorizontalAcceleration = DEFAULT_HORIZONTAL_ACCELERATION;
-			MoveSpeed = DEFAULT_MOVE_SPEED;
+			MoveSpeed = StartMoveSpeed;
+			CollisionWidth = DefaultCollisionWidth;
+			CollisionHeight = DefaultCollisionHeight;
 			AirAcceleration = DEFAULT_AIR_ACCELERATION;
 			Direction = HorizontalDirection.None;
         }
+
+		/// <summary>
+		/// *CREATES* a rectangle englobing the physics entity.
+		/// Only use this when you need a full rectangle object, because
+		/// it will create it everytime.
+		/// </summary>
+		/// <value>The rectangle.</value>
+		public Rect GetRectangle() 
+		{
+			// Since the position is the feet position, we take that into account
+			return new Rect(
+				Position.X - CollisionWidth / 2f, 
+				Position.Y - CollisionHeight,
+				CollisionWidth, CollisionHeight);
+		}
     }
 }
 

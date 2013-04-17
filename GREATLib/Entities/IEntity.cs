@@ -28,9 +28,9 @@ namespace GREATLib.Entities
     public class IEntity : ISynchronizable
     {
 		/// <summary>
-		/// Gets or sets the position of the entity in the game world.
+		/// Gets or sets the position of the feet of the entity in the game world.
 		/// </summary>
-		/// <value>The position of the entity.</value>
+		/// <value>The position of the feet of the entity.</value>
 		public Vec2 Position { get; set; }
 
         public IEntity()

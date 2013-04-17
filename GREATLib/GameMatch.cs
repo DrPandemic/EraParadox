@@ -56,7 +56,7 @@ namespace GREATLib
 		{
 			Debug.Assert(deltaSeconds > 0f, "The delta seconds while updating the match is too small.");
 
-			Physics.Update(deltaSeconds, PhysicsEntities.Values);
+			Physics.Update(deltaSeconds, World, PhysicsEntities.Values);
 		}
 
 		/// <summary>
@@ -74,6 +74,14 @@ namespace GREATLib
 			AddEntity(champion);
 
 			return player.Id;
+		}
+
+		public void MovePlayer(int playerId, HorizontalDirection direction)
+		{
+			Debug.Assert(playerId != EntityIDGenerator.NO_ID, "Invalid ID for a player.");
+			Debug.Assert(Players.ContainsKey(playerId), "No player with the given id.");
+
+			Physics.Move(Players[playerId].Champion, direction);
 		}
 		/// <summary>
 		/// Gets the player with the given ID.

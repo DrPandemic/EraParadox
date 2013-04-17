@@ -45,11 +45,12 @@
     <Compile Include="Entities\Physics\HorizontalDirection.cs" />
     <Compile Include="World\Tiles\TileMap.cs" />
     <Compile Include="World\Tiles\Tile.cs" />
-    <Compile Include="World\Tiles\TileCollision.cs" />
     <Compile Include="GameMatch.cs" />
     <Compile Include="World\GameWorld.cs" />
     <Compile Include="Entities\Physics\CollisionHandler.cs" />
     <Compile Include="Entities\EntityIDGenerator.cs" />
+    <Compile Include="Rect.cs" />
+    <Compile Include="World\Tiles\CollisionType.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

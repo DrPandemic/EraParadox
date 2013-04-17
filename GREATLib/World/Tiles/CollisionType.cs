@@ -23,23 +23,23 @@ using System;
 namespace GREATLib.World.Tiles
 {
 	/// <summary>
-	/// The different tile collision types.
+	/// The different collision types.
 	/// </summary>
-    public enum TileCollision
+    public enum CollisionType
     {
 		/// <summary>
-		/// A passable tile, with no collision event on touch.
+		/// A passable object, with no collision event on touch.
 		/// </summary>
 		Passable,
 
 		/// <summary>
-		/// An impassable tile, such as a wall, that can't be passed.
+		/// An impassable object, such as a wall, that can't be passed.
 		/// </summary>
 		Block,
 
 		/// <summary>
-		/// A platform tile. Entities only collide with it from its top part,
-		/// allowing them to go through it from the bottom.
+		/// A platform object. Entities only collide with it from its top side,
+		/// allowing them to go through it through the bottom.
 		/// </summary>
 		Platform,
 

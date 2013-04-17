@@ -37,7 +37,7 @@ namespace GREATClient
 		/// Gets or sets the sprite batch.
 		/// </summary>
 		/// <value>The sprite batch.</value>
-		private SpriteBatch spriteBatch { get; set; }
+		protected SpriteBatch spriteBatch { get; set; }
 
 		/// <summary>
 		/// Gets or sets the graphics.

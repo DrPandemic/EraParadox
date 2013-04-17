@@ -66,8 +66,9 @@ namespace GREATClient
 			
 			//TODO: remove. testing the physics engine
 			KeyboardState ks = Keyboard.GetState();
-			if (ks.IsKeyDown(Keys.Left)) match.Physics.Move(match.GetPlayer(OurId).Champion, HorizontalDirection.Left);
-			if (ks.IsKeyDown(Keys.Right)) match.Physics.Move(match.GetPlayer(OurId).Champion, HorizontalDirection.Right);
+			if (ks.IsKeyDown(Keys.Left)) { match.MovePlayer(OurId, HorizontalDirection.Left); }
+			if (ks.IsKeyDown(Keys.Right)) { match.MovePlayer(OurId, HorizontalDirection.Right); }
+
 			match.Update((float)dt.ElapsedGameTime.TotalSeconds);
 
 			base.Update(dt);

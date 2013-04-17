@@ -30,6 +30,11 @@ namespace GREATLib.Entities.Player.Champions
 		public override string Name { get { return "Stick Man"; } }
 		public override string AssetName { get { return "Stickman"; } }
 
+		protected override float DefaultCollisionWidth { get { return 13f; } }
+		protected override float DefaultCollisionHeight { get { return 46f; } }
+
+		protected override float StartMoveSpeed { get { return 250f; } }
+
         public StickmanChampion()
         {
         }

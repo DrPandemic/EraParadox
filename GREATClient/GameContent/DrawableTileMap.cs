@@ -57,13 +57,13 @@ namespace GameContent
 		{
 			Vector2 position = GetAbsolutePosition();
 			batch.Begin();
-			for (int y = 0; y < Map.TileRows.Count; ++y)
-				for (int x = 0; x < Map.TileRows[y].Count; ++x)
-					if (Map.TileRows[y][x].Collision != TileCollision.Passable)
+			for (int y = 0; y < Map.GetHeightTiles(); ++y)
+				for (int x = 0; x < Map.GetWidthTiles(); ++x)
+					if (Map.TileRows[y][x].Collision != CollisionType.Passable)
 						batch.Draw(pixel, new Rectangle(
-							(int)(position.X + x * Tile.Width),
-							(int)(position.Y + y * Tile.Height),
-							Tile.Width, Tile.Height), Color.Red);
+							(int)(position.X + x * Tile.WIDTH),
+							(int)(position.Y + y * Tile.HEIGHT),
+							Tile.WIDTH, Tile.HEIGHT), Color.Red);
 			batch.End();
 		}
     }

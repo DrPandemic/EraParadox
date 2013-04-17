@@ -20,6 +20,7 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
+using GREATLib.World;
 
 namespace GREATLib.Entities.Physics
 {
@@ -40,11 +41,12 @@ namespace GREATLib.Entities.Physics
 		/// </summary>
 		/// <param name="deltaSeconds">The delta seconds since the last frame.</param>
 		/// <param name="entities">The game entities.</param>
-		public void Update(float deltaSeconds, IEnumerable<PhysicsEntity> entities)
+		public void Update(float deltaSeconds, GameWorld world, 
+		                   IEnumerable<PhysicsEntity> entities)
 		{
 			foreach (PhysicsEntity entity in entities)
 			{
-				UpdateEntity(deltaSeconds, entity);
+				UpdateEntity(deltaSeconds, world, entity);
 			}
 		}
 
@@ -54,7 +56,9 @@ namespace GREATLib.Entities.Physics
 		/// </summary>
 		/// <param name="deltaSeconds">Delta seconds since the last frame.</param>
 		/// <param name="entity">The entity.</param>
-		private void UpdateEntity(float deltaSeconds, PhysicsEntity entity)
+		private void UpdateEntity(float deltaSeconds, 
+		                          GameWorld world,
+		                          PhysicsEntity entity)
 		{
 			// The minimum speed at which we're supposed to go.
 			float moveXVel = (int)entity.Direction * entity.MoveSpeed;
@@ -70,12 +74,12 @@ namespace GREATLib.Entities.Physics
 			// Apply the movement
 			entity.Position += entity.Velocity * deltaSeconds;
 
-			//TODO: undo collisions with the world geometry here
-
 			entity.Direction = HorizontalDirection.None; // Reset our moving value
 
 			// Make the movement fade out over time
 			entity.Velocity.X *= entity.HorizontalAcceleration;
+
+			Collisions.HandleCollisions(entity, world);
 		}
 
 		/// <summary>

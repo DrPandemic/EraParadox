@@ -22,6 +22,7 @@ using System;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
+using GREATLib;
 
 namespace GREATClient
 {
@@ -36,8 +37,15 @@ namespace GREATClient
 		/// <value>The size of the index element.</value>
 		public Vector2 Size { get; set; }
 
-		public DrawableRectangle(Rectangle rect, Color tint) : this(new Vector2(rect.Width, rect.Height),
-		                                                      new Vector2(rect.X, rect.Y), tint)
+		public DrawableRectangle(Rect rect, Color tint) 
+			: this(new Rectangle(
+				(int)rect.X, (int)rect.Y, (int)rect.Width, (int)rect.Height),
+			       tint)
+		{
+		}
+		public DrawableRectangle(Rectangle rect, Color tint) 
+			: this(new Vector2(rect.Width, rect.Height),
+			       new Vector2(rect.X, rect.Y), tint)
 		{
 		}
 

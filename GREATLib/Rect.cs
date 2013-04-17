@@ -1,5 +1,5 @@
 //
-//  Tile.cs
+//  Rect.cs
 //
 //  Author:
 //       Jesse <>
@@ -20,39 +20,34 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 
-namespace GREATLib.World.Tiles
+namespace GREATLib
 {
 	/// <summary>
-	/// Individual tile from a 2D tilemap.
+	/// A 2D rectangle used within the game library.
 	/// </summary>
-    public class Tile
+    public class Rect
     {
-		/// <summary>
-		/// The width of an individual tile.
-		/// </summary>
-		public const int WIDTH = 64;
-		/// <summary>
-		/// The height of an individual tile.
-		/// </summary>
-		public const int HEIGHT = 64;
+		public float X { get; set; }
+		public float Y { get; set; }
+		public float Width { get; set; }
+		public float Height { get; set; }
 
-		/// <summary>
-		/// Gets or sets the identifier representing the tile.
-		/// </summary>
-		/// <value>The identifier.</value>
-		public int Id { get; set; }
+		public float Left { get { return X; } }
+		public float Right { get { return Left + Width; } }
+		public float Top { get { return Y; } }
+		public float Bottom { get { return Top + Height; } }
 
-		/// <summary>
-		/// Gets or sets the collision type of the tile.
-		/// </summary>
-		/// <value>The collision.</value>
-		public CollisionType Collision { get; set; }
-
-        public Tile(int id, CollisionType collision)
+        public Rect()
+			: this (0f,0f,0f,0f)
         {
-			Id = id;
-			Collision = collision;
         }
+		public Rect(float x, float y, float width, float height)
+		{
+			X = x;
+			Y = y;
+			Width = width;
+			Height = height;
+		}
     }
 }
 
