@@ -39,6 +39,8 @@ namespace GREATLib.Entities.Physics
 		/// <param name="world">World.</param>
 		public void HandleCollisions(PhysicsEntity entity, GameWorld world)
 		{
+			entity.IsOnGround = false; // reset the flag indicating if we're on the ground
+
 			List<KeyValuePair<Rect, CollisionType>> collisions = 
 				world.GetTouchedObjects(entity.GetRectangle());
 
@@ -79,7 +81,10 @@ namespace GREATLib.Entities.Physics
 				{
 					entity.Position.Y += intersection.Y;
 
-					//TODO: check to hit the ground here
+					if (intersection.Y < 0f) // collided from the top side
+					{
+						entity.IsOnGround = true;
+					}
 					//TODO: only undo collision for platforms if we hit the ground
 
 					entity.Velocity.Y = 0f; // stop our Y movement

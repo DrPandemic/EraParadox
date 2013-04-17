@@ -27,8 +27,6 @@ namespace GREATLib.Entities.Physics
 	/// </summary>
     public abstract class PhysicsEntity : IEntity
     {
-		private const float DEFAULT_AIR_ACCELERATION = 0.8f;
-		private const float DEFAULT_HORIZONTAL_ACCELERATION = 0f;
 		/// <summary>
 		/// Gets or sets the velocity of the entity.
 		/// </summary>
@@ -56,6 +54,7 @@ namespace GREATLib.Entities.Physics
 		/// </summary>
 		/// <value>The horizontal acceleration.</value>
 		public float HorizontalAcceleration { get; set; }
+		protected virtual float DefaultHorizontalAcceleration { get { return 0.3f; } }
 
 		/// <summary>
 		/// Gets or sets the air acceleration.
@@ -65,6 +64,7 @@ namespace GREATLib.Entities.Physics
 		/// </summary>
 		/// <value>The air acceleration.</value>
 		public float AirAcceleration { get; set; }
+		protected virtual float DefaultAirAcceleration { get { return 0.8f; } }
 
 		/// <summary>
 		/// Gets the width of the collision box around the entity (for
@@ -81,14 +81,25 @@ namespace GREATLib.Entities.Physics
 		public float CollisionHeight { get; set; }
 		protected abstract float DefaultCollisionHeight { get; }
 
+		public float JumpForce { get; set; }
+		protected virtual float DefaultJumpForce { get { return 600f; } }
+
+		/// <summary>
+		/// Gets or sets a value indicating whether this instance is on the ground.
+		/// </summary>
+		/// <value><c>true</c> if this instance is on the ground; otherwise, <c>false</c>.</value>
+		public bool IsOnGround { get; set; }
+
         public PhysicsEntity()
         {
+			IsOnGround = false;
 			Velocity = new Vec2();
-			HorizontalAcceleration = DEFAULT_HORIZONTAL_ACCELERATION;
+			HorizontalAcceleration = DefaultHorizontalAcceleration;
 			MoveSpeed = StartMoveSpeed;
 			CollisionWidth = DefaultCollisionWidth;
 			CollisionHeight = DefaultCollisionHeight;
-			AirAcceleration = DEFAULT_AIR_ACCELERATION;
+			AirAcceleration = DefaultAirAcceleration;
+			JumpForce = DefaultJumpForce;
 			Direction = HorizontalDirection.None;
         }
 

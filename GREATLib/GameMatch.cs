@@ -83,6 +83,15 @@ namespace GREATLib
 
 			Physics.Move(Players[playerId].Champion, direction);
 		}
+
+		public void JumpPlayer(int playerId)
+		{
+			Debug.Assert(playerId != EntityIDGenerator.NO_ID, "Invalid ID for a player.");
+			Debug.Assert(Players.ContainsKey(playerId), "No player with the given id.");
+
+			Physics.Jump(Players[playerId].Champion);
+		}
+
 		/// <summary>
 		/// Gets the player with the given ID.
 		/// </summary>

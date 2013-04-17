@@ -68,6 +68,7 @@ namespace GREATClient
 			KeyboardState ks = Keyboard.GetState();
 			if (ks.IsKeyDown(Keys.Left)) { match.MovePlayer(OurId, HorizontalDirection.Left); }
 			if (ks.IsKeyDown(Keys.Right)) { match.MovePlayer(OurId, HorizontalDirection.Right); }
+			if (ks.IsKeyDown(Keys.Up)) { match.JumpPlayer(OurId); }
 			if (ks.IsKeyDown(Keys.R)) match.GetPlayer(OurId).Champion.Position.Y = 0f;
 
 			match.Update((float)dt.ElapsedGameTime.TotalSeconds);

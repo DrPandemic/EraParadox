@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using GREATLib.World;
+using System.Diagnostics;
 
 namespace GREATLib.Entities.Physics
 {
@@ -54,6 +55,8 @@ namespace GREATLib.Entities.Physics
 		public void Update(float deltaSeconds, GameWorld world, 
 		                   IEnumerable<PhysicsEntity> entities)
 		{
+			Debug.Assert(deltaSeconds > 0f, "Delta seconds too small for physics update.");
+
 			foreach (PhysicsEntity entity in entities)
 			{
 				UpdateEntity(deltaSeconds, world, entity);
@@ -106,6 +109,19 @@ namespace GREATLib.Entities.Physics
 			entity.Direction = (entity.Direction == HorizontalDirection.None ? // our first movement
 				direction : // set to our new one
 				HorizontalDirection.None); // cancel the other movement (i.e. left+right = no movement)
+		}
+
+		/// <summary>
+		/// Tries to make the specified entity jump.
+		/// </summary>
+		/// <param name="entity">Entity.</param>
+		public void Jump(PhysicsEntity entity)
+		{
+			if (entity.IsOnGround)
+			{
+				ApplyForce(entity, -Vec2.UnitY * entity.JumpForce);
+				entity.IsOnGround = false; // assume that we'll lift off the ground.
+			}
 		}
 
 		/// <summary>
