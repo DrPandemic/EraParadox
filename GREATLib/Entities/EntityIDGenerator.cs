@@ -1,5 +1,5 @@
 //
-//  ISynchronizable.cs
+//  EntityIDGenerator.cs
 //
 //  Author:
 //       Jesse <>
@@ -19,25 +19,40 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using GREATLib.Entities;
 
-namespace GREATLib
+namespace GREATLib.Entities
 {
 	/// <summary>
-	/// Represents an entity that is synchronized between the server and the clients.
+	/// The system in charge of dispatching unique IDs to the created entities.
 	/// </summary>
-    public class ISynchronizable
+    public class EntityIDGenerator
     {
 		/// <summary>
-		/// Gets or sets the unique identifier of the entity.
+		/// An invalid ID.
 		/// </summary>
-		/// <value>The identifier.</value>
-		public int Id { get; set; }
+		public const int NO_ID = -1;
 
-        public ISynchronizable()
+		const int START_ID = 0;
+
+		/// <summary>
+		/// Gets or sets the current ID that we're at.
+		/// </summary>
+		/// <value>The current ID.</value>
+		private int CurrentID { get; set; }
+
+        public EntityIDGenerator()
         {
-			Id = EntityIDGenerator.NO_ID;
+			CurrentID = START_ID;
         }
+
+		/// <summary>
+		/// Generates a unique ID to an entity.
+		/// </summary>
+		/// <returns>The unique ID.</returns>
+		public int GenerateID()
+		{
+			return CurrentID++;
+		}
     }
 }
 

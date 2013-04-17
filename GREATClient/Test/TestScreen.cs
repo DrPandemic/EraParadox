@@ -30,17 +30,19 @@ using Microsoft.Xna.Framework.Graphics;
 using GREATLib.World.Tiles;
 using GameContent;
 using GREATLib.Entities.Player;
+using GREATLib.Entities;
 
 namespace GREATClient
 {
     public class TestScreen : Screen
     {
-		//TODO: remove. temporary physics tests
-		PhysicsSystem physics = new PhysicsSystem();
+		//TODO: remove. temporary local tests
 		GameMatch match;
+		int OurId { get; set; }
 
 		public TestScreen(ContentManager content) : base(content)
         {
+			OurId = EntityIDGenerator.NO_ID;
 			match = new GameMatch();
         }
 		protected override void OnLoadContent()
@@ -49,12 +51,10 @@ namespace GREATClient
 			AddChild(new DrawableTileMap(match.World.Map));
 
 			//TODO: remove. simply testing the physics engine
-			match.Players.Add(new Player() { 
-				Champion = new StickmanChampion() {
-					Position = new Vec2(200f, 50f)
-				}
+			OurId = match.AddPlayer(new Player(), new StickmanChampion() {
+				Position = new Vec2(200f, 100f)
 			});
-			AddChild(new DrawableChampion(match.Players[0].Champion));
+			AddChild(new DrawableChampion(match.GetPlayer(OurId).Champion));
 		}
 
 		public override void Update(GameTime dt)
@@ -66,11 +66,9 @@ namespace GREATClient
 			
 			//TODO: remove. testing the physics engine
 			KeyboardState ks = Keyboard.GetState();
-			if (ks.IsKeyDown(Keys.Left)) physics.Move(match.Players[0].Champion, HorizontalDirection.Left);
-			if (ks.IsKeyDown(Keys.Right)) physics.Move(match.Players[0].Champion, HorizontalDirection.Right);
-			List<PhysicsEntity> entities = new List<PhysicsEntity>();
-			entities.Add(match.Players[0].Champion);
-			physics.Update((float)dt.ElapsedGameTime.TotalSeconds, entities);
+			if (ks.IsKeyDown(Keys.Left)) match.Physics.Move(match.GetPlayer(OurId).Champion, HorizontalDirection.Left);
+			if (ks.IsKeyDown(Keys.Right)) match.Physics.Move(match.GetPlayer(OurId).Champion, HorizontalDirection.Right);
+			match.Update((float)dt.ElapsedGameTime.TotalSeconds);
 
 			base.Update(dt);
 		}

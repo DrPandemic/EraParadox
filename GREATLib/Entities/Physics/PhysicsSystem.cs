@@ -28,8 +28,11 @@ namespace GREATLib.Entities.Physics
 	/// </summary>
     public class PhysicsSystem
     {
+		private CollisionHandler Collisions { get; set; }
+
         public PhysicsSystem()
         {
+			Collisions = new CollisionHandler();
         }
 
 		/// <summary>
@@ -37,9 +40,12 @@ namespace GREATLib.Entities.Physics
 		/// </summary>
 		/// <param name="deltaSeconds">The delta seconds since the last frame.</param>
 		/// <param name="entities">The game entities.</param>
-		public void Update(float deltaSeconds, List<PhysicsEntity> entities)
+		public void Update(float deltaSeconds, IEnumerable<PhysicsEntity> entities)
 		{
-			entities.ForEach(e => Update(deltaSeconds, e));
+			foreach (PhysicsEntity entity in entities)
+			{
+				UpdateEntity(deltaSeconds, entity);
+			}
 		}
 
 		/// <summary>
@@ -48,7 +54,7 @@ namespace GREATLib.Entities.Physics
 		/// </summary>
 		/// <param name="deltaSeconds">Delta seconds since the last frame.</param>
 		/// <param name="entity">The entity.</param>
-		private void Update(float deltaSeconds, PhysicsEntity entity)
+		private void UpdateEntity(float deltaSeconds, PhysicsEntity entity)
 		{
 			// The minimum speed at which we're supposed to go.
 			float moveXVel = (int)entity.Direction * entity.MoveSpeed;

@@ -25,7 +25,7 @@ namespace GREATLib.Entities
 	/// <summary>
 	/// Represents an entity, with a position in the world.
 	/// </summary>
-    public class IEntity
+    public class IEntity : ISynchronizable
     {
 		/// <summary>
 		/// Gets or sets the position of the entity in the game world.

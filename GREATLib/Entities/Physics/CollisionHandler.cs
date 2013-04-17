@@ -1,5 +1,5 @@
 //
-//  ISynchronizable.cs
+//  CollisionHandler.cs
 //
 //  Author:
 //       Jesse <>
@@ -19,25 +19,26 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using GREATLib.Entities;
+using GREATLib.Entities.Physics;
+using GREATLib.World;
 
-namespace GREATLib
+namespace GREATLib.Entities.Physics
 {
 	/// <summary>
-	/// Represents an entity that is synchronized between the server and the clients.
+	/// The system in charge of handling collisions happening between the game entities
+	/// and the game world.
 	/// </summary>
-    public class ISynchronizable
+    public class CollisionHandler
     {
 		/// <summary>
-		/// Gets or sets the unique identifier of the entity.
+		/// Resolves the collisions between an entity and the game world.
 		/// </summary>
-		/// <value>The identifier.</value>
-		public int Id { get; set; }
+		/// <param name="entity">Entity.</param>
+		/// <param name="world">World.</param>
+		public void HandleCollisions(PhysicsEntity entity, GameWorld world)
+		{
 
-        public ISynchronizable()
-        {
-			Id = EntityIDGenerator.NO_ID;
-        }
+		}
     }
 }
 
