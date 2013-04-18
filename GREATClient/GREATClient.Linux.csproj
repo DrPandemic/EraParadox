@@ -53,6 +53,9 @@
     <Compile Include="BaseClass\DrawableImage.cs" />
     <Compile Include="GameContent\DrawableTileMap.cs" />
     <Compile Include="GameContent\DrawableChampion.cs" />
+    <Compile Include="BaseClass\DrawableTriangle.cs" />
+    <Compile Include="BaseClass\DrawableCircleContour.cs" />
+    <Compile Include="BaseClass\DrawableCircle.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />
@@ -82,6 +85,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\testo.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\triangle.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\circle.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

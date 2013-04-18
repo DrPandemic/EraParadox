@@ -46,7 +46,6 @@ namespace GREATClient
 		Client client;
 
 		GraphicsDeviceManager graphics;
-		SpriteBatch spriteBatch;
 		TestScreen theScreen;
 
 
@@ -88,10 +87,9 @@ namespace GREATClient
 		protected override void LoadContent()
 		{
 			Console.WriteLine("Loading game content...");
-			spriteBatch = new SpriteBatch(GraphicsDevice);
 
 			// Create a new SpriteBatch, which can be used to draw textures.
-			theScreen.LoadContent(GraphicsDevice, spriteBatch);
+			theScreen.LoadContent(GraphicsDevice);
 		}
 
 		/// <summary>

@@ -79,6 +79,10 @@ namespace GREATClient
 		/// </summary>
 		/// <value>The effects.</value>
 		public SpriteEffects Effects { get; set; }
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="GREATClient.Drawable"/> class.
+		/// </summary>
 		protected Drawable()
 		{
 			Tint = Color.White;
@@ -88,7 +92,7 @@ namespace GREATClient
 			Orientation = 0f;
 			SourceRectangle = null;
 			Scale = new Vector2(1,1);
-			OriginRelative = new Vector2(0.5f,0.5f);
+			OriginRelative = new Vector2(0,0);
 			Effects = SpriteEffects.None;
 		}
 

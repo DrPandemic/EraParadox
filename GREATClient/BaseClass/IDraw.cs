@@ -47,6 +47,22 @@ namespace GREATClient
 		/// <value>The position.</value>
 		public Vector2 Position { get; set; }
 
+		/// <summary>
+		/// Gets or sets a value indicating whether this <see cref="GREATClient.IDraw"/> is visible.
+		/// </summary>
+		/// <value><c>true</c> if visible; otherwise, <c>false</c>.</value>
+		public bool Visible { get; set; }
+
+		/// <summary>
+		/// Gets or sets a value indicating whether this <see cref="GREATClient.IDraw"/> is updatable.
+		/// </summary>
+		/// <value><c>true</c> if updatable; otherwise, <c>false</c>.</value>
+		public bool Updatable { get; set; }
+
+		/// <summary>
+		/// Gets the absolute position.
+		/// </summary>
+		/// <returns>The absolute position.</returns>
 		public virtual Vector2 GetAbsolutePosition()
 		{
 			return Position+Parent.GetAbsolutePosition();

@@ -58,17 +58,21 @@ namespace GREATClient
 			Size = size;
 			Position = position;
 			Tint = tint;
+		
         }
 		protected override void OnLoad(ContentManager content, GraphicsDevice gd)
 		{
 			Texture = new Texture2D(gd,1,1);
-			Texture.SetData(new Color[] { Tint });
+			Texture.SetData(new Color[] { Color.White });
 		}
 		public override void Draw(SpriteBatch batch)
 		{
 			base.Draw(batch);
 			batch.Begin();
-			batch.Draw(Texture,new Rectangle((int)GetAbsolutePosition().X,(int)GetAbsolutePosition().Y,(int)Size.X,(int)Size.Y),Tint);			
+			batch.Draw(Texture,new Rectangle((int)(GetAbsolutePosition().X-OriginRelative.X*Size.X),
+			                                 (int)(GetAbsolutePosition().Y-OriginRelative.Y*Size.Y),
+			                                 (int)Size.X,(int)Size.Y),
+			           						Tint);		
 			batch.End();
 		}
     }

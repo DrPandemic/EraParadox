@@ -47,6 +47,7 @@ namespace GREATClient
         }
 		protected override void OnLoadContent()
 		{
+
 			//TODO: DrawableGameMatch? I personnally like the idea (Jesse)
 			AddChild(new DrawableTileMap(match.World.Map));
 
@@ -55,6 +56,15 @@ namespace GREATClient
 				Position = new Vec2(200f, 100f)
 			});
 			AddChild(new DrawableChampion(match.GetPlayer(OurId).Champion));
+			DrawableTriangle tr =  new DrawableTriangle(true);
+			tr.Ascendant = false;
+			tr.Tint = Color.Blue;
+			tr.Scale = new Vector2(1f,2f);
+			//AddChild(tr);
+			DrawableCircleContour ci = new DrawableCircleContour(32);
+			ci.Position = new Vector2(100,100);
+			AddChild(ci);
+			AddChild(new DrawableCircle());
 		}
 
 		public override void Update(GameTime dt)
