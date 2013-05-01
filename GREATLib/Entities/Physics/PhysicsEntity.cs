@@ -54,7 +54,7 @@ namespace GREATLib.Entities.Physics
 		/// </summary>
 		/// <value>The horizontal acceleration.</value>
 		public float HorizontalAcceleration { get; set; }
-		protected virtual float DefaultHorizontalAcceleration { get { return 0.3f; } }
+		protected virtual float DefaultHorizontalAcceleration { get { return 0.4f; } }
 
 		/// <summary>
 		/// Gets or sets the air acceleration.
@@ -82,7 +82,7 @@ namespace GREATLib.Entities.Physics
 		protected abstract float DefaultCollisionHeight { get; }
 
 		public float JumpForce { get; set; }
-		protected virtual float DefaultJumpForce { get { return 600f; } }
+		protected virtual float DefaultJumpForce { get { return 650f; } }
 
 		/// <summary>
 		/// Gets or sets a value indicating whether this instance is on the ground.

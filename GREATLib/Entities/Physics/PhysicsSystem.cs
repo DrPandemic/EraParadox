@@ -75,11 +75,14 @@ namespace GREATLib.Entities.Physics
 		{
 			ApplyMovement(entity, deltaSeconds);
 
+			entity.IsOnGround = false; // reset the flag indicating if we're on the ground
+
 			// Really apply the desired movement to our position
 			for (int pass = 0; pass < PHYSICS_PASSES; ++pass)
+			{
 				entity.Position += (entity.Velocity * deltaSeconds) / PHYSICS_PASSES;
-
-			Collisions.HandleCollisions(entity, world);
+				Collisions.HandleCollisions(entity, world);
+			}
 
 			entity.Direction = HorizontalDirection.None; // Reset our moving value
 			// Make the movement fade out over time
@@ -120,7 +123,7 @@ namespace GREATLib.Entities.Physics
 			if (entity.IsOnGround)
 			{
 				ApplyForce(entity, -Vec2.UnitY * entity.JumpForce);
-				entity.IsOnGround = false; // assume that we'll lift off the ground.
+				entity.IsOnGround = false; // assume that we'll lift off the ground to avoid multi-jump.
 			}
 		}
 

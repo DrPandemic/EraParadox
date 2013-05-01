@@ -23,6 +23,7 @@ using GREATLib.Entities.Physics;
 using GREATLib.World;
 using System.Collections.Generic;
 using GREATLib.World.Tiles;
+using System.Diagnostics;
 
 namespace GREATLib.Entities.Physics
 {
@@ -39,11 +40,20 @@ namespace GREATLib.Entities.Physics
 		/// <param name="world">World.</param>
 		public void HandleCollisions(PhysicsEntity entity, GameWorld world)
 		{
-			entity.IsOnGround = false; // reset the flag indicating if we're on the ground
-
-			List<KeyValuePair<Rect, CollisionType>> collisions = 
+			List<KeyValuePair<Rect, CollisionType>> tileCollisions = 
 				world.GetTouchedObjects(entity.GetRectangle());
 
+			HandleCollisionGroup(entity, tileCollisions, world, true);
+		}
+
+		/// <summary>
+		/// Handles a group of collisions with an entity.
+		/// </summary>
+		private void HandleCollisionGroup(
+			PhysicsEntity entity,
+			List<KeyValuePair<Rect, CollisionType>> collisions,
+			GameWorld world, bool isTile)
+		{
 			foreach (KeyValuePair<Rect, CollisionType> collision in collisions)
 			{
 				// Note: we recreate an entity rectangle on every loop
@@ -51,23 +61,26 @@ namespace GREATLib.Entities.Physics
 				Rect entityRect = entity.GetRectangle();
 				Rect rect = collision.Key;
 				CollisionType type = collision.Value;
-
+				
 				switch (type)
 				{
 					case CollisionType.Block:
-						UndoCollision(entity, entityRect, rect);
+						UndoCollision(entity, entityRect, rect, world.Map, isTile);
 						break;
-
+						
 					case CollisionType.Passable: break; // do nothing then
-
+						
 					default:
 						throw new NotImplementedException("Collision type not implemented.");
 				}
 			}
 		}
 
+		/// <summary>
+		/// Fixes a collision between an entity and an object.
+		/// </summary>
 		private void UndoCollision(PhysicsEntity entity, Rect entityRect,
-		                           Rect collided)
+		                           Rect collided, TileMap map, bool isTile)
 		{
 			Vec2 intersection = GetIntersectionDepth(entityRect, collided);
 
@@ -87,7 +100,9 @@ namespace GREATLib.Entities.Physics
 					}
 					//TODO: only undo collision for platforms if we hit the ground
 
-					entity.Velocity.Y = 0f; // stop our Y movement
+					// Only stop our movement if we're going straigth into the obstacle.
+					if (Math.Sign(intersection.Y) == -Math.Sign(entity.Velocity.Y))
+						entity.Velocity.Y = 0f; // stop our Y movement
 				}
 				else // collision on the x axis
 				{
@@ -97,6 +112,11 @@ namespace GREATLib.Entities.Physics
 			}
 		}
 
+		/// <summary>
+		/// Gets the intersection depth between two rectangles, telling how the first one
+		/// is inside the other one and in which direction we must push to fix the collision.
+		/// </summary>
+		/// <returns>The intersection depth.</returns>
 		private Vec2 GetIntersectionDepth(Rect A, Rect B)
 		{
 			// Calculate half sizes.

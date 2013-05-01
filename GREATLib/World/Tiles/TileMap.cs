@@ -36,9 +36,16 @@ namespace GREATLib.World.Tiles
 		/// <value>The tile rows.</value>
 		public List<List<Tile>> TileRows { get; private set; }
 
+		/// <summary>
+		/// Gets or sets the rectangles of the tiles.
+		/// </summary>
+		/// <value>The tile rectangles.</value>
+		private Dictionary<Tile, Rect> TileRectangles { get; set; }
+
         public TileMap()
         {
 			TileRows = GetDummyData();
+			InitMap();
         }
 
 		/// <summary>
@@ -56,16 +63,32 @@ namespace GREATLib.World.Tiles
 				GeneralHelper.MakeList(1, 0, 0, 0, 0, 0, 0, 0, 0, 1),
 				GeneralHelper.MakeList(1, 0, 0, 0, 0, 0, 0, 0, 0, 1),
 				GeneralHelper.MakeList(1, 0, 0, 0, 0, 0, 0, 0, 0, 1),
+				GeneralHelper.MakeList(1, 0, 0, 1, 0, 0, 0, 0, 0, 1),
+				GeneralHelper.MakeList(1, 0, 0, 0, 0, 1, 0, 0, 0, 1),
 				GeneralHelper.MakeList(1, 0, 0, 0, 0, 0, 0, 0, 0, 1),
-				GeneralHelper.MakeList(1, 0, 0, 0, 0, 0, 0, 0, 0, 1),
-				GeneralHelper.MakeList(1, 0, 0, 0, 0, 0, 0, 0, 0, 1),
-				GeneralHelper.MakeList(1, 0, 0, 0, 1, 0, 0, 0, 0, 1),
+				GeneralHelper.MakeList(1, 0, 0, 0, 1, 0, 0, 0, 1, 1),
 				GeneralHelper.MakeList(1, 0, 0, 1, 1, 1, 0, 0, 0, 1),
 				GeneralHelper.MakeList(1, 1, 1, 1, 1, 1, 1, 1, 1, 1));
 
 			return tiles.ConvertAll(
 				row => row.ConvertAll(
 					id => new Tile(id, collisions[ids.IndexOf(id)])));
+		}
+
+		private void InitMap()
+		{
+			TileRectangles = new Dictionary<Tile, Rect>();
+			for (int y = 0; y < GetHeightTiles(); ++y)
+			{
+				for (int x = 0; x < GetWidthTiles(); ++x)
+				{
+					TileRectangles.Add(TileRows[y][x],
+						new Rect(x * Tile.WIDTH,
+					         y * Tile.HEIGHT,
+					         Tile.WIDTH,
+					         Tile.HEIGHT));
+				}
+			}
 		}
 
 		/// <summary>
@@ -78,6 +101,8 @@ namespace GREATLib.World.Tiles
 		/// <param name="height">Height of the rectangle.</param>
 		public List<KeyValuePair<Rect, CollisionType>> GetTouchedTiles(Rect rectangle)
 		{
+			Debug.Assert(TileRectangles != null, "Map not initialized.");
+
 			// Get the start/end indices of the tiles that our rectangle touches
 			int startX = GeneralHelper.Clamp((int)rectangle.Left / Tile.WIDTH,
 			                                 0, GetWidthTiles() - 1);
@@ -97,8 +122,9 @@ namespace GREATLib.World.Tiles
 					CollisionType collision = TileRows[y][x].Collision;
 					if (collision != CollisionType.Passable) // we have a collision
 					{
-						Rect tileRect = new Rect(x * Tile.WIDTH, y * Tile.HEIGHT,
-						                         Tile.WIDTH, Tile.HEIGHT);
+						Debug.Assert(TileRectangles.ContainsKey(TileRows[y][x]), "Tile rectangle not created.");
+
+						Rect tileRect = TileRectangles[TileRows[y][x]];
 						touched.Add(new KeyValuePair<Rect, CollisionType>(
 							tileRect, collision));
 					}
@@ -123,6 +149,46 @@ namespace GREATLib.World.Tiles
 		public int GetHeightTiles()
 		{
 			return TileRows.Count;
+		}
+
+		/// <summary>
+		/// Checks if it is a valid x index.
+		/// </summary>
+		public bool IsValidXIndex(int x)
+		{
+			return x >= 0 && x < GetWidthTiles();
+		}
+		/// <summary>
+		/// Checks if it is a valid y index.
+		/// </summary>
+		public bool IsValidYIndex(int y)
+		{
+			return y >= 0 && y < GetHeightTiles();
+		}
+
+		/// <summary>
+		/// Gets the x index of the tile (as a rectangle).
+		/// </summary>
+		public int GetTileXIndex(Rect rect)
+		{
+			return (int)(rect.Left / Tile.WIDTH);
+		}
+		/// <summary>
+		/// Gets the y index of the tile (as a rectangle).
+		/// </summary>
+		public int GetTileYIndex(Rect rect)
+		{
+			return (int)(rect.Top / Tile.HEIGHT);
+		}
+
+		/// <summary>
+		/// Gets the collision of the given tile.
+		/// IF the tile is out of the tilemap, it returns a blocking collision.
+		/// </summary>
+		public CollisionType GetCollision(int tileX, int tileY)
+		{
+			return IsValidXIndex(tileX) && IsValidYIndex(tileY) ?
+				TileRows[tileY][tileX].Collision : CollisionType.Block;
 		}
     }
 }

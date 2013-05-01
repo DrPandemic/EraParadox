@@ -33,7 +33,7 @@ namespace GREATLib.Entities.Player.Champions
 		protected override float DefaultCollisionWidth { get { return 13f; } }
 		protected override float DefaultCollisionHeight { get { return 46f; } }
 
-		protected override float StartMoveSpeed { get { return 250f; } }
+		protected override float StartMoveSpeed { get { return 325f; } }
 
         public StickmanChampion()
         {

@@ -47,7 +47,6 @@ namespace GREATClient
         }
 		protected override void OnLoadContent()
 		{
-
 			//TODO: DrawableGameMatch? I personnally like the idea (Jesse)
 			AddChild(new DrawableTileMap(match.World.Map));
 
@@ -76,9 +75,10 @@ namespace GREATClient
 			
 			//TODO: remove. testing the physics engine
 			KeyboardState ks = Keyboard.GetState();
-			if (ks.IsKeyDown(Keys.Left)) { match.MovePlayer(OurId, HorizontalDirection.Left); }
-			if (ks.IsKeyDown(Keys.Right)) { match.MovePlayer(OurId, HorizontalDirection.Right); }
-			if (ks.IsKeyDown(Keys.Up)) { match.JumpPlayer(OurId); }
+			if (ks.IsKeyDown(Keys.A)) { match.MovePlayer(OurId, HorizontalDirection.Left); }
+			if (ks.IsKeyDown(Keys.D)) { match.MovePlayer(OurId, HorizontalDirection.Right); }
+			if (ks.IsKeyDown(Keys.W)) { 
+				match.JumpPlayer(OurId); }
 			if (ks.IsKeyDown(Keys.R)) match.GetPlayer(OurId).Champion.Position.Y = 0f;
 
 			match.Update((float)dt.ElapsedGameTime.TotalSeconds);
