@@ -22,24 +22,37 @@ using System;
 using System.Collections.Generic;
 using GREATLib.Entities.Player.Champions;
 using System.Diagnostics;
+using System.Xml.Serialization;
+using System.IO;
 
 namespace GREATClient
 {
 	/// <summary>
 	/// The information of an individual champion.
 	/// </summary>
+	[Serializable()]
 	public class ChampionInfo
 	{
-		public string Name { get; set; }
-		public string AssetName { get; set; }
-		public string Description { get; set; }
+		[System.Xml.Serialization.XmlElement("type", typeof(ChampionTypes))]
+		public ChampionTypes Type { get; set; }
 
-		public ChampionInfo(string name, string assetName, string description)
-		{
-			Name = name;
-			AssetName = assetName;
-			Description = description;
-		}
+		[System.Xml.Serialization.XmlElement("name")]
+		public string Name { get; set; }
+
+		[System.Xml.Serialization.XmlElement("assetname")]
+		public string AssetName { get; set; }
+
+		[System.Xml.Serialization.XmlElement("description")]
+		public string Description { get; set; }
+	}
+
+	[Serializable()]
+	[System.Xml.Serialization.XmlRoot("championcollection")]
+	public class ChampionInfoCollection
+	{
+		[System.Xml.Serialization.XmlArray("champions")]
+		[System.Xml.Serialization.XmlArrayItem("champion", typeof(ChampionInfo))]
+    	public ChampionInfo[] Champions { get; set; }
 	}
 
 	/// <summary>
@@ -63,13 +76,22 @@ namespace GREATClient
 
 		private void FillInfo()
 		{
+			const string CHAMPIONS_PATH = "Content/champions.xml";
 			Info = new Dictionary<ChampionTypes, ChampionInfo>();
 
-			//TODO: read from a champions.xml file! Users will be able to rename
-			// everything as they like and it will be much easier to manage (and update).
-			Info.Add(ChampionTypes.StickMan,
-			         new ChampionInfo("Stick Man", "Stickman",
-			                 "The drawn man that escaped his blank sheet and wants to take revenge upon his creators. Long has he awaited for a mere taste of liberty to finally try and defeat his oppressors. He will use any tools at hand, pencils or erasers, to defeat his enemies. Do not underestimate the powers of a drawing. Fear the Stick Man."));
+			ChampionInfoCollection champions = null;
+
+			XmlSerializer serializer = new XmlSerializer(typeof(ChampionInfoCollection));
+
+			StreamReader reader = new StreamReader(CHAMPIONS_PATH);
+			champions = (ChampionInfoCollection)serializer.Deserialize(reader);
+			reader.Close();
+
+			foreach (ChampionInfo info in champions.Champions)
+			{
+				Debug.Assert(!Info.ContainsKey(info.Type));
+				Info.Add(info.Type, info);
+			}
 		}
     }
 }

@@ -1,0 +1,34 @@
+<!-- 
+  So it looks like you would like to modify some meta-data about your favorite champions...
+  Go ahead!
+
+  Take note that some fields are dangerous to change, and playing where you shouldn't might
+  break your client.
+
+  Feel free to modify the following fields (although some might break the UI):
+  - name
+  - description
+
+  Please be careful with the following fields (they might just break your client and prevent you from playing):
+  - type
+  - assetname
+-->
+
+<?xml version="1.0" encoding="utf-8"?>
+<championcollection>
+<champions>
+
+  <!-- The Stick Man -->
+  <champion>
+    <type>StickMan</type>
+    <name>Stick Man</name>
+    <assetname>Stickman</assetname>
+    <description>The drawn man that escaped his blank sheet and wants to take revenge upon his creators. 
+      Long has he awaited for a mere taste of liberty to finally try and defeat his oppressors. 
+      He will use any tools at hand, pencils or erasers, to defeat his enemies. 
+      Do not underestimate the powers of a drawing. 
+      Fear the Stick Man.</description>
+  </champion>
+  
+</champions>
+</championcollection>

@@ -1,3 +1,10 @@
+2013-05-01  Jesse  <>
+
+	* champions.xml:
+	* GREATClient.Linux.csproj:
+	* GREATClient.Windows.csproj:
+	* ChampionsInfo.cs: 
+
 2013-04-30  Jesse  <>
 
 	* TestScreen.cs:
