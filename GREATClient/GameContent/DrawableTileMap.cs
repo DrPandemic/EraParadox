@@ -25,7 +25,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 
-namespace GameContent
+namespace GREATClient
 {
 	/// <summary>
 	/// Draws a tilemap.

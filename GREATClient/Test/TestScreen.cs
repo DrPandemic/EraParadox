@@ -28,7 +28,6 @@ using GREATLib.Entities.Player.Champions;
 using GREATLib;
 using Microsoft.Xna.Framework.Graphics;
 using GREATLib.World.Tiles;
-using GameContent;
 using GREATLib.Entities.Player;
 using GREATLib.Entities;
 
@@ -39,9 +38,11 @@ namespace GREATClient
 		//TODO: remove. temporary local tests
 		GameMatch match;
 		int OurId { get; set; }
+		ChampionsInfo championsInfo { get; set; }
 
 		public TestScreen(ContentManager content) : base(content)
         {
+			championsInfo = new ChampionsInfo();
 			OurId = EntityIDGenerator.NO_ID;
 			match = new GameMatch();
         }
@@ -54,7 +55,7 @@ namespace GREATClient
 			OurId = match.AddPlayer(new Player(), new StickmanChampion() {
 				Position = new Vec2(200f, 100f)
 			});
-			AddChild(new DrawableChampion(match.GetPlayer(OurId).Champion));
+			AddChild(new DrawableChampion(match.GetPlayer(OurId).Champion, championsInfo));
 			DrawableTriangle tr =  new DrawableTriangle(true);
 			tr.Ascendant = false;
 			tr.Tint = Color.Blue;

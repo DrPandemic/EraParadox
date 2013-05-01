@@ -51,6 +51,7 @@
     <Compile Include="Entities\EntityIDGenerator.cs" />
     <Compile Include="Rect.cs" />
     <Compile Include="World\Tiles\CollisionType.cs" />
+    <Compile Include="Entities\Player\Champions\ChampionTypes.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

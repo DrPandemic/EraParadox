@@ -23,7 +23,7 @@ using GREATClient;
 using GREATLib.Entities.Player.Champions;
 using Microsoft.Xna.Framework;
 
-namespace GameContent
+namespace GREATClient
 {
 	/// <summary>
 	/// Represents a champion in the game.
@@ -32,8 +32,8 @@ namespace GameContent
     {
 		public IChampion Champion { get; set; }
 
-        public DrawableChampion(IChampion champion)
-			: base(champion.AssetName + "_stand") //TODO: handle many animations instead
+        public DrawableChampion(IChampion champion, ChampionsInfo championsInfo)
+			: base(championsInfo.GetInfo(champion.Type).AssetName + "_stand") //TODO: handle many animations instead
         {
 			Champion = champion;
 			OriginRelative = new Vector2(0.5f, 1f); // position at the feet

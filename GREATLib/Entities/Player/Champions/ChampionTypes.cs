@@ -1,5 +1,5 @@
 //
-//  StickmanChampion.cs
+//  ChampionTypes.cs
 //
 //  Author:
 //       Jesse <>
@@ -23,20 +23,11 @@ using System;
 namespace GREATLib.Entities.Player.Champions
 {
 	/// <summary>
-	/// The Stickman champion.
+	/// The available champions.
 	/// </summary>
-    public class StickmanChampion : IChampion
+    public enum ChampionTypes
     {
-		public override ChampionTypes Type { get { return ChampionTypes.StickMan; } }
-
-		protected override float DefaultCollisionWidth { get { return 13f; } }
-		protected override float DefaultCollisionHeight { get { return 46f; } }
-
-		protected override float StartMoveSpeed { get { return 325f; } }
-
-        public StickmanChampion()
-        {
-        }
+		StickMan = 0
     }
 }
 

@@ -1,5 +1,12 @@
 2013-04-30  Jesse  <>
 
+	* GREATLib.csproj:
+	* IChampion.cs:
+	* ChampionTypes.cs:
+	* StickmanChampion.cs: 
+
+2013-04-30  Jesse  <>
+
 	* TileMap.cs:
 	* PhysicsSystem.cs:
 	* PhysicsEntity.cs:
