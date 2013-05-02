@@ -13,8 +13,6 @@
   - type
   - assetname
 -->
-
-<?xml version="1.0" encoding="utf-8"?>
 <championcollection>
 <champions>
 
@@ -29,6 +27,5 @@
       Do not underestimate the powers of a drawing. 
       Fear the Stick Man.</description>
   </champion>
-  
 </champions>
 </championcollection>
