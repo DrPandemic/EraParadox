@@ -20,7 +20,7 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 
-namespace GREATLib.Entities.Player.Champions
+namespace GREATLib.Entities.Player.Champions.AllChampions
 {
 	/// <summary>
 	/// The Stickman champion.

@@ -18,18 +18,14 @@
 //
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-using System;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
-using System.Collections.Generic;
-using GREATLib.Entities.Physics;
-using GREATLib.Entities.Player.Champions;
 using GREATLib;
-using Microsoft.Xna.Framework.Graphics;
-using GREATLib.World.Tiles;
-using GREATLib.Entities.Player;
 using GREATLib.Entities;
+using GREATLib.Entities.Physics;
+using GREATLib.Entities.Player;
+using GREATLib.Entities.Player.Champions.AllChampions;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Input;
 
 namespace GREATClient
 {
