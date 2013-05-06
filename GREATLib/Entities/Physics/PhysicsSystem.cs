@@ -122,7 +122,7 @@ namespace GREATLib.Entities.Physics
 		{
 			if (entity.IsOnGround)
 			{
-				ApplyForce(entity, -Vec2.UnitY * entity.JumpForce);
+				entity.Velocity.Y =  -entity.JumpForce;
 				entity.IsOnGround = false; // assume that we'll lift off the ground to avoid multi-jump.
 			}
 		}
