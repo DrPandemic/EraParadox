@@ -72,6 +72,8 @@ namespace GREATClient
 		{
 			Parent = null;
 			Z = 0;
+			Visible = true;
+			Updatable = true;
 		}
 
 		/// <summary>
@@ -110,13 +112,34 @@ namespace GREATClient
 		/// Draw the specified batch.
 		/// </summary>
 		/// <param name="batch">Batch.</param>
-		public abstract void Draw(SpriteBatch batch);
+		public virtual void Draw(SpriteBatch batch)
+		{
+			if(Visible)
+				OnDraw(batch);
+		}
+
+		/// <summary>
+		/// Called after Draw if visible
+		/// </summary>
+		/// <param name="batch">Batch.</param>
+		protected virtual void OnDraw(SpriteBatch batch);
+
 		/// <summary>
 		/// Update
 		/// Dt is disference of time since last call
 		/// </summary>
 		/// <param name="dt">Dt.</param>
-		public virtual void Update(GameTime dt) { }
+		public void Update(GameTime dt)
+		{
+			if(Updatable)
+				OnUpdate(dt);
+		}
+
+		/// <summary>
+		/// Called afet Update if Updatable
+		/// </summary>
+		/// <param name="dt">Dt.</param>
+		protected virtual void OnUpdate(GameTime dt);
     }
 }
 

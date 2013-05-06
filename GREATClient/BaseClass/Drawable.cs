@@ -115,9 +115,8 @@ namespace GREATClient
 			if(Texture == null)
 				OnLoad(Parent.Content,Parent.GetGraphics());
 
+			base.Draw(batch);
 		}
-
-
     }
 }
 

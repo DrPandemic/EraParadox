@@ -94,7 +94,7 @@ namespace GREATClient
 		/// <summary>
 		/// Draw this instance.
 		/// </summary>
-		public virtual void Draw()
+		public virtual void OnDraw()
 		{
 			Children.ForEach(child => child.Draw(spriteBatch));
 		}

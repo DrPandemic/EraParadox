@@ -63,7 +63,7 @@ namespace GREATClient
 			AddChild(new DrawableCircle());
 		}
 
-		public override void Update(GameTime dt)
+		protected override void OnUpdate(GameTime dt)
 		{
 			// For Mobile devices, this logic will close the Game when the Back button is pressed
 			if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState(PlayerIndex.One).IsKeyDown(Keys.Escape)) {

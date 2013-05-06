@@ -53,7 +53,7 @@ namespace GREATClient
 
 		}
 
-		public override void Draw(SpriteBatch batch)
+		public override void OnDraw(SpriteBatch batch)
 		{
 			Vector2 position = GetAbsolutePosition();
 			batch.Begin();
