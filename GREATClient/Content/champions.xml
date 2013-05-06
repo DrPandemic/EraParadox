@@ -1,14 +1,18 @@
+<championcollection>
 <champions>
-  <!-- The Stick Man -->
-  <champion type="StickMan" name="Stick Man" assetname="Stickman">
+
+  <!-- The Stick-Man -->
+  <champion type="StickMan" name="Stick-Man" assetname="Stickman">
     <description>The drawn man that escaped his blank sheet and wants to take revenge upon his creators. 
       Long has he awaited for a mere taste of liberty to finally try and defeat his oppressors. 
       He will use any tools at hand, pencils or erasers, to defeat his enemies. 
       Do not underestimate the powers of a drawing. 
       Fear the Stick Man.</description>
-      <animations>
-        <animation name="run" frames="4" line="2"/>
-        <animation name="stand" frames="4" line="1"/>
-      </animations>
+    <animations>
+      <animation name="idle" line="0" framecount="3" framerate="4"/>
+      <animation name="run" line="1" framecount="8" framerate="6"/>
+    </animations>
   </champion>
+
 </champions>
+</championcollection>

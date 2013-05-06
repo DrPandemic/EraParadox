@@ -28,22 +28,71 @@ using System.IO;
 namespace GREATClient
 {
 	/// <summary>
+	/// The information of an animation of a champion.
+	/// </summary>
+	[Serializable()]
+	public class AnimationInfo
+	{
+		public const string RUN = "run";
+		public const string IDLE = "idle";
+		public const string JUMP = "jump";
+		public const string DIE = "die";
+		public const string SPELL1 = "spell1";
+		public const string SPELL2 = "spell2";
+		public const string SPELL3 = "spell3";
+		public const string SPELL4 = "spell4";
+
+
+		[System.Xml.Serialization.XmlAttribute("name")]
+		public string Name { get; set; }
+		
+		[System.Xml.Serialization.XmlAttribute("line")]
+		public int Line { get; set; }
+
+		[System.Xml.Serialization.XmlAttribute("framecount")]
+		public int FrameCount { get; set; }
+
+		[System.Xml.Serialization.XmlAttribute("framerate")]
+		public int FrameRate { get; set; }
+	}
+
+	/// <summary>
 	/// The information of an individual champion.
 	/// </summary>
 	[Serializable()]
 	public class ChampionInfo
 	{
-		[System.Xml.Serialization.XmlElement("type", typeof(ChampionTypes))]
+		[System.Xml.Serialization.XmlAttribute("type")]
 		public ChampionTypes Type { get; set; }
 
-		[System.Xml.Serialization.XmlElement("name")]
+		[System.Xml.Serialization.XmlAttribute("name")]
 		public string Name { get; set; }
 
-		[System.Xml.Serialization.XmlElement("assetname")]
+		[System.Xml.Serialization.XmlAttribute("assetname")]
 		public string AssetName { get; set; }
 
 		[System.Xml.Serialization.XmlElement("description")]
 		public string Description { get; set; }
+
+		[System.Xml.Serialization.XmlArray("animations")]
+		[System.Xml.Serialization.XmlArrayItem("animation", typeof(AnimationInfo))]
+		public AnimationInfo[] Animations { get; set; }
+
+
+		/// <summary>
+		/// Gets the animation with the given name.
+		/// </summary>
+		/// <returns>The animation.</returns>
+		/// <param name="name">Name.</param>
+		public AnimationInfo GetAnimation(string name)
+		{
+			foreach (AnimationInfo anim in Animations)
+				if (anim.Name.ToLower() == name.ToLower())
+					return anim;
+
+			Debug.Assert(false, "No animation with the name " + name + " for the champion " + Name + ".");
+			return null;
+		}
 	}
 
 	[Serializable()]
