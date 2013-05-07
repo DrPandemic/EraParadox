@@ -53,8 +53,11 @@ namespace GREATLib.Entities.Player.Spells
 		/// <value><c>true</c> if this instance is on cooldown; otherwise, <c>false</c>.</value>
 		public bool IsOnCooldown { get { return TimeLeftOnCooldown.TotalMilliseconds > 0.0; } }
 
+		protected bool Activated { get; set; }
+
         public ISpell(TimeSpan cooldown)
         {
+			Activated = false;
 			Cooldown = cooldown;
 			TimeLeftOnCooldown = new TimeSpan();
         }
@@ -72,6 +75,7 @@ namespace GREATLib.Entities.Player.Spells
 			if (!IsOnCooldown)
 			{
 				casted = true;
+				Activated = true;
 				TimeLeftOnCooldown = Cooldown;
 				OnActivate(owner, match, target, mouseDelta);
 			}
@@ -90,6 +94,13 @@ namespace GREATLib.Entities.Player.Spells
 
 				Console.WriteLine(TimeLeftOnCooldown.TotalMilliseconds);
 			}
+
+			if (Activated)
+				OnUpdate(deltaSeconds);
+		}
+
+		protected virtual void OnUpdate(double deltaSeconds)
+		{
 		}
 
 		protected abstract void OnActivate(IChampion owner, GameMatch match, IEntity target, Vec2 mouseDelta);

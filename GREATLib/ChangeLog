@@ -50,6 +50,11 @@
 =======
 2013-05-07  Jesse  <>
 
+	* ISpell.cs:
+	* StickManRangedSpell.cs: 
+
+2013-05-07  Jesse  <>
+
 	* PhysicsSystem.cs:
 	* PhysicsEntity.cs: 
 

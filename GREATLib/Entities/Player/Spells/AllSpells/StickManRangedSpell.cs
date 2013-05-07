@@ -25,7 +25,12 @@ namespace GREATLib.Entities.Player.Spells.AllSpells
 {
 	public class StickManRangedSpell : ISpell
     {
+		Vec2 direction;
+		IChampion owner;
 		public override SpellTypes Type { get { return SpellTypes.StickMan_RangedAttack; } }
+		double timeDashing = 0;
+		static readonly TimeSpan TimeDashing = TimeSpan.FromSeconds(0.1);
+
 
 		public StickManRangedSpell()
 			: base(TimeSpan.FromSeconds(2))
@@ -34,10 +39,23 @@ namespace GREATLib.Entities.Player.Spells.AllSpells
 
 		protected override void OnActivate(IChampion owner, GameMatch match, IEntity target, Vec2 mouseDelta)
 		{
+			this.owner = owner;
 			//TODO: create a projectile, just jump the player for now
 			Vec2 dir = Vec2.Normalize(mouseDelta);
-			owner.Velocity.X += dir.X * 1000f;
+			direction = dir;
+			owner.Velocity.X += dir.X * 200f;
 			owner.Velocity.Y += dir.Y * 500f;
+			timeDashing = 0.0;
+		}
+
+		protected override void OnUpdate(double deltaSeconds)
+		{
+			base.OnUpdate(deltaSeconds);
+			owner.Velocity.X += direction.X * 200f;
+	
+			timeDashing += deltaSeconds;
+			if (timeDashing >= TimeDashing.TotalSeconds)
+				Activated = false;
 		}
     }
 }
