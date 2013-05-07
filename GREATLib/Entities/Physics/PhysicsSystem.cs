@@ -100,7 +100,9 @@ namespace GREATLib.Entities.Physics
 		{
 			// The minimum speed at which we're supposed to go.
 			float moveXVel = (int)entity.Direction * entity.MoveSpeed;
-			//TODO: implement air drag here
+
+			if (!entity.IsOnGround) moveXVel *= entity.AirAcceleration;
+
 			// Only move if we're not already moving too fast
 			if ((moveXVel < 0 && moveXVel < entity.Velocity.X) || (moveXVel > 0 && moveXVel > entity.Velocity.X))
 				entity.Velocity.X = moveXVel;

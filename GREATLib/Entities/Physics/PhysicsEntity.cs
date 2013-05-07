@@ -68,7 +68,7 @@ namespace GREATLib.Entities.Physics
 		/// </summary>
 		/// <value>The air acceleration.</value>
 		public float AirAcceleration { get; set; }
-		protected virtual float DefaultAirAcceleration { get { return 0.5f; } }
+		protected virtual float DefaultAirAcceleration { get { return 0.8f; } }
 
 		/// <summary>
 		/// Gets the width of the collision box around the entity (for
