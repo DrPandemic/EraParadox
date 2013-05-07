@@ -1,3 +1,18 @@
+2013-05-06  The Parasithe  <bipbip500@hotmail.com>
+
+	* Game1.cs:
+	* TestScreen.cs:
+	* IDraw.cs:
+	* Screen.cs:
+	* Drawable.cs:
+	* Container.cs:
+	* DrawableImage.cs:
+	* ChampionsInfo.cs:
+	* DrawableTileMap.cs:
+	* DrawableRectangle.cs:
+	* DrawableChampion.cs:
+	* DrawableCircleContour.cs: 
+
 <<<<<<< Upstream, based on origin/master
 2013-05-06  Jesse  <>
 

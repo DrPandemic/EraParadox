@@ -65,9 +65,8 @@ namespace GREATClient
 			Texture = new Texture2D(gd,1,1);
 			Texture.SetData(new Color[] { Color.White });
 		}
-		public override void OnDraw(SpriteBatch batch)
+		protected override void OnDraw(SpriteBatch batch)
 		{
-			base.Draw(batch);
 			batch.Begin();
 			batch.Draw(Texture,new Rectangle((int)(GetAbsolutePosition().X-OriginRelative.X*Size.X),
 			                                 (int)(GetAbsolutePosition().Y-OriginRelative.Y*Size.Y),

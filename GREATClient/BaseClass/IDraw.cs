@@ -122,7 +122,7 @@ namespace GREATClient
 		/// Called after Draw if visible
 		/// </summary>
 		/// <param name="batch">Batch.</param>
-		protected virtual void OnDraw(SpriteBatch batch);
+		protected abstract void OnDraw(SpriteBatch batch);
 
 		/// <summary>
 		/// Update
@@ -139,7 +139,9 @@ namespace GREATClient
 		/// Called afet Update if Updatable
 		/// </summary>
 		/// <param name="dt">Dt.</param>
-		protected virtual void OnUpdate(GameTime dt);
+		protected virtual void OnUpdate(GameTime dt)
+		{
+		}
     }
 }
 

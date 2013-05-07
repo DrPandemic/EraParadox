@@ -63,9 +63,8 @@ namespace GREATClient
 			Texture = CreateCircle(Radius,gd);
 
 		}
-		public override void OnDraw(SpriteBatch batch)
+		protected override void OnDraw(SpriteBatch batch)
 		{
-			base.Draw(batch);
 			batch.Begin();
 			batch.Draw(Texture,GetAbsolutePosition(),SourceRectangle,Tint,Orientation,
 			           OriginRelative * new Vector2(Texture.Width, Texture.Height),Scale,Effects,0);

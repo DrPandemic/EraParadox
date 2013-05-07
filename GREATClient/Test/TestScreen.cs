@@ -57,10 +57,7 @@ namespace GREATClient
 			tr.Tint = Color.Blue;
 			tr.Scale = new Vector2(1f,2f);
 			//AddChild(tr);
-			DrawableCircleContour ci = new DrawableCircleContour(32);
-			ci.Position = new Vector2(100,100);
-			AddChild(ci);
-			AddChild(new DrawableCircle());
+
 		}
 
 		protected override void OnUpdate(GameTime dt)
@@ -74,13 +71,13 @@ namespace GREATClient
 			KeyboardState ks = Keyboard.GetState();
 			if (ks.IsKeyDown(Keys.A)) { match.MovePlayer(OurId, HorizontalDirection.Left); }
 			if (ks.IsKeyDown(Keys.D)) { match.MovePlayer(OurId, HorizontalDirection.Right); }
-			if (ks.IsKeyDown(Keys.W)) { 
-				match.JumpPlayer(OurId); }
+			if (ks.IsKeyDown(Keys.W)) { match.JumpPlayer(OurId); }
 			if (ks.IsKeyDown(Keys.R)) match.GetPlayer(OurId).Champion.Position.Y = 0f;
 
 			match.Update((float)dt.ElapsedGameTime.TotalSeconds);
 
-			base.Update(dt);
+			base.OnUpdate(dt);
+
 		}
     }
 }

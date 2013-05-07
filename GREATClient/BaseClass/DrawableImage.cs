@@ -56,9 +56,8 @@ namespace GREATClient
 		/// Draw the object.
 		/// </summary>
 		/// <param name="batch">The spritebatch used to draw the object.</param>
-		public override void OnDraw(SpriteBatch batch)
+		protected override void OnDraw(SpriteBatch batch)
 		{
-			base.Draw(batch);			
 
 			batch.Begin();
 			batch.Draw(Texture,GetAbsolutePosition(),SourceRectangle,Tint,Orientation,

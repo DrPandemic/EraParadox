@@ -115,8 +115,6 @@ namespace GREATClient
 		/// <param name="dt">Delta time (time since the last frame).</param>
 		protected override void OnUpdate(GameTime dt)
 		{
-			base.Update(dt);
-
 			Children.ForEach(child => child.Update(dt));
 
 			// We remove the objects that we should
@@ -128,7 +126,7 @@ namespace GREATClient
 		/// Draw the container and its children.
 		/// </summary>
 		/// <param name="batch">The spritebatch, used in the drawing process.</param>
-		public override void OnDraw(SpriteBatch batch)
+		protected override void OnDraw(SpriteBatch batch)
 		{
 			Children.ForEach(child => child.Draw(batch));
 		}

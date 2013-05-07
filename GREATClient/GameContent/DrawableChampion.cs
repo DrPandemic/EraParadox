@@ -38,11 +38,12 @@ namespace GREATClient
 			Champion = champion;
 			OriginRelative = new Vector2(0.5f, 1f); // position at the feet
         }
-		public override void Update(Microsoft.Xna.Framework.GameTime dt)
+		protected override void OnUpdate(Microsoft.Xna.Framework.GameTime dt)
 		{
-			base.Update(dt);
 			Position = Champion.Position.ToVector2();
 		}
+
+
     }
 }
 
