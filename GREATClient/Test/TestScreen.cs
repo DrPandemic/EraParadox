@@ -58,6 +58,8 @@ namespace GREATClient
 			tr.Scale = new Vector2(1f,2f);
 			//AddChild(tr);
 
+
+
 		}
 
 		protected override void OnUpdate(GameTime dt)

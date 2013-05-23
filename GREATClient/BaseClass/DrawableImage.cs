@@ -45,7 +45,6 @@ namespace GREATClient
 		/// Loads the image of the object.
 		/// </summary>
 		/// <param name="content">Content.</param>
-
 		protected override void OnLoad(ContentManager content, GraphicsDevice gd)
 		{
 			if(content != null && gd != null)

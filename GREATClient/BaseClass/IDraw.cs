@@ -141,6 +141,7 @@ namespace GREATClient
 		/// <param name="dt">Dt.</param>
 		protected virtual void OnUpdate(GameTime dt)
 		{
+
 		}
     }
 }

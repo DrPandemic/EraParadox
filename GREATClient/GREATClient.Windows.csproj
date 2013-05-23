@@ -57,6 +57,7 @@
     <Compile Include="BaseClass\DrawableCircleContour.cs" />
     <Compile Include="BaseClass\DrawableCircle.cs" />
     <Compile Include="GameContent\ChampionsInfo.cs" />
+    <Compile Include="BaseClass\DrawableSprite.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />

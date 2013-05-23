@@ -78,6 +78,7 @@ namespace GREATClient
 			client.Start();
 
 			base.Initialize();
+
 		}
 
 		/// <summary>
