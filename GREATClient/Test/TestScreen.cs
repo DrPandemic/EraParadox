@@ -58,8 +58,14 @@ namespace GREATClient
 			tr.Scale = new Vector2(1f,2f);
 			//AddChild(tr);
 
+			DrawableSprite sp1 = new DrawableSprite("Stickman_run", 34, 33, 0, 10, 6);
+			sp1.Position = new Vector2(205, 205);
+			AddChild(sp1);
 
-
+			DrawableSprite sp2 = new DrawableSprite("Stickman_run", 34, 33, 0, 10, 6);
+			sp2.Position = new Vector2(335, 270);
+			sp2.FlipX = true;
+			AddChild(sp2);
 		}
 
 		protected override void OnUpdate(GameTime dt)

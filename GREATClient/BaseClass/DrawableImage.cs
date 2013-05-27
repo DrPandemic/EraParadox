@@ -36,6 +36,21 @@ namespace GREATClient
 		/// <value>The name of the file.</value>
 		public string FileName { get; private set; }
 
+		/// <summary>
+		/// Gets or sets a value indicating whether this <see cref="GREATClient.DrawableImage"/> is fliped in x.
+		/// </summary>
+		/// <value><c>true</c> if flip x; otherwise, <c>false</c>.</value>
+		bool flipX;
+		public bool FlipX 
+		{ 
+			get { return flipX; } 
+			set 
+			{
+				flipX = value;
+				Effects = (value ? SpriteEffects.FlipHorizontally : SpriteEffects.None );
+			}
+		}
+
         public DrawableImage(string file) : base()
         {
 			FileName = file;

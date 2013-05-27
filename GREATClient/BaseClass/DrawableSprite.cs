@@ -148,6 +148,7 @@ namespace GREATClient
 			{
 				Debug.Assert(value > 0, "The current frame must be mroe than 0");
 				currentFrame = value;
+				GenerateSourceRectangle();
 			}
 		}
 
@@ -162,7 +163,7 @@ namespace GREATClient
 			FrameCount = frameCount;
 			RepetitionCount = repetitionCount;
 
-			IsPlaying = false;
+			IsPlaying = autoStart;
 
 			UntilNextAnim = TimeSpan.FromSeconds(0);
 			CurrentFrame = 0;
@@ -206,11 +207,12 @@ namespace GREATClient
 		{
 			if(IsPlaying && FrameRate != 0)
 			{
-				UntilNextAnim.Add(dt.ElapsedGameTime);
+				UntilNextAnim = UntilNextAnim.Add(dt.ElapsedGameTime);
 
 				if(UntilNextAnim > TimeByFrame)
 				{
-					UntilNextAnim.Subtract(TimeByFrame);
+					//TODO add repetition
+					UntilNextAnim = UntilNextAnim.Subtract(TimeByFrame);
 					CurrentFrame++;
 
 					if (CurrentFrame >= FrameCount) 
