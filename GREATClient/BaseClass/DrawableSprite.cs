@@ -205,18 +205,20 @@ namespace GREATClient
 
 		protected override void OnUpdate(GameTime dt)
 		{
-			if(IsPlaying && FrameRate != 0)
+			if(IsPlaying && FrameRate != 0 && (RepetitionCount != 0))
 			{
 				UntilNextAnim = UntilNextAnim.Add(dt.ElapsedGameTime);
 
-				if(UntilNextAnim > TimeByFrame)
-				{
-					//TODO add repetition
+				if (UntilNextAnim > TimeByFrame) {
 					UntilNextAnim = UntilNextAnim.Subtract(TimeByFrame);
 					CurrentFrame++;
 
-					if (CurrentFrame >= FrameCount) 
+					if (CurrentFrame >= FrameCount) {
 						CurrentFrame = 0;	
+
+						if (RepetitionCount > 0)
+							RepetitionCount--;
+					}
 				}
 			}
 		}
