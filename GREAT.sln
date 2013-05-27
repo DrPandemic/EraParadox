@@ -38,7 +38,7 @@ Global
 		{A7C14748-728B-427E-9946-3C6681F14A60}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = GREATClient\GREATClient.Windows.csproj
+		StartupItem = GREATClient\GREATClient.Linux.csproj
 		Policies = $0
 		$0.DotNetNamingPolicy = $1
 		$1.DirectoryNamespaceAssociation = Hierarchical

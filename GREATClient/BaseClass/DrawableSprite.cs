@@ -91,6 +91,8 @@ namespace GREATClient
 			{
 				Debug.Assert(value >= 0 , "The line must be zero or greater");
 				frameRate = value;
+
+				CalculateTimeByFrame();
 			}
 		}
 
@@ -104,7 +106,7 @@ namespace GREATClient
 			get { return frameCount; } 
 			set
 			{
-				Debug.Assert(value > 0, "The frame count");
+				Debug.Assert(value > 0, "The frame count must be mroe than 0");
 				frameCount = value;
 			}
 		}
@@ -123,7 +125,7 @@ namespace GREATClient
 		int RepetitionCount { get; set; }
 
 		/// <summary>
-		/// Gets or sets the until next animation.
+		/// Gets or sets the time to now when to change of anim
 		/// </summary>
 		/// <value>The until next animation.</value>
 		TimeSpan UntilNextAnim { get; set; }
@@ -138,7 +140,16 @@ namespace GREATClient
 		/// Gets or sets the current frame.
 		/// </summary>
 		/// <value>The current frame.</value>
-		int CurrentFrame  { get; set; }
+		int currentFrame;
+		int CurrentFrame  
+		{ 
+			get { return currentFrame; }
+			set
+			{
+				Debug.Assert(value > 0, "The current frame must be mroe than 0");
+				currentFrame = value;
+			}
+		}
 
 
 		public DrawableSprite(string assetName, int frameWidth, int frameHeight, int line, float frameRate, int frameCount, int repetitionCount = 1, bool autoStart = true)
@@ -152,6 +163,9 @@ namespace GREATClient
 			RepetitionCount = repetitionCount;
 
 			IsPlaying = false;
+
+			UntilNextAnim = TimeSpan.FromSeconds(0);
+			CurrentFrame = 0;
         }
 	
 		/// <summary>
@@ -160,7 +174,6 @@ namespace GREATClient
 		public void Play()
 		{
 			IsPlaying = true;
-
 		}
 
 		/// <summary>
@@ -171,22 +184,47 @@ namespace GREATClient
 			IsPlaying = false;
 		}
 
-
-		private void CalculateNextTick()
+		/// <summary>
+		/// Calculates the time by frame with the frame rate.
+		/// </summary>
+		private void CalculateTimeByFrame()
 		{
+			Debug.Assert(FrameRate > 0, "The frame rate must be positive.");
 			//TODO calculer le nobre de temps que dure une frame
+			TimeByFrame = TimeSpan.FromMilliseconds(1000.0/FrameRate);
+		}
+
+		/// <summary>
+		/// Generates the source rectangle with the current frame, line, width and height
+		/// </summary>
+		private void GenerateSourceRectangle()
+		{
+			SourceRectangle = new Rectangle(CurrentFrame * FrameWidth, Line * FrameHeight, FrameWidth, FrameHeight);
 		}
 
 		protected override void OnUpdate(GameTime dt)
 		{
-			if(IsPlaying)
+			if(IsPlaying && FrameRate != 0)
 			{
-				//TODO Regarder quand on doit changer de frame
+				UntilNextAnim.Add(dt.ElapsedGameTime);
+
+				if(UntilNextAnim > TimeByFrame)
+				{
+					UntilNextAnim.Subtract(TimeByFrame);
+					CurrentFrame++;
+
+					if (CurrentFrame >= FrameCount) 
+						CurrentFrame = 0;	
+				}
 			}
 		}
 
 		protected override void OnDraw(SpriteBatch batch)
 		{
+			batch.Begin();
+			batch.Draw(Texture,GetAbsolutePosition(),SourceRectangle,Tint,Orientation,
+			           OriginRelative * new Vector2(Texture.Width, Texture.Height),Scale,Effects,0);
+			batch.End();
 		}
     }
 }
