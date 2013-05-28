@@ -106,7 +106,7 @@ namespace GREATClient
 			get { return frameCount; } 
 			set
 			{
-				Debug.Assert(value > 0, "The frame count must be mroe than 0");
+				Debug.Assert(value > 0, "The frame count must be more than 0");
 				frameCount = value;
 			}
 		}
@@ -146,11 +146,14 @@ namespace GREATClient
 			get { return currentFrame; }
 			set
 			{
-				Debug.Assert(value > 0, "The current frame must be mroe than 0");
-				currentFrame = value;
+				Debug.Assert(value >= 0, "The current frame must be mroe than 0");
+				currentFrame = value % FrameCount;
 				GenerateSourceRectangle();
 			}
 		}
+
+		protected override int Width { get { return FrameWidth; } }
+		protected override int Height { get { return FrameHeight; } }
 
 
 		public DrawableSprite(string assetName, int frameWidth, int frameHeight, int line, float frameRate, int frameCount, int repetitionCount = 1, bool autoStart = true)
@@ -214,19 +217,8 @@ namespace GREATClient
 					//TODO add repetition
 					UntilNextAnim = UntilNextAnim.Subtract(TimeByFrame);
 					CurrentFrame++;
-
-					if (CurrentFrame >= FrameCount) 
-						CurrentFrame = 0;	
 				}
 			}
-		}
-
-		protected override void OnDraw(SpriteBatch batch)
-		{
-			batch.Begin();
-			batch.Draw(Texture,GetAbsolutePosition(),SourceRectangle,Tint,Orientation,
-			           OriginRelative * new Vector2(Texture.Width, Texture.Height),Scale,Effects,0);
-			batch.End();
 		}
     }
 }

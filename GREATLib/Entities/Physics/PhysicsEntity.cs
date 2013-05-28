@@ -46,6 +46,10 @@ namespace GREATLib.Entities.Physics
 		/// <value>The direction.</value>
 		public HorizontalDirection Direction { get; set; }
 
+		public Animation CurrentAnimation { get; set; }
+
+		public bool FacingLeft { get; set; }
+
 		/// <summary>
 		/// Gets or sets the horizontal acceleration of the entity.
 		/// The value represents the percentage of the horizontal force
@@ -92,6 +96,8 @@ namespace GREATLib.Entities.Physics
 
         public PhysicsEntity()
         {
+			FacingLeft = false;
+			CurrentAnimation = Animation.Idle;
 			IsOnGround = false;
 			Velocity = new Vec2();
 			HorizontalAcceleration = DefaultHorizontalAcceleration;

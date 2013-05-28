@@ -1,5 +1,5 @@
 //
-//  StickmanChampion.cs
+//  Animation.cs
 //
 //  Author:
 //       Jesse <>
@@ -20,23 +20,13 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 
-namespace GREATLib.Entities.Player.Champions.AllChampions
+namespace GREATLib.Entities.Physics
 {
-	/// <summary>
-	/// The Stickman champion.
-	/// </summary>
-    public class StickmanChampion : IChampion
+    public enum Animation
     {
-		public override ChampionTypes Type { get { return ChampionTypes.StickMan; } }
-
-		protected override float DefaultCollisionWidth { get { return 13f; } }
-		protected override float DefaultCollisionHeight { get { return 46f; } }
-
-		protected override float StartMoveSpeed { get { return 325f; } }
-
-        public StickmanChampion()
-        {
-        }
+		Idle,
+		Move,
+		Die
     }
 }
 

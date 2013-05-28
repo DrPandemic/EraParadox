@@ -84,6 +84,13 @@ namespace GREATLib.Entities.Physics
 				Collisions.HandleCollisions(entity, world);
 			}
 
+			if (entity.Direction != HorizontalDirection.None) {
+				entity.CurrentAnimation = Animation.Move;
+				entity.FacingLeft = entity.Direction == HorizontalDirection.Left;
+			}
+			else
+				entity.CurrentAnimation = Animation.Idle;
+
 			entity.Direction = HorizontalDirection.None; // Reset our moving value
 			// Make the movement fade out over time
 			entity.Velocity.X *= entity.HorizontalAcceleration;

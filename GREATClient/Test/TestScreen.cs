@@ -36,6 +36,9 @@ namespace GREATClient
 		int OurId { get; set; }
 		ChampionsInfo championsInfo { get; set; }
 
+		KeyboardState oldks;
+		MouseState oldms;
+
 		public TestScreen(ContentManager content) : base(content)
         {
 			championsInfo = new ChampionsInfo();
@@ -56,16 +59,9 @@ namespace GREATClient
 			tr.Ascendant = false;
 			tr.Tint = Color.Blue;
 			tr.Scale = new Vector2(1f,2f);
-			//AddChild(tr);
 
-			DrawableSprite sp1 = new DrawableSprite("Stickman_run", 34, 33, 0, 10, 6);
-			sp1.Position = new Vector2(205, 205);
-			AddChild(sp1);
-
-			DrawableSprite sp2 = new DrawableSprite("Stickman_run", 34, 33, 0, 10, 6);
-			sp2.Position = new Vector2(335, 270);
-			sp2.FlipX = true;
-			AddChild(sp2);
+			oldks = Keyboard.GetState();
+			oldms = Mouse.GetState();
 		}
 
 		protected override void OnUpdate(GameTime dt)
@@ -77,15 +73,19 @@ namespace GREATClient
 			
 			//TODO: remove. testing the physics engine
 			KeyboardState ks = Keyboard.GetState();
+			MouseState ms = Mouse.GetState();
 			if (ks.IsKeyDown(Keys.A)) { match.MovePlayer(OurId, HorizontalDirection.Left); }
 			if (ks.IsKeyDown(Keys.D)) { match.MovePlayer(OurId, HorizontalDirection.Right); }
-			if (ks.IsKeyDown(Keys.W)) { match.JumpPlayer(OurId); }
+			if (oldks.IsKeyUp(Keys.W) && ks.IsKeyDown(Keys.W)) { match.JumpPlayer(OurId); }
 			if (ks.IsKeyDown(Keys.R)) match.GetPlayer(OurId).Champion.Position.Y = 0f;
+
 
 			match.Update((float)dt.ElapsedGameTime.TotalSeconds);
 
 			base.OnUpdate(dt);
 
+			oldks = ks;
+			oldms = ms;
 		}
     }
 }

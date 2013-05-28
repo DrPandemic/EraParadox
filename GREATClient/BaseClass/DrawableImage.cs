@@ -51,6 +51,9 @@ namespace GREATClient
 			}
 		}
 
+		protected virtual int Width { get { return Texture.Width; } }
+		protected virtual int Height { get { return Texture.Height; } } 
+
         public DrawableImage(string file) : base()
         {
 			FileName = file;
@@ -75,7 +78,7 @@ namespace GREATClient
 
 			batch.Begin();
 			batch.Draw(Texture,GetAbsolutePosition(),SourceRectangle,Tint,Orientation,
-			           OriginRelative * new Vector2(Texture.Width, Texture.Height),Scale,Effects,0);
+			           OriginRelative * new Vector2(Width, Height),Scale,Effects,0);
 			batch.End();
 
 		}

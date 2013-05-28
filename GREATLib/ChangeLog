@@ -1,4 +1,27 @@
+2013-05-28  Jesse  <>
+
+	* ChangeLog:
+	* GREATLib.csproj:
+	* GameWorld.cs:
+	* IEntity.cs:
+	* Player.cs:
+	* Animation.cs:
+	* ISpell.cs:
+	* PhysicsEntity.cs:
+	* PhysicsSystem.cs:
+	* IChampion.cs:
+	* ChampionTypes.cs:
+	* StickmanChampion.cs: 
+
+<<<<<<< Upstream, based on origin/master
 2013-05-06  The Parasithe  <bipbip500@hotmail.com>
+=======
+2013-05-07  Jesse  <>
+
+	* ISpell.cs: 
+
+2013-05-06  Jesse  <>
+>>>>>>> 58ec9fc ISpell cooldown
 
 	* GameMatch.cs: 
 

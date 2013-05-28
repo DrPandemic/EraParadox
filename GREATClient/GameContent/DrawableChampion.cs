@@ -22,28 +22,56 @@ using System;
 using GREATClient;
 using GREATLib.Entities.Player.Champions;
 using Microsoft.Xna.Framework;
+using GREATLib.Entities.Physics;
 
 namespace GREATClient
 {
 	/// <summary>
 	/// Represents a champion in the game.
 	/// </summary>
-    public class DrawableChampion : DrawableImage
+    public class DrawableChampion : IDraw
     {
+		DrawableImage Idle { get; set; }
+		DrawableSprite Run { get; set; }
 		public IChampion Champion { get; set; }
 
         public DrawableChampion(IChampion champion, ChampionsInfo championsInfo)
-			: base(championsInfo.GetInfo(champion.Type).AssetName + "_stand") //TODO: handle many animations instead
         {
 			Champion = champion;
-			OriginRelative = new Vector2(0.5f, 1f); // position at the feet
+			Idle = new DrawableImage(championsInfo.GetInfo(champion.Type).AssetName + "_stand");
+			Run = new DrawableSprite(championsInfo.GetInfo(champion.Type).AssetName + "_run",
+			                         34, 33, 0, 20, 6);
+			Idle.OriginRelative = Run.OriginRelative =
+				new Vector2(0.5f, 1f); // position at the feet
+
+			Run.Visible = false;
         }
+		protected override void OnLoad(Microsoft.Xna.Framework.Content.ContentManager content, Microsoft.Xna.Framework.Graphics.GraphicsDevice gd)
+		{
+			base.OnLoad(content, gd);
+
+			Parent.AddChild(Idle);
+			Parent.AddChild(Run);
+		}
 		protected override void OnUpdate(Microsoft.Xna.Framework.GameTime dt)
 		{
-			Position = Champion.Position.ToVector2();
+			Idle.Visible = (Champion.CurrentAnimation == Animation.Idle);
+			Run.Visible = !Idle.Visible;
+
+			if (Run.Visible) {
+				if (Champion.IsOnGround)
+					Run.Play();
+				else
+					Run.Stop();
+			}
+
+			Run.Position = Idle.Position = Champion.Position.ToVector2();
+			Run.FlipX = Idle.FlipX = Champion.FacingLeft;
 		}
-
-
+		protected override void OnDraw(Microsoft.Xna.Framework.Graphics.SpriteBatch batch)
+		{
+			// Run and Idle take care of that.
+		}
     }
 }
 
