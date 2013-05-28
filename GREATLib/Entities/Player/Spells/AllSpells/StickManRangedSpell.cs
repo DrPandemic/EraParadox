@@ -1,5 +1,5 @@
 //
-//  StickmanChampion.cs
+//  StickManRangedAttack.cs
 //
 //  Author:
 //       Jesse <>
@@ -19,26 +19,24 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using GREATLib.Entities.Player.Spells.AllSpells;
+using GREATLib.Entities.Player.Champions;
 
-namespace GREATLib.Entities.Player.Champions.AllChampions
+namespace GREATLib.Entities.Player.Spells.AllSpells
 {
-	/// <summary>
-	/// The Stickman champion.
-	/// </summary>
-    public class StickmanChampion : IChampion
+	public class StickManRangedSpell : ISpell
     {
-		public override ChampionTypes Type { get { return ChampionTypes.StickMan; } }
+		public override SpellTypes Type { get { return SpellTypes.StickMan_RangedAttack; } }
 
-		protected override float DefaultCollisionWidth { get { return 13f; } }
-		protected override float DefaultCollisionHeight { get { return 46f; } }
-
-		protected override float StartMoveSpeed { get { return 325f; } }
-
-        public StickmanChampion()
-			: base(new StickManRangedSpell())
+		public StickManRangedSpell()
+			: base(TimeSpan.FromSeconds(2))
         {
         }
+
+		protected override void OnActivate(IChampion owner, GameMatch match, IEntity target, Vec2 mouseDelta)
+		{
+			//TODO: create a projectile, just jump the player for now
+			owner.Velocity.Y -= 500f;
+		}
     }
 }
 

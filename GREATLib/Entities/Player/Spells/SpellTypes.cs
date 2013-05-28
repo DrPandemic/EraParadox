@@ -20,13 +20,12 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 
-namespace Entities.Player.Spells
+namespace GREATLib.Entities.Player.Spells
 {
     public enum SpellTypes
     {
 		// Stick-Man
-		StickMan_MeleeAttack = 0,
-		StickMan_RangedAttack = 1
+		StickMan_MeleeAttack,
+		StickMan_RangedAttack
     }
 }
-

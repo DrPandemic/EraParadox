@@ -24,7 +24,7 @@ using GREATLib.Entities;
 using GREATLib.Entities.Physics;
 using GREATLib.Entities.Player.Champions;
 
-namespace Entities.Player.Spells
+namespace GREATLib.Entities.Player.Spells
 {
 	/// <summary>
 	/// Represents a champion's spell.
@@ -39,7 +39,7 @@ namespace Entities.Player.Spells
 		/// Gets or sets the cooldown, which is the time it takes to cast this spell a second time.
 		/// </summary>
 		/// <value>The cooldown.</value>
-		public abstract TimeSpan Cooldown { get; }
+		public TimeSpan Cooldown { get; private set; }
 
 		/// <summary>
 		/// Gets or sets the time left on cooldown.
@@ -53,8 +53,9 @@ namespace Entities.Player.Spells
 		/// <value><c>true</c> if this instance is on cooldown; otherwise, <c>false</c>.</value>
 		public bool IsOnCooldown { get { return TimeLeftOnCooldown.TotalMilliseconds > 0.0; } }
 
-        public ISpell()
+        public ISpell(TimeSpan cooldown)
         {
+			Cooldown = cooldown;
 			TimeLeftOnCooldown = new TimeSpan();
         }
 
