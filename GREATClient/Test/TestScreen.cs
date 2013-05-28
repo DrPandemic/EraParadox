@@ -63,7 +63,7 @@ namespace GREATClient
 			OurId = match.AddPlayer(new Player(), new StickmanChampion() {
 				Position = new Vec2(200f, 100f)
 			});
-			Owner = match.GetPlayer(OurIdé);
+			Owner = match.GetPlayer(OurId);
 
 			AddChild(new DrawableChampion(Owner.Champion, ChampionsInfo));
 			DrawableTriangle tr =  new DrawableTriangle(true);
