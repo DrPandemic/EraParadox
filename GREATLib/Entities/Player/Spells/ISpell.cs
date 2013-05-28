@@ -33,11 +33,13 @@ namespace Entities.Player.Spells
 	/// </summary>
     public abstract class ISpell : ISynchronizable
     {
+		public abstract SpellTypes Type { get; }
+
 		/// <summary>
 		/// Gets or sets the cooldown, which is the time it takes to cast this spell a second time.
 		/// </summary>
 		/// <value>The cooldown.</value>
-		private TimeSpan Cooldown { get; set; }
+		public abstract TimeSpan Cooldown { get; }
 
 		/// <summary>
 		/// Gets or sets the time left on cooldown.
@@ -51,9 +53,8 @@ namespace Entities.Player.Spells
 		/// <value><c>true</c> if this instance is on cooldown; otherwise, <c>false</c>.</value>
 		public bool IsOnCooldown { get { return TimeLeftOnCooldown.TotalMilliseconds > 0.0; } }
 
-        public ISpell(TimeSpan cooldown)
+        public ISpell()
         {
-			Cooldown = cooldown;
 			TimeLeftOnCooldown = new TimeSpan();
         }
 

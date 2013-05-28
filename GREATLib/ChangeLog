@@ -1,4 +1,59 @@
+2013-05-28  Jesse  <jesse.emond@hotmail.com>
+
+	* ChangeLog:
+	* GREATLib.csproj:
+	* ISpell.cs:
+	* SpellTypes.cs: 
+
+<<<<<<< HEAD
 2013-05-28  Jesse  <>
+=======
+2013-05-07  Jesse  <>
+
+	* GREATLib.csproj:
+	* ISpell.cs:
+	* SpellTypes.cs: 
+
+2013-05-07  Jesse  <>
+
+	* ISpell.cs: 
+
+2013-05-06  Jesse  <>
+
+	* GREATLib.csproj:
+	* ISpell.cs:
+	* PhysicsSystem.cs: 
+
+2013-05-03  Jesse  <>
+
+	* GREATLib.csproj:
+	* StickmanChampion.cs:
+	* StickmanChampion.cs: 
+
+2013-04-30  Jesse  <>
+
+	* GREATLib.csproj:
+	* IChampion.cs:
+	* ChampionTypes.cs:
+	* StickmanChampion.cs: 
+
+2013-04-30  Jesse  <>
+
+	* TileMap.cs:
+	* PhysicsSystem.cs:
+	* PhysicsEntity.cs:
+	* CollisionHandler.cs:
+	* StickmanChampion.cs: 
+
+2013-04-17  Jesse  <>
+
+	* GameMatch.cs:
+	* PhysicsSystem.cs:
+	* PhysicsEntity.cs:
+	* CollisionHandler.cs: 
+
+2013-04-17  Jesse  <>
+>>>>>>> d8c0f6f... Spell types
 
 	* ChangeLog:
 	* GREATLib.csproj:

@@ -54,6 +54,7 @@
     <Compile Include="Entities\Player\Champions\AllChampions\StickmanChampion.cs" />
     <Compile Include="Entities\Player\Spells\ISpell.cs" />
     <Compile Include="Entities\Physics\Animation.cs" />
+    <Compile Include="Entities\Player\Spells\SpellTypes.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
