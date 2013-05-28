@@ -91,8 +91,6 @@ namespace GREATLib.Entities.Player.Spells
 					TimeLeftOnCooldown = TimeSpan.Zero;
 				else // make it go down
 					TimeLeftOnCooldown = TimeLeftOnCooldown.Subtract(TimeSpan.FromSeconds(deltaSeconds));
-
-				Console.WriteLine(TimeLeftOnCooldown.TotalMilliseconds);
 			}
 
 			if (Activated)

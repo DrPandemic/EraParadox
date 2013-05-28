@@ -25,14 +25,8 @@ namespace GREATLib.Entities.Physics
 	/// <summary>
 	/// Represents an entity that is affected by physics.
 	/// </summary>
-    public abstract class PhysicsEntity : IEntity
+    public abstract class PhysicsEntity : MovingEntity
     {
-		/// <summary>
-		/// Gets or sets the velocity of the entity.
-		/// </summary>
-		/// <value>The velocity.</value>
-		public Vec2 Velocity { get; set; }
-
 		/// <summary>
 		/// Gets or sets the move speed of the entity, in units per second.
 		/// </summary>
@@ -70,21 +64,6 @@ namespace GREATLib.Entities.Physics
 		public float AirAcceleration { get; set; }
 		protected virtual float DefaultAirAcceleration { get { return 0.8f; } }
 
-		/// <summary>
-		/// Gets the width of the collision box around the entity (for
-		/// collisions, spells, etc.)
-		/// </summary>
-		/// <value>The width of the collision.</value>
-		public float CollisionWidth { get; set; }
-		protected abstract float DefaultCollisionWidth { get; }
-		/// <summary>
-		/// Gets the height of the collision box around the entity (for
-		/// collisions, spells, etc.)
-		/// </summary>
-		/// <value>The height of the collision.</value>
-		public float CollisionHeight { get; set; }
-		protected abstract float DefaultCollisionHeight { get; }
-
 		public float JumpForce { get; set; }
 		protected virtual float DefaultJumpForce { get { return 650f; } }
 
@@ -99,11 +78,8 @@ namespace GREATLib.Entities.Physics
 			FacingLeft = false;
 			CurrentAnimation = Animation.Idle;
 			IsOnGround = false;
-			Velocity = new Vec2();
 			HorizontalAcceleration = DefaultHorizontalAcceleration;
 			MoveSpeed = StartMoveSpeed;
-			CollisionWidth = DefaultCollisionWidth;
-			CollisionHeight = DefaultCollisionHeight;
 			AirAcceleration = DefaultAirAcceleration;
 			JumpForce = DefaultJumpForce;
 			Direction = HorizontalDirection.None;
@@ -115,7 +91,7 @@ namespace GREATLib.Entities.Physics
 		/// it will create it everytime.
 		/// </summary>
 		/// <value>The rectangle.</value>
-		public Rect GetRectangle() 
+		public override Rect GetRectangle() 
 		{
 			// Since the position is the feet position, we take that into account
 			return new Rect(
@@ -123,6 +99,6 @@ namespace GREATLib.Entities.Physics
 				Position.Y - CollisionHeight,
 				CollisionWidth, CollisionHeight);
 		}
-    }
+	}
 }
 

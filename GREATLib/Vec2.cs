@@ -106,7 +106,14 @@ namespace GREATLib
 			return X * X + Y * Y;
 		}
 
-
+		public static float Distance(Vec2 a, Vec2 b)
+		{
+			return (b - a).GetLength();
+		}
+		public static float DistanceSquared(Vec2 a, Vec2 b)
+		{
+			return (b - a).GetLengthSquared();
+		}
 
 
 

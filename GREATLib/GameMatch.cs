@@ -26,6 +26,7 @@ using GREATLib.Entities;
 using GREATLib.Entities.Physics;
 using GREATLib.Entities.Player.Champions;
 using System.Diagnostics;
+using GREATLib.Entities.Player.Spells;
 
 namespace GREATLib
 {
@@ -40,6 +41,7 @@ namespace GREATLib
 
 		private EntityIDGenerator IDGenerator { get; set; }
 
+		private Dictionary<int, Projectile> Projectiles { get; set; }
 		private Dictionary<int, PhysicsEntity> PhysicsEntities { get; set; }
 		private Dictionary<int, Player> Players { get; set; }
 
@@ -50,6 +52,7 @@ namespace GREATLib
 			World = new GameWorld();
 			Players = new Dictionary<int, Player>();
 			PhysicsEntities = new Dictionary<int, PhysicsEntity>();
+			Projectiles = new Dictionary<int, Projectile>();
         }
 
 		public void Update(double deltaSeconds)
@@ -60,6 +63,14 @@ namespace GREATLib
 
 			foreach(Player player in Players.Values)
 				player.Update(deltaSeconds);
+
+			List<Projectile> toRemove = new List<Projectile>();
+			foreach (Projectile projectile in Projectiles.Values) {
+				projectile.Update(deltaSeconds, this);
+				if (projectile.RemoveMe)
+					toRemove.Add(projectile);
+			}
+			toRemove.ForEach(p => Projectiles.Remove(p.Id));
 		}
 
 		/// <summary>
@@ -77,6 +88,13 @@ namespace GREATLib
 			AddEntity(champion);
 
 			return player.Id;
+		}
+
+		public int AddProjectile(Projectile projectile)
+		{
+			projectile.Id = IDGenerator.GenerateID();
+			Projectiles.Add(projectile.Id, projectile);
+			return projectile.Id;
 		}
 
 		public void MovePlayer(int playerId, HorizontalDirection direction)
@@ -106,6 +124,10 @@ namespace GREATLib
 			Debug.Assert(Players.ContainsKey(id), "No player with the given id.");
 
 			return Players[id];
+		}
+		public IEnumerable<Projectile> GetProjectiles()
+		{
+			return Projectiles.Values;
 		}
 		/// <summary>
 		/// Adds the entity to the match and returns its id.

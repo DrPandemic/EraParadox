@@ -46,5 +46,10 @@ namespace GREATLib.Entities.Player.Champions
 		{
 			RangedSpell.Update(deltaSeconds);
 		}
+
+		public virtual Vec2 GetSpellSpawnPos()
+		{
+			return Position - Vec2.UnitY * CollisionHeight / 2f;
+		}
     }
 }

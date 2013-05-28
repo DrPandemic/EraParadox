@@ -1,6 +1,22 @@
 2013-05-28  Jesse  <jesse.emond@hotmail.com>
 
 	* Vec2.cs:
+	* ChangeLog:
+	* GameMatch.cs:
+	* GREATLib.csproj:
+	* IEntity.cs:
+	* ISpell.cs:
+	* MovingEntity.cs:
+	* PhysicsSystem.cs:
+	* PhysicsEntity.cs:
+	* Projectile.cs:
+	* IChampion.cs:
+	* StickManRangedSpell.cs: 
+
+<<<<<<< HEAD
+2013-05-28  Jesse  <jesse.emond@hotmail.com>
+
+	* Vec2.cs:
 	* PhysicsEntity.cs: 
 
 2013-05-28  Jesse  <jesse.emond@hotmail.com>
@@ -48,6 +64,21 @@
 <<<<<<< HEAD
 2013-05-28  Jesse  <>
 =======
+=======
+2013-05-21  Jesse  <>
+
+	* Vec2.cs:
+	* GameMatch.cs:
+	* GREATLib.csproj:
+	* IEntity.cs:
+	* ISpell.cs:
+	* MovingEntity.cs:
+	* PhysicsEntity.cs:
+	* Projectile.cs:
+	* IChampion.cs:
+	* StickManRangedSpell.cs: 
+
+>>>>>>> 8771429... Projectile when right-clicking (with cooldown).
 2013-05-07  Jesse  <>
 
 	* ISpell.cs:

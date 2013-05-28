@@ -26,6 +26,9 @@ using GREATLib.Entities.Player.Champions.AllChampions;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
+using GREATLib.Entities.Player.Spells;
+using System;
 
 namespace GREATClient
 {
@@ -35,6 +38,8 @@ namespace GREATClient
 		GameMatch match;
 		int OurId { get; set; }
 		Player Owner;
+
+		Dictionary<int, DrawableCircle> Projectiles = new Dictionary<int, DrawableCircle>();
 
 
 		ChampionsInfo ChampionsInfo { get; set; }
@@ -58,7 +63,7 @@ namespace GREATClient
 			OurId = match.AddPlayer(new Player(), new StickmanChampion() {
 				Position = new Vec2(200f, 100f)
 			});
-			Owner = match.GetPlayer(OurId);
+			Owner = match.GetPlayer(OurIdé);
 
 			AddChild(new DrawableChampion(Owner.Champion, ChampionsInfo));
 			DrawableTriangle tr =  new DrawableTriangle(true);
@@ -72,11 +77,6 @@ namespace GREATClient
 
 		protected override void OnUpdate(GameTime dt)
 		{
-			// For Mobile devices, this logic will close the Game when the Back button is pressed
-			if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState(PlayerIndex.One).IsKeyDown(Keys.Escape)) {
-				Exit = true;
-			}
-			
 			//TODO: remove. testing the physics engine
 			KeyboardState ks = Keyboard.GetState();
 			MouseState ms = Mouse.GetState();
@@ -94,10 +94,44 @@ namespace GREATClient
 
 			match.Update((float)dt.ElapsedGameTime.TotalSeconds);
 
-			base.OnUpdate(dt);
-
 			oldks = ks;
 			oldms = ms;
+
+			// CETTE PARTIE EST TEMPORAIRE, ELLE NE SERA PAS PRÉSENTE APRES
+			// LA PRÉSENTATION, C'EST SEULEMENT UN PROTOTYPE
+			List<int> projectilesAlive = new List<int>();
+			IEnumerable<Projectile> projectiles = match.GetProjectiles();
+			foreach (Projectile projectile in projectiles)
+			{
+				projectilesAlive.Add(projectile.Id);
+				if (!Projectiles.ContainsKey(projectile.Id))
+				{
+					DrawableCircle circle = new DrawableCircle();
+					AddChild(circle);
+					circle.Tint = Color.Pink;
+					circle.Scale = new Vector2(30f) / new Vector2(circle.Texture.Width, circle.Texture.Height);
+					Projectiles.Add(projectile.Id, circle);
+				}
+
+				Projectiles[projectile.Id].Position = projectile.Position.ToVector2() - new Vector2(1.5f);
+
+				const float FADE_OUT = 50f;
+				float dist = projectile.GetDistanceLeft();
+				if (dist <= FADE_OUT) {
+					dist = Math.Max(0, dist);
+					float percent = dist / FADE_OUT;
+					Projectiles[projectile.Id].Alpha = percent;
+				}
+			}
+
+			List<int> toRemove = new List<int>();
+			foreach (int p in Projectiles.Keys)
+				if (!projectilesAlive.Contains(p))
+					toRemove.Add(p);
+			toRemove.ForEach(p => { RemoveChild(Projectiles[p]); Projectiles.Remove(p); });
+			// FIN DE LA PARTIE TEMPORAIRE
+
+			base.OnUpdate(dt);
 		}
     }
 }

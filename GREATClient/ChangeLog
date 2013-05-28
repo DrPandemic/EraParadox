@@ -1,5 +1,13 @@
 2013-05-28  Jesse  <jesse.emond@hotmail.com>
 
+	* ChangeLog:
+	* TestScreen.cs:
+	* Drawable.cs:
+	* DrawableImage.cs: 
+
+<<<<<<< HEAD
+2013-05-28  Jesse  <jesse.emond@hotmail.com>
+
 	* TestScreen.cs: 
 
 2013-05-28  Jesse  <jesse.emond@hotmail.com>
@@ -49,6 +57,13 @@
 
 <<<<<<< Upstream, based on origin/master
 =======
+=======
+2013-05-21  Jesse  <>
+
+	* TestScreen.cs:
+	* DrawableImage.cs: 
+
+>>>>>>> 8771429... Projectile when right-clicking (with cooldown).
 2013-05-07  Jesse  <>
 
 	* TestScreen.cs: 
