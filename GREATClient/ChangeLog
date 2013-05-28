@@ -1,3 +1,9 @@
+2013-05-28  Jesse  <jesse.emond@hotmail.com>
+
+	* ChangeLog:
+	* TestScreen.cs: 
+
+<<<<<<< HEAD
 2013-05-28  Jesse  <>
 
 	* TestScreen.cs:
@@ -33,6 +39,12 @@
 	* DrawableCircleContour.cs: 
 
 <<<<<<< Upstream, based on origin/master
+=======
+2013-05-07  Jesse  <>
+
+	* TestScreen.cs: 
+
+>>>>>>> fa4b7ac... Test ranged spell (not a real spell for now, just a jump)
 2013-05-06  Jesse  <>
 
 	* champions.xml:

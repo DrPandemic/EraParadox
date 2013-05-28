@@ -34,14 +34,18 @@ namespace GREATClient
 		//TODO: remove. temporary local tests
 		GameMatch match;
 		int OurId { get; set; }
-		ChampionsInfo championsInfo { get; set; }
+		Player Owner;
+
+
+		ChampionsInfo ChampionsInfo { get; set; }
 
 		KeyboardState oldks;
 		MouseState oldms;
 
 		public TestScreen(ContentManager content) : base(content)
         {
-			championsInfo = new ChampionsInfo();
+			oldms = new MouseState();
+			ChampionsInfo = new ChampionsInfo();
 			OurId = EntityIDGenerator.NO_ID;
 			match = new GameMatch();
         }
@@ -50,11 +54,13 @@ namespace GREATClient
 			//TODO: DrawableGameMatch? I personnally like the idea (Jesse)
 			AddChild(new DrawableTileMap(match.World.Map));
 
-			//TODO: remove. simply testing the physics engine
+			//TODO: eventually remove. simply testing the physics engine
 			OurId = match.AddPlayer(new Player(), new StickmanChampion() {
 				Position = new Vec2(200f, 100f)
 			});
-			AddChild(new DrawableChampion(match.GetPlayer(OurId).Champion, championsInfo));
+			Owner = match.GetPlayer(OurId);
+
+			AddChild(new DrawableChampion(Owner.Champion, ChampionsInfo));
 			DrawableTriangle tr =  new DrawableTriangle(true);
 			tr.Ascendant = false;
 			tr.Tint = Color.Blue;
@@ -76,8 +82,14 @@ namespace GREATClient
 			MouseState ms = Mouse.GetState();
 			if (ks.IsKeyDown(Keys.A)) { match.MovePlayer(OurId, HorizontalDirection.Left); }
 			if (ks.IsKeyDown(Keys.D)) { match.MovePlayer(OurId, HorizontalDirection.Right); }
+
 			if (oldks.IsKeyUp(Keys.W) && ks.IsKeyDown(Keys.W)) { match.JumpPlayer(OurId); }
 			if (ks.IsKeyDown(Keys.R)) match.GetPlayer(OurId).Champion.Position.Y = 0f;
+
+			if (oldms.RightButton == ButtonState.Released && ms.RightButton == ButtonState.Pressed) 
+				Owner.Champion.RangedSpell.Activate(Owner.Champion, match, null, 
+				                                    new Vec2(ms.X - Owner.Champion.Position.X, 
+				         								ms.Y - Owner.Champion.Position.Y - Owner.Champion.CollisionHeight / 2f));
 
 
 			match.Update((float)dt.ElapsedGameTime.TotalSeconds);

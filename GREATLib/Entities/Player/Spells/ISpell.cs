@@ -86,7 +86,9 @@ namespace GREATLib.Entities.Player.Spells
 				if (TimeLeftOnCooldown.TotalSeconds <= deltaSeconds) // cooldown is over
 					TimeLeftOnCooldown = TimeSpan.Zero;
 				else // make it go down
-					TimeLeftOnCooldown.Subtract(TimeSpan.FromSeconds(deltaSeconds));
+					TimeLeftOnCooldown = TimeLeftOnCooldown.Subtract(TimeSpan.FromSeconds(deltaSeconds));
+
+				Console.WriteLine(TimeLeftOnCooldown.TotalMilliseconds);
 			}
 		}
 
