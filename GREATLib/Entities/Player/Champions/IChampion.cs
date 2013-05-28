@@ -41,6 +41,10 @@ namespace GREATLib.Entities.Player.Champions
         {
 			RangedSpell = ranged;
         }
+
+		public void Update(double deltaSeconds)
+		{
+			RangedSpell.Update(deltaSeconds);
+		}
     }
 }
-

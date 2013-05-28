@@ -79,6 +79,17 @@ namespace GREATLib.Entities.Player.Spells
 			return casted;
 		}
 
+		public void Update(double deltaSeconds)
+		{
+			if (IsOnCooldown)
+			{
+				if (TimeLeftOnCooldown.TotalSeconds <= deltaSeconds) // cooldown is over
+					TimeLeftOnCooldown = TimeSpan.Zero;
+				else // make it go down
+					TimeLeftOnCooldown.Subtract(TimeSpan.FromSeconds(deltaSeconds));
+			}
+		}
+
 		protected abstract void OnActivate(IChampion owner, GameMatch match, IEntity target, Vec2 mouseDelta);
     }
 }

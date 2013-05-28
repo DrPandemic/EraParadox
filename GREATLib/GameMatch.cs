@@ -52,11 +52,14 @@ namespace GREATLib
 			PhysicsEntities = new Dictionary<int, PhysicsEntity>();
         }
 
-		public void Update(float deltaSeconds)
+		public void Update(double deltaSeconds)
 		{
 			Debug.Assert(deltaSeconds > 0f, "The delta seconds while updating the match is too small.");
 
 			Physics.Update(deltaSeconds, World, PhysicsEntities.Values);
+
+			foreach(Player player in Players.Values)
+				player.Update(deltaSeconds);
 		}
 
 		/// <summary>
