@@ -89,13 +89,8 @@ namespace GREATClient
 			if (oldms.RightButton == ButtonState.Released && ms.RightButton == ButtonState.Pressed) 
 				Owner.Champion.RangedSpell.Activate(Owner.Champion, match, null, 
 				                                    new Vec2(ms.X - Owner.Champion.Position.X, 
-<<<<<<< HEAD
-				         								ms.Y - Owner.Champion.Position.Y - Owner.Champion.CollisionHeight / 2f));
-
-=======
 				         								ms.Y - (Owner.Champion.Position.Y - Owner.Champion.CollisionHeight / 2f)));
 			oldms = ms;
->>>>>>> 8db4d54... Dash ranged spell (for now) and added more functionalities to Vec2
 
 			match.Update((float)dt.ElapsedGameTime.TotalSeconds);
 
