@@ -1,5 +1,12 @@
 2013-05-28  Jesse  <jesse.emond@hotmail.com>
 
+	* Vec2.cs:
+	* ChangeLog:
+	* PhysicsEntity.cs:
+	* StickManRangedSpell.cs: 
+
+2013-05-28  Jesse  <jesse.emond@hotmail.com>
+
 	* ChangeLog:
 	* ISpell.cs: 
 
@@ -36,6 +43,12 @@
 <<<<<<< HEAD
 2013-05-28  Jesse  <>
 =======
+2013-05-07  Jesse  <>
+
+	* Vec2.cs:
+	* PhysicsEntity.cs:
+	* StickManRangedSpell.cs: 
+
 2013-05-07  Jesse  <>
 
 	* ISpell.cs: 

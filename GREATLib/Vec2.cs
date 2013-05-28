@@ -86,6 +86,32 @@ namespace GREATLib
 			return string.Format("({0}, {1})", X, Y);
 		}
 
+		public void Normalize()
+		{
+			if (this != Vec2.Zero)
+			{
+				float length = GetLength();
+				X /= length;
+				Y /= length;
+			}
+		}
+
+		public float GetLength()
+		{
+			return (float)Math.Sqrt((double)GetLengthSquared());
+		}
+
+		public float GetLengthSquared()
+		{
+			return X * X + Y * Y;
+		}
+
+
+
+
+
+
+
 		/// <summary>Unary + operator.</summary>
 		/// <param name="vec">The vector.</param>
 		public static Vec2 operator+(Vec2 vec)
@@ -143,6 +169,13 @@ namespace GREATLib
 		{
 			return new Vec2(start.X + factor * (goal.X - start.X),
 			                start.Y + factor * (goal.Y - start.Y));
+		}
+
+		public static Vec2 Normalize(Vec2 vec)
+		{
+			Vec2 v = new Vec2(vec.X, vec.Y);
+			v.Normalize();
+			return v;
 		}
     }
 }

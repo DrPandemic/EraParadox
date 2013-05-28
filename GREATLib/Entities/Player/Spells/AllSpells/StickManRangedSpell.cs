@@ -35,8 +35,9 @@ namespace GREATLib.Entities.Player.Spells.AllSpells
 		protected override void OnActivate(IChampion owner, GameMatch match, IEntity target, Vec2 mouseDelta)
 		{
 			//TODO: create a projectile, just jump the player for now
-			owner.Velocity.Y -= 500f;
+			Vec2 dir = Vec2.Normalize(mouseDelta);
+			owner.Velocity.X += dir.X * 1000f;
+			owner.Velocity.Y += dir.Y * 500f;
 		}
     }
 }
-
