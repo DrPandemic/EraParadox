@@ -27,15 +27,19 @@ namespace GREATLib.Entities
 	/// </summary>
     public class IEntity : ISynchronizable
     {
+		public bool RemoveMe { get; protected set; }
+
 		/// <summary>
-		/// Gets or sets the position of the feet of the entity in the game world.
+		/// Gets or sets the position of the feet of the entity (if it is a champion) in the game world
+		/// or the center of the entity (if it is a projectile).
 		/// </summary>
-		/// <value>The position of the feet of the entity.</value>
+		/// <value>The position of the feet or center of the entity.</value>
 		public Vec2 Position { get; set; }
 
         public IEntity()
         {
 			Position = new Vec2();
+			RemoveMe = false;
         }
     }
 }

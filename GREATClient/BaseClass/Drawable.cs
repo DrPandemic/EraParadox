@@ -102,7 +102,6 @@ namespace GREATClient
 		protected override void OnUnload()
 		{
 			base.OnUnload();
-			Texture.Dispose();
 		}
 
 		/// <summary>

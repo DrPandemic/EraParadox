@@ -84,7 +84,7 @@ namespace GREATClient
 				
 				++index;
 
-				Children.Insert(Children.Count == 0 ? 0 :index ,child);
+				Children.Insert(Children.Count == 0 ? 0 : index, child);
 			}
 			else
 				throw new Exception("The IDraw is already in a container");

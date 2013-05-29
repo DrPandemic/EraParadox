@@ -19,6 +19,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using GREATLib.Entities.Player.Spells.AllSpells;
 
 namespace GREATLib.Entities.Player.Champions.AllChampions
 {
@@ -35,6 +36,7 @@ namespace GREATLib.Entities.Player.Champions.AllChampions
 		protected override float StartMoveSpeed { get { return 325f; } }
 
         public StickmanChampion()
+			: base(new StickManRangedSpell())
         {
         }
     }

@@ -1,5 +1,5 @@
 //
-//  ISynchronizable.cs
+//  Animation.cs
 //
 //  Author:
 //       Jesse <>
@@ -19,25 +19,14 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using GREATLib.Entities;
 
-namespace GREATLib
+namespace GREATLib.Entities.Physics
 {
-	/// <summary>
-	/// Represents an entity that is synchronized between the server and the clients.
-	/// </summary>
-    public class ISynchronizable
+    public enum Animation
     {
-		/// <summary>
-		/// Gets or sets the unique identifier of the entity.
-		/// </summary>
-		/// <value>The identifier.</value>
-		public int Id { get; set; }
-
-        public ISynchronizable()
-        {
-			Id = EntityIDGenerator.NO_ID;
-        }
+		Idle,
+		Move,
+		Die
     }
 }
 

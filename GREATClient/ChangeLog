@@ -1,3 +1,44 @@
+2013-05-28  Jesse  <jesse.emond@hotmail.com>
+
+	* ChangeLog: 
+
+<<<<<<< HEAD
+2013-05-28  Jesse  <jesse.emond@hotmail.com>
+
+	* TestScreen.cs: 
+
+2013-05-28  Jesse  <jesse.emond@hotmail.com>
+
+	* ChangeLog:
+	* TestScreen.cs:
+	* Drawable.cs:
+	* DrawableImage.cs: 
+
+<<<<<<< HEAD
+2013-05-28  Jesse  <jesse.emond@hotmail.com>
+
+	* TestScreen.cs: 
+
+2013-05-28  Jesse  <jesse.emond@hotmail.com>
+
+	* ChangeLog:
+	* TestScreen.cs: 
+
+2013-05-28  Jesse  <jesse.emond@hotmail.com>
+
+	* ChangeLog:
+	* TestScreen.cs: 
+
+<<<<<<< HEAD
+2013-05-28  Jesse  <>
+
+	* TestScreen.cs:
+	* DrawableImage.cs:
+	* DrawableCircle.cs:
+	* DrawableSprite.cs:
+	* DrawableTriangle.cs:
+	* DrawableChampion.cs: 
+
 2013-05-22  The Parasithe  <bipbip500@hotmail.com>
 
 	* Game1.cs:
@@ -24,6 +65,32 @@
 	* DrawableCircleContour.cs: 
 
 <<<<<<< Upstream, based on origin/master
+=======
+=======
+=======
+2013-05-28  Jesse  <>
+
+	* Drawable.cs: 
+
+>>>>>>> 4f2ed44... Bugfix, textures are no longer unloaded when the child is removed.
+2013-05-21  Jesse  <>
+
+	* TestScreen.cs:
+	* DrawableImage.cs: 
+
+>>>>>>> 8771429... Projectile when right-clicking (with cooldown).
+2013-05-07  Jesse  <>
+
+	* TestScreen.cs: 
+
+<<<<<<< HEAD
+>>>>>>> fa4b7ac... Test ranged spell (not a real spell for now, just a jump)
+=======
+2013-05-07  Jesse  <>
+
+	* TestScreen.cs: 
+
+>>>>>>> 8db4d54... Dash ranged spell (for now) and added more functionalities to Vec2
 2013-05-06  Jesse  <>
 
 	* champions.xml:

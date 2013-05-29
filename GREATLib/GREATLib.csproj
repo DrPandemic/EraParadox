@@ -53,6 +53,11 @@
     <Compile Include="Entities\Player\Champions\ChampionTypes.cs" />
     <Compile Include="Entities\Player\Champions\AllChampions\StickmanChampion.cs" />
     <Compile Include="Entities\Player\Spells\ISpell.cs" />
+    <Compile Include="Entities\Physics\Animation.cs" />
+    <Compile Include="Entities\Player\Spells\SpellTypes.cs" />
+    <Compile Include="Entities\Player\Spells\AllSpells\StickManRangedSpell.cs" />
+    <Compile Include="Entities\Physics\MovingEntity.cs" />
+    <Compile Include="Entities\Player\Spells\Projectile.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -64,5 +69,6 @@
     <Folder Include="World\" />
     <Folder Include="World\Tiles\" />
     <Folder Include="Entities\Player\Champions\AllChampions\" />
+    <Folder Include="Entities\Player\Spells\AllSpells\" />
   </ItemGroup>
 </Project>

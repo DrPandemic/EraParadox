@@ -20,6 +20,7 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using GREATLib.Entities.Physics;
+using GREATLib.Entities.Player.Spells;
 
 namespace GREATLib.Entities.Player.Champions
 {
@@ -34,9 +35,21 @@ namespace GREATLib.Entities.Player.Champions
 		/// <value>The name.</value>
 		public abstract ChampionTypes Type { get; }
 
-        public IChampion()
+		public ISpell RangedSpell { get; private set; }
+
+        public IChampion(ISpell ranged)
         {
+			RangedSpell = ranged;
         }
+
+		public void Update(double deltaSeconds)
+		{
+			RangedSpell.Update(deltaSeconds);
+		}
+
+		public virtual Vec2 GetSpellSpawnPos()
+		{
+			return Position - Vec2.UnitY * CollisionHeight / 2f;
+		}
     }
 }
-

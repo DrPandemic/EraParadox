@@ -52,7 +52,7 @@ namespace GREATLib.Entities.Physics
 		/// </summary>
 		/// <param name="deltaSeconds">The delta seconds since the last frame.</param>
 		/// <param name="entities">The game entities.</param>
-		public void Update(float deltaSeconds, GameWorld world, 
+		public void Update(double deltaSeconds, GameWorld world, 
 		                   IEnumerable<PhysicsEntity> entities)
 		{
 			Debug.Assert(deltaSeconds > 0f, "Delta seconds too small for physics update.");
@@ -69,31 +69,40 @@ namespace GREATLib.Entities.Physics
 		/// </summary>
 		/// <param name="deltaSeconds">Delta seconds since the last frame.</param>
 		/// <param name="entity">The entity.</param>
-		private void UpdateEntity(float deltaSeconds, 
+		private void UpdateEntity(double deltaSeconds, 
 		                          GameWorld world,
 		                          PhysicsEntity entity)
 		{
-			ApplyMovement(entity, deltaSeconds);
+			ApplyMovement(entity);
 
 			entity.IsOnGround = false; // reset the flag indicating if we're on the ground
 
 			// Really apply the desired movement to our position
 			for (int pass = 0; pass < PHYSICS_PASSES; ++pass)
 			{
-				entity.Position += (entity.Velocity * deltaSeconds) / PHYSICS_PASSES;
+				entity.Position += (entity.Velocity * (float)deltaSeconds) / PHYSICS_PASSES;
 				Collisions.HandleCollisions(entity, world);
 			}
+
+			if (entity.Direction != HorizontalDirection.None) {
+				entity.CurrentAnimation = Animation.Move;
+				entity.FacingLeft = entity.Direction == HorizontalDirection.Left;
+			}
+			else
+				entity.CurrentAnimation = Animation.Idle;
 
 			entity.Direction = HorizontalDirection.None; // Reset our moving value
 			// Make the movement fade out over time
 			entity.Velocity.X *= entity.HorizontalAcceleration;
 		}
 
-		static void ApplyMovement(PhysicsEntity entity, float deltaSeconds)
+		static void ApplyMovement(PhysicsEntity entity)
 		{
 			// The minimum speed at which we're supposed to go.
 			float moveXVel = (int)entity.Direction * entity.MoveSpeed;
-			//TODO: implement air drag here
+
+			if (!entity.IsOnGround) moveXVel *= entity.AirAcceleration;
+
 			// Only move if we're not already moving too fast
 			if ((moveXVel < 0 && moveXVel < entity.Velocity.X) || (moveXVel > 0 && moveXVel > entity.Velocity.X))
 				entity.Velocity.X = moveXVel;

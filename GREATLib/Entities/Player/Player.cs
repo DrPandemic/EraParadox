@@ -40,6 +40,11 @@ namespace GREATLib.Entities.Player
 			//create the actual IChampion object) or the object itself, maybe?
 			Champion = null;
         }
+
+		public void Update(double deltaSeconds)
+		{
+			Champion.Update(deltaSeconds);
+		}
     }
 }
 
