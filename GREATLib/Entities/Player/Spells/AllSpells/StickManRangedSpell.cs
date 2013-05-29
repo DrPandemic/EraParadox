@@ -41,7 +41,7 @@ namespace GREATLib.Entities.Player.Spells.AllSpells
 
 
 		public StickManRangedSpell()
-			: base(TimeSpan.FromSeconds(2))
+			: base(TimeSpan.FromSeconds(0))
         {
         }
 
