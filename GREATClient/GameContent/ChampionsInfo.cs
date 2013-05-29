@@ -71,6 +71,12 @@ namespace GREATClient
 		[System.Xml.Serialization.XmlAttribute("assetname")]
 		public string AssetName { get; set; }
 
+		[System.Xml.Serialization.XmlAttribute("framewidth")]
+		public int FrameWidth { get; set; }
+
+		[System.Xml.Serialization.XmlAttribute("frameheight")]
+		public int FrameHeight { get; set; }
+
 		[System.Xml.Serialization.XmlElement("description")]
 		public string Description { get; set; }
 

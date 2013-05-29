@@ -68,7 +68,7 @@ namespace GREATClient
 		/// </summary>
 		/// <value>The line.</value>
 		int line;
-		int Line 
+		protected int Line 
 		{ 
 			get { return line; }
 			set 
@@ -84,14 +84,13 @@ namespace GREATClient
 		/// </summary>
 		/// <value>The frame rate.</value>
 		float frameRate;
-		float FrameRate 
+		protected float FrameRate 
 		{ 
 			get { return frameRate; }
 			set
 			{
 				Debug.Assert(value >= 0 , "The line must be zero or greater");
 				frameRate = value;
-
 				CalculateTimeByFrame();
 			}
 		}
@@ -101,7 +100,7 @@ namespace GREATClient
 		/// </summary>
 		/// <value>The frame count.</value>
 		int frameCount;
-		int FrameCount 
+		protected int FrameCount 
 		{ 
 			get { return frameCount; } 
 			set
@@ -115,33 +114,33 @@ namespace GREATClient
 		/// Gets or sets a value indicating whether this instance is playing.
 		/// </summary>
 		/// <value><c>true</c> if this instance is playing; otherwise, <c>false</c>.</value>
-		bool IsPlaying { get; set; }
+		protected bool IsPlaying { get; set; }
 
 		/// <summary>
 		/// Gets or sets the repetition count.
 		/// Every negative number will represent infinite
 		/// </summary>
 		/// <value>The repetition count.</value>
-		int RepetitionCount { get; set; }
+		protected int RepetitionCount { get; set; }
 
 		/// <summary>
 		/// Gets or sets the time to now when to change of anim
 		/// </summary>
 		/// <value>The until next animation.</value>
-		TimeSpan UntilNextAnim { get; set; }
+		protected TimeSpan UntilNextAnim { get; set; }
 
 		/// <summary>
 		/// Gets or sets the time by frame.
 		/// </summary>
 		/// <value>The time by frame.</value>
-		TimeSpan TimeByFrame { get; set; }
+		protected TimeSpan TimeByFrame { get; set; }
 
 		/// <summary>
 		/// Gets or sets the current frame.
 		/// </summary>
 		/// <value>The current frame.</value>
 		int currentFrame;
-		int CurrentFrame  
+		protected int CurrentFrame  
 		{ 
 			get { return currentFrame; }
 			set
