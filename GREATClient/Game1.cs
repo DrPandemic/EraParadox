@@ -40,8 +40,8 @@ namespace GREATClient
 		/// The screen name
 		const string SCREEN_NAME = "GREAT";
 		/// The screen dimensions
-		const int SCREEN_W = 800;
-		const int SCREEN_H = 600;
+		const int SCREEN_W = 1366;
+		const int SCREEN_H = 768;
 
 		Client client;
 
@@ -78,7 +78,6 @@ namespace GREATClient
 			client.Start();
 
 			base.Initialize();
-
 		}
 
 		/// <summary>

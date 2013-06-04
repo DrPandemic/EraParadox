@@ -41,7 +41,7 @@ namespace GREATClient
 
 			Idle = new DrawableImage(championsInfo.GetInfo(champion.Type).AssetName + "_stand");
 			Run = new DrawableSprite(championsInfo.GetInfo(champion.Type).AssetName + "_run",
-			                         34, 33, 0, 20, 6);
+			                         34, 33, 0, 20, 6,DrawableSprite.INFINITE);
 			Idle.OriginRelative = Run.OriginRelative =
 				new Vector2(0.5f, 1f); // position at the feet
 

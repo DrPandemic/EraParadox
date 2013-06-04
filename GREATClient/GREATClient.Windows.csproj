@@ -58,12 +58,14 @@
     <Compile Include="BaseClass\DrawableCircle.cs" />
     <Compile Include="GameContent\ChampionsInfo.cs" />
     <Compile Include="BaseClass\DrawableSprite.cs" />
+    <Compile Include="GameContent\DrawableChampionSprite.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />
     <None Include="Content\champions.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Content\Stickman.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Content\" />

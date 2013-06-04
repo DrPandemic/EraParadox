@@ -47,6 +47,10 @@ namespace GREATClient
 		KeyboardState oldks;
 		MouseState oldms;
 
+
+		DrawableChampionSprite champSprite;
+
+
 		public TestScreen(ContentManager content) : base(content)
         {
 			oldms = new MouseState();
@@ -65,7 +69,11 @@ namespace GREATClient
 			});
 			Owner = match.GetPlayer(OurId);
 
+			champSprite = new DrawableChampionSprite(Owner.Champion, ChampionsInfo);
+
 			AddChild(new DrawableChampion(Owner.Champion, ChampionsInfo));
+			AddChild(champSprite);
+
 			DrawableTriangle tr =  new DrawableTriangle(true);
 			tr.Ascendant = false;
 			tr.Tint = Color.Blue;
@@ -80,6 +88,10 @@ namespace GREATClient
 			//TODO: remove. testing the physics engine
 			KeyboardState ks = Keyboard.GetState();
 			MouseState ms = Mouse.GetState();
+
+			if (ks.IsKeyDown(Keys.Escape))
+				Exit = true;
+
 			if (ks.IsKeyDown(Keys.A)) { match.MovePlayer(OurId, HorizontalDirection.Left); }
 			if (ks.IsKeyDown(Keys.D)) { match.MovePlayer(OurId, HorizontalDirection.Right); }
 
@@ -90,6 +102,11 @@ namespace GREATClient
 				Owner.Champion.RangedSpell.Activate(Owner.Champion, match, null, 
 				                                    new Vec2(ms.X - Owner.Champion.Position.X, 
 				         								ms.Y - (Owner.Champion.Position.Y - Owner.Champion.CollisionHeight / 2f)));
+
+
+			if (ks.IsKeyDown(Keys.E)) { champSprite.PlayAnimation(AnimationInfo.JUMP);}
+			if (ks.IsKeyDown(Keys.Q)) { champSprite.PlayAnimation(AnimationInfo.RUN);}
+
 			oldms = ms;
 
 			match.Update((float)dt.ElapsedGameTime.TotalSeconds);

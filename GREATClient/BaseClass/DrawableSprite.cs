@@ -30,7 +30,7 @@ namespace GREATClient
 {
     public class DrawableSprite : DrawableImage
     {
-		const int INFINITE = -1;
+		public const int INFINITE = -1;
 
 
 		/// <summary>
@@ -145,7 +145,7 @@ namespace GREATClient
 			get { return currentFrame; }
 			set
 			{
-				Debug.Assert(value >= 0, "The current frame must be more than 0");
+				Debug.Assert(value >= 0, "The current frame must be 0 or more");
 				currentFrame = value;
 				GenerateSourceRectangle();
 			}
@@ -155,7 +155,7 @@ namespace GREATClient
 		protected override int Height { get { return FrameHeight; } }
 
 
-		public DrawableSprite(string assetName, int frameWidth, int frameHeight, int line, float frameRate, int frameCount, int repetitionCount = 1, bool autoStart = true)
+		public DrawableSprite(string assetName, int frameWidth, int frameHeight, int line, float frameRate, int frameCount, int repetitionCount = INFINITE, bool autoStart = true)
 			: base(assetName)
         {
 			FrameWidth = frameWidth;

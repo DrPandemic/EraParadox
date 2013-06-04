@@ -60,15 +60,15 @@ namespace GREATLib.World.Tiles
 				CollisionType.Passable, CollisionType.Block);
 
 			List<List<int>> tiles = GeneralHelper.MakeList(
-				GeneralHelper.MakeList(1, 0, 0, 0, 0, 0, 0, 0, 0, 1),
-				GeneralHelper.MakeList(1, 0, 0, 0, 0, 0, 0, 0, 0, 1),
-				GeneralHelper.MakeList(1, 0, 0, 0, 0, 0, 0, 0, 0, 1),
-				GeneralHelper.MakeList(1, 0, 0, 1, 0, 0, 0, 0, 0, 1),
-				GeneralHelper.MakeList(1, 0, 0, 0, 0, 1, 0, 0, 0, 1),
-				GeneralHelper.MakeList(1, 0, 0, 0, 0, 0, 0, 0, 0, 1),
-				GeneralHelper.MakeList(1, 0, 0, 0, 1, 0, 0, 0, 1, 1),
-				GeneralHelper.MakeList(1, 0, 0, 1, 1, 1, 0, 0, 0, 1),
-				GeneralHelper.MakeList(1, 1, 1, 1, 1, 1, 1, 1, 1, 1));
+				GeneralHelper.MakeList(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1),
+				GeneralHelper.MakeList(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1),
+				GeneralHelper.MakeList(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1),
+				GeneralHelper.MakeList(1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1),
+				GeneralHelper.MakeList(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1),
+				GeneralHelper.MakeList(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1),
+				GeneralHelper.MakeList(1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1),
+				GeneralHelper.MakeList(1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1),
+				GeneralHelper.MakeList(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1));
 
 			return tiles.ConvertAll(
 				row => row.ConvertAll(
