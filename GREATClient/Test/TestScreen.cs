@@ -81,6 +81,10 @@ namespace GREATClient
 
 			oldks = Keyboard.GetState();
 			oldms = Mouse.GetState();
+
+
+			//Test particle
+			//AddChild(new DrawableParticle(0.5f,new Color(),new TimeSpan()));
 		}
 
 		protected override void OnUpdate(GameTime dt)
