@@ -59,8 +59,9 @@
     <Compile Include="GameContent\ChampionsInfo.cs" />
     <Compile Include="BaseClass\DrawableSprite.cs" />
     <Compile Include="GameContent\DrawableChampionSprite.cs" />
-    <Compile Include="BaseClass\DrawableParticle.cs" />
     <Compile Include="Utilities.cs" />
+    <Compile Include="BaseClass\Particle\DrawableParticle.cs" />
+    <Compile Include="BaseClass\Particle\ParticleSystem.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />
@@ -73,6 +74,7 @@
     <Folder Include="BaseClass\" />
     <Folder Include="Test\" />
     <Folder Include="GameContent\" />
+    <Folder Include="BaseClass\Particle\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

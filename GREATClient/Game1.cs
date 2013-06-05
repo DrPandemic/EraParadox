@@ -43,8 +43,6 @@ namespace GREATClient
 		const int SCREEN_W = 1366;
 		const int SCREEN_H = 768;
 
-		public static Random Random = new Random();
-
 		Client client;
 
 		GraphicsDeviceManager graphics;

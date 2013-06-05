@@ -78,7 +78,7 @@ namespace GREATClient
 		                        string file = "particle") 
 			: base(file)
         {
-			Scale = new Vector2(0.1f, 0.1f);
+			Scale = new Vector2(0.3f, 0.3f);
 
 			LifeTime =  TimeSpan.FromTicks((long)(lifeTime.Ticks * GetRandomForPrecision(lifeTimeRandomizer)));
 

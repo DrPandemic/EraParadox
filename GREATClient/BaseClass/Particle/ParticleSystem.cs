@@ -1,5 +1,5 @@
 //
-//  Utilities.cs
+//  ParticleSystem.cs
 //
 //  Author:
 //       parasithe <>
@@ -22,14 +22,11 @@ using System;
 
 namespace GREATClient
 {
-    public static class Utilities
+    public class ParticleSystem
     {
-		public static Random Random = new Random();
-
-		public static float RandomFloat(this Random random, float min, float max)
-		{
-			return (float)random.NextDouble() * (max - min) + min;
-		}
+        public ParticleSystem()
+        {
+        }
     }
 }
 

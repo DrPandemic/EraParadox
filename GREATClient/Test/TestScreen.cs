@@ -51,6 +51,7 @@ namespace GREATClient
 		DrawableChampionSprite champSprite;
 
 
+
 		public TestScreen(ContentManager content) : base(content)
         {
 			oldms = new MouseState();
@@ -83,8 +84,16 @@ namespace GREATClient
 			oldms = Mouse.GetState();
 
 
+
 			//Test particle
-			//AddChild(new DrawableParticle(0.5f,new Color(),new TimeSpan()));
+			Container l1 = new Container(Content);
+			DrawableParticle par = new DrawableParticle(new TimeSpan(0,0,3), new Vector2(300, 0), new Vector2(0, 200));
+			l1.AddChild(par);
+			l1.Position = new Vector2(100,100);
+
+			//l1.RemoveChild(par);
+
+			AddChild(l1);
 		}
 
 		protected override void OnUpdate(GameTime dt)
