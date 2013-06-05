@@ -78,7 +78,7 @@ namespace GREATClient
 		                        string file = "particle") 
 			: base(file)
         {
-			Scale = new Vector2(0.3f, 0.3f);
+			Scale = new Vector2(0.1f, 0.1f);
 
 			LifeTime =  TimeSpan.FromTicks((long)(lifeTime.Ticks * GetRandomForPrecision(lifeTimeRandomizer)));
 
@@ -111,8 +111,6 @@ namespace GREATClient
 			}
 		}
 
-
-
 		/// <summary>
 		/// Generate a random number between the -precision and +precision
 		/// </summary>
@@ -122,6 +120,7 @@ namespace GREATClient
 		{
 			return 1.0f + Utilities.Random.RandomFloat(-precision, precision);
 		}
+
 		public override void Draw(SpriteBatch batch)
 		{
 			if (Alive)

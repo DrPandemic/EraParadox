@@ -61,6 +61,7 @@
     <Compile Include="GameContent\DrawableChampionSprite.cs" />
     <Compile Include="BaseClass\Particle\DrawableParticle.cs" />
     <Compile Include="BaseClass\Particle\ParticleSystem.cs" />
+    <Compile Include="Utilities.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />

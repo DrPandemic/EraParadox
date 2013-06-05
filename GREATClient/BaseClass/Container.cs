@@ -110,6 +110,17 @@ namespace GREATClient
 		}
 
 		/// <summary>
+		/// Removes all children.
+		/// </summary>
+		public void RemoveAllChildren()
+		{
+			foreach(IDraw child in Children)
+			{
+				RemoveChild(child);
+			}
+		}
+
+		/// <summary>
 		/// Update the container and its children.
 		/// </summary>
 		/// <param name="dt">Delta time (time since the last frame).</param>
