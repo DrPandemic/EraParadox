@@ -27,11 +27,15 @@ namespace GREATClient
 {
 	public class DrawableParticle : DrawableImage
     {
+
+		TimeSpan MaxLifeTime { get; set; }
+
 		/// <summary>
 		/// Gets or sets the life time.
 		/// </summary>
 		/// <value>The life time.</value>
 		protected TimeSpan LifeTime { get; set; }
+
 
 		/// <summary>
 		/// Gets or sets the max velocity.
@@ -80,7 +84,9 @@ namespace GREATClient
         {
 			Scale = new Vector2(0.1f, 0.1f);
 
-			LifeTime =  TimeSpan.FromTicks((long)(lifeTime.Ticks * GetRandomForPrecision(lifeTimeRandomizer)));
+			MaxLifeTime =  TimeSpan.FromTicks((long)(lifeTime.Ticks * GetRandomForPrecision(lifeTimeRandomizer)));
+			LifeTime = MaxLifeTime;
+
 
 			MaxVelocity = new Vector2(initialVelocity.X * GetRandomForPrecision(velocityRandomizer),
 			                          initialVelocity.Y * GetRandomForPrecision(velocityRandomizer));
@@ -134,6 +140,7 @@ namespace GREATClient
 			Alive = true;
 			Velocity = MaxVelocity;
 			Position = Vector2.Zero;
+			LifeTime = MaxLifeTime;
 		}
 
     }

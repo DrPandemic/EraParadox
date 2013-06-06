@@ -22,6 +22,7 @@ using System;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace GREATClient
 {
@@ -36,12 +37,55 @@ namespace GREATClient
 		/// <summary>
 		/// The number of particules.
 		/// </summary>
-		int NumberOfParticules { get; set; }
+		int numberOfPaticules;
+		int NumberOfParticules 
+		{ 
+			get { return numberOfPaticules; }
+			set {
+				numberOfPaticules = value;
+				CalculateTimeUntilNextSpawn();
+			}
+		}
 
 		/// <summary>
 		/// The length of the animation.
 		/// </summary>
-		TimeSpan? AnimationLength { get; set; }
+		TimeSpan? animationLength;
+		TimeSpan? AnimationLength 
+		{ 
+			get { return animationLength; }
+			set {
+				animationLength = value;
+				CalculateTimeUntilNextSpawn();
+			}
+		}
+	
+		/// <summary>
+		/// Gets or sets the length of the max animation.
+		/// </summary>
+		/// <value>The length of the max animation.</value>
+		TimeSpan? maxAnimationLength;
+		TimeSpan? MaxAnimationLength 
+		{
+			get { return maxAnimationLength; }
+			set 
+			{
+				maxAnimationLength = value;
+				AnimationLength = value;
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the time until next spawn.
+		/// </summary>
+		/// <value>The time until next spawn.</value>
+		TimeSpan TimeUntilNextSpawn { get; set; }
+
+		/// <summary>
+		/// Gets or sets the max time until next spawn.
+		/// </summary>
+		/// <value>The max time until next spawn.</value>
+		TimeSpan MaxTimeUntilNextSpawn { get; set; }
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="GREATClient.ParticleSystem"/> class.
@@ -57,8 +101,9 @@ namespace GREATClient
 		                      TimeSpan? particleLifeTime = null) 
 							  : base(content)
         {
+			Console.WriteLine(NumberOfParticules);
 			NumberOfParticules = numberOfParticle;
-			AnimationLength = animationLength;
+			MaxAnimationLength = animationLength;
 
 			Particules = new List<DrawableParticle>();
 
@@ -76,36 +121,55 @@ namespace GREATClient
 		protected virtual void CreateParticles(int number, TimeSpan lifeTime)
 		{
 			for (int i = 0; i < number; ++i) {
-				DrawableParticle particle = new DrawableParticle(lifeTime, new Vector2(200, 0), new Vector2(10, 30), 0.2f, 0.1f, 1.5f);
+				DrawableParticle particle = new DrawableParticle(lifeTime, new Vector2(200, 0), new Vector2(10, 40), 0.2f, 0.1f, 1.5f);
 				Particules.Add(particle);
 				AddChild(particle);
 			}
 		}
 
+		/// <summary>
+		/// Calculates the time until next spawn.
+		/// </summary>
+		private void CalculateTimeUntilNextSpawn()
+		{
+		
+			if (AnimationLength != null && NumberOfParticules != 0) {
+				MaxTimeUntilNextSpawn = TimeSpan.FromTicks(MaxAnimationLength.Value.Ticks / NumberOfParticules);
+				TimeUntilNextSpawn = MaxTimeUntilNextSpawn;
+			} 
+			else if (AnimationLength == null && NumberOfParticules != 0) {
+				MaxTimeUntilNextSpawn = TimeSpan.FromTicks(new TimeSpan(0, 0, 1).Ticks / NumberOfParticules);
+				TimeUntilNextSpawn = MaxTimeUntilNextSpawn;
+			}
+		
+		}
+
 		//TODO : faire aparraitre graduellement les particules et les faire revivre
 		protected override void OnUpdate(GameTime dt)
 		{
-			int numberToRevive = 0;
+			if (AnimationLength == null || AnimationLength.Value.TotalMilliseconds > 0) {
+				//Calculate the animation length
+				AnimationLength -= dt.ElapsedGameTime;
 
-			if (AnimationLength == null) {
-				//TODO 
-				numberToRevive = 1;
-			} else {
-				numberToRevive = NumberOfParticules / (int)AnimationLength.Value.TotalMilliseconds;
-				if(numberToRevive==0)
+				//Calculate the number of particules to spawn
+				int numberToRevive = 0;
+
+				TimeUntilNextSpawn -= dt.ElapsedGameTime;
+
+				while (TimeUntilNextSpawn.TotalMilliseconds <= 0) {
 					++numberToRevive;
-			}
+					TimeUntilNextSpawn += MaxTimeUntilNextSpawn;
+				}
 
 
-			//Reveive the good amount of particules
-			for(int i = Particules.Count - 1 ; i > 0 && numberToRevive > 0 ; --i )
-			{
-				if (!Particules[i].Alive) {
-					Particules[i].Reset();
-					--numberToRevive;
+				//Revive the good amount of particules
+				for (int i = Particules.Count - 1; i >= 0 && numberToRevive > 0; --i) {
+					if (!Particules[i].Alive) {
+						Particules[i].Reset();
+						--numberToRevive;
+					}
 				}
 			}
-
 			base.OnUpdate(dt);
 
 		}
