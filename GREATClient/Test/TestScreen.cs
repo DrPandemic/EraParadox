@@ -86,7 +86,7 @@ namespace GREATClient
 
 
 			//Test particle
-			ParticleSystem sys = new ParticleSystem(Content, 1000);
+			ParticleSystem sys = new ParticleSystem(Content, 1000,new TimeSpan?(new TimeSpan(0,0,5)),new );
 			sys.Position = new Vector2(100, 100);
 			AddChild(sys);
 

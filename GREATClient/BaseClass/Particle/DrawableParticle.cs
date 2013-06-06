@@ -56,7 +56,7 @@ namespace GREATClient
 		/// Gets a value indicating whether this <see cref="GREATClient.DrawableParticle"/> is alive.
 		/// </summary>
 		/// <value><c>true</c> if alive; otherwise, <c>false</c>.</value>
-		public bool Alive { get; private set; }
+		public bool Alive {	get; private set; }
 
 
 		/// <summary>
@@ -89,25 +89,27 @@ namespace GREATClient
 			Force = new Vector2(force.X * GetRandomForPrecision(forceRandomizer),
 			                    force.Y * GetRandomForPrecision(forceRandomizer));
 
-			Alive = true;
+			Alive = false;
 
 			OriginRelative = new Vector2(0.5f, 0.5f);
         }
 
 		protected override void OnUpdate(GameTime dt)
 		{
-			//Calculate life time
-			LifeTime -= dt.ElapsedGameTime;
+			if (Alive) {
+				//Calculate life time
+				LifeTime -= dt.ElapsedGameTime;
 
-			if (LifeTime <= TimeSpan.Zero) {
-				Alive = false;
-			} else {
-				//Calculate the effect of the force on the velocity
-				//The point here, is that the force is calculate for one second
-				Velocity += (Force * (float)dt.ElapsedGameTime.TotalMilliseconds) / 1000;
+				if (LifeTime <= TimeSpan.Zero) {
+					Alive = false;
+				} else {
+					//Calculate the effect of the force on the velocity
+					//The point here, is that the force is calculate for one second
+					Velocity += (Force * (float)dt.ElapsedGameTime.TotalMilliseconds) / 1000;
 
-				//Calculate the effect on the position
-				Position += (Velocity * (float)dt.ElapsedGameTime.TotalMilliseconds) / 1000;
+					//Calculate the effect on the position
+					Position += (Velocity * (float)dt.ElapsedGameTime.TotalMilliseconds) / 1000;
+				}
 			}
 		}
 
@@ -125,6 +127,13 @@ namespace GREATClient
 		{
 			if (Alive)
 				base.Draw(batch);
+		}
+
+		public void Reset()
+		{
+			Alive = true;
+			Velocity = MaxVelocity;
+			Position = Vector2.Zero;
 		}
 
     }

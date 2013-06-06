@@ -31,7 +31,7 @@ namespace GREATClient
 		/// <summary>
 		/// The particules.
 		/// </summary>
-		protected List<DrawableParticle> particules { get; set; }
+		protected List<DrawableParticle> Particules { get; set; }
 
 		/// <summary>
 		/// The number of particules.
@@ -60,7 +60,7 @@ namespace GREATClient
 			NumberOfParticules = numberOfParticle;
 			AnimationLength = animationLength;
 
-			particules = new List<DrawableParticle>();
+			Particules = new List<DrawableParticle>();
 
 			TimeSpan lifeTime = (particleLifeTime == null ? new TimeSpan(0, 0, 1) : particleLifeTime.Value);
 
@@ -76,14 +76,37 @@ namespace GREATClient
 		protected virtual void CreateParticles(int number, TimeSpan lifeTime)
 		{
 			for (int i = 0; i < number; ++i) {
-				DrawableParticle particle = new DrawableParticle(lifeTime, new Vector2(200, 0), new Vector2(10, 30), 0.2f, 0f, 1.5f);
-				particules.Add(particle);
+				DrawableParticle particle = new DrawableParticle(lifeTime, new Vector2(200, 0), new Vector2(10, 30), 0.2f, 0.1f, 1.5f);
+				Particules.Add(particle);
+				AddChild(particle);
 			}
 		}
 
 		//TODO : faire aparraitre graduellement les particules et les faire revivre
 		protected override void OnUpdate(GameTime dt)
 		{
+			int numberToRevive = 0;
+
+			if (AnimationLength == null) {
+				//TODO 
+				numberToRevive = 1;
+			} else {
+				numberToRevive = NumberOfParticules / (int)AnimationLength.Value.TotalMilliseconds;
+				if(numberToRevive==0)
+					++numberToRevive;
+			}
+
+
+			//Reveive the good amount of particules
+			for(int i = Particules.Count - 1 ; i > 0 && numberToRevive > 0 ; --i )
+			{
+				if (!Particules[i].Alive) {
+					Particules[i].Reset();
+					--numberToRevive;
+				}
+			}
+
+			base.OnUpdate(dt);
 
 		}
     }
