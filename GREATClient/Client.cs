@@ -21,6 +21,8 @@
 
 using System;
 using Lidgren.Network;
+using System.IO;
+using GREATLib;
 
 namespace GREATClient
 {
@@ -64,7 +66,7 @@ namespace GREATClient
 			client.UPnP.ForwardPort(client.Port, "GREAT Client");
 			client.DiscoverLocalPeers(14242);
 			// If the discover cluster-fucks on localhost, use that line instead
-			//client.Connect("127.0.0.1", 14242);
+			client.Connect("127.0.0.1", 14242);
 		}
 
 		public void Stop()
@@ -101,6 +103,14 @@ namespace GREATClient
 				}
 				client.Recycle(msg);
 			}
+		}
+
+		public void SendCommand(ClientCommand command)
+		{
+			NetOutgoingMessage msg = client.CreateMessage();
+			msg.Write((byte)command);
+
+			client.SendMessage(msg, NetDeliveryMethod.ReliableOrdered);
 		}
 	}
 }

@@ -21,6 +21,7 @@
 
 using System;
 using Lidgren.Network;
+using GREATLib;
 
 namespace GREATServer
 {
@@ -41,6 +42,10 @@ namespace GREATServer
 		}
 
 		NetServer server;
+
+
+		// The running game. TODO: replace by a list of current games.
+		ServerGame Game { get; set; }
 
 		Server()
 		{
@@ -63,6 +68,9 @@ namespace GREATServer
 		{
 			server.Start();
 			server.UPnP.ForwardPort(server.Port, "GREAT Server");
+
+			//TODO: Temporary game initialization.
+			Game = new ServerGame(server);
 		}
 
 		public void Stop()
@@ -83,6 +91,7 @@ namespace GREATServer
 						NetConnectionStatus status = (NetConnectionStatus)msg.ReadByte();
 						if (status == NetConnectionStatus.Connected) {
 							Console.WriteLine(NetUtility.ToHexString(msg.SenderConnection.RemoteUniqueIdentifier) + " connected!");
+							OnConnection(msg.SenderConnection);
 						}
 						else if (status == NetConnectionStatus.Disconnecting) {
 							Console.WriteLine(NetUtility.ToHexString(msg.SenderConnection.RemoteUniqueIdentifier) + " disconnected!");
@@ -95,6 +104,8 @@ namespace GREATServer
 						Console.WriteLine(msg.ReadString());
 						break;
 					case NetIncomingMessageType.Data:
+						// TODO: update all the games instead of just one.
+						Game.OnDataReceived(msg);
 						break;
 					default:
 						Console.WriteLine("Unhandled type: " + msg.MessageType);
@@ -102,6 +113,16 @@ namespace GREATServer
 				}
 				server.Recycle(msg);
 			}
+		}
+
+		/// <summary>
+		/// Called when a client connects to the server.
+		/// </summary>
+		void OnConnection(NetConnection connection)
+		{
+			//TODO: check which game to join instead of just the first
+			Game.AddClient(new ServerClient(connection, new Vec2(100f, 0f)));
+			Console.WriteLine("Player added for " + NetUtility.ToHexString(connection.RemoteUniqueIdentifier));
 		}
 	}
 }

@@ -28,6 +28,7 @@ using GREATLib.Entities.Physics;
 using GREATLib.Entities.Player.Champions;
 using System.Collections.Generic;
 using GREATLib;
+using GREATClient.Screens;
 
 
 namespace GREATClient
@@ -46,7 +47,7 @@ namespace GREATClient
 		Client client;
 
 		GraphicsDeviceManager graphics;
-		TestScreen theScreen;
+		Screen gameplay;
 
 
 		public Game1()
@@ -62,8 +63,6 @@ namespace GREATClient
 			graphics.PreferredBackBufferWidth = SCREEN_W;
 			graphics.PreferredBackBufferHeight = SCREEN_H;
 			graphics.ApplyChanges();
-
-			theScreen = new TestScreen(Content);
 		}
 
 		/// <summary>
@@ -89,7 +88,8 @@ namespace GREATClient
 			Console.WriteLine("Loading game content...");
 
 			// Create a new SpriteBatch, which can be used to draw textures.
-			theScreen.LoadContent(GraphicsDevice);
+			gameplay = new GameplayScreen(Content, client); // when testing: new TestScreen(Content);
+			gameplay.LoadContent(GraphicsDevice);
 		}
 
 		/// <summary>
@@ -99,9 +99,9 @@ namespace GREATClient
 		/// <param name="gameTime">Provides a snapshot of timing values.</param>
 		protected override void Update(GameTime gameTime)
 		{
-			theScreen.Update(gameTime);
+			gameplay.Update(gameTime);
 
-			if(theScreen.Exit)
+			if(gameplay.Exit)
 				Exit();
 
 			base.Update(gameTime);
@@ -115,7 +115,7 @@ namespace GREATClient
 		{
 			graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
 
-			theScreen.Draw();
+			gameplay.Draw();
 
 			base.Draw(gameTime);
 		}
