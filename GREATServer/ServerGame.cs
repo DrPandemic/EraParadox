@@ -35,6 +35,8 @@ namespace GREATServer
 	/// </summary>
     public class ServerGame
     {
+		const int FRAMES_PER_SEC = 60;
+		static readonly TimeSpan REFRESH_RATE = TimeSpan.FromMilliseconds(1000.0 / FRAMES_PER_SEC);
 		static readonly TimeSpan POSITION_UPDATE_RATE = TimeSpan.FromMilliseconds(1000.0 / 30.0);
 
 		Random random = new Random();
@@ -58,7 +60,16 @@ namespace GREATServer
 			Timer updatePositions = new Timer(POSITION_UPDATE_RATE.TotalMilliseconds);
 			updatePositions.Elapsed += UpdatePositions;
 			updatePositions.Start();
+
+			Timer update = new Timer(REFRESH_RATE.TotalMilliseconds);
+			update.Elapsed += Update;
+			update.Start();
         }
+
+		void Update(object sender, EventArgs e)
+		{
+			Match.Update(REFRESH_RATE.TotalSeconds);
+		}
 
 		public void AddClient(NetConnection connection)
 		{
@@ -105,10 +116,22 @@ namespace GREATServer
 
 		void UpdatePositions(object sender, EventArgs e)
 		{
-			/*if (Clients.Count > 0)
-				Console.WriteLine(Clients[0].Position);
-			else
-				Console.WriteLine("No clients. :(");*/
+			if (Clients.Count > 0) {
+				SendToClients(GeneratePositionUpdateMessage(), NetDeliveryMethod.Unreliable);
+			}
+		}
+
+		NetOutgoingMessage GeneratePositionUpdateMessage()
+		{
+			NetOutgoingMessage msg = Server.CreateMessage();
+			msg.Write((byte)ServerCommand.PositionUpdate);
+			msg.Write((byte)Clients.Count);
+			foreach (ServerClient client in Clients.Values) {
+				msg.Write((int)client.Player.Champion.Id);
+				msg.Write((float)client.Player.Champion.Position.X);
+				msg.Write((float)client.Player.Champion.Position.Y);
+			}
+			return msg;
 		}
 
 		void SendToClients(NetOutgoingMessage msg, NetDeliveryMethod method)

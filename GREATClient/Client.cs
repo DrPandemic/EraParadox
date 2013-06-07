@@ -23,6 +23,7 @@ using System;
 using Lidgren.Network;
 using System.IO;
 using GREATLib;
+using System.Collections.Generic;
 
 namespace GREATClient
 {
@@ -45,6 +46,7 @@ namespace GREATClient
 		NetClient client;
 
 		public EventHandler<NewPlayerEventArgs> OnNewPlayer;
+		public EventHandler<PositionUpdateEventArgs> OnPositionUpdate;
 
 		public Client()
 		{
@@ -113,11 +115,13 @@ namespace GREATClient
 			byte code = msg.ReadByte();
 			ServerCommand command = (ServerCommand)code;
 
-			Console.WriteLine("Received " + command);
-
 			switch (command) {
 				case ServerCommand.NewPlayer:
 					OnNewPlayer(this, new NewPlayerEventArgs(msg));
+					break;
+
+				case ServerCommand.PositionUpdate:
+					OnPositionUpdate(this, new PositionUpdateEventArgs(msg));
 					break;
 
 				default:
@@ -127,7 +131,6 @@ namespace GREATClient
 
 		public void SendCommand(ClientCommand command)
 		{
-			Console.WriteLine("Sending " + command);
 			NetOutgoingMessage msg = client.CreateMessage();
 			msg.Write((byte)command);
 
@@ -146,6 +149,26 @@ namespace GREATClient
 			ID = msg.ReadInt32();
 			IsOurID = msg.ReadBoolean();
 			Position = new Vec2(msg.ReadFloat(), msg.ReadFloat());
+		}
+	}
+	public struct PositionUpdateData
+	{
+		public int ID;
+		public Vec2 Position;
+	}
+	public class PositionUpdateEventArgs : EventArgs
+	{
+		public List<PositionUpdateData> Data { get; private set; }
+		public PositionUpdateEventArgs(NetIncomingMessage msg)
+		{
+			byte count = (byte)msg.ReadByte();
+			Data = new List<PositionUpdateData>(count);
+			for (int i = 0; i < count; ++i) {
+				Data.Add(new PositionUpdateData() { 
+					ID = msg.ReadInt32(),
+					Position = new Vec2(msg.ReadFloat(), msg.ReadFloat()) 
+				});
+			}
 		}
 	}
 }

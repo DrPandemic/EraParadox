@@ -59,8 +59,9 @@ namespace GREATLib
 
 			Physics.Update(deltaSeconds, World, PhysicsEntities.Values);
 
-			foreach(Player player in Players.Values)
+			foreach (Player player in Players.Values) {
 				player.Update(deltaSeconds);
+			}
 		}
 
 		/// <summary>

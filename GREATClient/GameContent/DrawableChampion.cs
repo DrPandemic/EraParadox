@@ -31,13 +31,18 @@ namespace GREATClient
 	/// </summary>
     public class DrawableChampion : IDraw
     {
+		const float INTERPOLATION_LERP_FACTOR = 0.2f;
+
 		DrawableImage Idle { get; set; }
 		DrawableSprite Run { get; set; }
 		public IChampion Champion { get; set; }
 
+		Vector2 position;
+
         public DrawableChampion(IChampion champion, ChampionsInfo championsInfo)
         {
 			Champion = champion;
+			position = champion.Position.ToVector2();
 
 			Idle = new DrawableImage(championsInfo.GetInfo(champion.Type).AssetName + "_stand");
 			Run = new DrawableSprite(championsInfo.GetInfo(champion.Type).AssetName + "_run",
@@ -66,7 +71,9 @@ namespace GREATClient
 					Run.Stop();
 			}
 
-			Run.Position = Idle.Position = Champion.Position.ToVector2();
+			position = Vector2.Lerp(position, Champion.Position.ToVector2(), INTERPOLATION_LERP_FACTOR);
+
+			Run.Position = Idle.Position = position;
 			Run.FlipX = Idle.FlipX = Champion.FacingLeft;
 		}
 		protected override void OnDraw(Microsoft.Xna.Framework.Graphics.SpriteBatch batch)

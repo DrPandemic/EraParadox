@@ -24,8 +24,8 @@ namespace GREATLib
 {
     public enum ServerCommand
     {
-		NewPlayer = 0,
-		PositionUpdate = 1
+		NewPlayer = 10,
+		PositionUpdate = 11
     }
 }
 

@@ -25,6 +25,7 @@ using GREATLib;
 using GREATLib.World.Tiles;
 using System.Collections.Generic;
 using GREATLib.Entities.Player.Champions.AllChampions;
+using System.Diagnostics;
 
 namespace GREATClient.Screens
 {
@@ -48,6 +49,7 @@ namespace GREATClient.Screens
         {
 			Client = client;
 			Client.OnNewPlayer += OnNewPlayer;
+			Client.OnPositionUpdate += OnPositionUpdate;
 
 			ChampionsInfo = new ChampionsInfo();
 
@@ -70,7 +72,6 @@ namespace GREATClient.Screens
 
 		void OnNewPlayer(object sender, NewPlayerEventArgs e)
 		{
-			Console.WriteLine("New player! id=" + e.ID + ", isourid=" + e.IsOurID + ", pos=" + e.Position);
 			DrawableChampion champion = new DrawableChampion(new StickmanChampion() { Position = e.Position, Id = e.ID }, ChampionsInfo);
 
 			Champions.Add(e.ID, champion);
@@ -78,6 +79,14 @@ namespace GREATClient.Screens
 
 			if (e.IsOurID)
 				OurChampion = champion;
+		}
+		void OnPositionUpdate(object sender, PositionUpdateEventArgs e)
+		{
+			foreach (PositionUpdateData data in e.Data) {
+				if (Champions.ContainsKey(data.ID)) {
+					Champions[data.ID].Champion.Position = data.Position;
+				}
+			}
 		}
 
 		protected override void OnUpdate(Microsoft.Xna.Framework.GameTime dt)
