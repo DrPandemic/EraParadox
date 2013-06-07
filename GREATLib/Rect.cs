@@ -48,6 +48,18 @@ namespace GREATLib
 			Width = width;
 			Height = height;
 		}
+
+		public override bool Equals(object obj)
+		{
+			if (!(obj is Rect))
+				return false;
+			Rect r = obj as Rect;
+			return r.X == X && r.Y == Y && r.Width == Width && r.Height == Height;
+		}
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
+		}
     }
 }
 
