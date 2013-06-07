@@ -74,6 +74,7 @@ namespace GREATClient
 		protected override void Initialize()
 		{
 			Console.WriteLine("Starting client...");
+			gameplay = new GameplayScreen(Content, client); // when testing: new TestScreen(Content);
 			client.Start();
 
 			base.Initialize();
@@ -87,8 +88,6 @@ namespace GREATClient
 		{
 			Console.WriteLine("Loading game content...");
 
-			// Create a new SpriteBatch, which can be used to draw textures.
-			gameplay = new GameplayScreen(Content, client); // when testing: new TestScreen(Content);
 			gameplay.LoadContent(GraphicsDevice);
 		}
 
@@ -99,6 +98,8 @@ namespace GREATClient
 		/// <param name="gameTime">Provides a snapshot of timing values.</param>
 		protected override void Update(GameTime gameTime)
 		{
+			client.Update();
+
 			gameplay.Update(gameTime);
 
 			if(gameplay.Exit)

@@ -2,6 +2,13 @@
 
 	* Game1.cs:
 	* Client.cs:
+	* TestScreen.cs:
+	* GameplayScreen.cs: 
+
+2013-06-06  Jesse  <jesse.emond@hotmail.com>
+
+	* Game1.cs:
+	* Client.cs:
 	* GREATClient.Linux.csproj:
 	* GameplayScreen.cs:
 	* GREATClient.Windows.csproj: 

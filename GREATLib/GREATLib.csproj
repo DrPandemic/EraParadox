@@ -59,6 +59,7 @@
     <Compile Include="Entities\Physics\MovingEntity.cs" />
     <Compile Include="Entities\Player\Spells\Projectile.cs" />
     <Compile Include="ClientCommand.cs" />
+    <Compile Include="ServerCommand.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

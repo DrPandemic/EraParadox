@@ -1,5 +1,12 @@
 2013-06-06  Jesse  <jesse.emond@hotmail.com>
 
+	* GameMatch.cs:
+	* GREATLib.csproj:
+	* ServerCommand.cs:
+	* StickManRangedSpell.cs: 
+
+2013-06-06  Jesse  <jesse.emond@hotmail.com>
+
 	* GREATLib.csproj:
 	* ClientCommand.cs: 
 

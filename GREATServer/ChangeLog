@@ -2,6 +2,12 @@
 
 	* Server.cs:
 	* ServerGame.cs:
+	* ServerClient.cs: 
+
+2013-06-06  Jesse  <jesse.emond@hotmail.com>
+
+	* Server.cs:
+	* ServerGame.cs:
 	* ServerClient.cs:
 	* GREATServer.csproj: 
 

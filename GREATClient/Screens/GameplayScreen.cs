@@ -22,6 +22,9 @@ using System;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Input;
 using GREATLib;
+using GREATLib.World.Tiles;
+using System.Collections.Generic;
+using GREATLib.Entities.Player.Champions.AllChampions;
 
 namespace GREATClient.Screens
 {
@@ -34,12 +37,18 @@ namespace GREATClient.Screens
 		MouseState oldMouse;
 		//ENDTODO
 
+		DrawableTileMap Map { get; set; }
+
 		ChampionsInfo ChampionsInfo { get; set; }
+		Dictionary<int, DrawableChampion> Champions { get; set; }
+		DrawableChampion OurChampion { get; set; }
 
         public GameplayScreen(ContentManager content, Client client)
 			: base(content)
         {
 			Client = client;
+			Client.OnNewPlayer += OnNewPlayer;
+
 			ChampionsInfo = new ChampionsInfo();
 
 			//TODO: input manager
@@ -47,6 +56,29 @@ namespace GREATClient.Screens
 			oldMouse = Mouse.GetState();
 			//ENDTODO
         }
+
+		protected override void OnLoadContent()
+		{
+			base.OnLoadContent();
+
+			Map = new DrawableTileMap(new TileMap());
+			AddChild(Map);
+
+			Champions = new Dictionary<int, DrawableChampion>();
+			OurChampion = null;
+		}
+
+		void OnNewPlayer(object sender, NewPlayerEventArgs e)
+		{
+			Console.WriteLine("New player! id=" + e.ID + ", isourid=" + e.IsOurID + ", pos=" + e.Position);
+			DrawableChampion champion = new DrawableChampion(new StickmanChampion() { Position = e.Position, Id = e.ID }, ChampionsInfo);
+
+			Champions.Add(e.ID, champion);
+			AddChild(champion);
+
+			if (e.IsOurID)
+				OurChampion = champion;
+		}
 
 		protected override void OnUpdate(Microsoft.Xna.Framework.GameTime dt)
 		{

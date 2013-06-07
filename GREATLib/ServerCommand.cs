@@ -1,5 +1,5 @@
 //
-//  ServerClient.cs
+//  ServerCommand.cs
 //
 //  Author:
 //       Jesse <jesse.emond@hotmail.com>
@@ -19,25 +19,13 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using Lidgren.Network;
-using GREATLib;
-using GREATLib.Entities.Player;
 
-namespace GREATServer
+namespace GREATLib
 {
-	/// <summary>
-	/// Represents a client on the server.
-	/// </summary>
-    public class ServerClient
+    public enum ServerCommand
     {
-		public NetConnection Connection { get; set; }
-		public Player Player { get; set; }
-
-        public ServerClient(NetConnection conn, Player player)
-        {
-			Connection = conn;
-			Player = player;
-        }
+		NewPlayer = 0,
+		PositionUpdate = 1
     }
 }
 

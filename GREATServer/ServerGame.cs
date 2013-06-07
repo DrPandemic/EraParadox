@@ -24,6 +24,9 @@ using System.Collections.Generic;
 using System.Timers;
 using System.Diagnostics;
 using GREATLib;
+using GREATLib.Entities;
+using GREATLib.Entities.Player;
+using GREATLib.Entities.Player.Champions.AllChampions;
 
 namespace GREATServer
 {
@@ -34,24 +37,59 @@ namespace GREATServer
     {
 		static readonly TimeSpan POSITION_UPDATE_RATE = TimeSpan.FromMilliseconds(1000.0 / 30.0);
 
+		Random random = new Random();
+
 		NetServer Server { get; set; }
 		Dictionary<NetConnection, ServerClient> Clients { get; set; }
+
+		GameMatch Match { get; set; }
+		EntityIDGenerator IDGenerator { get; set; }
 
 
 
         public ServerGame(NetServer server)
         {
+			IDGenerator = new EntityIDGenerator();
 			Server = server;
 			Clients = new Dictionary<NetConnection, ServerClient>();
+
+			Match = new GameMatch();
 
 			Timer updatePositions = new Timer(POSITION_UPDATE_RATE.TotalMilliseconds);
 			updatePositions.Elapsed += UpdatePositions;
 			updatePositions.Start();
         }
 
-		public void AddClient(ServerClient client)
+		public void AddClient(NetConnection connection)
 		{
+			// Create the player associated to that client
+			Player player = new Player();
+			Match.AddPlayer(player, new StickmanChampion());
+			player.Champion.Position = new Vec2((float)random.NextDouble() * 800f + 50f, (float)random.NextDouble() * 100f + 100f);
+
+			// Tell the others that he joined
+			SendToClients(GenerateNewPlayerMessage(player, false), NetDeliveryMethod.ReliableUnordered);
+
+			// Create the client to remember him
+			ServerClient client = new ServerClient(connection, player);
 			Clients.Add(client.Connection, client);
+
+			// Tell the new client about the old clients
+			foreach (ServerClient c in Clients.Values)
+				Server.SendMessage(GenerateNewPlayerMessage(c.Player, c.Player.Id == client.Player.Id),
+				                   client.Connection,
+				                   NetDeliveryMethod.ReliableUnordered);
+		}
+
+		NetOutgoingMessage GenerateNewPlayerMessage(Player player, bool ourId)
+		{
+			NetOutgoingMessage msg = Server.CreateMessage();
+			msg.Write((byte)ServerCommand.NewPlayer);
+			msg.Write((int)player.Id);
+			msg.Write((bool)ourId);
+			msg.Write((float)player.Champion.Position.X);
+			msg.Write((float)player.Champion.Position.Y);
+			return msg;
 		}
 
 		public void OnDataReceived(NetIncomingMessage msg)
@@ -75,8 +113,11 @@ namespace GREATServer
 
 		void SendToClients(NetOutgoingMessage msg, NetDeliveryMethod method)
 		{
-			foreach (ServerClient client in Clients.Values)
-				Server.SendMessage(msg, client.Connection, method);
+			foreach (ServerClient client in Clients.Values) {
+				NetOutgoingMessage tmp = Server.CreateMessage();
+				tmp.Write(msg);
+				Server.SendMessage(tmp, client.Connection, method);
+			}
 		}
     }
 }

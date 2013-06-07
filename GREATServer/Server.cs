@@ -121,8 +121,7 @@ namespace GREATServer
 		void OnConnection(NetConnection connection)
 		{
 			//TODO: check which game to join instead of just the first
-			Game.AddClient(new ServerClient(connection, new Vec2(100f, 0f)));
-			Console.WriteLine("Player added for " + NetUtility.ToHexString(connection.RemoteUniqueIdentifier));
+			Game.AddClient(connection);
 		}
 	}
 }
