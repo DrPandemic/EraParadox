@@ -107,7 +107,7 @@ namespace GREATClient
 
 			Particules = new List<DrawableParticle>();
 
-			TimeSpan lifeTime = (particleLifeTime == null ? new TimeSpan(0, 0, 1) : particleLifeTime.Value);
+			TimeSpan lifeTime = (particleLifeTime == null ? new TimeSpan(0, 0, 5) : particleLifeTime.Value);
 
 			CreateParticles(numberOfParticle,lifeTime);
         }
@@ -121,7 +121,7 @@ namespace GREATClient
 		protected virtual void CreateParticles(int number, TimeSpan lifeTime)
 		{
 			for (int i = 0; i < number; ++i) {
-				DrawableParticle particle = new DrawableParticle(lifeTime, new Vector2(200, 0), new Vector2(10, 40), 0.2f, 0.1f, 1.5f);
+				DrawableParticle particle = new DrawableParticle(lifeTime, new Vector2(30, -100), new Vector2(10, 100), 0.3f, 0f, 1.8f);
 				Particules.Add(particle);
 				AddChild(particle);
 			}
@@ -137,6 +137,7 @@ namespace GREATClient
 				MaxTimeUntilNextSpawn = TimeSpan.FromTicks(MaxAnimationLength.Value.Ticks / NumberOfParticules);
 				TimeUntilNextSpawn = MaxTimeUntilNextSpawn;
 			} 
+			//TODO repenser ici
 			else if (AnimationLength == null && NumberOfParticules != 0) {
 				MaxTimeUntilNextSpawn = TimeSpan.FromTicks(new TimeSpan(0, 0, 1).Ticks / NumberOfParticules);
 				TimeUntilNextSpawn = MaxTimeUntilNextSpawn;
@@ -144,7 +145,6 @@ namespace GREATClient
 		
 		}
 
-		//TODO : faire aparraitre graduellement les particules et les faire revivre
 		protected override void OnUpdate(GameTime dt)
 		{
 			if (AnimationLength == null || AnimationLength.Value.TotalMilliseconds > 0) {

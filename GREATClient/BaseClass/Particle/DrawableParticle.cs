@@ -28,6 +28,22 @@ namespace GREATClient
 	public class DrawableParticle : DrawableImage
     {
 
+		/// <summary>
+		/// Gets or sets the alpha percent.
+		/// </summary>
+		/// <value>The alpha percent.</value>
+		float AlphaPercent { get; set; }
+
+		/// <summary>
+		/// Gets or sets the alpha time.
+		/// </summary>
+		/// <value>The alpha time.</value>
+		TimeSpan AlphaTime { get; set; }
+
+		/// <summary>
+		/// Gets or sets the max life time.
+		/// </summary>
+		/// <value>The max life time.</value>
 		TimeSpan MaxLifeTime { get; set; }
 
 		/// <summary>
@@ -79,6 +95,7 @@ namespace GREATClient
 		/// <param name="file">File.</param>
         public DrawableParticle(TimeSpan lifeTime, Vector2 initialVelocity, Vector2 force, 
 		                        float lifeTimeRandomizer = 0, float velocityRandomizer = 0, float forceRandomizer = 0 ,
+		                        float alphaPercent = 0.25f,
 		                        string file = "particle") 
 			: base(file)
         {
@@ -87,6 +104,8 @@ namespace GREATClient
 			MaxLifeTime =  TimeSpan.FromTicks((long)(lifeTime.Ticks * GetRandomForPrecision(lifeTimeRandomizer)));
 			LifeTime = MaxLifeTime;
 
+			AlphaPercent = alphaPercent;
+			AlphaTime = TimeSpan.FromMilliseconds(MaxLifeTime.TotalMilliseconds * AlphaPercent);
 
 			MaxVelocity = new Vector2(initialVelocity.X * GetRandomForPrecision(velocityRandomizer),
 			                          initialVelocity.Y * GetRandomForPrecision(velocityRandomizer));
@@ -109,6 +128,9 @@ namespace GREATClient
 				if (LifeTime <= TimeSpan.Zero) {
 					Alive = false;
 				} else {
+					if (LifeTime <= AlphaTime) {
+						Alpha = (float)(LifeTime.TotalMilliseconds / AlphaTime.TotalMilliseconds);
+					}
 					//Calculate the effect of the force on the velocity
 					//The point here, is that the force is calculate for one second
 					Velocity += (Force * (float)dt.ElapsedGameTime.TotalMilliseconds) / 1000;
@@ -137,6 +159,7 @@ namespace GREATClient
 
 		public void Reset()
 		{
+			Alpha = 1f;
 			Alive = true;
 			Velocity = MaxVelocity;
 			Position = Vector2.Zero;
