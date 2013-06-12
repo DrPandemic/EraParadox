@@ -24,9 +24,11 @@ namespace GREATLib
 {
     public enum ClientCommand
 	{
-		MoveLeft = 20,
-		MoveRight = 21,
-		Jump = 22
+		MoveLeft = 0,
+		StopMoveLeft = 1,
+		MoveRight = 2,
+		StopMoveRight = 3,
+		Jump = 4
     }
 }
 

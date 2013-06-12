@@ -71,7 +71,7 @@ namespace GREATClient
 			batch.Draw(Texture,new Rectangle((int)(GetAbsolutePosition().X-OriginRelative.X*Size.X),
 			                                 (int)(GetAbsolutePosition().Y-OriginRelative.Y*Size.Y),
 			                                 (int)Size.X,(int)Size.Y),
-			           						Tint);		
+			           						Tint * Alpha);		
 			batch.End();
 		}
     }

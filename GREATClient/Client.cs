@@ -24,6 +24,7 @@ using Lidgren.Network;
 using System.IO;
 using GREATLib;
 using System.Collections.Generic;
+using GREATLib.Entities.Physics;
 
 namespace GREATClient
 {
@@ -56,9 +57,9 @@ namespace GREATClient
 
 			#if DEBUG
 			// LAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGGGGGGGG (MonoDevelop is saying bullshit, it works)
-			config.SimulatedLoss = 0.01f;
+			/*config.SimulatedLoss = 0.01f;
 			config.SimulatedMinimumLatency = 0.05f;
-			config.SimulatedRandomLatency = 0.05f;
+			config.SimulatedRandomLatency = 0.05f;*/
 			#endif
 
 			this.client = new NetClient(config);
@@ -155,6 +156,8 @@ namespace GREATClient
 	{
 		public int ID;
 		public Vec2 Position;
+		public Animation CurrentAnimation;
+		public bool FacingLeft;
 	}
 	public class PositionUpdateEventArgs : EventArgs
 	{
@@ -166,7 +169,9 @@ namespace GREATClient
 			for (int i = 0; i < count; ++i) {
 				Data.Add(new PositionUpdateData() { 
 					ID = msg.ReadInt32(),
-					Position = new Vec2(msg.ReadFloat(), msg.ReadFloat()) 
+					Position = new Vec2(msg.ReadFloat(), msg.ReadFloat()),
+					CurrentAnimation = (Animation)msg.ReadByte(),
+					FacingLeft = msg.ReadBoolean()
 				});
 			}
 		}

@@ -30,7 +30,7 @@ namespace GREATLib.Entities.Physics
 	/// </summary>
     public class PhysicsSystem
     {
-		private static readonly Vec2 GRAVITY = new Vec2(0f, 20f);
+		private static readonly Vec2 GRAVITY = new Vec2(0f, 28f);
 		/// <summary>
 		/// The amount of passes to make a movement.
 		/// For example, when set to 3, it will move the entity
@@ -91,7 +91,7 @@ namespace GREATLib.Entities.Physics
 			else
 				entity.CurrentAnimation = Animation.Idle;
 
-			entity.Direction = HorizontalDirection.None; // Reset our moving value
+			//entity.Direction = HorizontalDirection.None; // Reset our moving value
 			// Make the movement fade out over time
 			entity.Velocity.X *= entity.HorizontalAcceleration;
 		}
@@ -121,6 +121,11 @@ namespace GREATLib.Entities.Physics
 			entity.Direction = (entity.Direction == HorizontalDirection.None ? // our first movement
 				direction : // set to our new one
 				HorizontalDirection.None); // cancel the other movement (i.e. left+right = no movement)
+		}
+
+		public void StopMovement(PhysicsEntity entity)
+		{
+			entity.Direction = HorizontalDirection.None;
 		}
 
 		/// <summary>

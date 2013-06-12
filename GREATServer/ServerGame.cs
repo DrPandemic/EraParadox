@@ -27,6 +27,7 @@ using GREATLib;
 using GREATLib.Entities;
 using GREATLib.Entities.Player;
 using GREATLib.Entities.Player.Champions.AllChampions;
+using GREATLib.Entities.Physics;
 
 namespace GREATServer
 {
@@ -37,7 +38,7 @@ namespace GREATServer
     {
 		const int FRAMES_PER_SEC = 60;
 		static readonly TimeSpan REFRESH_RATE = TimeSpan.FromMilliseconds(1000.0 / FRAMES_PER_SEC);
-		static readonly TimeSpan POSITION_UPDATE_RATE = TimeSpan.FromMilliseconds(1000.0 / 30.0);
+		static readonly TimeSpan POSITION_UPDATE_RATE = TimeSpan.FromMilliseconds(16.7);
 
 		Random random = new Random();
 
@@ -111,7 +112,25 @@ namespace GREATServer
 			byte code = msg.ReadByte();
 			ClientCommand command = (ClientCommand)code;
 
-			Console.WriteLine("Received command: " + command);
+			switch (command) {
+				case ClientCommand.MoveLeft:
+					Match.MovePlayer(client.Player.Id, HorizontalDirection.Left);
+					break;
+				case ClientCommand.StopMoveLeft:
+				case ClientCommand.StopMoveRight:
+					Match.StopPlayer(client.Player.Id);
+					break;
+				case ClientCommand.MoveRight:
+					Match.MovePlayer(client.Player.Id, HorizontalDirection.Right);
+					break;
+				case ClientCommand.Jump:
+					Match.JumpPlayer(client.Player.Id);
+					break;
+
+				default:
+					Console.WriteLine("Unknown client command: " + command);
+					break;
+			}
 		}
 
 		void UpdatePositions(object sender, EventArgs e)
@@ -130,6 +149,8 @@ namespace GREATServer
 				msg.Write((int)client.Player.Champion.Id);
 				msg.Write((float)client.Player.Champion.Position.X);
 				msg.Write((float)client.Player.Champion.Position.Y);
+				msg.Write((byte)client.Player.Champion.CurrentAnimation);
+				msg.Write((bool)client.Player.Champion.FacingLeft);
 			}
 			return msg;
 		}

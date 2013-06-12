@@ -85,6 +85,8 @@ namespace GREATClient.Screens
 			foreach (PositionUpdateData data in e.Data) {
 				if (Champions.ContainsKey(data.ID)) {
 					Champions[data.ID].Champion.Position = data.Position;
+					Champions[data.ID].Champion.CurrentAnimation = data.CurrentAnimation;
+					Champions[data.ID].Champion.FacingLeft = data.FacingLeft;
 				}
 			}
 		}
@@ -98,10 +100,16 @@ namespace GREATClient.Screens
 			KeyboardState keyboard = Keyboard.GetState();
 			MouseState mouse = Mouse.GetState();
 
-			if (keyboard.IsKeyDown(LEFT))
+			if (oldKeyboard.IsKeyUp(LEFT) && keyboard.IsKeyDown(LEFT))
 				Client.SendCommand(ClientCommand.MoveLeft);
-			if (keyboard.IsKeyDown(RIGHT))
+			else if (oldKeyboard.IsKeyDown(LEFT) && keyboard.IsKeyUp(LEFT))
+				Client.SendCommand(ClientCommand.StopMoveLeft);
+
+			if (oldKeyboard.IsKeyUp(RIGHT) && keyboard.IsKeyDown(RIGHT))
 				Client.SendCommand(ClientCommand.MoveRight);
+			else if (oldKeyboard.IsKeyDown(RIGHT) && keyboard.IsKeyUp(RIGHT))
+				Client.SendCommand(ClientCommand.StopMoveRight);
+
 			if (oldKeyboard.IsKeyUp(JUMP) && keyboard.IsKeyDown(JUMP))
 				Client.SendCommand(ClientCommand.Jump);
 

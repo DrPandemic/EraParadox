@@ -89,6 +89,14 @@ namespace GREATLib
 			Physics.Move(Players[playerId].Champion, direction);
 		}
 
+		public void StopPlayer(int playerId)
+		{
+			Debug.Assert(playerId != EntityIDGenerator.NO_ID, "Invalide ID for a player.");
+			Debug.Assert(Players.ContainsKey(playerId), "No player with the given id.");
+
+			Physics.StopMovement(Players[playerId].Champion);
+		}
+
 		public void JumpPlayer(int playerId)
 		{
 			Debug.Assert(playerId != EntityIDGenerator.NO_ID, "Invalid ID for a player.");

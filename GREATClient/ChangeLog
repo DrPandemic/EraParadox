@@ -1,3 +1,10 @@
+2013-06-11  Jesse  <jesse.emond@hotmail.com>
+
+	* Client.cs:
+	* GameplayScreen.cs:
+	* DrawableRectangle.cs:
+	* DrawableChampion.cs: 
+
 2013-06-07  Jesse  <jesse.emond@hotmail.com>
 
 	* Client.cs:
