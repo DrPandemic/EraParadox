@@ -57,9 +57,9 @@ namespace GREATClient
 
 			#if DEBUG
 			// LAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGGGGGGGG (MonoDevelop is saying bullshit, it works)
-			/*config.SimulatedLoss = 0.01f;
+			config.SimulatedLoss = 0.01f;
 			config.SimulatedMinimumLatency = 0.05f;
-			config.SimulatedRandomLatency = 0.05f;*/
+			config.SimulatedRandomLatency = 0.05f;
 			#endif
 
 			this.client = new NetClient(config);

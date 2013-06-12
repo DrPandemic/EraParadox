@@ -80,11 +80,9 @@ namespace GREATClient
 			}
 
 			position = Vector2.Lerp(position, Champion.Position.ToVector2(), INTERPOLATION_LERP_FACTOR);
+			RealPositionDebugRect.Position = Champion.Position.ToVector2();
 
-			Run.Position = 
-				Idle.Position = 
-				RealPositionDebugRect.Position = 
-				position;
+			Run.Position = Idle.Position = position;
 			Run.FlipX = Idle.FlipX = Champion.FacingLeft;
 		}
 		protected override void OnDraw(Microsoft.Xna.Framework.Graphics.SpriteBatch batch)
