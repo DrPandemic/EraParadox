@@ -34,14 +34,6 @@ namespace GREATClient
 {
     public class TestScreen : Screen
     {
-		//TODO: remove. temporary local tests
-		GameMatch match;
-		int OurId { get; set; }
-		Player Owner;
-
-		Dictionary<int, DrawableCircle> Projectiles = new Dictionary<int, DrawableCircle>();
-
-
 		ChampionsInfo ChampionsInfo { get; set; }
 
 		KeyboardState oldks;
@@ -56,23 +48,11 @@ namespace GREATClient
         {
 			oldms = new MouseState();
 			ChampionsInfo = new ChampionsInfo();
-			OurId = EntityIDGenerator.NO_ID;
-			match = new GameMatch();
         }
 		protected override void OnLoadContent()
 		{
-			//TODO: DrawableGameMatch? I personnally like the idea (Jesse)
-			AddChild(new DrawableTileMap(match.World.Map));
+			champSprite = new DrawableChampionSprite(new StickmanChampion() { Position = new Vec2(200f, 100f) }, ChampionsInfo);
 
-			//TODO: eventually remove. simply testing the physics engine
-			OurId = match.AddPlayer(new Player(), new StickmanChampion() {
-				Position = new Vec2(200f, 100f)
-			});
-			Owner = match.GetPlayer(OurId);
-
-			champSprite = new DrawableChampionSprite(Owner.Champion, ChampionsInfo);
-
-			AddChild(new DrawableChampion(Owner.Champion, ChampionsInfo));
 			AddChild(champSprite);
 
 			DrawableTriangle tr =  new DrawableTriangle(true);
@@ -102,61 +82,11 @@ namespace GREATClient
 			if (ks.IsKeyDown(Keys.Escape))
 				Exit = true;
 
-			if (ks.IsKeyDown(Keys.A)) { match.MovePlayer(OurId, HorizontalDirection.Left); }
-			if (ks.IsKeyDown(Keys.D)) { match.MovePlayer(OurId, HorizontalDirection.Right); }
-
-			if (oldks.IsKeyUp(Keys.W) && ks.IsKeyDown(Keys.W)) { match.JumpPlayer(OurId); }
-			if (ks.IsKeyDown(Keys.R)) match.GetPlayer(OurId).Champion.Position.Y = 0f;
-
-			if (oldms.RightButton == ButtonState.Released && ms.RightButton == ButtonState.Pressed) 
-				Owner.Champion.RangedSpell.Activate(Owner.Champion, match, null, 
-				                                    new Vec2(ms.X - Owner.Champion.Position.X, 
-				         								ms.Y - (Owner.Champion.Position.Y - Owner.Champion.CollisionHeight / 2f)));
-
-
 			if (ks.IsKeyDown(Keys.E)) { champSprite.PlayAnimation(AnimationInfo.JUMP);}
 			if (ks.IsKeyDown(Keys.Q)) { champSprite.PlayAnimation(AnimationInfo.RUN);}
 
-			oldms = ms;
-
-			match.Update((float)dt.ElapsedGameTime.TotalSeconds);
-
 			oldks = ks;
 			oldms = ms;
-
-			// CETTE PARTIE EST TEMPORAIRE, ELLE NE SERA PAS PRÉSENTE APRES
-			// LA PRÉSENTATION, C'EST SEULEMENT UN PROTOTYPE
-			List<int> projectilesAlive = new List<int>();
-			IEnumerable<Projectile> projectiles = match.GetProjectiles();
-			foreach (Projectile projectile in projectiles)
-			{
-				projectilesAlive.Add(projectile.Id);
-				if (!Projectiles.ContainsKey(projectile.Id))
-				{
-					DrawableCircle circle = new DrawableCircle();
-					AddChild(circle);
-					circle.Tint = Color.Pink;
-					circle.Scale = new Vector2(30f) / new Vector2(circle.Texture.Width, circle.Texture.Height);
-					Projectiles.Add(projectile.Id, circle);
-				}
-
-				Projectiles[projectile.Id].Position = projectile.Position.ToVector2() - new Vector2(1.5f);
-
-				const float FADE_OUT = 50f;
-				float dist = projectile.GetDistanceLeft();
-				if (dist <= FADE_OUT) {
-					dist = Math.Max(0, dist);
-					float percent = dist / FADE_OUT;
-					Projectiles[projectile.Id].Alpha = percent;
-				}
-			}
-
-			List<int> toRemove = new List<int>();
-			foreach (int p in Projectiles.Keys)
-				if (!projectilesAlive.Contains(p))
-					toRemove.Add(p);
-			toRemove.ForEach(p => { RemoveChild(Projectiles[p]); Projectiles.Remove(p); });
-			// FIN DE LA PARTIE TEMPORAIRE
 
 			base.OnUpdate(dt);
 		}

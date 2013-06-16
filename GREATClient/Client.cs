@@ -21,6 +21,10 @@
 
 using System;
 using Lidgren.Network;
+using System.IO;
+using GREATLib;
+using System.Collections.Generic;
+using GREATLib.Entities.Physics;
 
 namespace GREATClient
 {
@@ -41,6 +45,9 @@ namespace GREATClient
 		}
 
 		NetClient client;
+
+		public EventHandler<NewPlayerEventArgs> OnNewPlayer;
+		public EventHandler<PositionUpdateEventArgs> OnPositionUpdate;
 
 		public Client()
 		{
@@ -94,12 +101,78 @@ namespace GREATClient
 						Console.WriteLine(msg.ReadString());
 						break;
 					case NetIncomingMessageType.Data:
+						OnDataReceived(msg);
 						break;
 					default:
 						Console.WriteLine("Unhandled type: " + msg.MessageType);
 						break;
 				}
 				client.Recycle(msg);
+			}
+		}
+
+		void OnDataReceived(NetIncomingMessage msg)
+		{
+			byte code = msg.ReadByte();
+			ServerCommand command = (ServerCommand)code;
+
+			switch (command) {
+				case ServerCommand.NewPlayer:
+					OnNewPlayer(this, new NewPlayerEventArgs(msg));
+					break;
+
+				case ServerCommand.PositionUpdate:
+					OnPositionUpdate(this, new PositionUpdateEventArgs(msg));
+					break;
+
+				default:
+					throw new NotImplementedException();
+			}
+		}
+
+		public void SendCommand(ClientCommand command)
+		{
+			NetOutgoingMessage msg = client.CreateMessage();
+			msg.Write((byte)command);
+
+			client.SendMessage(msg, NetDeliveryMethod.ReliableOrdered);
+		}
+	}
+
+
+	public class NewPlayerEventArgs : EventArgs
+	{
+		public int ID { get; private set; }
+		public bool IsOurID { get; private set; }
+		public Vec2 Position { get; private set; }
+		public NewPlayerEventArgs(NetIncomingMessage msg)
+		{
+			ID = msg.ReadInt32();
+			IsOurID = msg.ReadBoolean();
+			Position = new Vec2(msg.ReadFloat(), msg.ReadFloat());
+		}
+	}
+	public struct PositionUpdateData
+	{
+		public int ID;
+		public Vec2 Position;
+		public Animation CurrentAnimation;
+		public bool FacingLeft;
+	}
+	public class PositionUpdateEventArgs : EventArgs
+	{
+		public List<PositionUpdateData> Data { get; private set; }
+		public PositionUpdateEventArgs(NetIncomingMessage msg)
+		{
+			byte count = (byte)msg.ReadByte();
+			Data = new List<PositionUpdateData>(count);
+			for (int i = 0; i < count; ++i) {
+				Data.Add(new PositionUpdateData() { 
+					ID = msg.ReadInt32(),
+					Position = new Vec2(msg.ReadFloat(), msg.ReadFloat()),
+					CurrentAnimation = (Animation)msg.ReadByte(),
+					FacingLeft = msg.ReadBoolean()
+				});
 			}
 		}
 	}

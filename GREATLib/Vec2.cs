@@ -88,7 +88,7 @@ namespace GREATLib
 
 		public void Normalize()
 		{
-			if (this != Vec2.Zero)
+			if (!this.Equals(Vec2.Zero))
 			{
 				float length = GetLength();
 				X /= length;
@@ -183,6 +183,18 @@ namespace GREATLib
 			Vec2 v = new Vec2(vec.X, vec.Y);
 			v.Normalize();
 			return v;
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (!(obj is Vec2)) return false;
+			Vec2 o = obj as Vec2;
+			return o.X == X && o.Y == Y;
+		}
+
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
 		}
     }
 }

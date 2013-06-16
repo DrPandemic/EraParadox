@@ -62,6 +62,7 @@
     <Compile Include="Utilities.cs" />
     <Compile Include="BaseClass\Particle\DrawableParticle.cs" />
     <Compile Include="BaseClass\Particle\ParticleSystem.cs" />
+    <Compile Include="Screens\GameplayScreen.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />
@@ -75,6 +76,7 @@
     <Folder Include="Test\" />
     <Folder Include="GameContent\" />
     <Folder Include="BaseClass\Particle\" />
+    <Folder Include="Screens\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -47,7 +47,7 @@ namespace GREATLib.Entities.Player.Spells.AllSpells
 
 		protected override void OnActivate(IChampion owner, GameMatch match, IEntity target, Vec2 mouseDelta)
 		{
-			match.AddProjectile(new StickManRangedSpellProjectile(owner.GetSpellSpawnPos(), mouseDelta));
+			//match.AddProjectile(new StickManRangedSpellProjectile(owner.GetSpellSpawnPos(), mouseDelta));
 		}
     }
 }

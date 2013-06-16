@@ -1,3 +1,40 @@
+2013-06-11  Jesse  <jesse.emond@hotmail.com>
+
+	* Client.cs:
+	* DrawableChampion.cs: 
+
+2013-06-11  Jesse  <jesse.emond@hotmail.com>
+
+	* Client.cs:
+	* GameplayScreen.cs:
+	* DrawableRectangle.cs:
+	* DrawableChampion.cs: 
+
+2013-06-07  Jesse  <jesse.emond@hotmail.com>
+
+	* Client.cs:
+	* GameplayScreen.cs:
+	* DrawableChampion.cs: 
+
+2013-06-06  Jesse  <jesse.emond@hotmail.com>
+
+	* Game1.cs:
+	* Client.cs:
+	* TestScreen.cs:
+	* GameplayScreen.cs: 
+
+2013-06-06  Jesse  <jesse.emond@hotmail.com>
+
+	* Game1.cs:
+	* Client.cs:
+	* GREATClient.Linux.csproj:
+	* GameplayScreen.cs:
+	* GREATClient.Windows.csproj: 
+
+2013-06-06  Jesse  <jesse.emond@hotmail.com>
+
+	* Drawable.cs: 
+
 2013-06-06  Jesse  <jesse.emond@hotmail.com>
 
 	* TestScreen.cs: 

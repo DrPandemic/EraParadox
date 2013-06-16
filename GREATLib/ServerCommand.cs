@@ -1,8 +1,8 @@
 //
-//  StickmanChampion.cs
+//  ServerCommand.cs
 //
 //  Author:
-//       Jesse <>
+//       Jesse <jesse.emond@hotmail.com>
 //
 //  Copyright (c) 2013 Jesse
 //
@@ -19,26 +19,13 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using GREATLib.Entities.Player.Spells.AllSpells;
 
-namespace GREATLib.Entities.Player.Champions.AllChampions
+namespace GREATLib
 {
-	/// <summary>
-	/// The Stickman champion.
-	/// </summary>
-    public class StickmanChampion : IChampion
+    public enum ServerCommand
     {
-		public override ChampionTypes Type { get { return ChampionTypes.StickMan; } }
-
-		protected override float DefaultCollisionWidth { get { return 13f; } }
-		protected override float DefaultCollisionHeight { get { return 46f; } }
-
-		protected override float StartMoveSpeed { get { return 400f; } }
-
-        public StickmanChampion()
-			: base(new StickManRangedSpell())
-        {
-        }
+		NewPlayer = 10,
+		PositionUpdate = 11
     }
 }
 

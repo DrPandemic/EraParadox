@@ -65,7 +65,7 @@ namespace GREATLib.Entities.Physics
 		protected virtual float DefaultAirAcceleration { get { return 0.8f; } }
 
 		public float JumpForce { get; set; }
-		protected virtual float DefaultJumpForce { get { return 650f; } }
+		protected virtual float DefaultJumpForce { get { return 750f; } }
 
 		/// <summary>
 		/// Gets or sets a value indicating whether this instance is on the ground.

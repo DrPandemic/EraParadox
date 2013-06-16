@@ -41,7 +41,6 @@ namespace GREATLib
 
 		private EntityIDGenerator IDGenerator { get; set; }
 
-		private Dictionary<int, Projectile> Projectiles { get; set; }
 		private Dictionary<int, PhysicsEntity> PhysicsEntities { get; set; }
 		private Dictionary<int, Player> Players { get; set; }
 
@@ -52,7 +51,6 @@ namespace GREATLib
 			World = new GameWorld();
 			Players = new Dictionary<int, Player>();
 			PhysicsEntities = new Dictionary<int, PhysicsEntity>();
-			Projectiles = new Dictionary<int, Projectile>();
         }
 
 		public void Update(double deltaSeconds)
@@ -61,16 +59,9 @@ namespace GREATLib
 
 			Physics.Update(deltaSeconds, World, PhysicsEntities.Values);
 
-			foreach(Player player in Players.Values)
+			foreach (Player player in Players.Values) {
 				player.Update(deltaSeconds);
-
-			List<Projectile> toRemove = new List<Projectile>();
-			foreach (Projectile projectile in Projectiles.Values) {
-				projectile.Update(deltaSeconds, this);
-				if (projectile.RemoveMe)
-					toRemove.Add(projectile);
 			}
-			toRemove.ForEach(p => Projectiles.Remove(p.Id));
 		}
 
 		/// <summary>
@@ -79,22 +70,15 @@ namespace GREATLib
 		/// <returns>The player's id.</returns>
 		/// <param name="player">Player.</param>
 		/// <param name="champion">Champion.</param>
-		public int AddPlayer(Player player, IChampion champion)
+		public Player AddPlayer(Player player, IChampion champion)
 		{
 			player.Id = IDGenerator.GenerateID();
 			player.Champion = champion;
 			Players.Add(player.Id, player);
 
-			AddEntity(champion);
+			AddEntity(champion, player.Id);
 
-			return player.Id;
-		}
-
-		public int AddProjectile(Projectile projectile)
-		{
-			projectile.Id = IDGenerator.GenerateID();
-			Projectiles.Add(projectile.Id, projectile);
-			return projectile.Id;
+			return player;
 		}
 
 		public void MovePlayer(int playerId, HorizontalDirection direction)
@@ -103,6 +87,14 @@ namespace GREATLib
 			Debug.Assert(Players.ContainsKey(playerId), "No player with the given id.");
 
 			Physics.Move(Players[playerId].Champion, direction);
+		}
+
+		public void StopPlayer(int playerId)
+		{
+			Debug.Assert(playerId != EntityIDGenerator.NO_ID, "Invalide ID for a player.");
+			Debug.Assert(Players.ContainsKey(playerId), "No player with the given id.");
+
+			Physics.StopMovement(Players[playerId].Champion);
 		}
 
 		public void JumpPlayer(int playerId)
@@ -114,31 +106,13 @@ namespace GREATLib
 		}
 
 		/// <summary>
-		/// Gets the player with the given ID.
-		/// </summary>
-		/// <returns>The player.</returns>
-		/// <param name="id">The player's identifier.</param>
-		public Player GetPlayer(int id)
-		{
-			Debug.Assert(id != EntityIDGenerator.NO_ID, "Invalid ID for a player.");
-			Debug.Assert(Players.ContainsKey(id), "No player with the given id.");
-
-			return Players[id];
-		}
-		public IEnumerable<Projectile> GetProjectiles()
-		{
-			return Projectiles.Values;
-		}
-		/// <summary>
 		/// Adds the entity to the match and returns its id.
 		/// </summary>
-		/// <returns>The entity's id.</returns>
 		/// <param name="entity">Entity.</param>
-		private int AddEntity(PhysicsEntity entity)
+		private void AddEntity(PhysicsEntity entity, int? id)
 		{
-			entity.Id = IDGenerator.GenerateID();
+			entity.Id = id.HasValue ? id.Value : IDGenerator.GenerateID();
 			PhysicsEntities.Add(entity.Id, entity);
-			return entity.Id;
 		}
     }
 }

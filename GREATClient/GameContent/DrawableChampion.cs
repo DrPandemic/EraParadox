@@ -31,18 +31,30 @@ namespace GREATClient
 	/// </summary>
     public class DrawableChampion : IDraw
     {
+		const float INTERPOLATION_LERP_FACTOR = 0.4f;
+
 		DrawableImage Idle { get; set; }
 		DrawableSprite Run { get; set; }
 		public IChampion Champion { get; set; }
 
+		DrawableRectangle RealPositionDebugRect { get; set; }
+
+		Vector2 position;
+
         public DrawableChampion(IChampion champion, ChampionsInfo championsInfo)
         {
 			Champion = champion;
+			position = champion.Position.ToVector2();
 
 			Idle = new DrawableImage(championsInfo.GetInfo(champion.Type).AssetName + "_stand");
 			Run = new DrawableSprite(championsInfo.GetInfo(champion.Type).AssetName + "_run",
 			                         34, 33, 0, 20, 6,DrawableSprite.INFINITE);
-			Idle.OriginRelative = Run.OriginRelative =
+			RealPositionDebugRect = new DrawableRectangle(
+				new Rectangle((int)Champion.Position.X, (int)Champion.Position.Y, (int)Champion.CollisionWidth, (int)Champion.CollisionHeight), 
+				Color.Green);
+			RealPositionDebugRect.Alpha = 0.5f;
+
+			Idle.OriginRelative = Run.OriginRelative = RealPositionDebugRect.OriginRelative = 
 				new Vector2(0.5f, 1f); // position at the feet
 
 			Run.Visible = false;
@@ -53,6 +65,7 @@ namespace GREATClient
 
 			Parent.AddChild(Idle);
 			Parent.AddChild(Run);
+			Parent.AddChild(RealPositionDebugRect);
 		}
 		protected override void OnUpdate(Microsoft.Xna.Framework.GameTime dt)
 		{
@@ -66,7 +79,10 @@ namespace GREATClient
 					Run.Stop();
 			}
 
-			Run.Position = Idle.Position = Champion.Position.ToVector2();
+			position = Vector2.Lerp(position, Champion.Position.ToVector2(), INTERPOLATION_LERP_FACTOR);
+			RealPositionDebugRect.Position = Champion.Position.ToVector2();
+
+			Run.Position = Idle.Position = position;
 			Run.FlipX = Idle.FlipX = Champion.FacingLeft;
 		}
 		protected override void OnDraw(Microsoft.Xna.Framework.Graphics.SpriteBatch batch)
