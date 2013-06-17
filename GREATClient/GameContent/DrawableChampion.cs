@@ -38,13 +38,15 @@ namespace GREATClient
 		DrawableRectangle RealPositionDebugRect { get; set; }
 
 		Vector2 lastPosition;
+		Vector2 targetPosition;
 		TimeSpan timeForPosUpdate;
 		TimeSpan timeSinceLastPosUpdate;
 
         public DrawableChampion(IChampion champion, ChampionsInfo championsInfo)
         {
 			Champion = champion;
-			lastPosition = champion.Position.ToVector2();
+			targetPosition = champion.Position.ToVector2();
+			lastPosition = targetPosition;
 			timeForPosUpdate = timeSinceLastPosUpdate = TimeSpan.Zero;
 
 			Idle = new DrawableImage(championsInfo.GetInfo(champion.Type).AssetName + "_stand");
@@ -81,11 +83,12 @@ namespace GREATClient
 			}
 
 			// If we received a position update...
-			Vector2 position = Champion.Position.ToVector2();
-			if (lastPosition != position) {
-				timeForPosUpdate = Client.Instance.GetPing();
+			Vector2 realPosition = Champion.Position.ToVector2();
+			if (targetPosition != realPosition) {
+				timeForPosUpdate = Client.Instance.GetPing() * 2;
 				Console.WriteLine("NEW POS!");
-				lastPosition = position;
+				lastPosition = targetPosition;
+				targetPosition = realPosition;
 				timeSinceLastPosUpdate = TimeSpan.Zero;
 			} else {
 				timeSinceLastPosUpdate = timeSinceLastPosUpdate.Add(dt.ElapsedGameTime);
@@ -93,12 +96,13 @@ namespace GREATClient
 
 			float moveProgress = (float)(timeSinceLastPosUpdate.TotalMilliseconds / timeForPosUpdate.TotalMilliseconds);
 			moveProgress = MathHelper.Clamp(moveProgress, 0f, 1f);
-			Console.WriteLine(timeSinceLastPosUpdate.TotalMilliseconds + "/" + timeForPosUpdate.TotalMilliseconds + " : " + moveProgress);
+			//Console.WriteLine(timeSinceLastPosUpdate.TotalMilliseconds + "/" + timeForPosUpdate.TotalMilliseconds + " : " + moveProgress);
 
-			position = Vector2.Lerp(position, Champion.Position.ToVector2(), moveProgress);
-			RealPositionDebugRect.Position = Champion.Position.ToVector2();
+			Vector2 currentPosition = Vector2.Lerp(lastPosition, targetPosition, moveProgress);
+			Console.WriteLine(currentPosition);
+			RealPositionDebugRect.Position = targetPosition;
 
-			Run.Position = Idle.Position = position;
+			Run.Position = Idle.Position = currentPosition;
 			Run.FlipX = Idle.FlipX = Champion.FacingLeft;
 		}
 		protected override void OnDraw(Microsoft.Xna.Framework.Graphics.SpriteBatch batch)
