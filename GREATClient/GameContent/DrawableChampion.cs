@@ -31,20 +31,21 @@ namespace GREATClient
 	/// </summary>
     public class DrawableChampion : IDraw
     {
-		const float INTERPOLATION_LERP_FACTOR = 0.4f;
-
 		DrawableImage Idle { get; set; }
 		DrawableSprite Run { get; set; }
 		public IChampion Champion { get; set; }
 
 		DrawableRectangle RealPositionDebugRect { get; set; }
 
-		Vector2 position;
+		Vector2 lastPosition;
+		TimeSpan timeForPosUpdate;
+		TimeSpan timeSinceLastPosUpdate;
 
         public DrawableChampion(IChampion champion, ChampionsInfo championsInfo)
         {
 			Champion = champion;
-			position = champion.Position.ToVector2();
+			lastPosition = champion.Position.ToVector2();
+			timeForPosUpdate = timeSinceLastPosUpdate = TimeSpan.Zero;
 
 			Idle = new DrawableImage(championsInfo.GetInfo(champion.Type).AssetName + "_stand");
 			Run = new DrawableSprite(championsInfo.GetInfo(champion.Type).AssetName + "_run",
@@ -79,7 +80,22 @@ namespace GREATClient
 					Run.Stop();
 			}
 
-			position = Vector2.Lerp(position, Champion.Position.ToVector2(), INTERPOLATION_LERP_FACTOR);
+			// If we received a position update...
+			Vector2 position = Champion.Position.ToVector2();
+			if (lastPosition != position) {
+				timeForPosUpdate = Client.Instance.GetPing();
+				Console.WriteLine("NEW POS!");
+				lastPosition = position;
+				timeSinceLastPosUpdate = TimeSpan.Zero;
+			} else {
+				timeSinceLastPosUpdate = timeSinceLastPosUpdate.Add(dt.ElapsedGameTime);
+			}
+
+			float moveProgress = (float)(timeSinceLastPosUpdate.TotalMilliseconds / timeForPosUpdate.TotalMilliseconds);
+			moveProgress = MathHelper.Clamp(moveProgress, 0f, 1f);
+			Console.WriteLine(timeSinceLastPosUpdate.TotalMilliseconds + "/" + timeForPosUpdate.TotalMilliseconds + " : " + moveProgress);
+
+			position = Vector2.Lerp(position, Champion.Position.ToVector2(), moveProgress);
 			RealPositionDebugRect.Position = Champion.Position.ToVector2();
 
 			Run.Position = Idle.Position = position;

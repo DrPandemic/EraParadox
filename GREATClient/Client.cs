@@ -111,6 +111,11 @@ namespace GREATClient
 			}
 		}
 
+		public TimeSpan GetPing()
+		{
+			return TimeSpan.FromSeconds((double)client.ServerConnection.AverageRoundtripTime);
+		}
+
 		void OnDataReceived(NetIncomingMessage msg)
 		{
 			byte code = msg.ReadByte();
