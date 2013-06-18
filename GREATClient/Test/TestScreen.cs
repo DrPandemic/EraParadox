@@ -63,6 +63,9 @@ namespace GREATClient
 			oldks = Keyboard.GetState();
 			oldms = Mouse.GetState();
 
+			Container cc = new Container(Content);
+			cc.AddChild(new DrawableLabel("MyFont") {Text = "yo"} );
+			AddChild(cc);
 
 
 			//Test particle

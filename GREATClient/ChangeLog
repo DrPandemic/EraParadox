@@ -1,3 +1,16 @@
+2013-06-17  The Parasithe  <bipbip500@hotmail.com>
+
+	* Game1.cs:
+	* TestScreen.cs:
+	* Ubuntu.bmp:
+	* MyFont.xnb:
+	* Container.cs:
+	* GREATClient.Linux.csproj:
+	* Ubuntu.spritefont:
+	* DrawableLabel.cs:
+	* DrawableImage.cs:
+	* GREATClient.Windows.csproj: 
+
 2013-06-11  Jesse  <jesse.emond@hotmail.com>
 
 	* Client.cs:

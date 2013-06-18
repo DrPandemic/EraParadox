@@ -1,5 +1,5 @@
 //
-//  DrImage.cs
+//  DrawableLabel.cs
 //
 //  Author:
 //       The Parasithe <bipbip500@hotmail.com>
@@ -19,53 +19,35 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 
 namespace GREATClient
 {
-	/// <summary>
-	/// Dr. image.
-	/// </summary>
-    public class DrawableImage : Drawable
+    public class DrawableLabel : Drawable
     {
 		/// <summary>
-		/// Gets the name of the image file.
+		/// Gets or sets the name of the font.
 		/// </summary>
-		/// <value>The name of the file.</value>
-		public string FileName { get; private set; }
+		/// <value>The name of the font.</value>
+		string FontName { get; set; }
 
 		/// <summary>
-		/// Gets or sets a value indicating whether this <see cref="GREATClient.DrawableImage"/> is fliped in x.
+		/// Gets or sets the font.
 		/// </summary>
-		/// <value><c>true</c> if flip x; otherwise, <c>false</c>.</value>
-		bool flipX;
-		public bool FlipX 
-		{ 
-			get { return flipX; } 
-			set 
-			{
-				flipX = value;
-				Effects = (value ? SpriteEffects.FlipHorizontally : SpriteEffects.None );
-			}
-		}
+		/// <value>The font.</value>
+		SpriteFont Font { get; set; }
 
 		/// <summary>
-		/// Gets the width.
+		/// Gets or sets the text.
 		/// </summary>
-		/// <value>The width.</value>
-		protected virtual int Width { get { return Texture.Width; } }
-
-		/// <summary>
-		/// Gets the height.
-		/// </summary>
-		/// <value>The height.</value>
-		protected virtual int Height { get { return Texture.Height; } } 
-
-        public DrawableImage(string file) : base()
+		/// <value>The text.</value>
+		public String Text { get; set; }
+	
+        public DrawableLabel(string fontName) : base()
         {
-			FileName = file;
+			FontName = fontName;
         }
 
 		/// <summary>
@@ -75,20 +57,17 @@ namespace GREATClient
 		protected override void OnLoad(ContentManager content, GraphicsDevice gd)
 		{
 			if(content != null && gd != null)
-				Texture = content.Load<Texture2D>(FileName);
+				Font = content.Load<SpriteFont>(FontName);
 		}
 
-		/// <summary>
-		/// Draw the object.
-		/// </summary>
-		/// <param name="batch">The spritebatch used to draw the object.</param>
 		protected override void OnDraw(SpriteBatch batch)
 		{
-
 			batch.Begin();
 
-			batch.Draw(Texture,GetAbsolutePosition(),SourceRectangle,Tint * Alpha,Orientation,
-			           OriginRelative * new Vector2(Width, Height),Scale,Effects,0);
+			Vector2 FontOrigin = Font.MeasureString( Text ) / 2;
+			// Draw the string
+			batch.DrawString( Font, Text, GetAbsolutePosition(), Tint * Alpha, 
+			                 Orientation, OriginRelative * Font.MeasureString(Text), Scale, Effects, 0 );
 
 			batch.End();
 
