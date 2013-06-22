@@ -44,10 +44,18 @@ namespace GREATClient
 		/// </summary>
 		/// <value>The text.</value>
 		public String Text { get; set; }
+
+		/// <summary>
+		/// Gets or sets the update.
+		/// </summary>
+		/// <value>The update.</value>
+		Action<DrawableLabel> UpdateAction { get; set; }
 	
-        public DrawableLabel(string fontName) : base()
+
+        public DrawableLabel(string fontName, Action<DrawableLabel> update = null) : base()
         {
 			FontName = fontName;
+			UpdateAction = update;
         }
 
 		/// <summary>
@@ -70,7 +78,11 @@ namespace GREATClient
 			                 Orientation, OriginRelative * Font.MeasureString(Text), Scale, Effects, 0 );
 
 			batch.End();
+		}
 
+		protected override void OnUpdate(GameTime dt)
+		{
+			UpdateAction(this);
 		}
     }
 }

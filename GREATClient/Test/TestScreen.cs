@@ -64,7 +64,7 @@ namespace GREATClient
 			oldms = Mouse.GetState();
 
 			Container cc = new Container(Content);
-			cc.AddChild(new DrawableLabel("MyFont") {Text = "yo"} );
+			cc.AddChild(new DrawableLabel("Ubuntu",(DrawableLabel lbl) => lbl.Text += "1" ) {Text = ""} );
 			AddChild(cc);
 
 
