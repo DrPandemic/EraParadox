@@ -1,3 +1,14 @@
+2013-06-23  The Parasithe  <bipbip500@hotmail.com>
+
+	* TestScreen.cs:
+	* FPSCounter.cs:
+	* Drawable.cs:
+	* UIConstants.cs:
+	* GREATClient.Linux.csproj:
+	* GameplayScreen.cs:
+	* DrawableLabel.cs:
+	* GREATClient.Windows.csproj: 
+
 2013-06-22  The Parasithe  <bipbip500@hotmail.com>
 
 	* TestScreen.cs:

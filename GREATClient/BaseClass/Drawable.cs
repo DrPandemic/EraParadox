@@ -29,6 +29,12 @@ namespace GREATClient
     {
 
 		/// <summary>
+		/// Gets or sets a value indicating whether this instance is loaded.
+		/// </summary>
+		/// <value><c>true</c> if this instance is loaded; otherwise, <c>false</c>.</value>
+		protected bool IsLoaded { get; set; }
+
+		/// <summary>
 		/// Gets the texture.
 		/// </summary>
 		/// <value>The texture.</value>
@@ -94,6 +100,7 @@ namespace GREATClient
 			Scale = new Vector2(1,1);
 			OriginRelative = new Vector2(0,0);
 			Effects = SpriteEffects.None;
+			IsLoaded = false;
 		}
 
 		/// <summary>
@@ -111,7 +118,7 @@ namespace GREATClient
 		public override void Draw(SpriteBatch batch)
 		{
 			//If the texture wasn't load, beacause of the order of layer add
-			if(Texture == null)
+			if(Texture == null || !IsLoaded)
 				OnLoad(Parent.Content,Parent.GetGraphics());
 
 			base.Draw(batch);

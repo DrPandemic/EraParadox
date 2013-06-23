@@ -64,8 +64,9 @@ namespace GREATClient
 			oldms = Mouse.GetState();
 
 			Container cc = new Container(Content);
-			cc.AddChild(new DrawableLabel("Ubuntu",(DrawableLabel lbl) => lbl.Text += "1" ) {Text = ""} );
+			cc.AddChild(new FPSCounter());
 			AddChild(cc);
+
 
 
 			//Test particle
@@ -73,7 +74,7 @@ namespace GREATClient
 			sys.Position = new Vector2(100, 100);
 			AddChild(sys);
 
-
+		
 		}
 
 		protected override void OnUpdate(GameTime dt)

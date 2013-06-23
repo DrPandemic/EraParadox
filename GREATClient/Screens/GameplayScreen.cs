@@ -68,6 +68,8 @@ namespace GREATClient.Screens
 
 			Champions = new Dictionary<int, DrawableChampion>();
 			OurChampion = null;
+
+			AddChild(new FPSCounter());
 		}
 
 		void OnNewPlayer(object sender, NewPlayerEventArgs e)

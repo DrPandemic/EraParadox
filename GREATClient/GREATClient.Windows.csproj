@@ -63,6 +63,9 @@
     <Compile Include="BaseClass\Particle\ParticleSystem.cs" />
     <Compile Include="Utilities.cs" />
     <Compile Include="Screens\GameplayScreen.cs" />
+    <Compile Include="Display\FPSCounter.cs" />
+    <Compile Include="Display\UIConstants.cs" />
+    <Compile Include="BaseClass\DrawableLabel.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />
@@ -78,6 +81,7 @@
     <Folder Include="GameContent\" />
     <Folder Include="BaseClass\Particle\" />
     <Folder Include="Screens\" />
+    <Folder Include="Display\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
