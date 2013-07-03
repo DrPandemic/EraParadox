@@ -66,6 +66,7 @@
     <Compile Include="Display\FPSCounter.cs" />
     <Compile Include="Display\UIConstants.cs" />
     <Compile Include="BaseClass\DrawableLabel.cs" />
+    <Compile Include="Display\PingCounter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />

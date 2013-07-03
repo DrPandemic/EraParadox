@@ -70,6 +70,7 @@ namespace GREATClient.Screens
 			OurChampion = null;
 
 			AddChild(new FPSCounter());
+			AddChild(new PingCounter(() => {return 32d;}));
 		}
 
 		void OnNewPlayer(object sender, NewPlayerEventArgs e)

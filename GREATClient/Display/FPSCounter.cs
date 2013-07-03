@@ -75,7 +75,7 @@ namespace GREATClient
 			if( LastUpdate.TotalMilliseconds > 1000 / UPDATE_BY_SECOND)
 			{
 				Text = (1000 / (SinceStart.TotalMilliseconds - LastDraw.TotalMilliseconds)).ToString();
-				Text = Text.Substring(0, 5);
+				Text = Text.Substring(0, 5) + " fps";
 				LastUpdate = new TimeSpan();
 			}
 			
