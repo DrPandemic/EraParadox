@@ -1,4 +1,18 @@
+<<<<<<< Upstream, based on origin/master
 2013-07-15  Jesse  <jesse.emond@hotmail.com>
+=======
+2013-07-05  The Parasithe  <bipbip500@hotmail.com>
+
+	* Game1.cs:
+	* TestScreen.cs:
+	* IDraw.cs:
+	* Screen.cs:
+	* GREATClient.Linux.csproj:
+	* InputManager.cs:
+	* GameplayScreen.cs: 
+
+2013-07-02  The Parasithe  <bipbip500@hotmail.com>
+>>>>>>> 47c519c - Each IDraw object now have a reference to the Game
 
 	* Game1.cs:
 	* Client.cs:

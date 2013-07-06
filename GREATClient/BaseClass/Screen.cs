@@ -55,6 +55,17 @@ namespace GREATClient
 			return Position;
 		}
 
+		Game game;
+		public override Game Game 
+		{ 
+			get {
+				return game;
+			}
+			protected set {
+				game = value;
+			}
+		}
+
 		/// <summary>
 		/// Gets the graphics.
 		/// Only the screen hold the reference to the object
@@ -69,9 +80,10 @@ namespace GREATClient
 		/// Initializes a new instance of the <see cref="GREATClient.Screen"/> class.
 		/// </summary>
 		/// <param name="content">Content.</param>
-		public Screen(ContentManager content) : base(content)
+		public Screen(ContentManager content, Game game) : base(content)
         {
 			Exit = false;
+			Game = game;
         }
 		/// <summary>
 		/// Loads the content.

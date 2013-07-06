@@ -50,6 +50,7 @@ namespace GREATClient.Screens
 
         public GameplayScreen(ContentManager content, Client client)
 			: base(content)
+
         {
 			Client = client;
 			Client.OnNewPlayer += OnNewPlayer;

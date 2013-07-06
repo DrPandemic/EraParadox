@@ -44,7 +44,7 @@ namespace GREATClient
 
 
 
-		public TestScreen(ContentManager content) : base(content)
+		public TestScreen(ContentManager content, Game game) : base(content, game)
         {
 			oldms = new MouseState();
 			ChampionsInfo = new ChampionsInfo();

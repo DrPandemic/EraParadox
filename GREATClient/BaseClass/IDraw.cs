@@ -68,6 +68,18 @@ namespace GREATClient
 			return Position+Parent.GetAbsolutePosition();
 		}
 
+		/// <summary>
+		/// Gets or sets the game.
+		/// </summary>
+		/// <value>The game.</value>
+		public virtual Game Game 
+		{ 
+			get {
+				return Parent == null ? null : Parent.Game;
+			}
+			protected set { throw new NotImplementedException("Only the screen can set the Game");}
+		}
+
 		public IDraw() 
 		{
 			Parent = null;
