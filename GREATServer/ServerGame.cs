@@ -38,7 +38,7 @@ namespace GREATServer
     {
 		const int FRAMES_PER_SEC = 60;
 		static readonly TimeSpan REFRESH_RATE = TimeSpan.FromMilliseconds(1000.0 / FRAMES_PER_SEC);
-		static readonly TimeSpan POSITION_UPDATE_RATE = TimeSpan.FromMilliseconds(16.7);
+		static readonly TimeSpan POSITION_UPDATE_RATE = GameMatch.STATE_UPDATE_INTERVAL;
 
 		Random random = new Random();
 
@@ -117,8 +117,10 @@ namespace GREATServer
 					Match.MovePlayer(client.Player.Id, HorizontalDirection.Left);
 					break;
 				case ClientCommand.StopMoveLeft:
+					Match.StopPlayer(client.Player.Id, HorizontalDirection.Left);
+					break;
 				case ClientCommand.StopMoveRight:
-					Match.StopPlayer(client.Player.Id);
+					Match.StopPlayer(client.Player.Id, HorizontalDirection.Right);
 					break;
 				case ClientCommand.MoveRight:
 					Match.MovePlayer(client.Player.Id, HorizontalDirection.Right);

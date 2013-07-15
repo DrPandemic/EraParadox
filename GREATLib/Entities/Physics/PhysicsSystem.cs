@@ -84,9 +84,11 @@ namespace GREATLib.Entities.Physics
 				Collisions.HandleCollisions(entity, world);
 			}
 
-			if (entity.Direction != HorizontalDirection.None) {
+			HorizontalDirection direction = entity.GetDirection();
+
+			if (direction != HorizontalDirection.None) {
 				entity.CurrentAnimation = Animation.Move;
-				entity.FacingLeft = entity.Direction == HorizontalDirection.Left;
+				entity.FacingLeft = direction == HorizontalDirection.Left;
 			}
 			else
 				entity.CurrentAnimation = Animation.Idle;
@@ -99,7 +101,7 @@ namespace GREATLib.Entities.Physics
 		static void ApplyMovement(PhysicsEntity entity)
 		{
 			// The minimum speed at which we're supposed to go.
-			float moveXVel = (int)entity.Direction * entity.MoveSpeed;
+			float moveXVel = (int)entity.GetDirection() * entity.MoveSpeed;
 
 			if (!entity.IsOnGround) moveXVel *= entity.AirAcceleration;
 
@@ -118,14 +120,34 @@ namespace GREATLib.Entities.Physics
 		/// <param name="direction">The direction in which we want to move.</param>
 		public void Move(PhysicsEntity entity, HorizontalDirection direction)
 		{
-			entity.Direction = (entity.Direction == HorizontalDirection.None ? // our first movement
-				direction : // set to our new one
-				HorizontalDirection.None); // cancel the other movement (i.e. left+right = no movement)
+			SetMovement(entity, direction, true);
 		}
 
-		public void StopMovement(PhysicsEntity entity)
+		/// <summary>
+		/// Stops the movement of an entity in a direction (i.e. we stopped pressing a key
+		/// to go in the specified direction).
+		/// </summary>
+		/// <param name="entity">Entity.</param>
+		/// <param name="direction">Direction.</param>
+		public void StopMovement(PhysicsEntity entity, HorizontalDirection direction)
 		{
-			entity.Direction = HorizontalDirection.None;
+			SetMovement(entity, direction, false);
+		}
+
+		/// <summary>
+		/// Sets the movement of an entity in a direction (e.g. start or stop
+		/// the movement in a direction).
+		/// </summary>
+		/// <param name="entity">Entity.</param>
+		/// <param name="direction">Direction.</param>
+		/// <param name="moving">If we want to move (true) or stop (false).</param>
+		void SetMovement(PhysicsEntity entity, HorizontalDirection direction, bool moving)
+		{
+			if (direction == HorizontalDirection.Left) {
+				entity.MovingLeft = moving;
+			} else if (direction == HorizontalDirection.Right) {
+				entity.MovingRight = moving;
+			}
 		}
 
 		/// <summary>

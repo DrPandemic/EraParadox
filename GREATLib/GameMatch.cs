@@ -35,6 +35,13 @@ namespace GREATLib
 	/// </summary>
     public class GameMatch : ISynchronizable
     {
+		/// <summary>
+		/// The time taken between each state update sent by the server.
+		/// This is in the game's lib because it must be the same value for both the client
+		/// and the server.
+		/// </summary>
+		public static readonly TimeSpan STATE_UPDATE_INTERVAL = TimeSpan.FromMilliseconds(50.0);
+
 		public PhysicsSystem Physics { get; private set; }
 
 		public GameWorld World { get; private set; }
@@ -89,12 +96,12 @@ namespace GREATLib
 			Physics.Move(Players[playerId].Champion, direction);
 		}
 
-		public void StopPlayer(int playerId)
+		public void StopPlayer(int playerId, HorizontalDirection direction)
 		{
 			Debug.Assert(playerId != EntityIDGenerator.NO_ID, "Invalide ID for a player.");
 			Debug.Assert(Players.ContainsKey(playerId), "No player with the given id.");
 
-			Physics.StopMovement(Players[playerId].Champion);
+			Physics.StopMovement(Players[playerId].Champion, direction);
 		}
 
 		public void JumpPlayer(int playerId)

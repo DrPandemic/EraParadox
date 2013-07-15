@@ -152,6 +152,10 @@ namespace GREATLib
 		{
 			return new Vec2(k * lhs.X, k * lhs.Y);
 		}
+		public static Vec2 operator*(Vec2 lhs, double k)
+		{
+			return lhs * (float)k;
+		}
 		//// <summary>Scalar multiplication.</summary>
 		/// <param name="k">The scalar.</param
 		/// <param name="rhs">Right-hand side parameter.</param>
@@ -159,12 +163,20 @@ namespace GREATLib
 		{
 			return new Vec2(k * rhs.X, k * rhs.Y);
 		}
+		public static Vec2 operator*(double k, Vec2 rhs)
+		{
+			return (float)k * rhs;
+		}
 		/// <summary>Scalar division.</summary>
 		/// <param name="lhs">Left-hand side parameter.</param>
 		/// <param name="k">The scalar.</param>
 		public static Vec2 operator/(Vec2 lhs, float k)
 		{
 			return lhs * (1f / k);
+		}
+		public static Vec2 operator/(Vec2 lhs, double k)
+		{
+			return lhs / (float)k;
 		}
 		/// <summary>
 		/// Linear interpolation from a vector to another using a specified factor.

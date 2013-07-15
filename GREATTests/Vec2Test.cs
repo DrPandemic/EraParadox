@@ -137,7 +137,13 @@ namespace GREATTests
 			Assert.AreEqual(new Vec2(5f, 2f) * 5f, new Vec2(25f, 10f), "(5,2)*5 = (25,10)");
 			Assert.AreEqual(10f * new Vec2(15f, 30f), new Vec2(150f, 300f), "10*(15,30) = (150,300)");
 			Assert.AreEqual(Vec2.Zero * 100000f, Vec2.Zero, "(0,0)*100000 = (0,0)");
-			Assert.AreEqual(16 * Vec2.Zero, Vec2.Zero, "16*(0,0) = (0,0)");
+			Assert.AreEqual(16f * Vec2.Zero, Vec2.Zero, "16*(0,0) = (0,0)");
+			Assert.AreEqual(Vec2.UnitX * 1.0, Vec2.UnitX, "(1,0)*1.0 = (1,0)");
+			Assert.AreEqual(1.0 * Vec2.UnitY, Vec2.UnitY, "1.0*(0,1) = (0,1)");
+			Assert.AreEqual(new Vec2(5f, 2f) * 5.0, new Vec2(25f, 10f), "(5,2)*5.0 = (25,10)");
+			Assert.AreEqual(10.0 * new Vec2(15f, 30f), new Vec2(150f, 300f), "10.0*(15,30) = (150,300)");
+			Assert.AreEqual(Vec2.Zero * 100000.0, Vec2.Zero, "(0,0)*100000.0 = (0,0)");
+			Assert.AreEqual(16.0 * Vec2.Zero, Vec2.Zero, "16.0*(0,0) = (0,0)");
 		}
 
 		[Test()]
@@ -146,6 +152,9 @@ namespace GREATTests
 			Assert.AreEqual(Vec2.UnitX / 3f, new Vec2(1/3f, 0f), "(1,0)/3 = (1/3,0)");
 			Assert.AreEqual(Vec2.One / 5f, new Vec2(1/5f, 1 / 5f), "(1,1)/5 = (1/5,1/5)");
 			Assert.AreEqual(Vec2.Zero / 300000f, Vec2.Zero, "(0,0)/300000 = (0,0)");
+			Assert.AreEqual(Vec2.UnitX / 3.0, new Vec2(1/3f, 0f), "(1,0)/3.0 = (1/3,0)");
+			Assert.AreEqual(Vec2.One / 5.0, new Vec2(1/5f, 1 / 5f), "(1,1)/5.0 = (1/5,1/5)");
+			Assert.AreEqual(Vec2.Zero / 300000.0, Vec2.Zero, "(0,0)/300000.0 = (0,0)");
 		}
 
 		[Test()]

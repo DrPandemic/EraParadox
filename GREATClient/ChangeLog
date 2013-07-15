@@ -1,3 +1,13 @@
+2013-07-15  Jesse  <jesse.emond@hotmail.com>
+
+	* Client.cs:
+	* Logger.cs:
+	* Utilities.cs:
+	* GREATClient.Linux.csproj:
+	* GameplayScreen.cs:
+	* GREATClient.Windows.csproj:
+	* DrawableChampion.cs: 
+
 2013-06-16  Jesse  <jesse.emond@hotmail.com>
 
 	* DrawableChampion.cs: 

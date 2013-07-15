@@ -35,10 +35,15 @@ namespace GREATLib.Entities.Physics
 		protected abstract float StartMoveSpeed { get; }
 
 		/// <summary>
-		/// Gets or sets the direction in which the entity wants to move.
+		/// Gets or sets a value indicating whether this <see cref="GREATLib.Entities.Physics.PhysicsEntity"/> wants to move left.
 		/// </summary>
-		/// <value>The direction.</value>
-		public HorizontalDirection Direction { get; set; }
+		/// <value><c>true</c> if moving left; otherwise, <c>false</c>.</value>
+		public bool MovingLeft { get; set; }
+		/// <summary>
+		/// Gets or sets a value indicating whether this <see cref="GREATLib.Entities.Physics.PhysicsEntity"/> wants to move right.
+		/// </summary>
+		/// <value><c>true</c> if moving right; otherwise, <c>false</c>.</value>
+		public bool MovingRight { get; set; }
 
 		public Animation CurrentAnimation { get; set; }
 
@@ -82,7 +87,8 @@ namespace GREATLib.Entities.Physics
 			MoveSpeed = StartMoveSpeed;
 			AirAcceleration = DefaultAirAcceleration;
 			JumpForce = DefaultJumpForce;
-			Direction = HorizontalDirection.None;
+			MovingLeft = false;
+			MovingRight = false;
         }
 
 		/// <summary>
@@ -98,6 +104,16 @@ namespace GREATLib.Entities.Physics
 				Position.X - CollisionWidth / 2f, 
 				Position.Y - CollisionHeight,
 				CollisionWidth, CollisionHeight);
+		}
+
+		/// <summary>
+		/// Gets the direction in which we want to move.
+		/// </summary>
+		/// <returns>The direction.</returns>
+		public HorizontalDirection GetDirection()
+		{
+			return (MovingLeft == MovingRight) ? HorizontalDirection.None : // want to go both direction (or none)
+				(MovingLeft ? HorizontalDirection.Left : HorizontalDirection.Right); // going left or right
 		}
 	}
 }

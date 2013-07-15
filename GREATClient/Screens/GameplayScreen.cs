@@ -26,6 +26,8 @@ using GREATLib.World.Tiles;
 using System.Collections.Generic;
 using GREATLib.Entities.Player.Champions.AllChampions;
 using System.Diagnostics;
+using GREATLib.Entities.Player.Champions;
+using Microsoft.Xna.Framework;
 
 namespace GREATClient.Screens
 {
@@ -44,6 +46,8 @@ namespace GREATClient.Screens
 		Dictionary<int, DrawableChampion> Champions { get; set; }
 		DrawableChampion OurChampion { get; set; }
 
+		GameTime GameTime { get; set; }
+
         public GameplayScreen(ContentManager content, Client client)
 			: base(content)
         {
@@ -57,6 +61,8 @@ namespace GREATClient.Screens
 			oldKeyboard = Keyboard.GetState();
 			oldMouse = Mouse.GetState();
 			//ENDTODO
+
+			GameTime = null;
         }
 
 		protected override void OnLoadContent()
@@ -72,46 +78,66 @@ namespace GREATClient.Screens
 
 		void OnNewPlayer(object sender, NewPlayerEventArgs e)
 		{
-			DrawableChampion champion = new DrawableChampion(new StickmanChampion() { Position = e.Position, Id = e.ID }, ChampionsInfo);
+			Debug.Assert(e != null);
 
-			Champions.Add(e.ID, champion);
-			AddChild(champion);
+			IChampion champion = new StickmanChampion();
+			e.UpdateChampion(champion);
+			DrawableChampion drawableChampion = new DrawableChampion(champion, ChampionsInfo);
 
-			if (e.IsOurID)
-				OurChampion = champion;
+			Champions.Add(e.ID, drawableChampion);
+			AddChild(drawableChampion);
+
+			if (e.IsOurID) {
+				Debug.Assert(OurChampion == null); // We must not override our champion, indicates a problem.
+				OurChampion = drawableChampion;
+			}
 		}
 		void OnPositionUpdate(object sender, PositionUpdateEventArgs e)
 		{
+			Debug.Assert(e != null);
+			Debug.Assert(e.Data != null);
+
 			foreach (PositionUpdateData data in e.Data) {
 				if (Champions.ContainsKey(data.ID)) {
-					Champions[data.ID].Champion.Position = data.Position;
-					Champions[data.ID].Champion.CurrentAnimation = data.CurrentAnimation;
-					Champions[data.ID].Champion.FacingLeft = data.FacingLeft;
+					data.UpdateChampion(Client.GetTime().TotalSeconds, Champions[data.ID]);
 				}
 			}
 		}
 
 		protected override void OnUpdate(Microsoft.Xna.Framework.GameTime dt)
 		{
+			GameTime = dt;
+
 			//TODO: input manager
 			const Keys LEFT = Keys.A;
 			const Keys RIGHT = Keys.D;
 			const Keys JUMP = Keys.W;
+			const Keys DEBUG = Keys.T;
 			KeyboardState keyboard = Keyboard.GetState();
 			MouseState mouse = Mouse.GetState();
 
-			if (oldKeyboard.IsKeyUp(LEFT) && keyboard.IsKeyDown(LEFT))
+			if (oldKeyboard.IsKeyUp(LEFT) && keyboard.IsKeyDown(LEFT)) {
 				Client.SendCommand(ClientCommand.MoveLeft);
-			else if (oldKeyboard.IsKeyDown(LEFT) && keyboard.IsKeyUp(LEFT))
+			} else if (oldKeyboard.IsKeyDown(LEFT) && keyboard.IsKeyUp(LEFT)) {
 				Client.SendCommand(ClientCommand.StopMoveLeft);
+			}
 
-			if (oldKeyboard.IsKeyUp(RIGHT) && keyboard.IsKeyDown(RIGHT))
+			if (oldKeyboard.IsKeyUp(RIGHT) && keyboard.IsKeyDown(RIGHT)) {
 				Client.SendCommand(ClientCommand.MoveRight);
-			else if (oldKeyboard.IsKeyDown(RIGHT) && keyboard.IsKeyUp(RIGHT))
-				Client.SendCommand(ClientCommand.StopMoveRight);
+			} else if (oldKeyboard.IsKeyDown(RIGHT) && keyboard.IsKeyUp(RIGHT)) {
+					Client.SendCommand(ClientCommand.StopMoveRight);
+				}
 
-			if (oldKeyboard.IsKeyUp(JUMP) && keyboard.IsKeyDown(JUMP))
+			if (oldKeyboard.IsKeyUp(JUMP) && keyboard.IsKeyDown(JUMP)) {
 				Client.SendCommand(ClientCommand.Jump);
+			}
+
+
+			//DEBUG INPUT
+			if (oldKeyboard.IsKeyUp(DEBUG) && keyboard.IsKeyDown(DEBUG)) {
+				DrawableChampion.SHOW_DEBUG_RECT = !DrawableChampion.SHOW_DEBUG_RECT;
+			}
+
 
 			oldKeyboard = keyboard;
 			oldMouse = mouse;

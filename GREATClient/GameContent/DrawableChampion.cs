@@ -23,6 +23,9 @@ using GREATClient;
 using GREATLib.Entities.Player.Champions;
 using Microsoft.Xna.Framework;
 using GREATLib.Entities.Physics;
+using GREATLib;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace GREATClient
 {
@@ -31,23 +34,42 @@ namespace GREATClient
 	/// </summary>
     public class DrawableChampion : IDraw
     {
+		/// <summary>
+		/// Whether we should use entity interpolation or not.
+		/// </summary>
+		public static bool USE_INTERPOLATION = true;
+		/// <summary>
+		/// We interpolate how long it will take until the next position update. We take twice the amount of time to account the possibility
+		/// of packet loss or jitter.
+		/// This basically represents how far we are in the past we are when we are on the "current frame". So, with a value of 100ms,
+		/// we draw everything 100ms late.
+		/// </summary>
+		public static TimeSpan INTERPOLATION_TIME = TimeSpan.FromMilliseconds(GameMatch.STATE_UPDATE_INTERVAL.TotalMilliseconds * 2.0);
+		public static bool SHOW_DEBUG_RECT = false;
+
+		Vec2 CurrentPosition { get; set; }
+
 		DrawableImage Idle { get; set; }
 		DrawableSprite Run { get; set; }
 		public IChampion Champion { get; set; }
 
 		DrawableRectangle RealPositionDebugRect { get; set; }
 
-		Vector2 lastPosition;
-		Vector2 targetPosition;
-		TimeSpan timeForPosUpdate;
-		TimeSpan timeSinceLastPosUpdate;
+		/// <summary>
+		/// Gets or sets the position snapshots.
+		/// These are the positions updates that we get from this played at different
+		/// times. The key is the time when we receive an update (total game seconds), and the value is the
+		/// position at this particular time.
+		/// </summary>
+		/// <value>The position snapshots.</value>
+		List<KeyValuePair<double, Vec2>> PositionSnapshots { get; set; }
 
         public DrawableChampion(IChampion champion, ChampionsInfo championsInfo)
         {
 			Champion = champion;
-			targetPosition = champion.Position.ToVector2();
-			lastPosition = targetPosition;
-			timeForPosUpdate = timeSinceLastPosUpdate = TimeSpan.Zero;
+			PositionSnapshots = new List<KeyValuePair<double, Vec2>>();
+
+			CurrentPosition = champion.Position;
 
 			Idle = new DrawableImage(championsInfo.GetInfo(champion.Type).AssetName + "_stand");
 			Run = new DrawableSprite(championsInfo.GetInfo(champion.Type).AssetName + "_run",
@@ -61,6 +83,8 @@ namespace GREATClient
 				new Vector2(0.5f, 1f); // position at the feet
 
 			Run.Visible = false;
+
+			RealPositionDebugRect.Visible = SHOW_DEBUG_RECT;
         }
 		protected override void OnLoad(Microsoft.Xna.Framework.Content.ContentManager content, Microsoft.Xna.Framework.Graphics.GraphicsDevice gd)
 		{
@@ -82,32 +106,89 @@ namespace GREATClient
 					Run.Stop();
 			}
 
-			// If we received a position update...
-			Vector2 realPosition = Champion.Position.ToVector2();
-			if (targetPosition != realPosition) {
-				timeForPosUpdate = Client.Instance.GetPing() * 2;
-				Console.WriteLine("NEW POS!");
-				lastPosition = targetPosition;
-				targetPosition = realPosition;
-				timeSinceLastPosUpdate = TimeSpan.Zero;
+			UpdatePosition();
+
+			Run.Position = Idle.Position = CurrentPosition.ToVector2();
+			Run.FlipX = Idle.FlipX = Champion.FacingLeft;
+
+			RealPositionDebugRect.Visible = SHOW_DEBUG_RECT;
+		}
+
+		/// <summary>
+		/// Updates the position of the player, based on the last position snapshots
+		/// that we received.
+		/// </summary>
+		void UpdatePosition()
+		{
+			if (USE_INTERPOLATION) {
+				InterpolatePosition();
 			} else {
-				timeSinceLastPosUpdate = timeSinceLastPosUpdate.Add(dt.ElapsedGameTime);
+				CurrentPosition = Champion.Position;
 			}
 
-			float moveProgress = (float)(timeSinceLastPosUpdate.TotalMilliseconds / timeForPosUpdate.TotalMilliseconds);
-			moveProgress = MathHelper.Clamp(moveProgress, 0f, 1f);
-			//Console.WriteLine(timeSinceLastPosUpdate.TotalMilliseconds + "/" + timeForPosUpdate.TotalMilliseconds + " : " + moveProgress);
-
-			Vector2 currentPosition = Vector2.Lerp(lastPosition, targetPosition, moveProgress);
-			Console.WriteLine(currentPosition);
-			RealPositionDebugRect.Position = targetPosition;
-
-			Run.Position = Idle.Position = currentPosition;
-			Run.FlipX = Idle.FlipX = Champion.FacingLeft;
+			RealPositionDebugRect.Position = Champion.Position.ToVector2();
 		}
+
+		/// <summary>
+		/// Interpolates the position of the player, keeping the player's position in
+		/// the past and lerping towards the last snapshot that we received.
+		/// This gives a smoother feeling to the gameplay. Packets are unpredictable
+		/// and arrive at varying rates with a delay (the ping). Therefore, we have
+		/// to go a couple of snapshots behind (depending on what is the interpolation
+		/// delay) and interpolate towards a closer snapshot.
+		/// </summary>
+		/// <see cref="https://developer.valvesoftware.com/wiki/Source_Multiplayer_Networking#Entity_interpolation"/>
+		void InterpolatePosition()
+		{
+			bool interpolationWorked = false;
+
+			const int MIN_POSITIONS_REQUIRED = 2; // we need at least 2 snapshots for interpolation.
+
+			if (PositionSnapshots.Count >= MIN_POSITIONS_REQUIRED) { // we can interpolate!
+				// We first find the two snapshots that we'll use for interpolation (the one before and after our drawing time)
+				double drawingTime = Client.Instance.GetTime().TotalSeconds - INTERPOLATION_TIME.TotalSeconds;
+				int previousSnapshot = PositionSnapshots.FindLastIndex(snapshot => snapshot.Key <= drawingTime);
+				int nextSnapshot = PositionSnapshots.FindIndex(snapshot => snapshot.Key > drawingTime);
+
+				if (previousSnapshot >= 0 && nextSnapshot >= 0) { // we have enough snapshots to have one before and after our drawing time
+					KeyValuePair<double, Vec2> previous = PositionSnapshots[previousSnapshot];
+					KeyValuePair<double, Vec2> next = PositionSnapshots[nextSnapshot];
+
+					Debug.Assert(previous.Key <= drawingTime);
+					Debug.Assert(next.Key > drawingTime);
+					Debug.Assert(previous.Key < next.Key);
+
+					PositionSnapshots.RemoveRange(0, previousSnapshot); // we clean the snapshots that are too old now
+
+					// see how far we are in the snapshot transition
+					double progress = (drawingTime - previous.Key) / (next.Key - previous.Key);
+
+					// move from our old position (the previous snapshot) to our next snapshot (using the progress so far)
+					CurrentPosition = previous.Value + (next.Value - previous.Value) * progress;
+
+					interpolationWorked = true;
+				}
+			}
+
+			if (!interpolationWorked) {
+				CurrentPosition = Champion.Position; // directly pick the real position for now, we'll get valid snapshots soon.
+				Logger.Log("Insufficient snapshots for interpolation. Picking real position instead.", LogPriority.Warning);
+			}
+		}
+
+
 		protected override void OnDraw(Microsoft.Xna.Framework.Graphics.SpriteBatch batch)
 		{
 			// Run and Idle take care of that.
+		}
+
+		/// <summary>
+		/// When we receive a new position snapshot, we keep it to interpolate between the positions.
+		/// </summary>
+		/// <param name="totalGameSeconds">Total game seconds since the start of the game.</param>
+		public void OnPositionUpdate(double totalGameSeconds, Vec2 position)
+		{
+			PositionSnapshots.Add(new KeyValuePair<double, Vec2>(totalGameSeconds, position));
 		}
     }
 }

@@ -19,6 +19,8 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 
 namespace GREATClient
 {
@@ -29,6 +31,36 @@ namespace GREATClient
 		public static float RandomFloat(this Random random, float min, float max)
 		{
 			return (float)random.NextDouble() * (max - min) + min;
+		}
+
+		/// <summary>
+		/// Helper to quickly create Lists for DEBUGGING PURPOSES.
+		/// Usage:
+		/// List<string> list = Utilities.MakeList("hello", "this", "is", "a", "list");
+		/// </summary>
+		/// <returns>The list.</returns>
+		/// <param name="elements">Elements.</param>
+		/// <typeparam name="T">The 1st type parameter.</typeparam>
+		public static List<T> MakeList<T>(params T[] elements)
+		{
+			List<T> list = new List<T>();
+			foreach (T e in elements) {
+				list.Add(e);
+			}
+			return list;
+		}
+
+		/// <summary>
+		/// Utility function to easily get game services.
+		/// Usage:
+		/// InputManager input = game.GetService<InputManager>();
+		/// </summary>
+		/// <returns>The service.</returns>
+		/// <param name="game">Game.</param>
+		/// <typeparam name="T">The 1st type parameter.</typeparam>
+		public static T GetService<T>(this Game game)
+		{
+			return (T)game.Services.GetService(typeof(T));
 		}
     }
 }
