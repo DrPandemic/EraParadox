@@ -63,14 +63,28 @@ namespace GREATClient
 			oldks = Keyboard.GetState();
 			oldms = Mouse.GetState();
 
+			Container cc = new Container(Content);
+			cc.AddChild(new FPSCounter());
+			AddChild(cc);
+
 
 
 			//Test particle
-			ParticleSystem sys = new ParticleSystem(Content, 1000, null);
+			/*ParticleSystem sys = new ParticleSystem(Content, 1000, null);
 			sys.Position = new Vector2(100, 100);
-			AddChild(sys);
+			AddChild(sys);*/
+
+			AddChild(new PingCounter(yo));
+
+		}
 
 
+		/// <summary>
+		/// Boobies reference
+		/// </summary>
+		protected double yo()
+		{
+			return 32d;
 		}
 
 		protected override void OnUpdate(GameTime dt)

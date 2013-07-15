@@ -78,8 +78,7 @@ namespace GREATClient
 				child.Load(this, GetGraphics());
 				child.Z=z;
 				int index = Children.FindIndex(c => child.Z > c.Z);
-				if(index==-1)
-				
+				if(index==-1)				
 					index = Children.FindLastIndex(c => child.Z == c.Z);
 				
 				++index;

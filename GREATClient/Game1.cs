@@ -75,6 +75,7 @@ namespace GREATClient
 		{
 			Console.WriteLine("Starting client...");
 			gameplay = new GameplayScreen(Content, client); // when testing: new TestScreen(Content);
+			//gameplay = new TestScreen(Content);
 			client.Start();
 
 			base.Initialize();

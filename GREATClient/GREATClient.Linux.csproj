@@ -64,6 +64,10 @@
     <Compile Include="BaseClass\Particle\ParticleSystem.cs" />
     <Compile Include="Screens\GameplayScreen.cs" />
     <Compile Include="Logger.cs" />
+    <Compile Include="BaseClass\DrawableLabel.cs" />
+    <Compile Include="Display\FPSCounter.cs" />
+    <Compile Include="Display\UIConstants.cs" />
+    <Compile Include="Display\PingCounter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />
@@ -78,6 +82,7 @@
     <Folder Include="GameContent\" />
     <Folder Include="BaseClass\Particle\" />
     <Folder Include="Screens\" />
+    <Folder Include="Display\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -110,6 +115,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\particle.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\MyFont.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Ubuntu.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
