@@ -25,6 +25,7 @@ using GREATLib;
 using System.Collections.Generic;
 using GREATLib.Entities.Physics;
 using GREATLib.Entities.Player.Champions;
+using System.Diagnostics;
 
 namespace GREATClient
 {
@@ -113,7 +114,7 @@ namespace GREATClient
 
 		public TimeSpan GetPing()
 		{
-			return TimeSpan.FromSeconds((double)client.ServerConnection.AverageRoundtripTime);
+			return client.ServerConnection != null ? TimeSpan.FromSeconds((double)client.ServerConnection.AverageRoundtripTime) : TimeSpan.Zero;
 		}
 
 		public TimeSpan GetTime()

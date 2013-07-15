@@ -1,0 +1,12 @@
+2013-07-15  Jesse  <jesse.emond@hotmail.com>
+
+	* Game1.cs:
+	* Client.cs:
+	* TestScreen.cs:
+	* Drawable.cs:
+	* FPSCounter.cs:
+	* PingCounter.cs:
+	* UIConstants.cs:
+	* GameplayScreen.cs:
+	* DrawableLabel.cs: 
+
