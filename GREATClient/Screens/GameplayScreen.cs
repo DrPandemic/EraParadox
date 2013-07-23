@@ -48,8 +48,8 @@ namespace GREATClient.Screens
 
 		GameTime GameTime { get; set; }
 
-        public GameplayScreen(ContentManager content, Client client)
-			: base(content)
+        public GameplayScreen(ContentManager content, Game game, Client client)
+			: base(content, game)
 
         {
 			Client = client;
