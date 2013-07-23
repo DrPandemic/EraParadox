@@ -67,8 +67,6 @@ namespace GREATClient
 			cc.AddChild(new FPSCounter());
 			AddChild(cc);
 
-
-
 			//Test particle
 			/*ParticleSystem sys = new ParticleSystem(Content, 1000, null);
 			sys.Position = new Vector2(100, 100);
@@ -76,6 +74,7 @@ namespace GREATClient
 
 			AddChild(new PingCounter(yo));
 
+			InputManager inputManager = new InputManager();
 		}
 
 

@@ -6,7 +6,7 @@ namespace GREATClient
 {
 	static class Program
 	{
-		static Game1 game;
+		static GreatGame game;
 
 		/// <summary>
 		/// The main entry point for the application.
@@ -15,7 +15,7 @@ namespace GREATClient
 		static void Main()
 		{
 			Console.WriteLine("Creating game...");
-			game = new Game1();
+			game = new GreatGame();
 			game.Run();
 		}
 	}

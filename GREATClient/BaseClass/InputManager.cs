@@ -24,8 +24,15 @@ namespace GREATClient
 {
     public class InputManager
     {
+		/// <summary>
+		/// Gets or sets the inputs.
+		/// </summary>
+		/// <value>The inputs.</value>
+		Inputs Inputs { get; set; }
+
         public InputManager()
         {
+			Inputs = new Inputs();
         }
     }
 }

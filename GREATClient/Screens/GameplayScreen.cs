@@ -46,11 +46,8 @@ namespace GREATClient.Screens
 		Dictionary<int, DrawableChampion> Champions { get; set; }
 		DrawableChampion OurChampion { get; set; }
 
-		GameTime GameTime { get; set; }
-
-        public GameplayScreen(ContentManager content, Client client)
-			: base(content)
-
+        public GameplayScreen(ContentManager content, GreatGame game, Client client)
+			: base(content, game)
         {
 			Client = client;
 			Client.OnNewPlayer += OnNewPlayer;

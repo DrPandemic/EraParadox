@@ -39,7 +39,6 @@
     <Reference Include="MonoGame.Framework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Game1.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Client.cs" />
@@ -68,6 +67,9 @@
     <Compile Include="Display\UIConstants.cs" />
     <Compile Include="BaseClass\DrawableLabel.cs" />
     <Compile Include="Display\PingCounter.cs" />
+    <Compile Include="BaseClass\Input\InputInfo.cs" />
+    <Compile Include="BaseClass\Input\InputManager.cs" />
+    <Compile Include="GreatGame.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />
@@ -84,6 +86,7 @@
     <Folder Include="BaseClass\Particle\" />
     <Folder Include="Screens\" />
     <Folder Include="Display\" />
+    <Folder Include="BaseClass\Input\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -113,6 +116,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Ubuntu.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\inputs.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

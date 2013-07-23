@@ -36,7 +36,7 @@ namespace GREATClient
 	/// <summary>
 	/// This is the main type for your game
 	/// </summary>
-	public class Game1 : Game
+	public class GreatGame : Game
 	{
 		/// The screen name
 		const string SCREEN_NAME = "GREAT";
@@ -49,8 +49,7 @@ namespace GREATClient
 		GraphicsDeviceManager graphics;
 		Screen gameplay;
 
-
-		public Game1()
+		public GreatGame()
 		{
 			Console.WriteLine("Game created.");
 			client = Client.Instance;
@@ -74,9 +73,11 @@ namespace GREATClient
 		protected override void Initialize()
 		{
 			Console.WriteLine("Starting client...");
-			gameplay = new GameplayScreen(Content, this, client); // when testing: new TestScreen(Content);
-			//gameplay = new TestScreen(Content);
+			//gameplay = new GameplayScreen(Content, this, client); // when testing: new TestScreen(Content);
+			gameplay = new TestScreen(Content,this);
 			client.Start();
+
+			this.Services.AddService(typeof(InputManager), new InputManager());
 
 			base.Initialize();
 		}

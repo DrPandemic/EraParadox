@@ -28,6 +28,24 @@ namespace GREATClient
     public abstract class IDraw
     {
 		/// <summary>
+		/// Gets the input manager.
+		/// </summary>
+		/// <returns>The input manager.</returns>
+		InputManager inputManager;
+		public InputManager InputManager {
+			get {
+				if (inputManager != null) {
+					return inputManager;
+				} else if (this.Game != null) {
+					inputManager = (InputManager)this.Game.Services.GetService(typeof(InputManager));
+					return inputManager;
+				} else {
+					return null;
+				}
+			}
+		}
+
+		/// <summary>
 		/// Gets the parent of the object.
 		/// </summary>
 		/// <value>The parent.</value>
@@ -77,7 +95,7 @@ namespace GREATClient
 			get {
 				return Parent == null ? null : Parent.Game;
 			}
-			protected set { throw new NotImplementedException("Only the screen can set the Game");}
+			protected set { throw new NotImplementedException("Only the screen can set the Game"); }
 		}
 
 		public IDraw() 
