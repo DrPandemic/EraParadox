@@ -60,6 +60,8 @@
     <Compile Include="Entities\Player\Spells\Projectile.cs" />
     <Compile Include="ClientCommand.cs" />
     <Compile Include="ServerCommand.cs" />
+    <Compile Include="CustomLogger.cs" />
+    <Compile Include="ILogger.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -1,5 +1,5 @@
 //
-//  Logger.cs
+//  ILogger.cs
 //
 //  Author:
 //       Jesse <jesse.emond@hotmail.com>
@@ -19,10 +19,12 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.IO;
 
-namespace GREATClient
+namespace GREATLib
 {
+	/// <summary>
+	/// Priority of the message to log.
+	/// </summary>
 	public enum LogPriority
 	{
 		VeryLow = 0,
@@ -36,36 +38,37 @@ namespace GREATClient
 	}
 
 	/// <summary>
-	/// Class used to log important game events.
+	/// Manages the program's logs.
 	/// </summary>
-    public class Logger
+    public abstract class ILogger
     {
-		public static Logger Default = new Logger();
+		/// <summary>
+		/// The default logger to use.
+		/// </summary>
+		public static ILogger Default = new CustomLogger();
 
-		const LogPriority DEFAULT_MESSAGE_PRIORITY = LogPriority.Normal;
-		const LogPriority DEFAULT_MIN_PRIORITY = LogPriority.VeryLow;
+		protected const LogPriority DEFAULT_MESSAGE_PRIORITY = LogPriority.VeryLow;
+		protected const LogPriority DEFAULT_MIN_PRIORITY = LogPriority.VeryLow;
 
-		public TextWriter Output { get; set; }
+		/// <summary>
+		/// Gets or sets the minimum priority to show of the logger.
+		/// </summary>
+		/// <value>The minimum priority.</value>
 		public LogPriority MinPriority { get; set; }
 
-		public Logger(LogPriority priority = DEFAULT_MIN_PRIORITY)
-		: this(Console.Out, priority) { }
-
-		public Logger(TextWriter output, LogPriority priority = DEFAULT_MIN_PRIORITY)
+		/// <summary>
+		/// Initializes a new instance of the <see cref="GREATClient.ILogger"/> class.
+		/// </summary>
+		/// <param name="priority">Minimum priority to show.</param>
+		public ILogger(LogPriority priority = DEFAULT_MIN_PRIORITY)
 		{
 			MinPriority = priority;
-			Output = output;
 		}
 
 		/// <summary>
 		/// Log the specified message (if the priority is high enough) on the output of the logger.
 		/// </summary>
-		public void LogMessage(string message, LogPriority priority = DEFAULT_MESSAGE_PRIORITY)
-		{
-			if (priority >= MinPriority) { // the priority is high enough
-				Output.WriteLine(DateTime.Now + ": " + message);
-			}
-		}
+		public abstract void LogMessage(string message, LogPriority priority = DEFAULT_MESSAGE_PRIORITY);
 		/// <summary>
 		/// Log the specified message (if the priority is high enough) on the default logger.
 		/// </summary>
