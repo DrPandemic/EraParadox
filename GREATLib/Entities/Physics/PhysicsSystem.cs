@@ -30,6 +30,10 @@ namespace GREATLib.Entities.Physics
 	/// </summary>
     public class PhysicsSystem
     {
+		/// <summary>
+		/// The amount of time between every physics update.
+		/// </summary>
+		public static readonly TimeSpan UPDATE_RATE = TimeSpan.FromMilliseconds(15.0);
 		private static readonly Vec2 GRAVITY = new Vec2(0f, 28f);
 		/// <summary>
 		/// The amount of passes to make a movement.
@@ -55,7 +59,7 @@ namespace GREATLib.Entities.Physics
 		public void Update(double deltaSeconds, GameWorld world, 
 		                   IEnumerable<PhysicsEntity> entities)
 		{
-			Debug.Assert(deltaSeconds > 0f, "Delta seconds too small for physics update.");
+			Debug.Assert(deltaSeconds > 0f, "Delta seconds must be positive for physics update.");
 
 			foreach (PhysicsEntity entity in entities)
 			{
@@ -93,7 +97,6 @@ namespace GREATLib.Entities.Physics
 			else
 				entity.CurrentAnimation = Animation.Idle;
 
-			//entity.Direction = HorizontalDirection.None; // Reset our moving value
 			// Make the movement fade out over time
 			entity.Velocity.X *= entity.HorizontalAcceleration;
 		}

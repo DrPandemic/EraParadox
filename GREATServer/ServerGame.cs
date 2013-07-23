@@ -36,8 +36,6 @@ namespace GREATServer
 	/// </summary>
     public class ServerGame
     {
-		const int FRAMES_PER_SEC = 60;
-		static readonly TimeSpan REFRESH_RATE = TimeSpan.FromMilliseconds(1000.0 / FRAMES_PER_SEC);
 		static readonly TimeSpan POSITION_UPDATE_RATE = GameMatch.STATE_UPDATE_INTERVAL;
 
 		Random random = new Random();
@@ -62,14 +60,14 @@ namespace GREATServer
 			updatePositions.Elapsed += UpdatePositions;
 			updatePositions.Start();
 
-			Timer update = new Timer(REFRESH_RATE.TotalMilliseconds);
+			Timer update = new Timer(PhysicsSystem.UPDATE_RATE.TotalMilliseconds);
 			update.Elapsed += Update;
 			update.Start();
         }
 
 		void Update(object sender, EventArgs e)
 		{
-			Match.Update(REFRESH_RATE.TotalSeconds);
+			Match.Update(PhysicsSystem.UPDATE_RATE.TotalMilliseconds);
 		}
 
 		public void AddClient(NetConnection connection)
