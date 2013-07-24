@@ -24,9 +24,7 @@ using Microsoft.Xna.Framework.Input;
 using GREATLib;
 using GREATLib.World.Tiles;
 using System.Collections.Generic;
-using GREATLib.Entities.Player.Champions.AllChampions;
 using System.Diagnostics;
-using GREATLib.Entities.Player.Champions;
 using Microsoft.Xna.Framework;
 
 namespace GREATClient.Screens
@@ -53,9 +51,6 @@ namespace GREATClient.Screens
 
         {
 			Client = client;
-			Client.OnNewPlayer += OnNewPlayer;
-			Client.OnPositionUpdate += OnPositionUpdate;
-
 			ChampionsInfo = new ChampionsInfo();
 
 			//TODO: input manager
@@ -78,34 +73,6 @@ namespace GREATClient.Screens
 
 			AddChild(new FPSCounter());
 			AddChild(new PingCounter(() => {return Client.Instance.GetPing().TotalMilliseconds;}));
-		}
-
-		void OnNewPlayer(object sender, NewPlayerEventArgs e)
-		{
-			Debug.Assert(e != null);
-
-			IChampion champion = new StickmanChampion();
-			e.UpdateChampion(champion);
-			DrawableChampion drawableChampion = new DrawableChampion(champion, ChampionsInfo);
-
-			Champions.Add(e.ID, drawableChampion);
-			AddChild(drawableChampion);
-
-			if (e.IsOurID) {
-				Debug.Assert(OurChampion == null); // We must not override our champion, indicates a problem.
-				OurChampion = drawableChampion;
-			}
-		}
-		void OnPositionUpdate(object sender, PositionUpdateEventArgs e)
-		{
-			Debug.Assert(e != null);
-			Debug.Assert(e.Data != null);
-
-			foreach (PositionUpdateData data in e.Data) {
-				if (Champions.ContainsKey(data.ID)) {
-					data.UpdateChampion(Client.GetTime().TotalSeconds, Champions[data.ID]);
-				}
-			}
 		}
 
 		protected override void OnUpdate(Microsoft.Xna.Framework.GameTime dt)
@@ -139,7 +106,6 @@ namespace GREATClient.Screens
 
 			//DEBUG INPUT
 			if (oldKeyboard.IsKeyUp(DEBUG) && keyboard.IsKeyDown(DEBUG)) {
-				DrawableChampion.SHOW_DEBUG_RECT = !DrawableChampion.SHOW_DEBUG_RECT;
 			}
 
 

@@ -23,8 +23,6 @@ using System;
 using Lidgren.Network;
 using GREATLib;
 using System.Collections.Generic;
-using GREATLib.Entities.Physics;
-using GREATLib.Entities.Player.Champions;
 using System.Diagnostics;
 
 namespace GREATClient
@@ -48,7 +46,6 @@ namespace GREATClient
 		NetClient client;
 
 		public EventHandler<NewPlayerEventArgs> OnNewPlayer;
-		public EventHandler<PositionUpdateEventArgs> OnPositionUpdate;
 
 		public Client()
 		{
@@ -129,11 +126,9 @@ namespace GREATClient
 
 			switch (command) {
 				case ServerCommand.NewPlayer:
-					OnNewPlayer(this, new NewPlayerEventArgs(msg));
 					break;
 
 				case ServerCommand.PositionUpdate:
-					OnPositionUpdate(this, new PositionUpdateEventArgs(msg));
 					break;
 
 				default:
@@ -162,51 +157,12 @@ namespace GREATClient
 			IsOurID = msg.ReadBoolean();
 			Position = new Vec2(msg.ReadFloat(), msg.ReadFloat());
 		}
-
-		public void UpdateChampion(IChampion champion)
-		{
-			champion.Id = ID;
-			champion.Position = Position;
-		}
 	}
 	public struct PositionUpdateData
 	{
 		public int ID;
 		public Vec2 Position;
-		public Animation CurrentAnimation;
 		public bool FacingLeft;
-
-		/// <summary>
-		/// Updates the champion for the new position update.
-		/// </summary>
-		/// <param name="totalGameSeconds">Total game seconds since the start of the game.</param>
-		/// <param name="champion">Champion.</param>
-		public void UpdateChampion(double totalGameSeconds, DrawableChampion champion)
-		{
-			IChampion champ = champion.Champion;
-			champ.Position = Position;
-			champ.CurrentAnimation = CurrentAnimation;
-			champ.FacingLeft = FacingLeft;
-
-			champion.OnPositionUpdate(totalGameSeconds, Position);
-		}
-	}
-	public class PositionUpdateEventArgs : EventArgs
-	{
-		public List<PositionUpdateData> Data { get; private set; }
-		public PositionUpdateEventArgs(NetIncomingMessage msg)
-		{
-			byte count = (byte)msg.ReadByte();
-			Data = new List<PositionUpdateData>(count);
-			for (int i = 0; i < count; ++i) {
-				Data.Add(new PositionUpdateData() { 
-					ID = msg.ReadInt32(),
-					Position = new Vec2(msg.ReadFloat(), msg.ReadFloat()),
-					CurrentAnimation = (Animation)msg.ReadByte(),
-					FacingLeft = msg.ReadBoolean()
-				});
-			}
-		}
 	}
 }
 

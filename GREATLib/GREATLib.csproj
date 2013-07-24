@@ -35,29 +35,12 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Vec2.cs" />
     <Compile Include="GeneralHelper.cs" />
-    <Compile Include="ISynchronizable.cs" />
-    <Compile Include="Entities\IEntity.cs" />
-    <Compile Include="Entities\Physics\PhysicsEntity.cs" />
-    <Compile Include="Entities\Player\Player.cs" />
-    <Compile Include="Entities\Player\Champions\IChampion.cs" />
-    <Compile Include="Entities\Physics\PhysicsSystem.cs" />
-    <Compile Include="Entities\Physics\HorizontalDirection.cs" />
     <Compile Include="World\Tiles\TileMap.cs" />
     <Compile Include="World\Tiles\Tile.cs" />
     <Compile Include="GameMatch.cs" />
     <Compile Include="World\GameWorld.cs" />
-    <Compile Include="Entities\Physics\CollisionHandler.cs" />
-    <Compile Include="Entities\EntityIDGenerator.cs" />
     <Compile Include="Rect.cs" />
     <Compile Include="World\Tiles\CollisionType.cs" />
-    <Compile Include="Entities\Player\Champions\ChampionTypes.cs" />
-    <Compile Include="Entities\Player\Champions\AllChampions\StickmanChampion.cs" />
-    <Compile Include="Entities\Player\Spells\ISpell.cs" />
-    <Compile Include="Entities\Physics\Animation.cs" />
-    <Compile Include="Entities\Player\Spells\SpellTypes.cs" />
-    <Compile Include="Entities\Player\Spells\AllSpells\StickManRangedSpell.cs" />
-    <Compile Include="Entities\Physics\MovingEntity.cs" />
-    <Compile Include="Entities\Player\Spells\Projectile.cs" />
     <Compile Include="ClientCommand.cs" />
     <Compile Include="ServerCommand.cs" />
     <Compile Include="CustomLogger.cs" />
@@ -67,12 +50,7 @@
   <ItemGroup>
     <Folder Include="Entities\" />
     <Folder Include="Entities\Physics\" />
-    <Folder Include="Entities\Player\" />
-    <Folder Include="Entities\Player\Spells\" />
-    <Folder Include="Entities\Player\Champions\" />
     <Folder Include="World\" />
     <Folder Include="World\Tiles\" />
-    <Folder Include="Entities\Player\Champions\AllChampions\" />
-    <Folder Include="Entities\Player\Spells\AllSpells\" />
   </ItemGroup>
 </Project>

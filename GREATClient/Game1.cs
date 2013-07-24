@@ -24,8 +24,6 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using GREATLib.Entities.Physics;
-using GREATLib.Entities.Player.Champions;
 using System.Collections.Generic;
 using GREATLib;
 using GREATClient.Screens;

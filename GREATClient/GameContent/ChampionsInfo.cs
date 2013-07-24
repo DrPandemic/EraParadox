@@ -20,13 +20,18 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
-using GREATLib.Entities.Player.Champions;
 using System.Diagnostics;
 using System.Xml.Serialization;
 using System.IO;
 
 namespace GREATClient
 {
+	//TODO: TEMP REPLACE ME
+	public enum ChampionTypes
+	{
+		StickMan
+	}
+
 	/// <summary>
 	/// The information of an animation of a champion.
 	/// </summary>

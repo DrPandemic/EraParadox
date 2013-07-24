@@ -19,44 +19,42 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using GREATLib.Entities.Player.Champions;
+using System.Diagnostics;
 
 namespace GREATClient
 {
     public class DrawableChampionSprite : DrawableSprite
     {
 		/// <summary>
-		/// Gets or sets the champion.
-		/// </summary>
-		/// <value>The champion.</value>
-		IChampion champion { get; set; }
-
-		/// <summary>
-		/// Gets or sets the infos.
+		/// Gets or sets the information about a specific champion.
 		/// </summary>
 		/// <value>The infos.</value>
-		ChampionInfo information { get; set; }
+		ChampionInfo Information { get; set; }
 
-		public DrawableChampionSprite(IChampion champ, ChampionsInfo championsInfo)
-			: base (championsInfo.GetInfo(champ.Type).AssetName,
-			        championsInfo.GetInfo(champ.Type).FrameWidth,
-			        championsInfo.GetInfo(champ.Type).FrameHeight,
-			        championsInfo.GetInfo(champ.Type).GetAnimation(AnimationInfo.IDLE).Line,
-			        championsInfo.GetInfo(champ.Type).GetAnimation(AnimationInfo.IDLE).FrameRate,
-			        championsInfo.GetInfo(champ.Type).GetAnimation(AnimationInfo.IDLE).FrameCount)
+		public DrawableChampionSprite(ChampionTypes type, ChampionsInfo championsInfo)
+			: base (championsInfo.GetInfo(type).AssetName,
+			        championsInfo.GetInfo(type).FrameWidth,
+			        championsInfo.GetInfo(type).FrameHeight,
+			        championsInfo.GetInfo(type).GetAnimation(AnimationInfo.IDLE).Line,
+			        championsInfo.GetInfo(type).GetAnimation(AnimationInfo.IDLE).FrameRate,
+			        championsInfo.GetInfo(type).GetAnimation(AnimationInfo.IDLE).FrameCount)
         {
-			champion = champ;
-			information = championsInfo.GetInfo(champion.Type);
+			Information = championsInfo.GetInfo(type);
         }
 
 		/// <summary>
-		/// Plaies the animation.
-		/// If the nimation doesn't exist, this call is ignored;
+		/// Plays the animation.
+		/// If the animation doesn't exist, this call is ignored;
 		/// </summary>
 		/// <param name="name">Name.</param>
 		public void PlayAnimation(string name)
 		{
-			AnimationInfo anim = information.GetAnimation(name);
+			Debug.Assert(!String.IsNullOrWhiteSpace(name), "No animation specified");
+
+			AnimationInfo anim = Information.GetAnimation(name);
+
+			Debug.Assert(anim != null, "The animation does not exist.");
+
 			if (anim!=null) {
 				Line = anim.Line;
 				FrameCount = anim.FrameCount;

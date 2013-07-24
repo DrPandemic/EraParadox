@@ -19,15 +19,10 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using GREATLib;
-using GREATLib.Entities;
-using GREATLib.Entities.Physics;
-using GREATLib.Entities.Player;
-using GREATLib.Entities.Player.Champions.AllChampions;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
-using GREATLib.Entities.Player.Spells;
 using System;
 
 namespace GREATClient
@@ -39,10 +34,7 @@ namespace GREATClient
 		KeyboardState oldks;
 		MouseState oldms;
 
-
 		DrawableChampionSprite champSprite;
-
-
 
 		public TestScreen(ContentManager content, Game game) : base(content, game)
         {
@@ -51,8 +43,7 @@ namespace GREATClient
         }
 		protected override void OnLoadContent()
 		{
-			champSprite = new DrawableChampionSprite(new StickmanChampion() { Position = new Vec2(200f, 100f) }, ChampionsInfo);
-
+			champSprite = new DrawableChampionSprite(ChampionTypes.StickMan, ChampionsInfo);
 			AddChild(champSprite);
 
 			DrawableTriangle tr =  new DrawableTriangle(true);
@@ -74,17 +65,7 @@ namespace GREATClient
 			sys.Position = new Vector2(100, 100);
 			AddChild(sys);*/
 
-			AddChild(new PingCounter(yo));
-
-		}
-
-
-		/// <summary>
-		/// Boobies reference
-		/// </summary>
-		protected double yo()
-		{
-			return 32d;
+			AddChild(new PingCounter(() => Client.Instance.GetPing().TotalMilliseconds));
 		}
 
 		protected override void OnUpdate(GameTime dt)

@@ -21,7 +21,6 @@
 using System;
 using Lidgren.Network;
 using GREATLib;
-using GREATLib.Entities.Player;
 
 namespace GREATServer
 {
@@ -31,12 +30,10 @@ namespace GREATServer
     public class ServerClient
     {
 		public NetConnection Connection { get; set; }
-		public Player Player { get; set; }
 
-        public ServerClient(NetConnection conn, Player player)
+        public ServerClient(NetConnection conn)
         {
 			Connection = conn;
-			Player = player;
         }
     }
 }

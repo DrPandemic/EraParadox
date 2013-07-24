@@ -20,20 +20,15 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using GREATLib.World;
-using GREATLib.Entities.Player;
 using System.Collections.Generic;
-using GREATLib.Entities;
-using GREATLib.Entities.Physics;
-using GREATLib.Entities.Player.Champions;
 using System.Diagnostics;
-using GREATLib.Entities.Player.Spells;
 
 namespace GREATLib
 {
 	/// <summary>
 	/// An individual game match, 
 	/// </summary>
-    public class GameMatch : ISynchronizable
+    public class GameMatch
     {
 		/// <summary>
 		/// The time taken between each state update sent by the server.
@@ -42,84 +37,16 @@ namespace GREATLib
 		/// </summary>
 		public static readonly TimeSpan STATE_UPDATE_INTERVAL = TimeSpan.FromMilliseconds(50.0);
 
-		public PhysicsSystem Physics { get; private set; }
-
 		public GameWorld World { get; private set; }
-
-		private EntityIDGenerator IDGenerator { get; set; }
-
-		private Dictionary<int, PhysicsEntity> PhysicsEntities { get; set; }
-		private Dictionary<int, Player> Players { get; set; }
 
         public GameMatch()
         {
-			IDGenerator = new EntityIDGenerator();
-			Physics = new PhysicsSystem();
 			World = new GameWorld();
-			Players = new Dictionary<int, Player>();
-			PhysicsEntities = new Dictionary<int, PhysicsEntity>();
         }
 
 		public void Update(double deltaSeconds)
 		{
 			Debug.Assert(deltaSeconds > 0f, "The delta seconds while updating the match is too small.");
-
-			Physics.Update(deltaSeconds, World, PhysicsEntities.Values);
-
-			foreach (Player player in Players.Values) {
-				player.Update(deltaSeconds);
-			}
-		}
-
-		/// <summary>
-		/// Adds the player to the match with his champion and returns its id.
-		/// </summary>
-		/// <returns>The player's id.</returns>
-		/// <param name="player">Player.</param>
-		/// <param name="champion">Champion.</param>
-		public Player AddPlayer(Player player, IChampion champion)
-		{
-			player.Id = IDGenerator.GenerateID();
-			player.Champion = champion;
-			Players.Add(player.Id, player);
-
-			AddEntity(champion, player.Id);
-
-			return player;
-		}
-
-		public void MovePlayer(int playerId, HorizontalDirection direction)
-		{
-			Debug.Assert(playerId != EntityIDGenerator.NO_ID, "Invalid ID for a player.");
-			Debug.Assert(Players.ContainsKey(playerId), "No player with the given id.");
-
-			Physics.Move(Players[playerId].Champion, direction);
-		}
-
-		public void StopPlayer(int playerId, HorizontalDirection direction)
-		{
-			Debug.Assert(playerId != EntityIDGenerator.NO_ID, "Invalide ID for a player.");
-			Debug.Assert(Players.ContainsKey(playerId), "No player with the given id.");
-
-			Physics.StopMovement(Players[playerId].Champion, direction);
-		}
-
-		public void JumpPlayer(int playerId)
-		{
-			Debug.Assert(playerId != EntityIDGenerator.NO_ID, "Invalid ID for a player.");
-			Debug.Assert(Players.ContainsKey(playerId), "No player with the given id.");
-
-			Physics.Jump(Players[playerId].Champion);
-		}
-
-		/// <summary>
-		/// Adds the entity to the match and returns its id.
-		/// </summary>
-		/// <param name="entity">Entity.</param>
-		private void AddEntity(PhysicsEntity entity, int? id)
-		{
-			entity.Id = id.HasValue ? id.Value : IDGenerator.GenerateID();
-			PhysicsEntities.Add(entity.Id, entity);
 		}
     }
 }

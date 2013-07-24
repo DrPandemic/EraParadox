@@ -105,7 +105,7 @@ namespace GREATServer
 						break;
 					case NetIncomingMessageType.Data:
 						// TODO: update all the games instead of just one.
-						Game.OnDataReceived(msg);
+						//Game.OnDataReceived(msg);
 						break;
 					default:
 						Console.WriteLine("Unhandled type: " + msg.MessageType);
@@ -121,7 +121,7 @@ namespace GREATServer
 		void OnConnection(NetConnection connection)
 		{
 			//TODO: check which game to join instead of just the first
-			Game.AddClient(connection);
+			//Game.AddClient(connection);
 		}
 	}
 }
