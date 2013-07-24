@@ -30,7 +30,7 @@ using System.Collections.Generic;
 using GREATLib.Entities.Player.Spells;
 using System;
 
-namespace GREATClient
+namespace GREATClient.Test
 {
     public class TestScreen : Screen
     {

@@ -27,7 +27,7 @@ using GREATLib;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace GREATClient
+namespace GREATClient.GameContent
 {
 	/// <summary>
 	/// Represents a champion in the game.

@@ -23,7 +23,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 
-namespace GREATClient
+namespace GREATClient.BaseClass.Particle
 {
 	public class DrawableParticle : DrawableImage
     {

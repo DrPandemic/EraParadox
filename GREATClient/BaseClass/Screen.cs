@@ -23,7 +23,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 
-namespace GREATClient
+namespace GREATClient.BaseClass
 {
     public class Screen : Container
     {

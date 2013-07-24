@@ -24,7 +24,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using GREATLib;
 
-namespace GREATClient
+namespace GREATClient.BaseClass
 {
 	/// <summary>
 	/// Dr. Rectangle

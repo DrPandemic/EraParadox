@@ -25,7 +25,7 @@ using System.Diagnostics;
 using System.Xml.Serialization;
 using System.IO;
 
-namespace GREATClient
+namespace GREATClient.GameContent
 {
 	/// <summary>
 	/// The information of an animation of a champion.

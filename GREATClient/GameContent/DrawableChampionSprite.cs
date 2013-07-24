@@ -21,7 +21,7 @@
 using System;
 using GREATLib.Entities.Player.Champions;
 
-namespace GREATClient
+namespace GREATClient.GameContent
 {
     public class DrawableChampionSprite : DrawableSprite
     {
