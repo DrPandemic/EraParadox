@@ -26,6 +26,7 @@ using GREATLib.Entities.Physics;
 using GREATLib;
 using System.Collections.Generic;
 using System.Diagnostics;
+using GREATClient.BaseClass;
 
 namespace GREATClient.GameContent
 {

@@ -26,6 +26,7 @@ using System.Collections.Generic;
 using GREATLib.Entities.Physics;
 using GREATLib.Entities.Player.Champions;
 using System.Diagnostics;
+using GREATClient.GameContent;
 
 namespace GREATClient
 {

@@ -29,6 +29,9 @@ using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
 using GREATLib.Entities.Player.Spells;
 using System;
+using GREATClient.BaseClass;
+using GREATClient.GameContent;
+using GREATClient.Display;
 
 namespace GREATClient.Test
 {

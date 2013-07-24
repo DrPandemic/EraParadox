@@ -28,6 +28,9 @@ using GREATLib.Entities.Player.Champions.AllChampions;
 using System.Diagnostics;
 using GREATLib.Entities.Player.Champions;
 using Microsoft.Xna.Framework;
+using GREATClient.BaseClass;
+using GREATClient.GameContent;
+using GREATClient.Display;
 
 namespace GREATClient.Screens
 {
