@@ -22,8 +22,9 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using GREATClient.BaseClass;
 
-namespace GREATClient
+namespace GREATClient.Display
 {
     public class FPSCounter : DrawableLabel
     {

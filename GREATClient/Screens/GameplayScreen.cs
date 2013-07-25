@@ -28,6 +28,9 @@ using GREATLib.Entities.Player.Champions.AllChampions;
 using System.Diagnostics;
 using GREATLib.Entities.Player.Champions;
 using Microsoft.Xna.Framework;
+using GREATClient.BaseClass;
+using GREATClient.GameContent;
+using GREATClient.Display;
 
 namespace GREATClient.Screens
 {
@@ -46,7 +49,9 @@ namespace GREATClient.Screens
 		Dictionary<int, DrawableChampion> Champions { get; set; }
 		DrawableChampion OurChampion { get; set; }
 
-        public GameplayScreen(ContentManager content, GreatGame game, Client client)
+		GameTime GameTime { get; set; }
+
+        public GameplayScreen(ContentManager content, Game game, Client client)
 			: base(content, game)
         {
 			Client = client;

@@ -21,7 +21,7 @@
 using System;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace GREATClient
+namespace GREATClient.BaseClass
 {
     public class DrawableTriangle : DrawableImage
     {

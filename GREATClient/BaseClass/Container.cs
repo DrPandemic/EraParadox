@@ -24,7 +24,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Content;
 
-namespace GREATClient
+namespace GREATClient.BaseClass
 {
     public class Container : IDraw
     {

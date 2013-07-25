@@ -62,7 +62,6 @@
     <Compile Include="BaseClass\Particle\ParticleSystem.cs" />
     <Compile Include="Utilities.cs" />
     <Compile Include="Screens\GameplayScreen.cs" />
-    <Compile Include="Logger.cs" />
     <Compile Include="Display\FPSCounter.cs" />
     <Compile Include="Display\UIConstants.cs" />
     <Compile Include="BaseClass\DrawableLabel.cs" />

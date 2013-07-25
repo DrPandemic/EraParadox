@@ -23,7 +23,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 
-namespace GREATClient
+namespace GREATClient.BaseClass
 {
     public class DrawableLabel : Drawable
     {

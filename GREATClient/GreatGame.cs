@@ -29,6 +29,7 @@ using GREATLib.Entities.Player.Champions;
 using System.Collections.Generic;
 using GREATLib;
 using GREATClient.Screens;
+using GREATClient.BaseClass;
 
 
 namespace GREATClient
