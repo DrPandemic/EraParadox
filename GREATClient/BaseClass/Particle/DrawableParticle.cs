@@ -148,7 +148,7 @@ namespace GREATClient
 		/// <param name="precision">Precision.</param>
 		float GetRandomForPrecision(float precision)
 		{
-			return 1.0f + Utilities.Random.RandomFloat(-precision, precision);
+			return 1.0f + Utilities.RandomFloat(Utilities.Random, -precision, precision);
 		}
 
 		public override void Draw(SpriteBatch batch)

@@ -24,6 +24,7 @@ using Microsoft.Xna.Framework;
 using GREATLib;
 using System.Collections.Generic;
 using System.Diagnostics;
+using GREATClient.Network;
 
 namespace GREATClient
 {
@@ -32,27 +33,29 @@ namespace GREATClient
 	/// </summary>
     public class DrawableChampion : IDraw
     {
-		DrawableImage Idle { get; set; }
-		DrawableSprite Run { get; set; }
+		public MainClientChampion Champion { get; set; }
+		DrawableRectangle ChampionDrawnRect { get; set; }
 
         public DrawableChampion(ChampionsInfo championsInfo)
         {
+			Champion = new MainClientChampion();
         }
 		protected override void OnLoad(Microsoft.Xna.Framework.Content.ContentManager content, Microsoft.Xna.Framework.Graphics.GraphicsDevice gd)
 		{
 			base.OnLoad(content, gd);
 
-			Parent.AddChild(Idle);
-			Parent.AddChild(Run);
+			ChampionDrawnRect = new DrawableRectangle(new Rectangle(0, 0, 15, 30), Color.White);
+			Parent.AddChild(ChampionDrawnRect);
 		}
 		protected override void OnUpdate(Microsoft.Xna.Framework.GameTime dt)
 		{
+			ChampionDrawnRect.Position = GameLibHelper.ToVector2(Champion.DrawnPosition);
 		}
 
 
 		protected override void OnDraw(Microsoft.Xna.Framework.Graphics.SpriteBatch batch)
 		{
-			// Run and Idle take care of that.
+			// The champion's animations take care of the drawing.
 		}
     }
 }

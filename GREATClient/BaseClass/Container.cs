@@ -23,6 +23,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Content;
+using System.Diagnostics;
 
 namespace GREATClient
 {
@@ -73,6 +74,8 @@ namespace GREATClient
 		/// <param name="z">The z coordinate.</param>
 		public void AddChild(IDraw child, int z)
 		{
+			Debug.Assert(child != null);
+
 			if(child.Parent == null)
 			{
 				child.Load(this, GetGraphics());

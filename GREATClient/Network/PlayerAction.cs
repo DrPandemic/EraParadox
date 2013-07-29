@@ -1,8 +1,8 @@
 //
-//  GameLibHelper.cs
+//  PlayerAction.cs
 //
 //  Author:
-//       Jesse <${AuthorEmail}>
+//       Jesse <jesse.emond@hotmail.com>
 //
 //  Copyright (c) 2013 Jesse
 //
@@ -19,25 +19,29 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using Microsoft.Xna.Framework;
 using GREATLib;
 
-namespace GREATClient
+namespace Network
 {
 	/// <summary>
-	/// Helper functions to work with the game lib.
+	/// Represents the action that a clients wants to make (e.g. go right, jump, etc.)
 	/// </summary>
-	public static class GameLibHelper
+    public struct PlayerAction
     {
 		/// <summary>
-		/// Converts a game library's vector to a Microsoft XNA's vector.
+		/// Gets or sets the unique ID of the action.
 		/// </summary>
-		/// <returns>The vector2.</returns>
-		/// <param name="vec">The initial vector from the game lib.</param>
-		public static Vector2 ToVector2(this Vec2 vec)
-		{
-			return new Vector2(vec.X, vec.Y);
-		}
+		public int ID { get; set; }
+
+		/// <summary>
+		/// The action that we're making (e.g. go right, jump, shoot, etc.) 
+		/// </summary>
+		public PlayerActionType Type { get; set; }
+
+		/// <summary>
+		/// Gets or sets the time, in seconds, when the action was requested.
+		/// </summary>
+		public double Time { get; set; }
     }
 }
 

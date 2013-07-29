@@ -68,6 +68,8 @@
     <Compile Include="Display\UIConstants.cs" />
     <Compile Include="Display\PingCounter.cs" />
     <Compile Include="BaseClass\InputManager.cs" />
+    <Compile Include="Network\MainClientChampion.cs" />
+    <Compile Include="Network\PlayerAction.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />
@@ -83,6 +85,7 @@
     <Folder Include="BaseClass\Particle\" />
     <Folder Include="Screens\" />
     <Folder Include="Display\" />
+    <Folder Include="Network\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -93,6 +96,10 @@
     <ProjectReference Include="..\GREATLib\GREATLib.csproj">
       <Project>{74DBBE2A-15FA-4776-B611-9B06EAFE80C0}</Project>
       <Name>GREATLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="GREATClient.Windows.csproj">
+      <Project>{0F19250F-56ED-4ADB-80E1-306C9FFA97C7}</Project>
+      <Name>GREATClient.Windows</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

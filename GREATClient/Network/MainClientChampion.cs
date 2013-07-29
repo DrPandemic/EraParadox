@@ -1,8 +1,8 @@
 //
-//  GameLibHelper.cs
+//  MainChampion.cs
 //
 //  Author:
-//       Jesse <${AuthorEmail}>
+//       Jesse <jesse.emond@hotmail.com>
 //
 //  Copyright (c) 2013 Jesse
 //
@@ -19,25 +19,28 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using Microsoft.Xna.Framework;
 using GREATLib;
 
-namespace GREATClient
+namespace GREATClient.Network
 {
 	/// <summary>
-	/// Helper functions to work with the game lib.
+	/// Represents the champion's data of the main player, the one playing the game on
+	/// this instance of the program.
 	/// </summary>
-	public static class GameLibHelper
+    public class MainClientChampion
     {
 		/// <summary>
-		/// Converts a game library's vector to a Microsoft XNA's vector.
+		/// Gets the drawn position of the champion.
+		/// This is the position where we should currently draw the champion.
 		/// </summary>
-		/// <returns>The vector2.</returns>
-		/// <param name="vec">The initial vector from the game lib.</param>
-		public static Vector2 ToVector2(this Vec2 vec)
-		{
-			return new Vector2(vec.X, vec.Y);
-		}
+		/// <value>The drawn position.</value>
+		public Vec2 DrawnPosition { get; set; }
+
+		public MainClientChampion()
+        {
+			//TODO: toremove
+			DrawnPosition = new Vec2(500f, 300f);
+        }
     }
 }
 

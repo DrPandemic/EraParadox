@@ -26,6 +26,7 @@ using GREATLib.World.Tiles;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.Xna.Framework;
+using Network;
 
 namespace GREATClient.Screens
 {
@@ -69,7 +70,7 @@ namespace GREATClient.Screens
 			AddChild(Map);
 
 			Champions = new Dictionary<int, DrawableChampion>();
-			OurChampion = null;
+			AddChild(OurChampion = new DrawableChampion(ChampionsInfo));
 
 			AddChild(new FPSCounter());
 			AddChild(new PingCounter(() => {return Client.Instance.GetPing().TotalMilliseconds;}));
@@ -79,41 +80,101 @@ namespace GREATClient.Screens
 		{
 			GameTime = dt;
 
-			//TODO: input manager
-			const Keys LEFT = Keys.A;
-			const Keys RIGHT = Keys.D;
-			const Keys JUMP = Keys.W;
-			const Keys DEBUG = Keys.T;
+			// The client-side loop of the game
+
+			// 1. Handle input. We package input to send to the server and simulate them locally 
+			//    for client-side prediction.
+			HandleInput();
+
+			// 2. Check for server changes. We apply changes of states received from the server,
+			//    applying movement correction when needed.
+			ApplyServerModifications();
+
+			// 3. Update local physics. We run the physics loop that is ran on the server to keep
+			//    our local simulation running.
+			UpdateLocalPhysics();
+
+			// 4. Send input. We send packaged client actions to the server at regular intervals.
+			SendInput();
+
+			base.OnUpdate(dt);
+		}
+
+		/// <summary>
+		/// Package local input as actions to eventually send to the server.
+		/// At the same time, we simulate the input locally for client-side prediction.
+		/// </summary>
+		void HandleInput()
+		{
 			KeyboardState keyboard = Keyboard.GetState();
 			MouseState mouse = Mouse.GetState();
 
-			if (oldKeyboard.IsKeyUp(LEFT) && keyboard.IsKeyDown(LEFT)) {
-				Client.SendCommand(ClientCommand.MoveLeft);
-			} else if (oldKeyboard.IsKeyDown(LEFT) && keyboard.IsKeyUp(LEFT)) {
-				Client.SendCommand(ClientCommand.StopMoveLeft);
+			List<PlayerActionType> Actions = new List<PlayerActionType>();
+
+			const Keys LEFT = Keys.A;
+			const Keys RIGHT = Keys.D;
+			const Keys JUMP = Keys.Space;
+			if (keyboard.IsKeyDown(LEFT) && oldKeyboard.IsKeyUp(LEFT)) {
+				Actions.Add(PlayerActionType.StartMoveLeft);
+			} else if (keyboard.IsKeyUp(LEFT) && oldKeyboard.IsKeyDown(LEFT)) {
+				Actions.Add(PlayerActionType.StopMoveLeft);
+			} else if (keyboard.IsKeyDown(RIGHT) && oldKeyboard.IsKeyUp(RIGHT)) {
+				Actions.Add(PlayerActionType.StartMoveRight);
+			} else if (keyboard.IsKeyUp(RIGHT) && oldKeyboard.IsKeyDown(RIGHT)) {
+				Actions.Add(PlayerActionType.StopMoveRight);
+			} else if (keyboard.IsKeyDown(JUMP) && oldKeyboard.IsKeyUp(JUMP)) {
+				Actions.Add(PlayerActionType.Jump);
 			}
 
-			if (oldKeyboard.IsKeyUp(RIGHT) && keyboard.IsKeyDown(RIGHT)) {
-				Client.SendCommand(ClientCommand.MoveRight);
-			} else if (oldKeyboard.IsKeyDown(RIGHT) && keyboard.IsKeyUp(RIGHT)) {
-					Client.SendCommand(ClientCommand.StopMoveRight);
+
+			//TODO: package input to list in class
+			foreach (PlayerActionType action in Actions) {
+				switch (action) {
+					case PlayerActionType.StartMoveLeft:
+						OurChampion.Champion.DrawnPosition -= Vec2.UnitX * 15f;
+						break;
+					case PlayerActionType.StopMoveLeft:
+						break;
+					case PlayerActionType.StartMoveRight:
+						OurChampion.Champion.DrawnPosition += Vec2.UnitX * 15f;
+						break;
+					case PlayerActionType.StopMoveRight:
+						break;
+					case PlayerActionType.Jump:
+						break;
+
+					default:
+						throw new NotImplementedException("The action " + action + " is not handled locally.");
 				}
 
-			if (oldKeyboard.IsKeyUp(JUMP) && keyboard.IsKeyDown(JUMP)) {
-				Client.SendCommand(ClientCommand.Jump);
+				//TODO: package here
 			}
-
-
-			//DEBUG INPUT
-			if (oldKeyboard.IsKeyUp(DEBUG) && keyboard.IsKeyDown(DEBUG)) {
-			}
-
 
 			oldKeyboard = keyboard;
 			oldMouse = mouse;
-			//ENDTODO
+		}
 
-			base.OnUpdate(dt);
+		/// <summary>
+		/// Check for recent server update to apply to our local perception of the game (movement
+		/// correction, etc.)
+		/// </summary>
+		void ApplyServerModifications()
+		{
+		}
+
+		/// <summary>
+		/// Runs the game's physics on the local perception of the game at regular intervals.
+		/// </summary>
+		void UpdateLocalPhysics()
+		{
+		}
+
+		/// <summary>
+		/// Checks whether we should send our packaged player actions to the server yet (we do
+		/// so at regular intervals).
+		/// </summary>
+		void SendInput()
+		{
 		}
     }
 }

@@ -1,8 +1,8 @@
 //
-//  GameLibHelper.cs
+//  PlayerAction.cs
 //
 //  Author:
-//       Jesse <${AuthorEmail}>
+//       Jesse <jesse.emond@hotmail.com>
 //
 //  Copyright (c) 2013 Jesse
 //
@@ -19,25 +19,21 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using Microsoft.Xna.Framework;
-using GREATLib;
 
-namespace GREATClient
+namespace GREATLib
 {
 	/// <summary>
-	/// Helper functions to work with the game lib.
+	/// Represents a player action that a client may want to do in-game.
 	/// </summary>
-	public static class GameLibHelper
+    public enum PlayerActionType
     {
-		/// <summary>
-		/// Converts a game library's vector to a Microsoft XNA's vector.
-		/// </summary>
-		/// <returns>The vector2.</returns>
-		/// <param name="vec">The initial vector from the game lib.</param>
-		public static Vector2 ToVector2(this Vec2 vec)
-		{
-			return new Vector2(vec.X, vec.Y);
-		}
+		StartMoveRight = 0,
+		StopMoveRight,
+
+		StartMoveLeft,
+		StopMoveLeft,
+
+		Jump
     }
 }
 
