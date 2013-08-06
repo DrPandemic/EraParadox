@@ -31,7 +31,7 @@ namespace Network
 		/// <summary>
 		/// Gets or sets the unique ID of the action.
 		/// </summary>
-		public int ID { get; set; }
+		public uint ID { get; set; }
 
 		/// <summary>
 		/// The action that we're making (e.g. go right, jump, shoot, etc.) 

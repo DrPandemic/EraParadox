@@ -69,6 +69,10 @@
     <Compile Include="Display\PingCounter.cs" />
     <Compile Include="Network\MainClientChampion.cs" />
     <Compile Include="Network\PlayerAction.cs" />
+    <Compile Include="Network\Physics\PhysicsEngine.cs" />
+    <Compile Include="BaseClass\IUpdatable.cs" />
+    <Compile Include="Network\Physics\HorizontalDirection.cs" />
+    <Compile Include="Network\IDGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />
@@ -86,6 +90,7 @@
     <Folder Include="Screens\" />
     <Folder Include="Display\" />
     <Folder Include="Network\" />
+    <Folder Include="Network\Physics\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

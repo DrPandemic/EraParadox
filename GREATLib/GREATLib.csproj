@@ -49,8 +49,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Folder Include="Entities\" />
-    <Folder Include="Entities\Physics\" />
     <Folder Include="World\" />
     <Folder Include="World\Tiles\" />
   </ItemGroup>

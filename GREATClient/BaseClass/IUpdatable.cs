@@ -1,5 +1,5 @@
 //
-//  PlayerAction.cs
+//  .cs
 //
 //  Author:
 //       Jesse <jesse.emond@hotmail.com>
@@ -19,24 +19,20 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using Microsoft.Xna.Framework;
 
-namespace GREATLib
+namespace GREATClient
 {
 	/// <summary>
-	/// Represents a player action that a client may want to do in-game.
+	/// Represents an object that can be updated on every frame.
 	/// </summary>
-    public enum PlayerActionType
+	public interface IUpdatable
     {
-		// Movement
-		   MoveRight = 0
-		,  MoveLeft
-		,  Jump
-
-		// Abilities
-		,  Spell1
-		,  Spell2
-		,  Spell3
-		,  Spell4
-	}
+		/// <summary>
+		/// Update the object.
+		/// </summary>
+		/// <param name="deltaTime">Delta time.</param>
+		void Update(GameTime deltaTime);
+    }
 }
 

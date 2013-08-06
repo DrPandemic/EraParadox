@@ -1,5 +1,5 @@
 //
-//  PlayerAction.cs
+//  IDGenerator.cs
 //
 //  Author:
 //       Jesse <jesse.emond@hotmail.com>
@@ -20,23 +20,31 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 
-namespace GREATLib
+namespace GREATClient.Network
 {
 	/// <summary>
-	/// Represents a player action that a client may want to do in-game.
+	/// Unique identifier generator. New IDs are guarenteed to be higher than older ones, except if the
+	/// value EVER exceeds the maximum amount of an unsigned int, it wraps to 0.
 	/// </summary>
-    public enum PlayerActionType
+    public static class IDGenerator
     {
-		// Movement
-		   MoveRight = 0
-		,  MoveLeft
-		,  Jump
+		/// <summary>
+		/// Gets or sets the current ID.
+		/// </summary>
+		static uint CurrentID { get; set; }
 
-		// Abilities
-		,  Spell1
-		,  Spell2
-		,  Spell3
-		,  Spell4
-	}
+		/// <summary>
+		/// Generates a unique ID incrementally bigger as time goes on.
+		/// </summary>
+		public static uint GenerateID()
+		{
+			try {
+				CurrentID = checked (CurrentID+1); // check for overflows (http://msdn.microsoft.com/en-us/library/74b4xzyw(v=vs.71).aspx)
+			} catch (System.OverflowException) {
+				CurrentID = new uint(); // wrap back to 0
+			}
+			return CurrentID;
+		}
+    }
 }
 

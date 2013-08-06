@@ -25,6 +25,7 @@ using GREATLib;
 using System.Collections.Generic;
 using System.Diagnostics;
 using GREATClient.Network;
+using Network;
 
 namespace GREATClient
 {
@@ -33,11 +34,27 @@ namespace GREATClient
 	/// </summary>
     public class DrawableChampion : IDraw
     {
-		public MainClientChampion Champion { get; set; }
+		/// <summary>
+		/// Gets or sets the function for action.
+		/// </summary>
+		Dictionary<PlayerActionType, Action> FunctionForAction { get; set; }
+
+		/// <summary>
+		/// Client-side version of the main champion, managing the network interaction and local
+		/// simulation of the client's champion.
+		/// </summary>
+		MainClientChampion Champion { get; set; }
+
+		/// <summary>
+		/// TODO: class for debug info
+		/// </summary>
 		DrawableRectangle ChampionDrawnRect { get; set; }
+
+
 
         public DrawableChampion(ChampionsInfo championsInfo)
         {
+			FillFunctionsForActions();
 			Champion = new MainClientChampion();
         }
 		protected override void OnLoad(Microsoft.Xna.Framework.Content.ContentManager content, Microsoft.Xna.Framework.Graphics.GraphicsDevice gd)
@@ -49,13 +66,53 @@ namespace GREATClient
 		}
 		protected override void OnUpdate(Microsoft.Xna.Framework.GameTime dt)
 		{
+			Champion.Update(dt);
+
 			ChampionDrawnRect.Position = GameLibHelper.ToVector2(Champion.DrawnPosition);
 		}
-
 
 		protected override void OnDraw(Microsoft.Xna.Framework.Graphics.SpriteBatch batch)
 		{
 			// The champion's animations take care of the drawing.
+		}
+
+		/// <summary>
+		/// Fills the functions associated to certain player actions.
+		/// </summary>
+		void FillFunctionsForActions()
+		{
+			Debug.Assert(FunctionForAction == null);
+
+			FunctionForAction = new Dictionary<PlayerActionType, Action>();
+
+			FunctionForAction.Add(PlayerActionType.Jump, () => {
+				Champion.Jump(); 
+			});
+			FunctionForAction.Add(PlayerActionType.MoveLeft, () => {
+				Champion.MoveLeft();
+			});
+			FunctionForAction.Add(PlayerActionType.MoveRight, () => {
+				Champion.MoveRight();
+			});
+		}
+
+		/// <summary>
+		/// Packages a client-side action to be sent to the server. This also simulates the action locally
+		/// for client-side prediction.
+		/// </summary>
+		public void PackageAction(PlayerActionType action)
+		{
+			Debug.Assert(FunctionForAction.ContainsKey(action));
+
+			PlayerAction toPackage = new PlayerAction() { 
+				Type = action,
+				Time = Client.Instance.GetTime().TotalSeconds,
+				ID   = IDGenerator.GenerateID()
+			};
+
+			FunctionForAction[action]();
+
+			//TODO: package them to later send to the server
 		}
     }
 }

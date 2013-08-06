@@ -92,12 +92,10 @@ namespace GREATClient.Screens
 
 			// 3. Update local physics. We run the physics loop that is ran on the server to keep
 			//    our local simulation running.
-			UpdateLocalPhysics();
+			base.OnUpdate(dt); // this is done by the player's drawablechampion
 
 			// 4. Send input. We send packaged client actions to the server at regular intervals.
 			SendInput();
-
-			base.OnUpdate(dt);
 		}
 
 		/// <summary>
@@ -111,44 +109,23 @@ namespace GREATClient.Screens
 
 			List<PlayerActionType> Actions = new List<PlayerActionType>();
 
+			// This will be replaced by the inputmanager
 			const Keys LEFT = Keys.A;
 			const Keys RIGHT = Keys.D;
 			const Keys JUMP = Keys.Space;
-			if (keyboard.IsKeyDown(LEFT) && oldKeyboard.IsKeyUp(LEFT)) {
-				Actions.Add(PlayerActionType.StartMoveLeft);
-			} else if (keyboard.IsKeyUp(LEFT) && oldKeyboard.IsKeyDown(LEFT)) {
-				Actions.Add(PlayerActionType.StopMoveLeft);
-			} else if (keyboard.IsKeyDown(RIGHT) && oldKeyboard.IsKeyUp(RIGHT)) {
-				Actions.Add(PlayerActionType.StartMoveRight);
-			} else if (keyboard.IsKeyUp(RIGHT) && oldKeyboard.IsKeyDown(RIGHT)) {
-				Actions.Add(PlayerActionType.StopMoveRight);
-			} else if (keyboard.IsKeyDown(JUMP) && oldKeyboard.IsKeyUp(JUMP)) {
+			if (keyboard.IsKeyDown(LEFT)) {
+				Actions.Add(PlayerActionType.MoveLeft);
+			} 
+
+			if (keyboard.IsKeyDown(RIGHT)) {
+				Actions.Add(PlayerActionType.MoveRight);
+			} 
+
+			if (keyboard.IsKeyDown(JUMP) && oldKeyboard.IsKeyUp(JUMP)) {
 				Actions.Add(PlayerActionType.Jump);
 			}
 
-
-			//TODO: package input to list in class
-			foreach (PlayerActionType action in Actions) {
-				switch (action) {
-					case PlayerActionType.StartMoveLeft:
-						OurChampion.Champion.DrawnPosition -= Vec2.UnitX * 15f;
-						break;
-					case PlayerActionType.StopMoveLeft:
-						break;
-					case PlayerActionType.StartMoveRight:
-						OurChampion.Champion.DrawnPosition += Vec2.UnitX * 15f;
-						break;
-					case PlayerActionType.StopMoveRight:
-						break;
-					case PlayerActionType.Jump:
-						break;
-
-					default:
-						throw new NotImplementedException("The action " + action + " is not handled locally.");
-				}
-
-				//TODO: package here
-			}
+			Actions.ForEach(OurChampion.PackageAction);
 
 			oldKeyboard = keyboard;
 			oldMouse = mouse;
@@ -160,13 +137,7 @@ namespace GREATClient.Screens
 		/// </summary>
 		void ApplyServerModifications()
 		{
-		}
-
-		/// <summary>
-		/// Runs the game's physics on the local perception of the game at regular intervals.
-		/// </summary>
-		void UpdateLocalPhysics()
-		{
+			//TODO
 		}
 
 		/// <summary>
@@ -175,6 +146,7 @@ namespace GREATClient.Screens
 		/// </summary>
 		void SendInput()
 		{
+			//TODO
 		}
     }
 }

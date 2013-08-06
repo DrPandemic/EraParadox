@@ -74,7 +74,7 @@ namespace GREATClient
 
 		public void Stop()
 		{
-			client.Disconnect("FUCK OFF!");
+			client.Disconnect("Client stopped.");
 		}
 
 		public void Update()

@@ -19,6 +19,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using System.Diagnostics;
 
 namespace GREATLib
 {
@@ -74,6 +75,7 @@ namespace GREATLib
 		/// </summary>
 		public static void Log(string message, LogPriority priority = DEFAULT_MESSAGE_PRIORITY)
 		{
+			Debug.Assert(message != null);
 			Default.LogMessage(message, priority);
 		}
     }

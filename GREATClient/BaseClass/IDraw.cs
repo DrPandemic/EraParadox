@@ -25,7 +25,7 @@ using Microsoft.Xna.Framework.Content;
 
 namespace GREATClient
 {
-    public abstract class IDraw
+	public abstract class IDraw : IUpdatable
     {
 		/// <summary>
 		/// Gets the parent of the object.
@@ -153,7 +153,6 @@ namespace GREATClient
 		/// <param name="dt">Dt.</param>
 		protected virtual void OnUpdate(GameTime dt)
 		{
-
 		}
     }
 }
