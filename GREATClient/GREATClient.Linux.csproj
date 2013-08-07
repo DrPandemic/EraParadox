@@ -69,6 +69,7 @@
     <Compile Include="BaseClass\Input\InputManager.cs" />
     <Compile Include="BaseClass\Input\InputInfo.cs" />
     <Compile Include="GreatGame.cs" />
+    <Compile Include="BaseClass\Input\InputActions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />

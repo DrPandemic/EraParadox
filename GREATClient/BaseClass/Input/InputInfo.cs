@@ -24,23 +24,22 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Xml.Serialization;
 using System.IO;
+using GREATClient.BaseClass.Input;
+using System.Collections;
 
-namespace GREATClient
+namespace GREATClient.BaseClass.Input
 {
 	[Serializable()]
 	public class InputInfo
 	{
-		public const string SPELL_1 = "spell1";
-		public const string SPELL_2 = "spell2";
-		public const string SPELL_3 = "spell3";
-		public const string SPELL_4 = "spell4";
-
-
-		[System.Xml.Serialization.XmlAttribute("name")]
-		public string Name { get; set; }
+		[System.Xml.Serialization.XmlAttribute("action")]
+		public InputActions Action { get; set; }
 
 		[System.Xml.Serialization.XmlAttribute("key")]
 		public Keys Key { get; set; }
+
+		[System.Xml.Serialization.XmlAttribute("state")]
+		public KeyState State { get; set; }
 	}
 	[Serializable]
 	[System.Xml.Serialization.XmlRoot("inputCollection")]
@@ -55,26 +54,64 @@ namespace GREATClient
 	public class Inputs
 	{
 		/// <summary>
+		/// The XML file containing the inputs.
+		/// </summary>
+		public const string INPUT_FILE = "inputs.xml";
+
+		/// <summary>
 		/// All the key infos.
 		/// </summary>
 		/// <value>The info.</value>
-		public Dictionary<Keys, InputInfo> Info { get; set; }
+		public Dictionary<InputActions, KeyValuePair<Keys,KeyState>> Info { get; private set; }
 
 		public Inputs()
         {
 			FillInfo();
         }
 
-		public InputInfo GetInfo(Keys key)
+		/// <summary>
+		/// Gets the key for a given action.
+		/// </summary>
+		/// <returns>The key.</returns>
+		/// <param name="action">Action.</param>
+		public Keys GetKey(InputActions action)
 		{
-			Debug.Assert(Info.ContainsKey(key));
-			return Info[key];
+			if (!Info.ContainsKey(action)) {
+				throw new Exception("The action is not present in the XML");
+			}
+			return Info[action].Key;
 		}
+
+		/// <summary>
+		/// Gets the info for a given action.
+		/// </summary>
+		/// <returns>The info.</returns>
+		/// <param name="action">Action.</param>
+		public InputInfo GetInfo(InputActions action)
+		{
+			if (!Info.ContainsKey(action)) {
+				throw new Exception("The action is not present in the XML");
+			}
+			return new InputInfo() { Action = action, Key = Info[action].Key, State = Info[action].Value };
+		}
+
+		/// <summary>
+		/// Gets the action for a given key and key state.
+		/// </summary>
+		/// <returns>The action.</returns>
+		/// <param name="pair">The key and the key state</param>
+		public InputActions GetAction(KeyValuePair<Keys,KeyState> pair){
+			InputActions action = InputActions.None;
+			return action;
+		}
+
+		/// <summary>
+		/// Fills the info object from the xml.
+		/// </summary>
 		private void FillInfo()
 		{
-			const string INPUTS_PATH = "Content/inputs.xml";
-			Info = new Dictionary<Keys, InputInfo>();
-
+			const string INPUTS_PATH = "Content/" + INPUT_FILE;
+			Info = new Dictionary<InputActions, KeyValuePair<Keys,KeyState>>();
 			InputInfos inputs = null;
 
 			XmlSerializer serializer = new XmlSerializer(typeof(InputInfos));
@@ -82,11 +119,14 @@ namespace GREATClient
 			StreamReader reader = new StreamReader(INPUTS_PATH);
 			inputs = (InputInfos)serializer.Deserialize(reader);
 			reader.Close();
-
+		
 			foreach (InputInfo info in inputs.Inputs)
 			{
-				Debug.Assert(!Info.ContainsKey(info.Key),"There was 2 times the same key in the inputs.xml");
-				Info.Add(info.Key, info);
+				if (Info.ContainsKey(info.Action)) {
+					throw new ActionDeserializationException();
+				} else {					
+					Info.Add(info.Action, Utilities.MakePair(info.Key, info.State));				
+				}
 			}
 		}
 	}

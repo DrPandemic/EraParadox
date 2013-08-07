@@ -37,6 +37,9 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="MonoGame.Framework" />
+    <Reference Include="Microsoft.Office.Interop.Word, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
@@ -69,6 +72,7 @@
     <Compile Include="BaseClass\Input\InputInfo.cs" />
     <Compile Include="BaseClass\Input\InputManager.cs" />
     <Compile Include="GreatGame.cs" />
+    <Compile Include="BaseClass\Input\InputActions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />

@@ -62,6 +62,19 @@ namespace GREATClient
 		{
 			return (T)game.Services.GetService(typeof(T));
 		}
+
+		/// <summary>
+		/// Utility function to easily make a KeyValuePair.
+		/// </summary>
+		/// <returns>The pair.</returns>
+		/// <param name="key">Key.</param>
+		/// <param name="value">Value.</param>
+		/// <typeparam name="T">The 1st type parameter.</typeparam>
+		/// <typeparam name="V">The 2nd type parameter.</typeparam>
+		public static KeyValuePair<T,V> MakePair<T,V>(T key, V value)
+		{
+			return new KeyValuePair<T,V>(key,value);
+		}
     }
 }
 

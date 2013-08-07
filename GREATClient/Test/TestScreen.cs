@@ -32,6 +32,7 @@ using System;
 using GREATClient.BaseClass;
 using GREATClient.GameContent;
 using GREATClient.Display;
+using GREATClient.BaseClass.Input;
 
 namespace GREATClient.Test
 {
@@ -44,8 +45,6 @@ namespace GREATClient.Test
 
 
 		DrawableChampionSprite champSprite;
-
-
 
 		public TestScreen(ContentManager content, Game game) : base(content, game)
         {
@@ -77,7 +76,8 @@ namespace GREATClient.Test
 
 			AddChild(new PingCounter(yo));
 
-			InputManager inputManager = new InputManager();
+			inputManager.RegisterEvent(InputActions.Jump, new EventHandler(Jump));
+
 		}
 
 
@@ -87,6 +87,11 @@ namespace GREATClient.Test
 		protected double yo()
 		{
 			return 32d;
+		}
+
+		private void Jump(object sender, EventArgs e)
+		{
+			int a = 2;
 		}
 
 		protected override void OnUpdate(GameTime dt)

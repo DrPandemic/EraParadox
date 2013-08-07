@@ -1,5 +1,11 @@
 <inputCollection>
     <inputs>
-        <input name="spell1" key="A"/>
+        <input action="Spell1" key="Q" state="Released" />
+        <input action="Spell2" key="E" state="Released" />
+        <input action="Spell3" key="R" state="Released" />
+        <input action="Spell4" key="T" state="Released" />
+        <input action="Jump" key="W" state="Released" />
+        <input action="GoRight" key="D" state="Released" />
+        <input action="GoLeft" key="A" state="Released" />
     </inputs>
 </inputCollection>

@@ -30,6 +30,8 @@ using System.Collections.Generic;
 using GREATLib;
 using GREATClient.Screens;
 using GREATClient.BaseClass;
+using GREATClient.Test;
+using GREATClient.BaseClass.Input;
 
 
 namespace GREATClient
@@ -104,6 +106,8 @@ namespace GREATClient
 			client.Update();
 
 			gameplay.Update(gameTime);
+
+			((InputManager)Services.GetService(typeof(InputManager))).Update();
 
 			if(gameplay.Exit)
 				Exit();

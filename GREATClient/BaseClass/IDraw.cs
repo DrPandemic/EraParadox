@@ -22,6 +22,7 @@ using System;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
+using GREATClient.BaseClass.Input;
 
 namespace GREATClient.BaseClass
 {
@@ -31,14 +32,14 @@ namespace GREATClient.BaseClass
 		/// Gets the input manager.
 		/// </summary>
 		/// <returns>The input manager.</returns>
-		InputManager inputManager;
-		public InputManager InputManager {
+		InputManager m_InputManager;
+		public InputManager inputManager {
 			get {
-				if (inputManager != null) {
-					return inputManager;
+				if (m_InputManager != null) {
+					return m_InputManager;
 				} else if (this.Game != null) {
-					inputManager = (InputManager)this.Game.Services.GetService(typeof(InputManager));
-					return inputManager;
+					m_InputManager = (InputManager)this.Game.Services.GetService(typeof(InputManager));
+					return m_InputManager;
 				} else {
 					return null;
 				}
