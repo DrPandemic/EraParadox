@@ -105,9 +105,9 @@ namespace GREATClient
 		{
 			client.Update();
 
-			gameplay.Update(gameTime);
-
 			((InputManager)Services.GetService(typeof(InputManager))).Update();
+
+			gameplay.Update(gameTime);
 
 			if(gameplay.Exit)
 				Exit();

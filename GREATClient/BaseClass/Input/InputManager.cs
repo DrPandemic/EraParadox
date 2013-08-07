@@ -44,6 +44,12 @@ namespace GREATClient.BaseClass.Input
 		Dictionary<InputActions,EventHandler> InputEvents { get; set; }
 
 		/// <summary>
+		/// Gets or sets a list of actions fired in this tick.
+		/// </summary>
+		/// <value>The actions fired.</value>
+		List<InputActions> ActionsFired { get; set; }
+
+		/// <summary>
 		/// Gets or sets a value indicating whether this <see cref="GREATClient.BaseClass.Input.InputManager"/> is updatable.
 		/// </summary>
 		/// <value><c>true</c> if updatable; otherwise, <c>false</c>.</value>
@@ -53,6 +59,7 @@ namespace GREATClient.BaseClass.Input
         {
 			Inputs = new Inputs();
 			InputEvents = new Dictionary<InputActions,EventHandler>();
+			ActionsFired = new List<InputActions>();
 			Keys k = Inputs.GetKey(InputActions.Spell1);
 			InputInfo info = Inputs.GetInfo(InputActions.Spell1);
 			Updatable = true;
@@ -60,31 +67,42 @@ namespace GREATClient.BaseClass.Input
 
 		protected void OnUpdate()
 		{
+			ActionsFired.Clear();
 			foreach (KeyValuePair<InputActions,KeyValuePair<Keys,KeyState>> action in Inputs.Info) {
-				if (InputEvents.ContainsKey(action.Key)) {
-					switch (action.Value.Value) {
-						case KeyState.Up:
-							if (Keyboard.GetState().IsKeyUp(action.Value.Key)) {
+				switch (action.Value.Value) {
+					case KeyState.Up:
+						if (Keyboard.GetState().IsKeyUp(action.Value.Key)) {
+							if (InputEvents.ContainsKey(action.Key)) {
 								InputEvents[action.Key](this, new InputEventArgs());
 							}
-							break;
-						case KeyState.Down:
-							if (Keyboard.GetState().IsKeyDown(action.Value.Key)) {
+							ActionsFired.Add(action.Key);
+						}
+						break;
+					case KeyState.Down:
+						if (Keyboard.GetState().IsKeyDown(action.Value.Key)) {
+							if (InputEvents.ContainsKey(action.Key)) {
 								InputEvents[action.Key](this, new InputEventArgs());
 							}
-							break;
-						case KeyState.Pressed:
-							if (Keyboard.GetState().IsKeyDown(action.Value.Key) && OldKeyboard.IsKeyUp(action.Value.Key)) {
+							ActionsFired.Add(action.Key);
+						}
+						break;
+					case KeyState.Pressed:
+						if (Keyboard.GetState().IsKeyDown(action.Value.Key) && OldKeyboard.IsKeyUp(action.Value.Key)) {
+							if (InputEvents.ContainsKey(action.Key)) {
 								InputEvents[action.Key](this, new InputEventArgs());
 							}
-							break;
-						case KeyState.Released:
-							if (Keyboard.GetState().IsKeyUp(action.Value.Key) && OldKeyboard.IsKeyDown(action.Value.Key)) {
+							ActionsFired.Add(action.Key);
+						}
+						break;
+					case KeyState.Released:
+						if (Keyboard.GetState().IsKeyUp(action.Value.Key) && OldKeyboard.IsKeyDown(action.Value.Key)) {
+							if (InputEvents.ContainsKey(action.Key)) {
 								InputEvents[action.Key](this, new InputEventArgs());
 							}
-							break;
-					}
-				}
+							ActionsFired.Add(action.Key);
+						}
+						break;
+				}				
 			}
 			OldKeyboard = Keyboard.GetState();
 		}
@@ -105,6 +123,16 @@ namespace GREATClient.BaseClass.Input
 		{
 			InputEvents.Add(action,null);
 			InputEvents[action] += callback;
+		}
+
+		/// <summary>
+		/// Determines if an action was fired on during since last drop call.
+		/// </summary>
+		/// <returns><c>true</c>, if the event happend, <c>false</c> otherwise.</returns>
+		/// <param name="action">Action.</param>
+		public bool IsActionFired(InputActions action)
+		{
+			return ActionsFired.Contains(action);
 		}
     }
 
