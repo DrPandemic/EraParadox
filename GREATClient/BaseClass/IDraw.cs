@@ -22,11 +22,30 @@ using System;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
+using GREATClient.BaseClass.Input;
 
 namespace GREATClient.BaseClass
 {
     public abstract class IDraw
     {
+		/// <summary>
+		/// Gets the input manager.
+		/// </summary>
+		/// <returns>The input manager.</returns>
+		InputManager m_InputManager;
+		public InputManager inputManager {
+			get {
+				if (m_InputManager != null) {
+					return m_InputManager;
+				} else if (this.Game != null) {
+					m_InputManager = (InputManager)this.Game.Services.GetService(typeof(InputManager));
+					return m_InputManager;
+				} else {
+					return null;
+				}
+			}
+		}
+
 		/// <summary>
 		/// Gets the parent of the object.
 		/// </summary>
@@ -77,7 +96,7 @@ namespace GREATClient.BaseClass
 			get {
 				return Parent == null ? null : Parent.Game;
 			}
-			protected set { throw new NotImplementedException("Only the screen can set the Game");}
+			protected set { throw new NotImplementedException("Only the screen can set the Game"); }
 		}
 
 		public IDraw() 
