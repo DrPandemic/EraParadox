@@ -59,6 +59,17 @@ namespace GREATClient.Network
 		public float MoveSpeed { get; set; }
 
 		/// <summary>
+		/// Gets or sets a value indicating whether this instance is on ground or not.
+		/// Mainly used to handle jumping and apply certain accelerations.
+		/// </summary>
+		public bool IsOnGround { get; set; }
+
+		/// <summary>
+		/// Gets or sets the jump force of the entity.
+		/// </summary>
+		public short JumpForce { get; set; }
+
+		/// <summary>
 		/// Gets or sets the horizontal acceleration of the entity, which is how much of our horizontal velocity
 		/// we maintain on each physics pass.
 		/// </summary>
@@ -101,11 +112,13 @@ namespace GREATClient.Network
 			MoveSpeed = 100f;
 			CollisionWidth = 15f;
 			CollisionHeight = 30f;
+			JumpForce = 750;
 
 			Physics = new PhysicsEngine(world);
 			Velocity = new Vec2();
 			Direction = HorizontalDirection.None;
 			xMovement = 0;
+			IsOnGround = true;
 
 			HorizontalAcceleration = DEFAULT_HORIZONTAL_ACCELERATION;
         }
@@ -130,7 +143,7 @@ namespace GREATClient.Network
 		}
 		public void Jump()
 		{
-			throw new NotImplementedException();
+			Physics.Jump(this);
 		}
 
 		/// <summary>

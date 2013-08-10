@@ -34,7 +34,6 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Vec2.cs" />
-    <Compile Include="GeneralHelper.cs" />
     <Compile Include="World\Tiles\TileMap.cs" />
     <Compile Include="World\Tiles\Tile.cs" />
     <Compile Include="GameMatch.cs" />
@@ -46,6 +45,7 @@
     <Compile Include="CustomLogger.cs" />
     <Compile Include="ILogger.cs" />
     <Compile Include="PlayerActionType.cs" />
+    <Compile Include="Utilities.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

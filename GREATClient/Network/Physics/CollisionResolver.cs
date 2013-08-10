@@ -109,10 +109,9 @@ namespace GREATClient.Network.Physics
 				{
 					entity.SimulatedPosition.Y += intersection.Y;
 
-					if (intersection.Y < 0f) // collided from the top side
-					{
-						//TODO: add
-						//entity.IsOnGround = true;
+					if (intersection.Y < 0f) { // collided from the top side
+						// We are therefore standing on something - we're on the ground
+						entity.IsOnGround = true;
 					}
 					//TODO: only undo collision for platforms if we hit the ground
 

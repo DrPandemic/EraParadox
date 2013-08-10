@@ -116,7 +116,7 @@ namespace GREATClient.Screens
 			// This will be replaced by the inputmanager
 			const Keys LEFT = Keys.A;
 			const Keys RIGHT = Keys.D;
-			const Keys JUMP = Keys.Space;
+			const Keys JUMP = Keys.W;
 			if (keyboard.IsKeyDown(LEFT)) {
 				Actions.Add(PlayerActionType.MoveLeft);
 			} 

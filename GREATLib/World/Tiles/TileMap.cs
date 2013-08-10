@@ -60,15 +60,17 @@ namespace GREATLib.World.Tiles
 				CollisionType.Passable, CollisionType.Block);
 
 			List<List<int>> tiles = Utilities.MakeList(
-				Utilities.MakeList(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1),
-				Utilities.MakeList(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1),
-				Utilities.MakeList(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1),
-				Utilities.MakeList(1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1),
-				Utilities.MakeList(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1),
-				Utilities.MakeList(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1),
-				Utilities.MakeList(1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1),
-				Utilities.MakeList(1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1),
-				Utilities.MakeList(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1));
+				Utilities.MakeList(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1),
+				Utilities.MakeList(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1),
+				Utilities.MakeList(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1),
+				Utilities.MakeList(1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1),
+				Utilities.MakeList(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1),
+				Utilities.MakeList(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1),
+				Utilities.MakeList(1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1),
+				Utilities.MakeList(1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1),
+				Utilities.MakeList(1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1),
+				Utilities.MakeList(1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1),
+				Utilities.MakeList(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1));
 
 			return tiles.ConvertAll(
 				row => row.ConvertAll(
@@ -94,44 +96,60 @@ namespace GREATLib.World.Tiles
 		/// <summary>
 		/// Gets the touched tiles by a passed rectangle.
 		/// </summary>
-		/// <returns>The touched tiles.</returns>
-		/// <param name="left">Left side of the rectangle.</param>
-		/// <param name="top">Top side of the rectangle.</param>
-		/// <param name="width">Width of the rectangle.</param>
-		/// <param name="height">Height of the rectangle.</param>
 		public List<KeyValuePair<Rect, CollisionType>> GetTouchedTiles(Rect rectangle)
 		{
+			Debug.Assert(rectangle != null);
 			Debug.Assert(TileRectangles != null, "Map not initialized.");
 
 			// Get the start/end indices of the tiles that our rectangle touches
-			int startX = Utilities.Clamp((int)rectangle.Left / Tile.WIDTH,
-			                                 0, GetWidthTiles() - 1);
-			int startY = Utilities.Clamp((int)rectangle.Top / Tile.HEIGHT,
-			                                 0, GetHeightTiles() - 1);
-			int endX = Utilities.Clamp((int)Math.Ceiling((double)rectangle.Right / Tile.WIDTH) - 1,
-			                               0, GetWidthTiles() - 1);
-			int endY = Utilities.Clamp((int)Math.Ceiling((double)rectangle.Bottom / Tile.HEIGHT) - 1,
-			                               0, GetHeightTiles() - 1);
+			int centerX = (int)((rectangle.Left + rectangle.Width / 2f) / Tile.WIDTH);
+			int centerY = (int)((rectangle.Top + rectangle.Height / 2f) / Tile.HEIGHT);
 
 			List<KeyValuePair<Rect, CollisionType>> touched = new List<KeyValuePair<Rect, CollisionType>>();
 
-			for (int y = startY; y <= endY; ++y)
-			{
-				for (int x = startX; x <= endX; ++x)
-				{
-					CollisionType collision = TileRows[y][x].Collision;
-					if (collision != CollisionType.Passable) // we have a collision
-					{
-						Debug.Assert(TileRectangles.ContainsKey(TileRows[y][x]), "Tile rectangle not created.");
+			// if we just get the touched tiles with 2 nested loops, we'll get a list in this order:
+			// [1][2][3]
+			// [4][5][6]
+			// [7][8][9]
+			// but then we'll fix the diagonal tiles before the horizontal/vertical ones, and we don't want that
+			// (it produces weird collision resolution otherwise).
+			// We want this order: (see http://www.raywenderlich.com/15230/how-to-make-a-platform-game-like-super-mario-brothers-part-1/ss-tile-order-given-and-desired)
+			// [6][3][7]
+			// [4][1][5]
+			// [8][2][9]
 
-						Rect tileRect = TileRectangles[TileRows[y][x]];
-						touched.Add(new KeyValuePair<Rect, CollisionType>(
-							tileRect, collision));
-					}
-				}
-			}
+			AddTouchedTile(centerX, centerY, touched);         // center tile
+			AddTouchedTile(centerX, centerY + 1, touched);     // bottom tile
+			AddTouchedTile(centerX, centerY - 1, touched);     // top tile
+			AddTouchedTile(centerX - 1, centerY, touched);     // left tile
+			AddTouchedTile(centerX + 1, centerY, touched);     // right tile
+			AddTouchedTile(centerX - 1, centerY - 1, touched); // top left tile
+			AddTouchedTile(centerX + 1, centerY - 1, touched); // top right tile
+			AddTouchedTile(centerX - 1, centerY + 1, touched); // bottom left tile
+			AddTouchedTile(centerX + 1, centerY + 1, touched); // bottom right tile
 
 			return touched;
+		}
+
+		void AddTouchedTile(int x, int y, ICollection<KeyValuePair<Rect, CollisionType>> touchedTiles)
+		{
+			if (AreValidTileIndices(x, y)) {
+				CollisionType collision = TileRows[y][x].Collision;
+				if (collision != CollisionType.Passable) { // we have a collision
+					Debug.Assert(TileRectangles.ContainsKey(TileRows[y][x]), "Tile rectangle not created.");
+					Rect tileRect = TileRectangles[TileRows[y][x]];
+					touchedTiles.Add(new KeyValuePair<Rect, CollisionType>(tileRect, collision));
+				}
+			}
+		}
+
+		/// <summary>
+		/// Checks whether the given tile indices are valid.
+		/// </summary>
+		bool AreValidTileIndices(int x, int y)
+		{
+			return x >= 0 && x < GetWidthTiles() &&
+				   y >= 0 && y < GetHeightTiles();
 		}
 
 		/// <summary>

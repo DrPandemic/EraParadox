@@ -105,6 +105,19 @@ namespace GREATClient.Network.Physics
 			}
 		}
 
+		public void Jump(MainClientChampion entity)
+		{
+			Debug.Assert(entity != null
+						 && entity.Velocity != null);
+
+			// We may only jump when we're on the ground
+			if (entity.IsOnGround) {
+				entity.Velocity.Y -= entity.JumpForce;
+				// assume that we'll lift off the ground to avoid multi-jump.
+				entity.IsOnGround = false;
+			}
+		}
+
 		/// <summary>
 		/// Actually applies the update (without checking whether we really should update or not with the update rate).
 		/// </summary>
@@ -139,7 +152,8 @@ namespace GREATClient.Network.Physics
 		void ApplyDesiredMovement(double deltaSeconds, MainClientChampion entity, int xMovement)
 		{
 			Debug.Assert(deltaSeconds > 0);
-			Debug.Assert(entity != null && entity.Velocity != null);
+			Debug.Assert(entity != null 
+			             && entity.Velocity != null);
 
 			// The minimum speed at which we're supposed to go.
 			float moveXVel = xMovement * entity.MoveSpeed;

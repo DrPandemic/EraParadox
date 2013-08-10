@@ -30,11 +30,11 @@ namespace GREATLib.World.Tiles
 		/// <summary>
 		/// The width of an individual tile.
 		/// </summary>
-		public const int WIDTH = 64;
+		public const int WIDTH = 32;
 		/// <summary>
 		/// The height of an individual tile.
 		/// </summary>
-		public const int HEIGHT = 64;
+		public const int HEIGHT = WIDTH;
 
 		/// <summary>
 		/// Gets or sets the identifier representing the tile.
