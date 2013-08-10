@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Network;
+using GREATLib.World;
 
 namespace GREATClient.Screens
 {
@@ -39,6 +40,7 @@ namespace GREATClient.Screens
 		MouseState oldMouse;
 		//ENDTODO
 
+		GameWorld World { get; set; }
 		DrawableTileMap Map { get; set; }
 
 		ChampionsInfo ChampionsInfo { get; set; }
@@ -66,11 +68,13 @@ namespace GREATClient.Screens
 		{
 			base.OnLoadContent();
 
-			Map = new DrawableTileMap(new TileMap());
+			World = new GameWorld();
+
+			Map = new DrawableTileMap(World.Map);
 			AddChild(Map);
 
 			Champions = new Dictionary<int, DrawableChampion>();
-			AddChild(OurChampion = new DrawableChampion(ChampionsInfo));
+			AddChild(OurChampion = new DrawableChampion(ChampionsInfo, World));
 
 			AddChild(new FPSCounter());
 			AddChild(new PingCounter(() => {return Client.Instance.GetPing().TotalMilliseconds;}));

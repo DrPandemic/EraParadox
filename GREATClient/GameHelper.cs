@@ -1,10 +1,10 @@
 //
-//  Utilities.cs
+//  GameHelper.cs
 //
 //  Author:
-//       parasithe <>
+//       Jesse <jesse.emond@hotmail.com>
 //
-//  Copyright (c) 2013 parasithe
+//  Copyright (c) 2013 Jesse
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -19,37 +19,12 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
 namespace GREATClient
 {
-    public static class Utilities
+    public static class GameHelper
     {
-		public static Random Random = new Random();
-
-		public static float RandomFloat(this Random random, float min, float max)
-		{
-			return (float)random.NextDouble() * (max - min) + min;
-		}
-
-		/// <summary>
-		/// Helper to quickly create Lists for DEBUGGING PURPOSES.
-		/// Usage:
-		/// List<string> list = Utilities.MakeList("hello", "this", "is", "a", "list");
-		/// </summary>
-		/// <returns>The list.</returns>
-		/// <param name="elements">Elements.</param>
-		/// <typeparam name="T">The 1st type parameter.</typeparam>
-		public static List<T> MakeList<T>(params T[] elements)
-		{
-			List<T> list = new List<T>();
-			foreach (T e in elements) {
-				list.Add(e);
-			}
-			return list;
-		}
-
 		/// <summary>
 		/// Utility function to easily get game services.
 		/// Usage:

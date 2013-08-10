@@ -39,7 +39,7 @@ namespace GREATClient.Network
 		public static uint GenerateID()
 		{
 			try {
-				CurrentID = checked (CurrentID+1); // check for overflows (http://msdn.microsoft.com/en-us/library/74b4xzyw(v=vs.71).aspx)
+				CurrentID = checked (CurrentID+1); // check for overflow ( http://msdn.microsoft.com/en-us/library/74b4xzyw(v=vs.71).aspx )
 			} catch (System.OverflowException) {
 				CurrentID = new uint(); // wrap back to 0
 			}

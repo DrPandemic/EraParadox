@@ -22,6 +22,7 @@ using System;
 using GREATLib;
 using GREATClient.Network.Physics;
 using Microsoft.Xna.Framework;
+using GREATLib.World;
 
 namespace GREATClient.Network
 {
@@ -31,7 +32,7 @@ namespace GREATClient.Network
 	/// </summary>
     public class MainClientChampion : IUpdatable
     {
-		const float DEFAULT_HORIZONTAL_ACCELERATION = 0.8f;
+		const float DEFAULT_HORIZONTAL_ACCELERATION = 0.75f;
 
 		/// <summary>
 		/// Gets the drawn position of the champion.
@@ -65,25 +66,46 @@ namespace GREATClient.Network
 		public float HorizontalAcceleration { get; set; }
 
 		/// <summary>
+		/// Gets or sets the width of the collision rectangle of the entity.
+		/// </summary>
+		public float CollisionWidth { get; set; }
+		/// <summary>
+		/// Gets or sets the height of the collision rectangle of the entity.
+		/// </summary>
+		public float CollisionHeight { get; set; }
+
+		/// <summary>
 		/// Gets the direction of the entity during the current frame.
 		/// </summary>
 		public HorizontalDirection Direction { get; set; }
 
-		private PhysicsEngine Physics { get; set; }
+		/// <summary>
+		/// Local physics engine, used to do client-side prediction.
+		/// </summary>
+		PhysicsEngine Physics { get; set; }
 
-		private int XMovement;
+		/// <summary>
+		/// The amount of moving actions that we have to make.
+		/// When we move right, we do +1.
+		/// When we move left, we do -1.
+		/// This is mainly used by the server to know how many actions it has to
+		/// reproduce in one frame (how many times it must change the velocity).
+		/// </summary>
+		int xMovement;
 
-		public MainClientChampion()
+		public MainClientChampion(GameWorld world)
         {
 			//TODO: toremove
-			Physics = new PhysicsEngine();
 			DrawnPosition = new Vec2(500f, 300f);
 			SimulatedPosition = DrawnPosition;
-			MoveSpeed = 400f;
+			MoveSpeed = 100f;
+			CollisionWidth = 15f;
+			CollisionHeight = 30f;
 
+			Physics = new PhysicsEngine(world);
 			Velocity = new Vec2();
 			Direction = HorizontalDirection.None;
-			XMovement = 0;
+			xMovement = 0;
 
 			HorizontalAcceleration = DEFAULT_HORIZONTAL_ACCELERATION;
         }
@@ -94,21 +116,29 @@ namespace GREATClient.Network
 		public void Update(GameTime deltaTime)
 		{
 			// client-side prediction
-			Physics.Update(deltaTime.ElapsedGameTime.TotalSeconds, this, ref XMovement);
+			Physics.Update(deltaTime.ElapsedGameTime.TotalSeconds, this, ref xMovement);
 			DrawnPosition = SimulatedPosition;
 		}
 
 		public void MoveLeft()
 		{
-			Physics.Move(this, HorizontalDirection.Left, ref XMovement);
+			Physics.Move(this, HorizontalDirection.Left, ref xMovement);
 		}
 		public void MoveRight()
 		{
-			Physics.Move(this, HorizontalDirection.Right, ref XMovement);
+			Physics.Move(this, HorizontalDirection.Right, ref xMovement);
 		}
 		public void Jump()
 		{
 			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Creates the rectangle that represents the collision rectangle of the entity.
+		/// </summary>
+		public Rect CreateCollisionRectangle()
+		{
+			return new Rect(SimulatedPosition.X, SimulatedPosition.Y, CollisionWidth, CollisionHeight);
 		}
     }
 }

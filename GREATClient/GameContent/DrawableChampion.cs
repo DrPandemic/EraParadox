@@ -26,6 +26,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using GREATClient.Network;
 using Network;
+using GREATLib.World;
 
 namespace GREATClient
 {
@@ -52,10 +53,10 @@ namespace GREATClient
 
 
 
-        public DrawableChampion(ChampionsInfo championsInfo)
+        public DrawableChampion(ChampionsInfo championsInfo, GameWorld world) //TODO: new MainClientDrawableChampion
         {
 			FillFunctionsForActions();
-			Champion = new MainClientChampion();
+			Champion = new MainClientChampion(world);
         }
 		protected override void OnLoad(Microsoft.Xna.Framework.Content.ContentManager content, Microsoft.Xna.Framework.Graphics.GraphicsDevice gd)
 		{

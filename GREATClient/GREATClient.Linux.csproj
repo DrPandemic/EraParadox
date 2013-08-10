@@ -59,7 +59,6 @@
     <Compile Include="GameContent\ChampionsInfo.cs" />
     <Compile Include="BaseClass\DrawableSprite.cs" />
     <Compile Include="GameContent\DrawableChampionSprite.cs" />
-    <Compile Include="Utilities.cs" />
     <Compile Include="BaseClass\Particle\DrawableParticle.cs" />
     <Compile Include="BaseClass\Particle\ParticleSystem.cs" />
     <Compile Include="Screens\GameplayScreen.cs" />
@@ -74,6 +73,8 @@
     <Compile Include="Network\Physics\HorizontalDirection.cs" />
     <Compile Include="BaseClass\IUpdatable.cs" />
     <Compile Include="Network\IDGenerator.cs" />
+    <Compile Include="Network\Physics\CollisionResolver.cs" />
+    <Compile Include="GameHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />

@@ -55,20 +55,20 @@ namespace GREATLib.World.Tiles
 		private List<List<Tile>> GetDummyData()
 		{
 			// Temporary code to get a quick-and-dirty map.
-			List<int> ids = GeneralHelper.MakeList(0, 1);
-			List<CollisionType> collisions = GeneralHelper.MakeList(
+			List<int> ids = Utilities.MakeList(0, 1);
+			List<CollisionType> collisions = Utilities.MakeList(
 				CollisionType.Passable, CollisionType.Block);
 
-			List<List<int>> tiles = GeneralHelper.MakeList(
-				GeneralHelper.MakeList(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1),
-				GeneralHelper.MakeList(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1),
-				GeneralHelper.MakeList(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1),
-				GeneralHelper.MakeList(1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1),
-				GeneralHelper.MakeList(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1),
-				GeneralHelper.MakeList(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1),
-				GeneralHelper.MakeList(1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1),
-				GeneralHelper.MakeList(1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1),
-				GeneralHelper.MakeList(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1));
+			List<List<int>> tiles = Utilities.MakeList(
+				Utilities.MakeList(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1),
+				Utilities.MakeList(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1),
+				Utilities.MakeList(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1),
+				Utilities.MakeList(1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1),
+				Utilities.MakeList(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1),
+				Utilities.MakeList(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1),
+				Utilities.MakeList(1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1),
+				Utilities.MakeList(1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1),
+				Utilities.MakeList(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1));
 
 			return tiles.ConvertAll(
 				row => row.ConvertAll(
@@ -104,13 +104,13 @@ namespace GREATLib.World.Tiles
 			Debug.Assert(TileRectangles != null, "Map not initialized.");
 
 			// Get the start/end indices of the tiles that our rectangle touches
-			int startX = GeneralHelper.Clamp((int)rectangle.Left / Tile.WIDTH,
+			int startX = Utilities.Clamp((int)rectangle.Left / Tile.WIDTH,
 			                                 0, GetWidthTiles() - 1);
-			int startY = GeneralHelper.Clamp((int)rectangle.Top / Tile.HEIGHT,
+			int startY = Utilities.Clamp((int)rectangle.Top / Tile.HEIGHT,
 			                                 0, GetHeightTiles() - 1);
-			int endX = GeneralHelper.Clamp((int)Math.Ceiling((double)rectangle.Right / Tile.WIDTH) - 1,
+			int endX = Utilities.Clamp((int)Math.Ceiling((double)rectangle.Right / Tile.WIDTH) - 1,
 			                               0, GetWidthTiles() - 1);
-			int endY = GeneralHelper.Clamp((int)Math.Ceiling((double)rectangle.Bottom / Tile.HEIGHT) - 1,
+			int endY = Utilities.Clamp((int)Math.Ceiling((double)rectangle.Bottom / Tile.HEIGHT) - 1,
 			                               0, GetHeightTiles() - 1);
 
 			List<KeyValuePair<Rect, CollisionType>> touched = new List<KeyValuePair<Rect, CollisionType>>();

@@ -21,6 +21,7 @@
 using System;
 using GREATLib;
 using System.Diagnostics;
+using GREATLib.World;
 
 namespace GREATClient.Network.Physics
 {
@@ -44,13 +45,18 @@ namespace GREATClient.Network.Physics
 
 		double TimeSinceLastUpdate { get; set; }
 
-        public PhysicsEngine()
+		CollisionResolver Collisions { get; set; }
+
+        public PhysicsEngine(GameWorld world)
         {
 			Debug.Assert(UPDATE_RATE.TotalSeconds > 0.0);
 			Debug.Assert(GRAVITY.Y > 0f, "Gravity has to go towards the ground.");
 			Debug.Assert(PHYSICS_PASSES > 0);
+			Debug.Assert(world != null);
 
 			TimeSinceLastUpdate = 0.0;
+
+			Collisions = new CollisionResolver(world);
         }
 
 		/// <summary>
@@ -114,8 +120,8 @@ namespace GREATClient.Network.Physics
 			// Multiple physics passes to reduce the chance of "going through" obstacles when we're too fast.
 			for (int pass = 0; pass < PHYSICS_PASSES; ++pass) {
 				entity.SimulatedPosition += (entity.Velocity * deltaSeconds) / PHYSICS_PASSES;
-				//TODO: collisions
-				ILogger.Log(entity.SimulatedPosition.ToString());
+
+				Collisions.UndoCollisions(entity);
 			}
 
 			// Make the movement fade out over time
@@ -132,17 +138,19 @@ namespace GREATClient.Network.Physics
 		/// </summary>
 		void ApplyDesiredMovement(double deltaSeconds, MainClientChampion entity, int xMovement)
 		{
+			Debug.Assert(deltaSeconds > 0);
+			Debug.Assert(entity != null && entity.Velocity != null);
+
 			// The minimum speed at which we're supposed to go.
 			float moveXVel = xMovement * entity.MoveSpeed;
 
 			//if (!entity.IsOnGround) moveXVel *= entity.AirAcceleration;
 
 			// Only move if we're not already moving too fast
-			if ((moveXVel < 0 && moveXVel < entity.Velocity.X) || (moveXVel > 0 && moveXVel > entity.Velocity.X))
-				entity.Velocity.X = moveXVel;
+			entity.Velocity.X += moveXVel;
 
 			// Apply gravity
-			//entity.Velocity += GRAVITY;
+			entity.Velocity += GRAVITY;
 		}
     }
 }
