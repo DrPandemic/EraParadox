@@ -60,26 +60,27 @@ namespace GREATClient.BaseClass.Input
 			Inputs = new Inputs();
 			InputEvents = new Dictionary<InputActions,EventHandler>();
 			ActionsFired = new List<InputActions>();
-			Keys k = Inputs.GetKey(InputActions.Spell1);
-			InputInfo info = Inputs.GetInfo(InputActions.Spell1);
 			Updatable = true;
         }
 
 		protected void OnUpdate()
 		{
 			ActionsFired.Clear();
-			foreach (KeyValuePair<InputActions,KeyValuePair<Keys,KeyState>> action in Inputs.Info) {
-				switch (action.Value.Value) {
+			foreach (KeyValuePair<InputActions,InputState> action in Inputs.Info) {
+				switch (action.Value.State) {
+					// The type of key state.
 					case KeyState.Up:
-						if (Keyboard.GetState().IsKeyUp(action.Value.Key)) {
+						// Makes sure it is in the good state.
+						if (Keyboard.GetState().IsKeyUp(action.Value.Key) && CheckDeadKey(Keyboard.GetState(),action.Value.DeadKey)) {
 							if (InputEvents.ContainsKey(action.Key)) {
 								InputEvents[action.Key](this, new InputEventArgs());
 							}
+							// Adds it to the list to be able to query all event fired in this frame.
 							ActionsFired.Add(action.Key);
 						}
 						break;
 					case KeyState.Down:
-						if (Keyboard.GetState().IsKeyDown(action.Value.Key)) {
+						if (Keyboard.GetState().IsKeyDown(action.Value.Key) && CheckDeadKey(Keyboard.GetState(),action.Value.DeadKey)) {
 							if (InputEvents.ContainsKey(action.Key)) {
 								InputEvents[action.Key](this, new InputEventArgs());
 							}
@@ -87,7 +88,9 @@ namespace GREATClient.BaseClass.Input
 						}
 						break;
 					case KeyState.Pressed:
-						if (Keyboard.GetState().IsKeyDown(action.Value.Key) && OldKeyboard.IsKeyUp(action.Value.Key)) {
+						if (Keyboard.GetState().IsKeyDown(action.Value.Key) && OldKeyboard.IsKeyUp(action.Value.Key) && 
+						    CheckDeadKey(Keyboard.GetState(),action.Value.DeadKey)) 
+						{
 							if (InputEvents.ContainsKey(action.Key)) {
 								InputEvents[action.Key](this, new InputEventArgs());
 							}
@@ -95,7 +98,9 @@ namespace GREATClient.BaseClass.Input
 						}
 						break;
 					case KeyState.Released:
-						if (Keyboard.GetState().IsKeyUp(action.Value.Key) && OldKeyboard.IsKeyDown(action.Value.Key)) {
+						if (Keyboard.GetState().IsKeyUp(action.Value.Key) && OldKeyboard.IsKeyDown(action.Value.Key) && 
+						    CheckDeadKey(Keyboard.GetState(),action.Value.DeadKey)) 
+						{
 							if (InputEvents.ContainsKey(action.Key)) {
 								InputEvents[action.Key](this, new InputEventArgs());
 							}
@@ -133,6 +138,37 @@ namespace GREATClient.BaseClass.Input
 		public bool IsActionFired(InputActions action)
 		{
 			return ActionsFired.Contains(action);
+		}
+
+		/// <summary>
+		/// Checks if the dead key is down.
+		/// </summary>
+		/// <returns><c>true</c>, if dead key is down, <c>false</c> otherwise.</returns>
+		/// <param name="keyboardState">Keyboard state.</param>
+		/// <param name="deadKey">Dead key.</param>
+		bool CheckDeadKey(KeyboardState keyboardState, DeadKeys deadKey)
+		{
+			switch (deadKey) {
+				case DeadKeys.Alt:
+					if (keyboardState.IsKeyDown(Keys.LeftAlt) || keyboardState.IsKeyDown(Keys.RightAlt)) {
+						return true;
+					}
+				break;
+				case DeadKeys.Shift:
+					if (keyboardState.IsKeyDown(Keys.LeftShift) || keyboardState.IsKeyDown(Keys.RightShift)) {
+						return true;
+					}
+				break;
+				case DeadKeys.Control:
+					if (keyboardState.IsKeyDown(Keys.LeftControl) || keyboardState.IsKeyDown(Keys.LeftControl)) {
+						return true;
+					}
+				break;
+				case DeadKeys.None:
+					return true;
+				break;
+			}
+			return false;
 		}
     }
 

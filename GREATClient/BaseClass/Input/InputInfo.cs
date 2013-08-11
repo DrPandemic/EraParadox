@@ -40,6 +40,9 @@ namespace GREATClient.BaseClass.Input
 
 		[System.Xml.Serialization.XmlAttribute("state")]
 		public KeyState State { get; set; }
+
+		[System.Xml.Serialization.XmlAttribute("deadKey")]
+		public DeadKeys DeadKey { get; set; }
 	}
 	[Serializable]
 	[System.Xml.Serialization.XmlRoot("inputCollection")]
@@ -50,6 +53,16 @@ namespace GREATClient.BaseClass.Input
 		public InputInfo[] Inputs { get; set; }
 
     }
+
+	/// <summary>
+	/// Contains every informations about an input.
+	/// </summary>
+	public class InputState 
+	{
+		public Keys Key { get; set; }
+		public KeyState State { get; set; }
+		public DeadKeys DeadKey { get; set; }
+	}
 
 	public class Inputs
 	{
@@ -62,7 +75,7 @@ namespace GREATClient.BaseClass.Input
 		/// All the key infos.
 		/// </summary>
 		/// <value>The info.</value>
-		public Dictionary<InputActions, KeyValuePair<Keys,KeyState>> Info { get; private set; }
+		public Dictionary<InputActions, InputState> Info { get; private set; }
 
 		public Inputs()
         {
@@ -92,18 +105,18 @@ namespace GREATClient.BaseClass.Input
 			if (!Info.ContainsKey(action)) {
 				throw new Exception("The action is not present in the XML");
 			}
-			return new InputInfo() { Action = action, Key = Info[action].Key, State = Info[action].Value };
+			return new InputInfo() { Action = action, Key = Info[action].Key, State = Info[action].State, DeadKey =  Info[action].DeadKey };
 		}
 
 		/// <summary>
 		/// Gets the action for a given key and key state.
 		/// </summary>
 		/// <returns>The action.</returns>
-		/// <param name="pair">The key and the key state</param>
-		public InputActions GetAction(KeyValuePair<Keys,KeyState> pair){
+		/// <param name="pair">The key, the key state and the dead key state</param>
+		/*public InputActions GetAction(InputState pair){
 			InputActions action = InputActions.None;
 			return action;
-		}
+		}*/
 
 		/// <summary>
 		/// Fills the info object from the xml.
@@ -111,7 +124,7 @@ namespace GREATClient.BaseClass.Input
 		private void FillInfo()
 		{
 			const string INPUTS_PATH = "Content/" + INPUT_FILE;
-			Info = new Dictionary<InputActions, KeyValuePair<Keys,KeyState>>();
+			Info = new Dictionary<InputActions, InputState>();
 			InputInfos inputs = null;
 
 			XmlSerializer serializer = new XmlSerializer(typeof(InputInfos));
@@ -125,7 +138,7 @@ namespace GREATClient.BaseClass.Input
 				if (Info.ContainsKey(info.Action)) {
 					throw new ActionDeserializationException();
 				} else {					
-					Info.Add(info.Action, Utilities.MakePair(info.Key, info.State));				
+					Info.Add(info.Action, new InputState() {Key = info.Key, State = info.State, DeadKey = info.DeadKey});				
 				}
 			}
 		}

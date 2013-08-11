@@ -22,7 +22,7 @@ using System;
 
 namespace GREATClient.BaseClass.Input
 {
-    public enum InputActions{
+    public enum InputActions {
 		None,
 		Spell1,
 		Spell2,
@@ -33,11 +33,18 @@ namespace GREATClient.BaseClass.Input
 		GoRight
 	}
 
-	public enum KeyState{
+	public enum KeyState {
 		Up,
 		Down,
 		Pressed,
 		Released
+	}
+
+	public enum DeadKeys {
+		None,
+		Control,
+		Alt,
+		Shift
 	}
 }
 
