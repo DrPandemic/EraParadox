@@ -76,8 +76,7 @@ namespace GREATClient.Test
 
 			AddChild(new PingCounter(yo));
 
-			inputManager.RegisterEvent(InputActions.Jump, new EventHandler(Jump));
-
+			inputManager.RegisterEvent(InputActions.Spell3, new EventHandler(Jump));
 		}
 
 

@@ -46,5 +46,14 @@ namespace GREATClient.BaseClass.Input
 		Alt,
 		Shift
 	}
+
+	public enum MouseKeys {
+		None,
+		Left,
+		Right,
+		Wheel,
+		WheelUp,
+		WheelDown
+	}
 }
 
