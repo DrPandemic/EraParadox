@@ -22,11 +22,19 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
+using GREATClient.BaseClass.Input;
 
 namespace GREATClient.BaseClass
 {
     public class Screen : Container
     {
+		/// <summary>
+		/// Gets the services.
+		/// Is used to replace Game.Services.
+		/// </summary>
+		/// <value>The services.</value>
+		public GameServiceContainer Services { get; private set;}
+
 		/// <summary>
 		/// Gets or sets a value indicating whether it want to exit
 		/// </summary>
@@ -53,6 +61,17 @@ namespace GREATClient.BaseClass
 		public override Vector2 GetAbsolutePosition()
 		{
 			return Position;
+		}
+
+		/// <summary>
+		/// Gets the services.
+		/// Is used to replace Game.Services.
+		/// Only the screen hold the reference to the object.
+		/// </summary>
+		/// <value>The services.</value>
+		public override GameServiceContainer GetServices() 
+		{
+			return Services;
 		}
 
 		Game game;
@@ -82,6 +101,9 @@ namespace GREATClient.BaseClass
 		/// <param name="content">Content.</param>
 		public Screen(ContentManager content, Game game) : base(content)
         {
+			IsScreen = true;
+			Services = new GameServiceContainer();
+			this.Services.AddService(typeof(InputManager), new InputManager());
 			Exit = false;
 			Game = game;
         }
@@ -109,6 +131,12 @@ namespace GREATClient.BaseClass
 		public virtual void Draw()
 		{
 			Children.ForEach(child => child.Draw(spriteBatch));
+		}
+
+		protected override void OnUpdate(GameTime dt)
+		{
+			((InputManager)Services.GetService(typeof(InputManager))).Update();
+			base.OnUpdate(dt);
 		}
     }
 }

@@ -42,20 +42,33 @@ namespace GREATClient.BaseClass
 		/// <summary>
 		/// A list of the children that want to be removed. This is used because it is impossible
 		/// to remove an object from a collection while iterating it (e.g. remove an object in its Update method).
-		/// Instead, we remove the items
-		/// when the frame ends.
+		/// Instead, we remove the items when the frame ends.
 		/// </summary>
 		private List<IDraw> toRemove = new List<IDraw>();
 
 		/// <summary>
 		/// Gets the graphics.
-		/// Only the screen hold the reference to the object
+		/// Only the screen hold the reference to the object.
 		/// </summary>
 		/// <returns>The graphics.</returns>
 		public virtual GraphicsDevice GetGraphics()
 		{
 			if(Parent != null)
 				return Parent.GetGraphics();
+			return null;
+		}
+
+		/// <summary>
+		/// Gets the services.
+		/// Is used to replace Game.Services.
+		/// Only the screen hold the reference to the object.
+		/// </summary>
+		/// <value>The services.</value>
+		public virtual GameServiceContainer GetServices() 
+		{
+			if (Parent != null) {
+				return Parent.GetServices();
+			}
 			return null;
 		}
 

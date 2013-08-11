@@ -29,6 +29,11 @@ namespace GREATClient.BaseClass
     public abstract class IDraw
     {
 		/// <summary>
+		/// The is a screen.
+		/// </summary>
+		protected bool IsScreen;
+
+		/// <summary>
 		/// Gets the input manager.
 		/// </summary>
 		/// <returns>The input manager.</returns>
@@ -37,8 +42,11 @@ namespace GREATClient.BaseClass
 			get {
 				if (m_InputManager != null) {
 					return m_InputManager;
-				} else if (this.Game != null) {
-					m_InputManager = (InputManager)this.Game.Services.GetService(typeof(InputManager));
+				} else if (this.Parent != null) {
+					m_InputManager = (InputManager)this.Parent.GetServices().GetService(typeof(InputManager));
+					return m_InputManager;
+				} else if(IsScreen) {
+					m_InputManager = (InputManager)((Screen)this).GetServices().GetService(typeof(InputManager));
 					return m_InputManager;
 				} else {
 					return null;
@@ -101,6 +109,7 @@ namespace GREATClient.BaseClass
 
 		public IDraw() 
 		{
+			IsScreen = false;
 			Parent = null;
 			Z = 0;
 			Visible = true;

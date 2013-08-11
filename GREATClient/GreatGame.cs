@@ -80,8 +80,6 @@ namespace GREATClient
 			gameplay = new TestScreen(Content,this);
 			client.Start();
 
-			this.Services.AddService(typeof(InputManager), new InputManager());
-
 			base.Initialize();
 		}
 
@@ -106,8 +104,6 @@ namespace GREATClient
 			client.Update();
 
 			gameplay.Update(gameTime);
-
-			((InputManager)Services.GetService(typeof(InputManager))).Update();
 
 			if(gameplay.Exit)
 				Exit();
