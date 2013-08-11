@@ -21,7 +21,7 @@
 using System;
 using GREATLib;
 
-namespace Network
+namespace GREATClient.Network
 {
 	/// <summary>
 	/// Represents the action that a clients wants to make (e.g. go right, jump, etc.)

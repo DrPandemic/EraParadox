@@ -23,12 +23,11 @@ using System;
 namespace GREATLib
 {
     public enum ClientCommand
-	{
-		MoveLeft = 0,
-		StopMoveLeft = 1,
-		MoveRight = 2,
-		StopMoveRight = 3,
-		Jump = 4
+    {
+		/// <summary>
+		/// The actions (inputs) that the player wants to do.
+		/// </summary>
+		ActionPackage = 0
     }
 }
 

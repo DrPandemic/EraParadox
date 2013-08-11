@@ -26,13 +26,14 @@ using GREATLib.World.Tiles;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.Xna.Framework;
-using Network;
 using GREATLib.World;
 
 namespace GREATClient.Screens
 {
     public class GameplayScreen : Screen
     {
+		static readonly TimeSpan SEND_INPUTS_TO_SERVER_INTERVAL = TimeSpan.FromMilliseconds(30.0);
+
 		Client Client { get; set; }
 
 		//TODO: place these in a class to manage input
@@ -49,6 +50,8 @@ namespace GREATClient.Screens
 
 		GameTime GameTime { get; set; }
 
+		double TimeSinceLastInputSent { get; set; }
+
         public GameplayScreen(ContentManager content, Game game, Client client)
 			: base(content, game)
 
@@ -62,6 +65,7 @@ namespace GREATClient.Screens
 			//ENDTODO
 
 			GameTime = null;
+			TimeSinceLastInputSent = 0.0;
         }
 
 		protected override void OnLoadContent()
@@ -90,16 +94,16 @@ namespace GREATClient.Screens
 			//    for client-side prediction.
 			HandleInput();
 
-			// 2. Check for server changes. We apply changes of states received from the server,
+			// 2. Send input. We send packaged client actions to the server at regular intervals.
+			SendInput();
+
+			// 3. Check for server changes. We apply changes of states received from the server,
 			//    applying movement correction when needed.
 			ApplyServerModifications();
 
-			// 3. Update local physics. We run the physics loop that is ran on the server to keep
+			// 4. Update local physics. We run the physics loop that is ran on the server to keep
 			//    our local simulation running.
 			base.OnUpdate(dt); // this is done by the player's drawablechampion
-
-			// 4. Send input. We send packaged client actions to the server at regular intervals.
-			SendInput();
 		}
 
 		/// <summary>
@@ -150,7 +154,19 @@ namespace GREATClient.Screens
 		/// </summary>
 		void SendInput()
 		{
-			//TODO
+			TimeSinceLastInputSent += GameTime.ElapsedGameTime.TotalSeconds;
+
+			if (TimeSinceLastInputSent >= SEND_INPUTS_TO_SERVER_INTERVAL.TotalSeconds) {
+				var package = OurChampion.GetActionPackage();
+
+				if (package.Count > 0) {
+					// Send packaged input
+					Client.SendPlayerActionPackage(package);
+					package.Clear();
+
+					TimeSinceLastInputSent = 0f;
+				}
+			}
 		}
     }
 }

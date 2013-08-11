@@ -24,6 +24,7 @@ using Lidgren.Network;
 using GREATLib;
 using System.Collections.Generic;
 using System.Diagnostics;
+using GREATClient.Network;
 
 namespace GREATClient
 {
@@ -111,7 +112,9 @@ namespace GREATClient
 
 		public TimeSpan GetPing()
 		{
-			return client.ServerConnection != null ? TimeSpan.FromSeconds((double)client.ServerConnection.AverageRoundtripTime) : TimeSpan.Zero;
+			return client.ServerConnection != null ?
+				TimeSpan.FromSeconds((double)client.ServerConnection.AverageRoundtripTime) : 
+				TimeSpan.Zero;
 		}
 
 		public TimeSpan GetTime()
@@ -136,10 +139,21 @@ namespace GREATClient
 			}
 		}
 
-		public void SendCommand(ClientCommand command)
+		/// <summary>
+		/// Sends the action package of the player, indicating the inputs that the player
+		/// has done in the past few milliseconds.
+		/// </summary>
+		public void SendPlayerActionPackage(List<PlayerAction> actions)
 		{
 			NetOutgoingMessage msg = client.CreateMessage();
-			msg.Write((byte)command);
+			msg.Write((byte)ClientCommand.ActionPackage);
+
+			msg.Write((byte)actions.Count);
+			foreach (PlayerAction action in actions) {
+				msg.Write((uint)action.ID);
+				msg.Write((float)action.Time);
+				msg.Write((byte)action.Type);
+			}
 
 			client.SendMessage(msg, NetDeliveryMethod.ReliableOrdered);
 		}

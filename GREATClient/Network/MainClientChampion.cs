@@ -23,6 +23,7 @@ using GREATLib;
 using GREATClient.Network.Physics;
 using Microsoft.Xna.Framework;
 using GREATLib.World;
+using System.Collections.Generic;
 
 namespace GREATClient.Network
 {
@@ -99,10 +100,10 @@ namespace GREATClient.Network
 		/// The amount of moving actions that we have to make.
 		/// When we move right, we do +1.
 		/// When we move left, we do -1.
-		/// This is mainly used by the server to know how many actions it has to
-		/// reproduce in one frame (how many times it must change the velocity).
 		/// </summary>
 		int xMovement;
+
+		List<PlayerAction> PackagedActions { get; set; }
 
 		public MainClientChampion(GameWorld world)
         {
@@ -119,6 +120,7 @@ namespace GREATClient.Network
 			Direction = HorizontalDirection.None;
 			xMovement = 0;
 			IsOnGround = true;
+			PackagedActions = new List<PlayerAction>();
 
 			HorizontalAcceleration = DEFAULT_HORIZONTAL_ACCELERATION;
         }
@@ -131,6 +133,11 @@ namespace GREATClient.Network
 			// client-side prediction
 			Physics.Update(deltaTime.ElapsedGameTime.TotalSeconds, this, ref xMovement);
 			DrawnPosition = SimulatedPosition;
+		}
+
+		public void PackageAction(PlayerAction action)
+		{
+			PackagedActions.Add(action);
 		}
 
 		public void MoveLeft()
@@ -152,6 +159,11 @@ namespace GREATClient.Network
 		public Rect CreateCollisionRectangle()
 		{
 			return new Rect(SimulatedPosition.X, SimulatedPosition.Y, CollisionWidth, CollisionHeight);
+		}
+
+		public List<PlayerAction> GetActionPackage()
+		{
+			return PackagedActions;
 		}
     }
 }

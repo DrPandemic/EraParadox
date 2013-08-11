@@ -25,7 +25,6 @@ using GREATLib;
 using System.Collections.Generic;
 using System.Diagnostics;
 using GREATClient.Network;
-using Network;
 using GREATLib.World;
 
 namespace GREATClient
@@ -113,7 +112,12 @@ namespace GREATClient
 
 			FunctionForAction[action]();
 
-			//TODO: package them to later send to the server
+			Champion.PackageAction(toPackage);
+		}
+
+		public List<PlayerAction> GetActionPackage()
+		{
+			return Champion.GetActionPackage();
 		}
     }
 }

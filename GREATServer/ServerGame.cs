@@ -32,7 +32,7 @@ namespace GREATServer
 	/// </summary>
     public class ServerGame
     {
-		static readonly TimeSpan POSITION_UPDATE_RATE = GameMatch.STATE_UPDATE_INTERVAL;
+		static readonly TimeSpan UPDATE_INTERVAL = TimeSpan.FromMilliseconds(15.0);
 
 		Random random = new Random();
 
@@ -47,10 +47,50 @@ namespace GREATServer
         {
 			Server = server;
 			Clients = new Dictionary<NetConnection, ServerClient>();
+
+			Timer updateTimer = new Timer(UPDATE_INTERVAL.TotalMilliseconds);
+			updateTimer.Elapsed += Update;
+			updateTimer.Start();
         }
 
 		void Update(object sender, EventArgs e)
 		{
+
+		}
+
+		/// <summary>
+		/// When we received data from one of our players.
+		/// </summary>
+		public void OnDataReceived(NetIncomingMessage message)
+		{
+			ClientCommand command = (ClientCommand)message.ReadByte();
+
+			switch (command) {
+				case ClientCommand.ActionPackage:
+					OnActionPackage(message);
+					break;
+
+				default:
+					Debug.Assert(false, "Invalid client command.");
+					ILogger.Log("Invalid client command received: " + command, LogPriority.Warning);
+					break;
+			}
+		}
+
+		void OnActionPackage(NetIncomingMessage message)
+		{
+			try {
+				byte size = message.ReadByte();
+				for (int i = 0; i < size; ++i) {
+					uint id = message.ReadUInt32();
+					float time = message.ReadFloat();
+					PlayerActionType type = (PlayerActionType)message.ReadByte();
+
+					ILogger.Log(String.Format("Action package: size={3}, id={0}, time={1}, type={2}", id,time,type,size));
+				}
+			} catch (Exception e) {
+				ILogger.Log("Action package badly formatted: " + e.ToString(), LogPriority.Error);
+			}
 		}
     }
 }

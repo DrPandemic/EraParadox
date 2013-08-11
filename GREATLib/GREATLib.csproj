@@ -40,12 +40,12 @@
     <Compile Include="World\GameWorld.cs" />
     <Compile Include="Rect.cs" />
     <Compile Include="World\Tiles\CollisionType.cs" />
-    <Compile Include="ClientCommand.cs" />
     <Compile Include="ServerCommand.cs" />
     <Compile Include="CustomLogger.cs" />
     <Compile Include="ILogger.cs" />
     <Compile Include="PlayerActionType.cs" />
     <Compile Include="Utilities.cs" />
+    <Compile Include="ClientCommand.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

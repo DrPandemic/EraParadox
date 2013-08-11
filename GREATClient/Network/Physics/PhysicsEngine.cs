@@ -130,6 +130,8 @@ namespace GREATClient.Network.Physics
 
 			ApplyDesiredMovement(deltaSeconds, entity, xMovement);
 
+			entity.IsOnGround = false; // reset the flag indicating if we're on the ground
+
 			// Multiple physics passes to reduce the chance of "going through" obstacles when we're too fast.
 			for (int pass = 0; pass < PHYSICS_PASSES; ++pass) {
 				entity.SimulatedPosition += (entity.Velocity * deltaSeconds) / PHYSICS_PASSES;
