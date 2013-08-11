@@ -101,7 +101,6 @@ namespace GREATClient.BaseClass
 		/// <param name="content">Content.</param>
 		public Screen(ContentManager content, Game game) : base(content)
         {
-			IsScreen = true;
 			Services = new GameServiceContainer();
 			this.Services.AddService(typeof(InputManager), new InputManager());
 			Exit = false;

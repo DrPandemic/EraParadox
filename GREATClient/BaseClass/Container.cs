@@ -58,20 +58,6 @@ namespace GREATClient.BaseClass
 			return null;
 		}
 
-		/// <summary>
-		/// Gets the services.
-		/// Is used to replace Game.Services.
-		/// Only the screen hold the reference to the object.
-		/// </summary>
-		/// <value>The services.</value>
-		public virtual GameServiceContainer GetServices() 
-		{
-			if (Parent != null) {
-				return Parent.GetServices();
-			}
-			return null;
-		}
-
 		public Container(ContentManager content) 
         {
 			Content = content;
