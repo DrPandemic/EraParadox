@@ -108,6 +108,10 @@ namespace GREATClient.Test
 
 			oldks = ks;
 			oldms = ms;
+			if (inputManager.IsActionFired(InputActions.GoRight))
+			{
+				int a = 1;
+			}
 
 			base.OnUpdate(dt);
 		}

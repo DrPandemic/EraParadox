@@ -180,9 +180,7 @@ namespace GREATClient.BaseClass
 		/// </summary>
 		/// <param name="dt">Dt.</param>
 		protected virtual void OnUpdate(GameTime dt)
-		{
-
-		}
+		{ }
     }
 }
 
