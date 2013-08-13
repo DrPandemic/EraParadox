@@ -23,6 +23,7 @@ using Microsoft.Xna.Framework.Input;
 using GREATClient.BaseClass.Input;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Microsoft.Xna.Framework;
 
 namespace GREATClient.BaseClass.Input
 {
@@ -61,6 +62,39 @@ namespace GREATClient.BaseClass.Input
 		/// </summary>
 		/// <value><c>true</c> if updatable; otherwise, <c>false</c>.</value>
 		public bool Updatable { get; set; }
+
+		/// <summary>
+		/// Gets the mouse position.
+		/// </summary>
+		/// <value>The mouse position.</value>
+		public Vector2 MousePosition 
+		{ 
+			get {
+				return new Vector2(MouseX,MouseY);
+			}
+		}
+
+		/// <summary>
+		/// Gets the mouse x.
+		/// </summary>
+		/// <value>The mouse x.</value>
+		public int MouseX 
+		{
+			get {
+				return OldMouse.X;
+			}
+		}
+
+		/// <summary>
+		/// Gets the mouse y.
+		/// </summary>
+		/// <value>The mouse y.</value>
+		public int MouseY
+		{
+			get {
+				return OldMouse.Y;
+			}
+		}
 
         public InputManager()
         {
@@ -141,6 +175,13 @@ namespace GREATClient.BaseClass.Input
 			}
 		}
 
+		/// <summary>
+		/// Checks the state of the mouse to throw the good events.
+		/// </summary>
+		/// <returns><c>true</c>, if mouse state was checked, <c>false</c> otherwise.</returns>
+		/// <param name="keyboardState">Keyboard state.</param>
+		/// <param name="mouseState">Mouse state.</param>
+		/// <param name="inputState">Input state.</param>
 		bool CheckMouseState(KeyboardState keyboardState, MouseState mouseState, InputState inputState) {
 			Debug.Assert(!inputState.IsKeyboard);
 			Debug.Assert(inputState.MouseKey != MouseKeys.None);
@@ -184,6 +225,13 @@ namespace GREATClient.BaseClass.Input
 			return false;
 		}
 
+		/// <summary>
+		/// Checks precise mouse key state.
+		/// </summary>
+		/// <returns><c>true</c>, if A mouse key was checked, <c>false</c> otherwise.</returns>
+		/// <param name="buttonState">Button state.</param>
+		/// <param name="oldButtonState">Old button state.</param>
+		/// <param name="keyState">Key state.</param>
 		bool CheckAMouseKey(ButtonState buttonState, ButtonState oldButtonState, KeyState keyState ) {			
 
 			switch (keyState) {
