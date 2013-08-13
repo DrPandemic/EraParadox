@@ -29,8 +29,8 @@ using System.Collections;
 
 namespace GREATClient.BaseClass.Input
 {
-	[Serializable()]
-	public class InputInfo
+	[Serializable]
+	public class KeyboardInputInfo
 	{
 		[System.Xml.Serialization.XmlAttribute("action")]
 		public InputActions Action { get; set; }
@@ -44,22 +44,70 @@ namespace GREATClient.BaseClass.Input
 		[System.Xml.Serialization.XmlAttribute("deadKey")]
 		public DeadKeys DeadKey { get; set; }
 	}
+
+	[Serializable]
+	public class MouseInputInfo
+	{
+		[System.Xml.Serialization.XmlAttribute("action")]
+		public InputActions Action { get; set; }
+
+		[System.Xml.Serialization.XmlAttribute("key")]
+		public MouseKeys Key { get; set; }
+
+		// For thw WheelUp/Down the state will be ignore.
+		[System.Xml.Serialization.XmlAttribute("state")]
+		public KeyState State { get; set; }
+
+		[System.Xml.Serialization.XmlAttribute("deadKey")]
+		public DeadKeys DeadKey { get; set; }
+	}
+
 	[Serializable]
 	[System.Xml.Serialization.XmlRoot("inputCollection")]
 	public class InputInfos
     {
-		[System.Xml.Serialization.XmlArray("inputs")]
-		[System.Xml.Serialization.XmlArrayItem("input", typeof(InputInfo))]
-		public InputInfo[] Inputs { get; set; }
+		[System.Xml.Serialization.XmlArray("keyboardInputs")]
+		[System.Xml.Serialization.XmlArrayItem("input", typeof(KeyboardInputInfo))]
+		public KeyboardInputInfo[] KeyboadInputs { get; set; }
 
-    }
+		[System.Xml.Serialization.XmlArray("MouseInputs")]
+		[System.Xml.Serialization.XmlArrayItem("input", typeof(MouseInputInfo))]
+		public MouseInputInfo[] MouseInputs { get; set; }
+	}
 
 	/// <summary>
-	/// Contains every informations about an input.
+	/// Contains every informations about an input from the keyboard.
 	/// </summary>
 	public class InputState 
 	{
-		public Keys Key { get; set; }
+		public bool IsKeyboard { get; private set; }
+
+		Keys keyboardKey;
+		public Keys KeyboardKey 
+		{ 
+			get {
+				return keyboardKey;
+			}
+			set {
+				IsKeyboard = true;
+				mouseKey = MouseKeys.None;
+				keyboardKey = value;
+			}
+		}
+		MouseKeys mouseKey;
+		public MouseKeys MouseKey 
+		{
+			get {
+				return mouseKey;
+			}
+			set {
+				IsKeyboard = false;
+				keyboardKey = Keys.None;
+				mouseKey = value;
+			}
+		}
+
+		KeyState state;
 		public KeyState State { get; set; }
 		public DeadKeys DeadKey { get; set; }
 	}
@@ -92,7 +140,7 @@ namespace GREATClient.BaseClass.Input
 			if (!Info.ContainsKey(action)) {
 				throw new Exception("The action is not present in the XML");
 			}
-			return Info[action].Key;
+			return Info[action].KeyboardKey;
 		}
 
 		/// <summary>
@@ -100,12 +148,12 @@ namespace GREATClient.BaseClass.Input
 		/// </summary>
 		/// <returns>The info.</returns>
 		/// <param name="action">Action.</param>
-		public InputInfo GetInfo(InputActions action)
+		public KeyboardInputInfo GetInfo(InputActions action)
 		{
 			if (!Info.ContainsKey(action)) {
 				throw new Exception("The action is not present in the XML");
 			}
-			return new InputInfo() { Action = action, Key = Info[action].Key, State = Info[action].State, DeadKey =  Info[action].DeadKey };
+			return new KeyboardInputInfo() { Action = action, Key = Info[action].KeyboardKey, State = Info[action].State, DeadKey =  Info[action].DeadKey };
 		}
 
 		/// <summary>
@@ -133,12 +181,20 @@ namespace GREATClient.BaseClass.Input
 			inputs = (InputInfos)serializer.Deserialize(reader);
 			reader.Close();
 		
-			foreach (InputInfo info in inputs.Inputs)
+			foreach (KeyboardInputInfo info in inputs.KeyboadInputs)
 			{
 				if (Info.ContainsKey(info.Action)) {
 					throw new ActionDeserializationException();
 				} else {					
-					Info.Add(info.Action, new InputState() {Key = info.Key, State = info.State, DeadKey = info.DeadKey});				
+					Info.Add(info.Action, new InputState() {KeyboardKey = info.Key, State = info.State, DeadKey = info.DeadKey});				
+				}
+			}
+			foreach (MouseInputInfo info in inputs.MouseInputs)
+			{
+				if (Info.ContainsKey(info.Action)) {
+					throw new ActionDeserializationException();
+				} else {
+					Info.Add(info.Action, new InputState() {MouseKey = info.Key, State = info.State, DeadKey = info.DeadKey});				
 				}
 			}
 		}

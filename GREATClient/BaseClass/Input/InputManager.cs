@@ -22,6 +22,8 @@ using System;
 using Microsoft.Xna.Framework.Input;
 using GREATClient.BaseClass.Input;
 using System.Collections.Generic;
+using System.Diagnostics;
+using Microsoft.Xna.Framework;
 
 namespace GREATClient.BaseClass.Input
 {
@@ -37,6 +39,12 @@ namespace GREATClient.BaseClass.Input
 		/// The keyboard state.
 		/// </summary>
 		KeyboardState OldKeyboard { get; set; }
+
+		/// <summary>
+		/// Gets or sets the old mouse.
+		/// </summary>
+		/// <value>The old mouse.</value>
+		MouseState OldMouse { get; set; }
 
 		/// <summary>
 		/// The dictionary holding the events handler for each action.
@@ -55,61 +63,109 @@ namespace GREATClient.BaseClass.Input
 		/// <value><c>true</c> if updatable; otherwise, <c>false</c>.</value>
 		public bool Updatable { get; set; }
 
+		/// <summary>
+		/// Gets the mouse position.
+		/// </summary>
+		/// <value>The mouse position.</value>
+		public Vector2 MousePosition 
+		{ 
+			get {
+				return new Vector2(MouseX,MouseY);
+			}
+		}
+
+		/// <summary>
+		/// Gets the mouse x.
+		/// </summary>
+		/// <value>The mouse x.</value>
+		public int MouseX 
+		{
+			get {
+				return OldMouse.X;
+			}
+		}
+
+		/// <summary>
+		/// Gets the mouse y.
+		/// </summary>
+		/// <value>The mouse y.</value>
+		public int MouseY
+		{
+			get {
+				return OldMouse.Y;
+			}
+		}
+
         public InputManager()
         {
 			Inputs = new Inputs();
 			InputEvents = new Dictionary<InputActions,EventHandler>();
 			ActionsFired = new List<InputActions>();
 			Updatable = true;
+			OldMouse = Mouse.GetState();
+			OldKeyboard = Keyboard.GetState();
         }
 
 		protected void OnUpdate()
 		{
 			ActionsFired.Clear();
+			KeyboardState keyboardState = Keyboard.GetState();
+			MouseState mouseState = Mouse.GetState();
 			foreach (KeyValuePair<InputActions,InputState> action in Inputs.Info) {
-				switch (action.Value.State) {
-					// The type of key state.
-					case KeyState.Up:
-						// Makes sure it is in the good state.
-						if (Keyboard.GetState().IsKeyUp(action.Value.Key) && CheckDeadKey(Keyboard.GetState(),action.Value.DeadKey)) {
-							if (InputEvents.ContainsKey(action.Key)) {
-								InputEvents[action.Key](this, new InputEventArgs());
-							}
-							// Adds it to the list to be able to query all event fired in this frame.
-							ActionsFired.Add(action.Key);
+				// Manage mouse events.
+				if (!action.Value.IsKeyboard && action.Value.MouseKey != MouseKeys.None) {
+					if (CheckMouseState(keyboardState,mouseState, action.Value)) {
+						if (InputEvents.ContainsKey(action.Key)) {
+							InputEvents[action.Key](this, new InputEventArgs());
 						}
-						break;
-					case KeyState.Down:
-						if (Keyboard.GetState().IsKeyDown(action.Value.Key) && CheckDeadKey(Keyboard.GetState(),action.Value.DeadKey)) {
-							if (InputEvents.ContainsKey(action.Key)) {
-								InputEvents[action.Key](this, new InputEventArgs());
+						ActionsFired.Add(action.Key);
+					}
+				} else if (action.Value.KeyboardKey != Keys.None) {
+					switch (action.Value.State) {
+						// The type of key state.
+						case KeyState.Up:
+							// Makes sure it is in the good state.
+							if (keyboardState.IsKeyUp(action.Value.KeyboardKey) && CheckDeadKey(keyboardState, action.Value.DeadKey)) {
+								if (InputEvents.ContainsKey(action.Key)) {
+									InputEvents[action.Key](this, new InputEventArgs());
+								}
+								// Adds it to the list to be able to query all event fired in this frame.
+								ActionsFired.Add(action.Key);
 							}
-							ActionsFired.Add(action.Key);
-						}
 						break;
-					case KeyState.Pressed:
-						if (Keyboard.GetState().IsKeyDown(action.Value.Key) && OldKeyboard.IsKeyUp(action.Value.Key) && 
-						    CheckDeadKey(Keyboard.GetState(),action.Value.DeadKey)) 
-						{
-							if (InputEvents.ContainsKey(action.Key)) {
-								InputEvents[action.Key](this, new InputEventArgs());
+						case KeyState.Down:
+							if (keyboardState.IsKeyDown(action.Value.KeyboardKey) && CheckDeadKey(keyboardState,action.Value.DeadKey)) {
+								if (InputEvents.ContainsKey(action.Key)) {
+									InputEvents[action.Key](this, new InputEventArgs());
+								}
+								ActionsFired.Add(action.Key);
 							}
-							ActionsFired.Add(action.Key);
-						}
 						break;
-					case KeyState.Released:
-						if (Keyboard.GetState().IsKeyUp(action.Value.Key) && OldKeyboard.IsKeyDown(action.Value.Key) && 
-						    CheckDeadKey(Keyboard.GetState(),action.Value.DeadKey)) 
-						{
-							if (InputEvents.ContainsKey(action.Key)) {
-								InputEvents[action.Key](this, new InputEventArgs());
+						case KeyState.Pressed:
+							if (keyboardState.IsKeyDown(action.Value.KeyboardKey) && OldKeyboard.IsKeyUp(action.Value.KeyboardKey) && 
+							    CheckDeadKey(keyboardState,action.Value.DeadKey)) 
+							{
+								if (InputEvents.ContainsKey(action.Key)) {
+									InputEvents[action.Key](this, new InputEventArgs());
+								}
+								ActionsFired.Add(action.Key);
 							}
-							ActionsFired.Add(action.Key);
-						}
 						break;
-				}				
+						case KeyState.Released:
+							if (keyboardState.IsKeyUp(action.Value.KeyboardKey) && OldKeyboard.IsKeyDown(action.Value.KeyboardKey) && 
+							    CheckDeadKey(keyboardState,action.Value.DeadKey)) 
+							{
+								if (InputEvents.ContainsKey(action.Key)) {
+									InputEvents[action.Key](this, new InputEventArgs());
+								}
+								ActionsFired.Add(action.Key);
+							}
+						break;
+					}				
+				}
 			}
-			OldKeyboard = Keyboard.GetState();
+			OldKeyboard = keyboardState;
+			OldMouse = mouseState;
 		}
 
 		public void Update()
@@ -117,6 +173,91 @@ namespace GREATClient.BaseClass.Input
 			if (Updatable) {
 				OnUpdate();
 			}
+		}
+
+		/// <summary>
+		/// Checks the state of the mouse to throw the good events.
+		/// </summary>
+		/// <returns><c>true</c>, if mouse state was checked, <c>false</c> otherwise.</returns>
+		/// <param name="keyboardState">Keyboard state.</param>
+		/// <param name="mouseState">Mouse state.</param>
+		/// <param name="inputState">Input state.</param>
+		bool CheckMouseState(KeyboardState keyboardState, MouseState mouseState, InputState inputState) {
+			Debug.Assert(!inputState.IsKeyboard);
+			Debug.Assert(inputState.MouseKey != MouseKeys.None);
+
+			if (inputState.MouseKey != MouseKeys.None) {
+				// Start with dead key.
+				if (CheckDeadKey(keyboardState,inputState.DeadKey)) {				
+					// Manage wheel mouvement.
+					if (inputState.MouseKey == MouseKeys.WheelDown) {
+						if (mouseState.ScrollWheelValue < OldMouse.ScrollWheelValue) {
+							return true;
+						}
+					} else if (inputState.MouseKey == MouseKeys.WheelDown) {
+						if (mouseState.ScrollWheelValue > OldMouse.ScrollWheelValue) {
+							return true;
+						}
+						// Now the other keys.
+					} else {
+						switch (inputState.MouseKey) {
+							case MouseKeys.Left:
+								if (CheckAMouseKey(mouseState.LeftButton, OldMouse.LeftButton, inputState.State)) {
+									return true;
+								}
+							break;
+							case MouseKeys.Right:
+								if (CheckAMouseKey(mouseState.RightButton, OldMouse.RightButton, inputState.State)) {
+									return true;
+								}
+							break;
+							case MouseKeys.Wheel:
+								if (CheckAMouseKey(mouseState.MiddleButton, OldMouse.MiddleButton, inputState.State)) {
+									return true;
+								}
+							break;
+						}
+					}
+				}
+			}
+
+
+			return false;
+		}
+
+		/// <summary>
+		/// Checks precise mouse key state.
+		/// </summary>
+		/// <returns><c>true</c>, if A mouse key was checked, <c>false</c> otherwise.</returns>
+		/// <param name="buttonState">Button state.</param>
+		/// <param name="oldButtonState">Old button state.</param>
+		/// <param name="keyState">Key state.</param>
+		bool CheckAMouseKey(ButtonState buttonState, ButtonState oldButtonState, KeyState keyState ) {			
+
+			switch (keyState) {
+				case KeyState.Down:
+					if (buttonState == ButtonState.Pressed) {
+						return true;
+					}
+				break;
+				case KeyState.Up:
+					if (buttonState == ButtonState.Released) {
+						return true;
+					}
+				break;
+				case KeyState.Released:
+					if (buttonState == ButtonState.Released && oldButtonState == ButtonState.Pressed) {
+						return true;
+					}
+				break;
+				case KeyState.Pressed:
+					if (buttonState == ButtonState.Pressed && oldButtonState == ButtonState.Released) {
+						return true;
+					}
+				break;
+			}
+
+			return false;
 		}
 
 		/// <summary>
@@ -142,35 +283,43 @@ namespace GREATClient.BaseClass.Input
 
 		/// <summary>
 		/// Checks if the dead key is down.
+		/// If there is multiple dead keys, drop the action.
 		/// </summary>
 		/// <returns><c>true</c>, if dead key is down, <c>false</c> otherwise.</returns>
 		/// <param name="keyboardState">Keyboard state.</param>
 		/// <param name="deadKey">Dead key.</param>
 		bool CheckDeadKey(KeyboardState keyboardState, DeadKeys deadKey)
 		{
-			switch (deadKey) {
-				case DeadKeys.Alt:
-					if (keyboardState.IsKeyDown(Keys.LeftAlt) || keyboardState.IsKeyDown(Keys.RightAlt)) {
+			bool altDown = keyboardState.IsKeyDown(Keys.LeftAlt) || keyboardState.IsKeyDown(Keys.RightAlt);
+			bool shiftDown = keyboardState.IsKeyDown(Keys.LeftShift) || keyboardState.IsKeyDown(Keys.RightShift);
+			bool controlDown = keyboardState.IsKeyDown(Keys.LeftControl) || keyboardState.IsKeyDown(Keys.LeftControl);
+
+			// Makes sure there is only one dead key pressed.
+			if (altDown ? (!shiftDown && !controlDown) : (shiftDown ^ controlDown)) {
+				switch (deadKey) {
+					case DeadKeys.Alt:
+						if (altDown) {
+							return true;
+						}
+						break;
+						case DeadKeys.Shift:
+						if (shiftDown) {
+							return true;
+						}
+						break;
+						case DeadKeys.Control:
+						if (controlDown) {
+							return true;
+						}
+						break;
+						case DeadKeys.None:
 						return true;
-					}
-				break;
-				case DeadKeys.Shift:
-					if (keyboardState.IsKeyDown(Keys.LeftShift) || keyboardState.IsKeyDown(Keys.RightShift)) {
-						return true;
-					}
-				break;
-				case DeadKeys.Control:
-					if (keyboardState.IsKeyDown(Keys.LeftControl) || keyboardState.IsKeyDown(Keys.LeftControl)) {
-						return true;
-					}
-				break;
-				case DeadKeys.None:
-					return true;
-				break;
+						break;
+				}
 			}
 			return false;
 		}
-    }
+	}
 
 	public class InputEventArgs : EventArgs
 	{
