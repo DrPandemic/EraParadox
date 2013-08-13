@@ -22,7 +22,7 @@ using System;
 using Microsoft.Xna.Framework.Input;
 using GREATClient.BaseClass.Input;
 using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Diagnostics;
 
 namespace GREATClient.BaseClass.Input
 {
@@ -142,8 +142,8 @@ namespace GREATClient.BaseClass.Input
 		}
 
 		bool CheckMouseState(KeyboardState keyboardState, MouseState mouseState, InputState inputState) {
-			Assert.IsFalse(inputState.IsKeyboard);
-			Assert.IsFalse(inputState.MouseKey == MouseKeys.None);
+			Debug.Assert(!inputState.IsKeyboard);
+			Debug.Assert(inputState.MouseKey != MouseKeys.None);
 
 			if (inputState.MouseKey != MouseKeys.None) {
 				// Start with dead key.
@@ -235,39 +235,43 @@ namespace GREATClient.BaseClass.Input
 
 		/// <summary>
 		/// Checks if the dead key is down.
+		/// If there is multiple dead keys, drop the action.
 		/// </summary>
 		/// <returns><c>true</c>, if dead key is down, <c>false</c> otherwise.</returns>
 		/// <param name="keyboardState">Keyboard state.</param>
 		/// <param name="deadKey">Dead key.</param>
 		bool CheckDeadKey(KeyboardState keyboardState, DeadKeys deadKey)
 		{
-			switch (deadKey) {
-				case DeadKeys.Alt:
-					if (keyboardState.IsKeyDown(Keys.LeftAlt) || keyboardState.IsKeyDown(Keys.RightAlt)) {
+			bool altDown = keyboardState.IsKeyDown(Keys.LeftAlt) || keyboardState.IsKeyDown(Keys.RightAlt);
+			bool shiftDown = keyboardState.IsKeyDown(Keys.LeftShift) || keyboardState.IsKeyDown(Keys.RightShift);
+			bool controlDown = keyboardState.IsKeyDown(Keys.LeftControl) || keyboardState.IsKeyDown(Keys.LeftControl);
+
+			// Makes sure there is only one dead key pressed.
+			if (altDown ? (!shiftDown && !controlDown) : (shiftDown ^ controlDown)) {
+				switch (deadKey) {
+					case DeadKeys.Alt:
+						if (altDown) {
+							return true;
+						}
+						break;
+						case DeadKeys.Shift:
+						if (shiftDown) {
+							return true;
+						}
+						break;
+						case DeadKeys.Control:
+						if (controlDown) {
+							return true;
+						}
+						break;
+						case DeadKeys.None:
 						return true;
-					}
-				break;
-				case DeadKeys.Shift:
-					if (keyboardState.IsKeyDown(Keys.LeftShift) || keyboardState.IsKeyDown(Keys.RightShift)) {
-						return true;
-					}
-				break;
-				case DeadKeys.Control:
-					if (keyboardState.IsKeyDown(Keys.LeftControl) || keyboardState.IsKeyDown(Keys.LeftControl)) {
-						return true;
-					}
-				break;
-				case DeadKeys.None:
-					if (!(keyboardState.IsKeyDown(Keys.LeftAlt) || keyboardState.IsKeyDown(Keys.RightAlt)) &&
-					    !(keyboardState.IsKeyDown(Keys.LeftShift) || keyboardState.IsKeyDown(Keys.RightShift)) &&
-					    !(keyboardState.IsKeyDown(Keys.LeftControl) || keyboardState.IsKeyDown(Keys.LeftControl))) {
-						return true;
-					}
-				break;
+						break;
+				}
 			}
 			return false;
 		}
-    }
+	}
 
 	public class InputEventArgs : EventArgs
 	{

@@ -7,7 +7,7 @@
         <input action="GoLeft" key="A" state="Released" />
     </keyboardInputs>
     <MouseInputs>
-        <input action="Spell3" key="Left" state="Released" />
+        <input action="Spell3" key="Left" state="Released" deadKey="Shift"/>
         <input action="Spell4" key="Right" state="Released" />
     </MouseInputs>
 </inputCollection>
