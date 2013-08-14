@@ -1,5 +1,5 @@
 //
-//  HorizontalDirection.cs
+//  PlayerAction.cs
 //
 //  Author:
 //       Jesse <jesse.emond@hotmail.com>
@@ -20,13 +20,23 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 
-namespace GREATClient.Network.Physics
+namespace GREATLib.Network
 {
-    public enum HorizontalDirection
+	/// <summary>
+	/// Represents a player action that a client may want to do in-game.
+	/// </summary>
+    public enum PlayerActionType
     {
-		Left = -1,
-		Right = 1,
-		None = 0
-    }
+		// Movement
+		   MoveRight = 0
+		,  MoveLeft
+		,  Jump
+
+		// Abilities
+		,  Spell1
+		,  Spell2
+		,  Spell3
+		,  Spell4
+	}
 }
 

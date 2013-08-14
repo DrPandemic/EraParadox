@@ -1,5 +1,5 @@
 //
-//  IDGenerator.cs
+//  PlayerAction.cs
 //
 //  Author:
 //       Jesse <jesse.emond@hotmail.com>
@@ -19,32 +19,29 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using GREATLib;
 
-namespace GREATClient.Network
+namespace GREATLib.Network
 {
 	/// <summary>
-	/// Unique identifier generator. New IDs are guarenteed to be higher than older ones, except if the
-	/// value EVER exceeds the maximum amount of an unsigned int, it wraps to 0.
+	/// Represents the action that a clients wants to make (e.g. go right, jump, etc.)
 	/// </summary>
-    public static class IDGenerator
+    public struct PlayerAction
     {
 		/// <summary>
-		/// Gets or sets the current ID.
+		/// Gets or sets the unique ID of the action.
 		/// </summary>
-		static uint CurrentID { get; set; }
+		public uint ID { get; set; }
 
 		/// <summary>
-		/// Generates a unique ID incrementally bigger as time goes on.
+		/// The action that we're making (e.g. go right, jump, shoot, etc.) 
 		/// </summary>
-		public static uint GenerateID()
-		{
-			try {
-				CurrentID = checked (CurrentID+1); // check for overflow ( http://msdn.microsoft.com/en-us/library/74b4xzyw(v=vs.71).aspx )
-			} catch (System.OverflowException) {
-				CurrentID = new uint(); // wrap back to 0
-			}
-			return CurrentID;
-		}
+		public PlayerActionType Type { get; set; }
+
+		/// <summary>
+		/// Gets or sets the time, in seconds, when the action was requested.
+		/// </summary>
+		public double Time { get; set; }
     }
 }
 

@@ -51,4 +51,7 @@
       <Name>GREATLib</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Network\" />
+  </ItemGroup>
 </Project>

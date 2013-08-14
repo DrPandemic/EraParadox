@@ -36,20 +36,31 @@
     <Compile Include="Vec2.cs" />
     <Compile Include="World\Tiles\TileMap.cs" />
     <Compile Include="World\Tiles\Tile.cs" />
-    <Compile Include="GameMatch.cs" />
     <Compile Include="World\GameWorld.cs" />
     <Compile Include="Rect.cs" />
     <Compile Include="World\Tiles\CollisionType.cs" />
-    <Compile Include="ServerCommand.cs" />
     <Compile Include="CustomLogger.cs" />
     <Compile Include="ILogger.cs" />
-    <Compile Include="PlayerActionType.cs" />
     <Compile Include="Utilities.cs" />
-    <Compile Include="ClientCommand.cs" />
+    <Compile Include="Entities\IEntity.cs" />
+    <Compile Include="Entities\HorizontalDirection.cs" />
+    <Compile Include="Entities\ChampionSpawnInfo.cs" />
+    <Compile Include="Physics\PhysicsEngine.cs" />
+    <Compile Include="Physics\CollisionResolver.cs" />
+    <Compile Include="IDGenerator.cs" />
+    <Compile Include="Network\ClientCommand.cs" />
+    <Compile Include="Network\GameMatch.cs" />
+    <Compile Include="Network\PlayerAction.cs" />
+    <Compile Include="Network\PlayerActionType.cs" />
+    <Compile Include="Network\ServerCommand.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="World\" />
     <Folder Include="World\Tiles\" />
+    <Folder Include="Entities\" />
+    <Folder Include="Physics\" />
+    <Folder Include="Network\" />
+    <Folder Include="Debug\" />
   </ItemGroup>
 </Project>

@@ -1,5 +1,5 @@
 //
-//  ClientCommand.cs
+//  HorizontalDirection.cs
 //
 //  Author:
 //       Jesse <jesse.emond@hotmail.com>
@@ -20,14 +20,13 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 
-namespace GREATLib
+namespace GREATLib.Entities
 {
-    public enum ClientCommand
+    public enum HorizontalDirection
     {
-		/// <summary>
-		/// The actions (inputs) that the player wants to do.
-		/// </summary>
-		ActionPackage = 0
+		Left = -1,
+		Right = 1,
+		None = 0
     }
 }
 

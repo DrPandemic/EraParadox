@@ -25,6 +25,7 @@ using GREATLib;
 using System.Collections.Generic;
 using System.Diagnostics;
 using GREATClient.Network;
+using GREATLib.Network;
 
 namespace GREATClient
 {

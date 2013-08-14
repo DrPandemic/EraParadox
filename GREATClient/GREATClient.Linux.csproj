@@ -68,12 +68,7 @@
     <Compile Include="Display\PingCounter.cs" />
     <Compile Include="BaseClass\InputManager.cs" />
     <Compile Include="Network\MainClientChampion.cs" />
-    <Compile Include="Network\PlayerAction.cs" />
-    <Compile Include="Network\Physics\PhysicsEngine.cs" />
-    <Compile Include="Network\Physics\HorizontalDirection.cs" />
     <Compile Include="BaseClass\IUpdatable.cs" />
-    <Compile Include="Network\IDGenerator.cs" />
-    <Compile Include="Network\Physics\CollisionResolver.cs" />
     <Compile Include="GameHelper.cs" />
   </ItemGroup>
   <ItemGroup>

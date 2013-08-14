@@ -25,7 +25,8 @@ using GREATLib;
 using System.Collections.Generic;
 using System.Diagnostics;
 using GREATClient.Network;
-using GREATLib.World;
+using GREATLib.Entities;
+using GREATLib.Network;
 
 namespace GREATClient
 {
@@ -44,6 +45,7 @@ namespace GREATClient
 		/// simulation of the client's champion.
 		/// </summary>
 		MainClientChampion Champion { get; set; }
+		public IEntity Entity { get { return Champion; } }
 
 		/// <summary>
 		/// TODO: class for debug info
@@ -52,10 +54,10 @@ namespace GREATClient
 
 
 
-        public DrawableChampion(ChampionsInfo championsInfo, GameWorld world) //TODO: new MainClientDrawableChampion
+        public DrawableChampion(ChampionSpawnInfo spawnInfo, ChampionsInfo championsInfo, GameMatch match) //TODO: new MainClientDrawableChampion
         {
 			FillFunctionsForActions();
-			Champion = new MainClientChampion(world);
+			Champion = new MainClientChampion(spawnInfo, match);
         }
 		protected override void OnLoad(Microsoft.Xna.Framework.Content.ContentManager content, Microsoft.Xna.Framework.Graphics.GraphicsDevice gd)
 		{

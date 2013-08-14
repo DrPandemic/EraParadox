@@ -26,7 +26,8 @@ using GREATLib.World.Tiles;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.Xna.Framework;
-using GREATLib.World;
+using GREATLib.Entities;
+using GREATLib.Network;
 
 namespace GREATClient.Screens
 {
@@ -41,11 +42,10 @@ namespace GREATClient.Screens
 		MouseState oldMouse;
 		//ENDTODO
 
-		GameWorld World { get; set; }
+		GameMatch Match { get; set; }
 		DrawableTileMap Map { get; set; }
 
 		ChampionsInfo ChampionsInfo { get; set; }
-		Dictionary<int, DrawableChampion> Champions { get; set; }
 		DrawableChampion OurChampion { get; set; }
 
 		GameTime GameTime { get; set; }
@@ -66,19 +66,21 @@ namespace GREATClient.Screens
 
 			GameTime = null;
 			TimeSinceLastInputSent = 0.0;
+
+			Match = new GameMatch();
         }
 
 		protected override void OnLoadContent()
 		{
 			base.OnLoadContent();
 
-			World = new GameWorld();
-
-			Map = new DrawableTileMap(World.Map);
+			Map = new DrawableTileMap(Match.World.Map);
 			AddChild(Map);
 
-			Champions = new Dictionary<int, DrawableChampion>();
-			AddChild(OurChampion = new DrawableChampion(ChampionsInfo, World));
+			AddChild(OurChampion = new DrawableChampion(new ChampionSpawnInfo(0, new Vec2(500f, 200f)),
+			                                            ChampionsInfo, 
+			                                            Match));
+			Match.AddEntity(OurChampion.Entity); //TODO: create on "New Player" server message
 
 			AddChild(new FPSCounter());
 			AddChild(new PingCounter(() => {return Client.Instance.GetPing().TotalMilliseconds;}));

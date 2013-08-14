@@ -1,8 +1,8 @@
 //
-//  GameMatch.cs
+//  IDGenerator.cs
 //
 //  Author:
-//       Jesse <>
+//       Jesse <jesse.emond@hotmail.com>
 //
 //  Copyright (c) 2013 Jesse
 //
@@ -19,34 +19,31 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using GREATLib.World;
-using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace GREATLib
 {
 	/// <summary>
-	/// An individual game match, 
+	/// Unique identifier generator. New IDs are guarenteed to be higher than older ones, except if the
+	/// value EVER exceeds the maximum amount of an unsigned int, then it wraps to 0.
 	/// </summary>
-    public class GameMatch
+    public static class IDGenerator
     {
 		/// <summary>
-		/// The time taken between each state update sent by the server.
-		/// This is in the game's lib because it must be the same value for both the client
-		/// and the server.
+		/// Gets or sets the current ID.
 		/// </summary>
-		public static readonly TimeSpan STATE_UPDATE_INTERVAL = TimeSpan.FromMilliseconds(50.0);
+		static uint CurrentID { get; set; }
 
-		public GameWorld World { get; private set; }
-
-        public GameMatch()
-        {
-			World = new GameWorld();
-        }
-
-		public void Update(double deltaSeconds)
+		/// <summary>
+		/// Generates a unique ID incrementally bigger as time goes on.
+		/// </summary>
+		public static uint GenerateID()
 		{
-			Debug.Assert(deltaSeconds > 0f, "The delta seconds while updating the match is too small.");
+			try {
+				CurrentID = checked (CurrentID+1); // check for overflow ( http://msdn.microsoft.com/en-us/library/74b4xzyw(v=vs.71).aspx )
+			} catch (OverflowException) {
+				CurrentID = 0u;
+			}
+			return CurrentID;
 		}
     }
 }

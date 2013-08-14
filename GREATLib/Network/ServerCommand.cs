@@ -1,5 +1,5 @@
 //
-//  PlayerAction.cs
+//  ServerCommand.cs
 //
 //  Author:
 //       Jesse <jesse.emond@hotmail.com>
@@ -19,29 +19,13 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using GREATLib;
 
-namespace GREATClient.Network
+namespace GREATLib.Network
 {
-	/// <summary>
-	/// Represents the action that a clients wants to make (e.g. go right, jump, etc.)
-	/// </summary>
-    public struct PlayerAction
+    public enum ServerCommand
     {
-		/// <summary>
-		/// Gets or sets the unique ID of the action.
-		/// </summary>
-		public uint ID { get; set; }
-
-		/// <summary>
-		/// The action that we're making (e.g. go right, jump, shoot, etc.) 
-		/// </summary>
-		public PlayerActionType Type { get; set; }
-
-		/// <summary>
-		/// Gets or sets the time, in seconds, when the action was requested.
-		/// </summary>
-		public double Time { get; set; }
+		NewPlayer = 10,
+		PositionUpdate = 11
     }
 }
 

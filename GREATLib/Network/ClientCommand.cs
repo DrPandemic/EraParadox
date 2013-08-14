@@ -1,5 +1,5 @@
 //
-//  PlayerAction.cs
+//  ClientCommand.cs
 //
 //  Author:
 //       Jesse <jesse.emond@hotmail.com>
@@ -20,23 +20,14 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 
-namespace GREATLib
+namespace GREATLib.Network
 {
-	/// <summary>
-	/// Represents a player action that a client may want to do in-game.
-	/// </summary>
-    public enum PlayerActionType
+    public enum ClientCommand
     {
-		// Movement
-		   MoveRight = 0
-		,  MoveLeft
-		,  Jump
-
-		// Abilities
-		,  Spell1
-		,  Spell2
-		,  Spell3
-		,  Spell4
-	}
+		/// <summary>
+		/// The actions (inputs) that the player wants to do.
+		/// </summary>
+		ActionPackage = 0
+    }
 }
 

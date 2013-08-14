@@ -19,15 +19,14 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using GREATLib;
 using System.Diagnostics;
 using GREATLib.World;
+using GREATLib.Entities;
 
-namespace GREATClient.Network.Physics
+namespace GREATLib.Physics
 {
 	/// <summary>
-	/// Physics engine to offer move game objects and resolve collisions.
-	/// If you need physics in the game, you are looking at the right place.
+	/// Physics engine to move game objects and resolve collisions.
 	/// </summary>
     public class PhysicsEngine
     {
@@ -47,8 +46,8 @@ namespace GREATClient.Network.Physics
 
 		CollisionResolver Collisions { get; set; }
 
-        public PhysicsEngine(GameWorld world)
-        {
+		public PhysicsEngine(GameWorld world)
+		{
 			Debug.Assert(UPDATE_RATE.TotalSeconds > 0.0);
 			Debug.Assert(GRAVITY.Y > 0f, "Gravity has to go towards the ground.");
 			Debug.Assert(PHYSICS_PASSES > 0);
@@ -57,14 +56,14 @@ namespace GREATClient.Network.Physics
 			TimeSinceLastUpdate = 0.0;
 
 			Collisions = new CollisionResolver(world);
-        }
+		}
 
 		/// <summary>
 		/// Runs a physics update if we have reached our physics update rate.
 		/// Call this every frame or so with the delta seconds, and it will only update
 		/// the entity when the time reaches the update rate.
 		/// </summary>
-		public void Update(double deltaSeconds, MainClientChampion entity, ref int xMovement)
+		public void Update(double deltaSeconds, IEntity entity, ref int xMovement)
 		{
 			Debug.Assert(entity != null);
 			Debug.Assert(deltaSeconds > 0);
@@ -84,7 +83,7 @@ namespace GREATClient.Network.Physics
 		/// <summary>
 		/// Makes the specified entity move in a certain direction for the current frame.
 		/// </summary>
-		public void Move(MainClientChampion entity, HorizontalDirection direction, ref int xMovement)
+		public void Move(IEntity entity, HorizontalDirection direction, ref int xMovement)
 		{
 			Debug.Assert(entity != null);
 			Debug.Assert(Utilities.MakeList(HorizontalDirection.Left, HorizontalDirection.None, HorizontalDirection.Right).Contains(direction));
@@ -105,10 +104,10 @@ namespace GREATClient.Network.Physics
 			}
 		}
 
-		public void Jump(MainClientChampion entity)
+		public void Jump(IEntity entity)
 		{
 			Debug.Assert(entity != null
-						 && entity.Velocity != null);
+			             && entity.Velocity != null);
 
 			// We may only jump when we're on the ground
 			if (entity.IsOnGround) {
@@ -121,11 +120,11 @@ namespace GREATClient.Network.Physics
 		/// <summary>
 		/// Actually applies the update (without checking whether we really should update or not with the update rate).
 		/// </summary>
-		void ApplyUpdate(double deltaSeconds, MainClientChampion entity, ref int xMovement)
+		void ApplyUpdate(double deltaSeconds, IEntity entity, ref int xMovement)
 		{
 			Debug.Assert(deltaSeconds > 0.0);
 			Debug.Assert(entity != null 
-			             && entity.SimulatedPosition != null
+			             && entity.Position != null
 			             && entity.Velocity != null);
 
 			ApplyDesiredMovement(deltaSeconds, entity, xMovement);
@@ -134,7 +133,7 @@ namespace GREATClient.Network.Physics
 
 			// Multiple physics passes to reduce the chance of "going through" obstacles when we're too fast.
 			for (int pass = 0; pass < PHYSICS_PASSES; ++pass) {
-				entity.SimulatedPosition += (entity.Velocity * deltaSeconds) / PHYSICS_PASSES;
+				entity.Position += (entity.Velocity * deltaSeconds) / PHYSICS_PASSES;
 
 				Collisions.UndoCollisions(entity);
 			}
@@ -151,7 +150,7 @@ namespace GREATClient.Network.Physics
 		/// Applies the desired movement for the entity.
 		/// Basically this function modifies the entity's VELOCITY, NOT the position.
 		/// </summary>
-		void ApplyDesiredMovement(double deltaSeconds, MainClientChampion entity, int xMovement)
+		void ApplyDesiredMovement(double deltaSeconds, IEntity entity, int xMovement)
 		{
 			Debug.Assert(deltaSeconds > 0);
 			Debug.Assert(entity != null 

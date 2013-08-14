@@ -1,5 +1,5 @@
 //
-//  ServerCommand.cs
+//  ChampionSpawnInfo.cs
 //
 //  Author:
 //       Jesse <jesse.emond@hotmail.com>
@@ -20,12 +20,19 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 
-namespace GREATLib
+namespace GREATLib.Entities
 {
-    public enum ServerCommand
+    public struct ChampionSpawnInfo
     {
-		NewPlayer = 10,
-		PositionUpdate = 11
+		public uint ID { get; private set; }
+		public Vec2 SpawningPosition { get; private set; }
+
+		public ChampionSpawnInfo(uint id, Vec2 spawn) 
+			: this() // to be able to have automatic properties (http://stackoverflow.com/a/420441/395386)
+		{
+			ID = id;
+			SpawningPosition = spawn;
+		}
     }
 }
 

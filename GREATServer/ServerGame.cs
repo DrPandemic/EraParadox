@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Timers;
 using System.Diagnostics;
 using GREATLib;
+using GREATLib.Network;
 
 namespace GREATServer
 {
@@ -42,11 +43,11 @@ namespace GREATServer
 		GameMatch Match { get; set; }
 
 
-
         public ServerGame(NetServer server)
         {
 			Server = server;
 			Clients = new Dictionary<NetConnection, ServerClient>();
+			Match = new GameMatch();
 
 			Timer updateTimer = new Timer(UPDATE_INTERVAL.TotalMilliseconds);
 			updateTimer.Elapsed += Update;

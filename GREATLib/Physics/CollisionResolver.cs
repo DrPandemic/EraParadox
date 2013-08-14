@@ -20,12 +20,12 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using GREATLib.World;
+using System.Diagnostics;
 using System.Collections.Generic;
 using GREATLib.World.Tiles;
-using GREATLib;
-using System.Diagnostics;
+using GREATLib.Entities;
 
-namespace GREATClient.Network.Physics
+namespace GREATLib.Physics
 {
 	/// <summary>
 	/// The system in charge of resolving collisions between the game entities and the
@@ -45,7 +45,7 @@ namespace GREATClient.Network.Physics
 		/// <summary>
 		/// Resolves the collisions between an entity and the world it is in.
 		/// </summary>
-        public void UndoCollisions(MainClientChampion entity)
+		public void UndoCollisions(IEntity entity)
 		{
 			Debug.Assert(entity != null);
 
@@ -58,7 +58,7 @@ namespace GREATClient.Network.Physics
 		/// Handles the collision of an object with multiple entities.
 		/// </summary>
 		void HandleCollisionGroup(
-			MainClientChampion entity,
+			IEntity entity,
 			List<KeyValuePair<Rect, CollisionType>> collisions)
 		{
 			Debug.Assert(entity != null);
@@ -78,9 +78,9 @@ namespace GREATClient.Network.Physics
 						UndoCollision(entity, entityRect, rect, World.Map);
 						break;
 
-					case CollisionType.Passable: break; // do nothing then
+						case CollisionType.Passable: break; // do nothing then
 
-					default:
+						default:
 						throw new NotImplementedException("Collision type not implemented.");
 				}
 			}
@@ -89,8 +89,8 @@ namespace GREATClient.Network.Physics
 		/// <summary>
 		/// Fixes a collision between an entity and a single object.
 		/// </summary>
-		static void UndoCollision(MainClientChampion entity, Rect entityRect,
-		                           Rect collided, TileMap map)
+		static void UndoCollision(IEntity entity, Rect entityRect,
+		                          Rect collided, TileMap map)
 		{
 			Debug.Assert(entity != null);
 			Debug.Assert(entityRect != null);
@@ -107,7 +107,7 @@ namespace GREATClient.Network.Physics
 				// Resolve the collision on the axis where it will be less noticeable (the smallest collision amount)
 				if (abs_dept_y < abs_dept_x) // collision on the y axis
 				{
-					entity.SimulatedPosition.Y += intersection.Y;
+					entity.Position.Y += intersection.Y;
 
 					if (intersection.Y < 0f) { // collided from the top side
 						// We are therefore standing on something - we're on the ground
@@ -121,7 +121,7 @@ namespace GREATClient.Network.Physics
 				}
 				else // collision on the x axis
 				{
-					entity.SimulatedPosition.X += intersection.X;
+					entity.Position.X += intersection.X;
 					entity.Velocity.X = 0f; // stop our X movement
 				}
 			}

@@ -18,12 +18,11 @@
 //
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-using System;
 using GREATLib;
-using GREATClient.Network.Physics;
 using Microsoft.Xna.Framework;
-using GREATLib.World;
 using System.Collections.Generic;
+using GREATLib.Entities;
+using GREATLib.Network;
 
 namespace GREATClient.Network
 {
@@ -31,70 +30,16 @@ namespace GREATClient.Network
 	/// Represents the champion's data of the main player, the one playing the game on
 	/// this instance of the program.
 	/// </summary>
-    public class MainClientChampion : IUpdatable
+    public class MainClientChampion : IEntity, IUpdatable
     {
-		const float DEFAULT_HORIZONTAL_ACCELERATION = 0.75f;
-
 		/// <summary>
 		/// Gets the drawn position of the champion.
 		/// This is the position where we should currently draw the champion.
 		/// </summary>
 		/// <value>The drawn position.</value>
-		public Vec2 DrawnPosition { get; set; }
+		public Vec2 DrawnPosition { get; private set; }
 
-		/// <summary>
-		/// Gets or sets the simulated position of the champion.
-		/// This is the position of our client-side prediction of the game state.
-		/// </summary>
-		/// <value>The simulated position.</value>
-		public Vec2 SimulatedPosition { get; set; }
-
-		/// <summary>
-		/// Gets or sets the velocity of the entity.
-		/// </summary>
-		public Vec2 Velocity { get; set; }
-		/// <summary>
-		/// Gets or sets the movement speed of the entity.
-		/// </summary>
-		/// <value>The move speed.</value>
-		public float MoveSpeed { get; set; }
-
-		/// <summary>
-		/// Gets or sets a value indicating whether this instance is on ground or not.
-		/// Mainly used to handle jumping and apply certain accelerations.
-		/// </summary>
-		public bool IsOnGround { get; set; }
-
-		/// <summary>
-		/// Gets or sets the jump force of the entity.
-		/// </summary>
-		public short JumpForce { get; set; }
-
-		/// <summary>
-		/// Gets or sets the horizontal acceleration of the entity, which is how much of our horizontal velocity
-		/// we maintain on each physics pass.
-		/// </summary>
-		/// <example>0.9 would keep 90% of the entity's X velocity every frame.</example>
-		public float HorizontalAcceleration { get; set; }
-
-		/// <summary>
-		/// Gets or sets the width of the collision rectangle of the entity.
-		/// </summary>
-		public float CollisionWidth { get; set; }
-		/// <summary>
-		/// Gets or sets the height of the collision rectangle of the entity.
-		/// </summary>
-		public float CollisionHeight { get; set; }
-
-		/// <summary>
-		/// Gets the direction of the entity during the current frame.
-		/// </summary>
-		public HorizontalDirection Direction { get; set; }
-
-		/// <summary>
-		/// Local physics engine, used to do client-side prediction.
-		/// </summary>
-		PhysicsEngine Physics { get; set; }
+		GameMatch Match { get; set; }
 
 		/// <summary>
 		/// The amount of moving actions that we have to make.
@@ -105,24 +50,15 @@ namespace GREATClient.Network
 
 		List<PlayerAction> PackagedActions { get; set; }
 
-		public MainClientChampion(GameWorld world)
+		public MainClientChampion(ChampionSpawnInfo spawnInfo, GameMatch match)
+			: base(spawnInfo.ID, spawnInfo.SpawningPosition)
         {
-			//TODO: toremove
-			DrawnPosition = new Vec2(500f, 300f);
-			SimulatedPosition = DrawnPosition;
-			MoveSpeed = 100f;
-			CollisionWidth = 15f;
-			CollisionHeight = 30f;
-			JumpForce = 750;
+			Match = match;
 
-			Physics = new PhysicsEngine(world);
-			Velocity = new Vec2();
-			Direction = HorizontalDirection.None;
+			DrawnPosition = Position;
+
 			xMovement = 0;
-			IsOnGround = true;
 			PackagedActions = new List<PlayerAction>();
-
-			HorizontalAcceleration = DEFAULT_HORIZONTAL_ACCELERATION;
         }
 
 		/// <summary>
@@ -131,8 +67,12 @@ namespace GREATClient.Network
 		public void Update(GameTime deltaTime)
 		{
 			// client-side prediction
-			Physics.Update(deltaTime.ElapsedGameTime.TotalSeconds, this, ref xMovement);
-			DrawnPosition = SimulatedPosition;
+			Match.ApplyPhysicsUpdate(ID, deltaTime.ElapsedGameTime.TotalSeconds, ref xMovement);
+
+			DrawnPosition = Position;
+
+			//TODO: remove, used for testing purposes
+			ILogger.Log(Position.ToString());
 		}
 
 		public void PackageAction(PlayerAction action)
@@ -142,23 +82,15 @@ namespace GREATClient.Network
 
 		public void MoveLeft()
 		{
-			Physics.Move(this, HorizontalDirection.Left, ref xMovement);
+			Match.Move(ID, HorizontalDirection.Left, ref xMovement);
 		}
 		public void MoveRight()
 		{
-			Physics.Move(this, HorizontalDirection.Right, ref xMovement);
+			Match.Move(ID, HorizontalDirection.Right, ref xMovement);
 		}
 		public void Jump()
 		{
-			Physics.Jump(this);
-		}
-
-		/// <summary>
-		/// Creates the rectangle that represents the collision rectangle of the entity.
-		/// </summary>
-		public Rect CreateCollisionRectangle()
-		{
-			return new Rect(SimulatedPosition.X, SimulatedPosition.Y, CollisionWidth, CollisionHeight);
+			Match.Jump(ID);
 		}
 
 		public List<PlayerAction> GetActionPackage()
