@@ -19,9 +19,10 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
+using GREATClient.BaseClass.Action;
 using GREATClient.BaseClass.Input;
 
 namespace GREATClient.BaseClass
@@ -184,6 +185,18 @@ namespace GREATClient.BaseClass
 		/// <param name="dt">Dt.</param>
 		protected virtual void OnUpdate(GameTime dt)
 		{ }
-    }
+
+		/// <summary>
+		/// Performs the action.
+		/// </summary>
+		/// <param name="action">Action.</param>
+		public virtual void PerformAction(ActionOverTime action)
+		{
+			// Set the target.
+			action.Target = this;
+			// Start the action.
+			action.Start();
+		}
+	}
 }
 

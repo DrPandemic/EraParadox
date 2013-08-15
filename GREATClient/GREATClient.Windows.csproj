@@ -76,6 +76,7 @@
     <Compile Include="BaseClass\Input\InputManager.cs" />
     <Compile Include="GreatGame.cs" />
     <Compile Include="BaseClass\Input\InputActions.cs" />
+    <Compile Include="BaseClass\Action\ActionOverTime.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />
@@ -93,6 +94,7 @@
     <Folder Include="Screens\" />
     <Folder Include="Display\" />
     <Folder Include="BaseClass\Input\" />
+    <Folder Include="BaseClass\Action\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
