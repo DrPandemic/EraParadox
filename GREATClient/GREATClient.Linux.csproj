@@ -77,6 +77,8 @@
     <Compile Include="GreatGame.cs" />
     <Compile Include="BaseClass\Input\InputActions.cs" />
     <Compile Include="BaseClass\Action\ActionOverTime.cs" />
+    <Compile Include="BaseClass\Action\ActionMoveTo.cs" />
+    <Compile Include="BaseClass\Action\ActionMoveBy.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />

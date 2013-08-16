@@ -33,6 +33,7 @@ using GREATClient.BaseClass;
 using GREATClient.GameContent;
 using GREATClient.Display;
 using GREATClient.BaseClass.Input;
+using GREATClient.BaseClass.Action;
 
 namespace GREATClient.Test
 {
@@ -53,9 +54,12 @@ namespace GREATClient.Test
         }
 		protected override void OnLoadContent()
 		{
-			champSprite = new DrawableChampionSprite(new StickmanChampion() { Position = new Vec2(200f, 100f) }, ChampionsInfo);
+			champSprite = new DrawableChampionSprite(new StickmanChampion() { Position = new Vec2(200f, 100f) }, ChampionsInfo) 
+			{ Position = new Vector2(200f, 100f) };
 
 			AddChild(champSprite);
+
+			champSprite.PerformAction(new ActionMoveTo(new TimeSpan(0,0,5),new Vector2(0f,100f)));
 
 			DrawableTriangle tr =  new DrawableTriangle(true);
 			tr.Ascendant = false;

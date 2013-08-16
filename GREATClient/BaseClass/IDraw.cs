@@ -99,6 +99,12 @@ namespace GREATClient.BaseClass
 		protected List<ActionOverTime> ActionsOverTime { get; set; }
 
 		/// <summary>
+		/// Gets or sets the actions over time to remove.
+		/// </summary>
+		/// <value>The actions over time to remove.</value>
+		List<ActionOverTime> ActionsOverTimeToRemove { get; set; }
+
+		/// <summary>
 		/// Gets the absolute position.
 		/// </summary>
 		/// <returns>The absolute position.</returns>
@@ -126,6 +132,7 @@ namespace GREATClient.BaseClass
 			Visible = true;
 			Updatable = true;
 			ActionsOverTime = new List<ActionOverTime>();
+			ActionsOverTimeToRemove = new List<ActionOverTime>();
 		}
 
 		/// <summary>
@@ -190,7 +197,11 @@ namespace GREATClient.BaseClass
 				foreach(ActionOverTime action in ActionsOverTime) {
 					action.Update(dt);
 				}
-				
+				foreach (ActionOverTime action in ActionsOverTimeToRemove) {
+					ActionsOverTime.Remove(action);
+				}
+				ActionsOverTimeToRemove.Clear();
+
 				OnUpdate(dt);
 			}
 		}
@@ -211,6 +222,7 @@ namespace GREATClient.BaseClass
 			ActionsOverTime.Add(action);
 			// Set the target.
 			action.Target = this;
+			action.Ready();
 			// Start the action.
 			action.Start();
 		}
@@ -225,7 +237,7 @@ namespace GREATClient.BaseClass
 		public virtual void ActionDone(ActionOverTime action, Object args)
 		{
 			action.Stop();
-			ActionsOverTime.Remove(action);
+			ActionsOverTimeToRemove.Add(action);
 		}
 	}
 }

@@ -114,8 +114,12 @@ namespace GREATClient.BaseClass.Action
 		/// </summary>
 		/// <param name="dt">Dt.</param>
 		public void Update(GameTime dt) {
-			if (Updatable) {
+			if (Updatable && Started) {
 				OnUpdate(dt);
+				Duration -= dt.ElapsedGameTime;
+				if (Duration.Ticks <= 0) {
+					Done(null);
+				}
 			}
 		}
 
@@ -135,9 +139,17 @@ namespace GREATClient.BaseClass.Action
 		{
 			IsDone = true;
 			Stop();
-			DoneAction(args);
+			if (DoneAction != null) {
+				DoneAction(args);
+			}
 			Target.ActionDone(this, args);
 		}
+
+		/// <summary>
+		/// Called be <see cref="GREATClient.BaseClass.IDraw"/> when it set the target.
+		/// </summary>
+		public virtual void Ready()
+		{ }
     }
 }
 
