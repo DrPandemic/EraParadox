@@ -20,6 +20,7 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 //using GREATClient.BaseClass;
+using Microsoft.Xna.Framework;
 
 namespace GREATClient.BaseClass.Action
 {
@@ -63,11 +64,18 @@ namespace GREATClient.BaseClass.Action
 		/// <value>The target.</value>
 		public IDraw Target { get; set; }
 
+		/// <summary>
+		/// Gets or sets a value indicating whether this <see cref="GREATClient.BaseClass.Action.ActionOverTime"/> is updatable.
+		/// </summary>
+		/// <value><c>true</c> if updatable; otherwise, <c>false</c>.</value>
+		protected bool Updatable { get; set; }
+
 		public ActionOverTime()
         {
 			Started = false;
 			IsDone = false;
 			Speed = 1f;
+			Updatable = true;
         }
 
 		/// <summary>
@@ -101,6 +109,24 @@ namespace GREATClient.BaseClass.Action
 		protected virtual void OnStop() { }
 
 		/// <summary>
+		/// Update
+		/// Dt is disference of time since last call
+		/// </summary>
+		/// <param name="dt">Dt.</param>
+		public void Update(GameTime dt) {
+			if (Updatable) {
+				OnUpdate(dt);
+			}
+		}
+
+		/// <summary>
+		/// Called after Update if Updatable
+		/// </summary>
+		/// <param name="dt">Dt.</param>
+		protected virtual void OnUpdate(GameTime dt)
+		{ }
+
+		/// <summary>
 		/// Call this method when the action is done.
 		/// Will call the DoneAction.
 		/// </summary>
@@ -110,6 +136,7 @@ namespace GREATClient.BaseClass.Action
 			IsDone = true;
 			Stop();
 			DoneAction(args);
+			Target.ActionDone(this, args);
 		}
     }
 }

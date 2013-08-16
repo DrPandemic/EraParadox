@@ -24,6 +24,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using GREATClient.BaseClass.Action;
 using GREATClient.BaseClass.Input;
+using System.Collections.Generic;
 
 namespace GREATClient.BaseClass
 {
@@ -92,6 +93,12 @@ namespace GREATClient.BaseClass
 		public bool Updatable { get; set; }
 
 		/// <summary>
+		/// Gets or sets the actions over time.
+		/// </summary>
+		/// <value>The actions over time.</value>
+		protected List<ActionOverTime> ActionsOverTime { get; set; }
+
+		/// <summary>
 		/// Gets the absolute position.
 		/// </summary>
 		/// <returns>The absolute position.</returns>
@@ -118,6 +125,7 @@ namespace GREATClient.BaseClass
 			Z = 0;
 			Visible = true;
 			Updatable = true;
+			ActionsOverTime = new List<ActionOverTime>();
 		}
 
 		/// <summary>
@@ -130,6 +138,7 @@ namespace GREATClient.BaseClass
 			Parent = container;
 			OnLoad(Parent.Content, gd);
 		}
+
 		/// <summary>
 		/// Raises the load event.
 		/// Will be call after it is had to a container
@@ -147,6 +156,7 @@ namespace GREATClient.BaseClass
 			Parent = null;
 			OnUnload();
 		}
+
 		/// <summary>
 		///  After Unload was call.
 		/// </summary>
@@ -175,12 +185,18 @@ namespace GREATClient.BaseClass
 		/// <param name="dt">Dt.</param>
 		public void Update(GameTime dt)
 		{
-			if(Updatable)
+			if (Updatable) {
+
+				foreach(ActionOverTime action in ActionsOverTime) {
+					action.Update(dt);
+				}
+				
 				OnUpdate(dt);
+			}
 		}
 
 		/// <summary>
-		/// Called afet Update if Updatable
+		/// Called after Update if Updatable
 		/// </summary>
 		/// <param name="dt">Dt.</param>
 		protected virtual void OnUpdate(GameTime dt)
@@ -192,10 +208,24 @@ namespace GREATClient.BaseClass
 		/// <param name="action">Action.</param>
 		public virtual void PerformAction(ActionOverTime action)
 		{
+			ActionsOverTime.Add(action);
 			// Set the target.
 			action.Target = this;
 			// Start the action.
 			action.Start();
+		}
+
+		/// <summary>
+		/// Called by an action when it's done.
+		/// Will remove itself from the dictionary.
+		/// Can be override but don't forget to call the base().
+		/// </summary>
+		/// <param name="action">Action.</param>
+		/// <param name="args">Argument.</param>
+		public virtual void ActionDone(ActionOverTime action, Object args)
+		{
+			action.Stop();
+			ActionsOverTime.Remove(action);
 		}
 	}
 }
