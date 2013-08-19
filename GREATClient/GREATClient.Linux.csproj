@@ -76,9 +76,10 @@
     <Compile Include="BaseClass\Input\InputInfo.cs" />
     <Compile Include="GreatGame.cs" />
     <Compile Include="BaseClass\Input\InputActions.cs" />
-    <Compile Include="BaseClass\Action\ActionOverTime.cs" />
-    <Compile Include="BaseClass\Action\ActionMoveTo.cs" />
-    <Compile Include="BaseClass\Action\ActionMoveBy.cs" />
+    <Compile Include="BaseClass\BaseAction\ActionOverTime.cs" />
+    <Compile Include="BaseClass\BaseAction\ActionMoveTo.cs" />
+    <Compile Include="BaseClass\BaseAction\ActionMoveBy.cs" />
+    <Compile Include="BaseClass\BaseAction\ActionSequence.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />
@@ -95,7 +96,7 @@
     <Folder Include="Screens\" />
     <Folder Include="Display\" />
     <Folder Include="BaseClass\Input\" />
-    <Folder Include="BaseClass\Action\" />
+    <Folder Include="BaseClass\BaseAction\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

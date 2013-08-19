@@ -22,7 +22,7 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using GREATClient.BaseClass.Action;
+using GREATClient.BaseClass.BaseAction;
 using GREATClient.BaseClass.Input;
 using System.Collections.Generic;
 
@@ -105,6 +105,12 @@ namespace GREATClient.BaseClass
 		List<ActionOverTime> ActionsOverTimeToRemove { get; set; }
 
 		/// <summary>
+		/// Gets or sets the actions over time to activate.
+		/// </summary>
+		/// <value>The actions over time to activate.</value>
+		List<ActionOverTime> ActionsOverTimeToActivate { get; set; }
+
+		/// <summary>
 		/// Gets the absolute position.
 		/// </summary>
 		/// <returns>The absolute position.</returns>
@@ -133,6 +139,7 @@ namespace GREATClient.BaseClass
 			Updatable = true;
 			ActionsOverTime = new List<ActionOverTime>();
 			ActionsOverTimeToRemove = new List<ActionOverTime>();
+			ActionsOverTimeToActivate = new List<ActionOverTime>();
 		}
 
 		/// <summary>
@@ -202,6 +209,8 @@ namespace GREATClient.BaseClass
 				}
 				ActionsOverTimeToRemove.Clear();
 
+				ActivateAction();
+
 				OnUpdate(dt);
 			}
 		}
@@ -219,12 +228,23 @@ namespace GREATClient.BaseClass
 		/// <param name="action">Action.</param>
 		public virtual void PerformAction(ActionOverTime action)
 		{
-			ActionsOverTime.Add(action);
-			// Set the target.
-			action.Target = this;
-			action.Ready();
-			// Start the action.
-			action.Start();
+			ActionsOverTimeToActivate.Add(action);
+		}
+
+		private void ActivateAction()
+		{
+			int size = ActionsOverTimeToActivate.Count;
+
+			for (int i = size - 1; i>= 0 ; i--) {
+				ActionsOverTime.Add(ActionsOverTimeToActivate[i]);
+				// Set the target.
+				ActionsOverTimeToActivate[i].Target = this;
+				ActionsOverTimeToActivate[i].Ready();
+				// Start the action.
+				ActionsOverTimeToActivate[i].Start();
+			}
+
+			ActionsOverTimeToActivate.RemoveRange(0, size);
 		}
 
 		/// <summary>
@@ -238,6 +258,17 @@ namespace GREATClient.BaseClass
 		{
 			action.Stop();
 			ActionsOverTimeToRemove.Add(action);
+		}
+
+		/// <summary>
+		/// Stops all actions and clear all action lists.
+		/// </summary>
+		public void StopAllActions() 
+		{
+			ActionsOverTime.ForEach((ActionOverTime item) => item.Stop());
+			ActionsOverTime.Clear();
+			ActionsOverTimeToActivate.Clear();
+			ActionsOverTimeToRemove.Clear();
 		}
 	}
 }

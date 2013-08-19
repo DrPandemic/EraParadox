@@ -22,7 +22,7 @@ using System;
 using Microsoft.Xna.Framework;
 using System.Diagnostics;
 
-namespace GREATClient.BaseClass.Action
+namespace GREATClient.BaseClass.BaseAction
 {
     public class ActionMoveTo : ActionOverTime
     {
@@ -43,10 +43,9 @@ namespace GREATClient.BaseClass.Action
 		/// </summary>
 		/// <param name="duration">Duration of the animation.</param>
 		/// <param name="destination">Destination of the <see cref="GREATClient.BaseClass.IDraw"/>.</param>
-        public ActionMoveTo(TimeSpan duration, Vector2 destination) : base()
+        public ActionMoveTo(TimeSpan duration, Vector2 destination) : base(duration)
         {
 			Debug.Assert(duration.Ticks > 0);
-			Duration = duration;
 			Destination = destination;
 			MouvementByMillisecond = new Vector2();
         }
@@ -66,6 +65,12 @@ namespace GREATClient.BaseClass.Action
 			Target.Position = Vector2.Add(Target.Position, 
 			                              Vector2.Multiply(MouvementByMillisecond,
 			                                               (float)dt.ElapsedGameTime.TotalMilliseconds));
+		}
+
+		public override void Reset()
+		{
+			base.Reset();
+
 		}
     }
 }

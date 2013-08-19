@@ -22,7 +22,7 @@ using System;
 using Microsoft.Xna.Framework;
 using System.Diagnostics;
 
-namespace GREATClient.BaseClass.Action
+namespace GREATClient.BaseClass.BaseAction
 {
 	public class ActionMoveBy : ActionMoveTo
 	{

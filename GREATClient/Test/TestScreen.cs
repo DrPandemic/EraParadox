@@ -33,7 +33,7 @@ using GREATClient.BaseClass;
 using GREATClient.GameContent;
 using GREATClient.Display;
 using GREATClient.BaseClass.Input;
-using GREATClient.BaseClass.Action;
+using GREATClient.BaseClass.BaseAction;
 
 namespace GREATClient.Test
 {
@@ -59,7 +59,9 @@ namespace GREATClient.Test
 
 			AddChild(champSprite);
 
-			champSprite.PerformAction(new ActionMoveTo(new TimeSpan(0,0,5),new Vector2(0f,100f)));
+			ActionSequence AS = new ActionSequence(ActionSequence.INFINITE_SEQUENCE,new ActionMoveBy(new TimeSpan(0,0,1), new Vector2(100, 100)), new ActionMoveBy(new TimeSpan(0,0,1), new Vector2(-100, -100)));
+
+			champSprite.PerformAction(AS);
 
 			DrawableTriangle tr =  new DrawableTriangle(true);
 			tr.Ascendant = false;
@@ -81,6 +83,7 @@ namespace GREATClient.Test
 			AddChild(new PingCounter(yo));
 
 			inputManager.RegisterEvent(InputActions.Spell3, new EventHandler(Jump));
+			inputManager.RegisterEvent(InputActions.Spell4, new EventHandler(Jump2));
 		}
 
 
@@ -94,7 +97,12 @@ namespace GREATClient.Test
 
 		private void Jump(object sender, EventArgs e)
 		{
-			int a = 2;
+			champSprite.StopAllActions();
+		}
+
+		private void Jump2(object sender, EventArgs e)
+		{
+			champSprite.PerformAction(new ActionMoveBy(new TimeSpan(0,0,1),new Vector2(50f,0f)));
 		}
 
 		protected override void OnUpdate(GameTime dt)

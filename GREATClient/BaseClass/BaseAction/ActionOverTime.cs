@@ -19,10 +19,9 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-//using GREATClient.BaseClass;
 using Microsoft.Xna.Framework;
 
-namespace GREATClient.BaseClass.Action
+namespace GREATClient.BaseClass.BaseAction
 {
     public abstract class ActionOverTime
     {
@@ -45,6 +44,13 @@ namespace GREATClient.BaseClass.Action
 		public TimeSpan Duration { get; protected set; }
 
 		/// <summary>
+		/// Gets or sets the initial duration.
+		/// Is used to be able to reset the instance.
+		/// </summary>
+		/// <value>The initial duration.</value>
+		protected TimeSpan InitialDuration { get; set; }
+
+		/// <summary>
 		/// Gets or sets a value indicating whether this action is completed.
 		/// </summary>
 		/// <value><c>true</c> if this action is done; otherwise, <c>false</c>.</value>
@@ -55,6 +61,13 @@ namespace GREATClient.BaseClass.Action
 		/// </summary>
 		/// <value>The done action.</value>
 		public Action<Object> DoneAction { get; set; }
+
+		/// <summary>
+		/// Gets or sets the done action for sequence.
+		/// Used by <see cref="GREATClient.BaseClass.Action.ActionSequence"/>.
+		/// </summary>
+		/// <value>The done action for sequence.</value>
+		public Action<ActionOverTime> DoneActionForSequence { get; set; }
 
 		/// <summary>
 		/// Gets or sets the target.
@@ -70,12 +83,14 @@ namespace GREATClient.BaseClass.Action
 		/// <value><c>true</c> if updatable; otherwise, <c>false</c>.</value>
 		protected bool Updatable { get; set; }
 
-		public ActionOverTime()
+		public ActionOverTime(TimeSpan duration)
         {
 			Started = false;
 			IsDone = false;
 			Speed = 1f;
 			Updatable = true;
+			Duration = duration;
+			InitialDuration = duration;
         }
 
 		/// <summary>
@@ -142,7 +157,23 @@ namespace GREATClient.BaseClass.Action
 			if (DoneAction != null) {
 				DoneAction(args);
 			}
-			Target.ActionDone(this, args);
+			if (Target != null) {
+				Target.ActionDone(this, args);
+			}
+			if (DoneActionForSequence != null) {
+				DoneActionForSequence(this);
+			}
+		}
+
+		/// <summary>
+		/// Reset this instance.
+		/// </summary>
+		public virtual void Reset() {
+			Started = false;
+			IsDone = false;
+			Updatable = true;
+			Target = null;
+			Duration = InitialDuration;
 		}
 
 		/// <summary>
