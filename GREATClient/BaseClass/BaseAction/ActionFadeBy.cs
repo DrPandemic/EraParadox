@@ -1,5 +1,5 @@
 //
-//  ActionRotateBy.cs
+//  ActionFadeBy.cs
 //
 //  Author:
 //       Jean-Samuel Aubry-Guzzi <bipbip500@gmail.com>
@@ -19,59 +19,56 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using Microsoft.Xna.Framework;
 using System.Diagnostics;
+using Microsoft.Xna.Framework;
 
 namespace GREATClient.BaseClass.BaseAction
 {
-    public class ActionRotateBy : ActionOverTimeDrawable
+    public class ActionFadeBy : ActionOverTimeDrawable
     {
 		/// <summary>
-		/// Gets or sets the rotation.
+		/// Gets or sets the alpha.
 		/// </summary>
-		/// <value>The rotation.</value>
-		protected float Rotation { get; set; }
+		/// <value>The alpha.</value>
+		protected float Alpha { get; set; }
 
 		/// <summary>
-		/// Gets or sets the initial rotation.
+		/// Gets or sets the initiallpha.
 		/// Is used to be able to reset the instance.
 		/// </summary>
-		/// <value>The initial rotation.</value>
-		protected float InitialRotation { get; set; }
+		/// <value>The initiallpha.</value>
+		protected float InitialAlpha { get; set; }
 
 		/// <summary>
-		/// Gets or sets the rotation by millisecond.
+		/// Gets or sets the alpha change be millisecond.
 		/// </summary>
-		/// <value>The rotation by millisecond.</value>
-		protected double RotationByMillisecond { get; set; }
+		/// <value>The alpha change be millisecond.</value>
+		protected double AlphaChangeBeMillisecond { get; set; }
 
-		public ActionRotateBy(TimeSpan duration, float rotation, bool isRadian) : base (duration)
+        public ActionFadeBy(TimeSpan duration, float alpha) : base(duration)
         {
-			if (!isRadian) {
-				rotation = Utilities.GetRadian(rotation);
-			}
-			Rotation = rotation;
-			InitialRotation = rotation;
+			Alpha = alpha;
+			InitialAlpha = alpha;
         }
+
+		public override void Ready()
+		{
+			Debug.Assert(Target != null);
+
+			AlphaChangeBeMillisecond = Alpha / Duration.TotalMilliseconds;
+		}
+
+		public override void Reset()
+		{
+			Alpha = InitialAlpha;
+			base.Reset();
+		}
 
 		protected override void OnUpdate(GameTime dt)
 		{
 			Debug.Assert(Target != null);
 
-			((Drawable)Target).Orientation += RotationByMillisecond * dt.ElapsedGameTime.TotalMilliseconds;
-		}
-
-		public override void Ready()
-		{
-			Debug.Assert(Target != null);				
-
-			RotationByMillisecond = Rotation / Duration.TotalMilliseconds;
-		}
-
-		public override void Reset()
-		{
-			Rotation = InitialRotation;
-			base.Reset();
+			((Drawable)Target).Alpha += (float)(AlphaChangeBeMillisecond * dt.ElapsedGameTime.TotalMilliseconds);
 		}
     }
 }

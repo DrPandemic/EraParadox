@@ -98,13 +98,12 @@ namespace GREATClient.Test
 
 		private void Jump(object sender, EventArgs e)
 		{
-			AS.Reset();
-			champSprite.PerformAction(AS);
+			champSprite.PerformAction(new ActionFadeTo(new TimeSpan(0,0,1),1));
 		}
 
 		private void Jump2(object sender, EventArgs e)
 		{
-			champSprite.PerformAction(new ActionRotateTo(new TimeSpan(0,0,1),300,false));
+			champSprite.PerformAction(new ActionFadeBy(new TimeSpan(0,0,3),-0.5f));
 		}
 
 		protected override void OnUpdate(GameTime dt)

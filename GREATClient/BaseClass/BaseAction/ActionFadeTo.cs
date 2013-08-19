@@ -1,5 +1,5 @@
 //
-//  ActionRotateTo.cs
+//  ActionFadeTo.cs
 //
 //  Author:
 //       Jean-Samuel Aubry-Guzzi <bipbip500@gmail.com>
@@ -23,17 +23,17 @@ using System.Diagnostics;
 
 namespace GREATClient.BaseClass.BaseAction
 {
-    public class ActionRotateTo : ActionRotateBy
+    public class ActionFadeTo : ActionFadeBy
     {
-		public ActionRotateTo(TimeSpan duration, float rotation, bool isRadian) : base(duration,rotation,isRadian)
+		public ActionFadeTo(TimeSpan duration, float alpha) : base(duration,alpha)
         {
         }
 
 		public override void Ready()
 		{
-			Debug.Assert(Target != null);			
+			Debug.Assert(Target != null);
 
-			RotationByMillisecond = (Rotation - ((Drawable)Target).Orientation) / Duration.TotalMilliseconds;
+			AlphaChangeBeMillisecond = (Alpha - ((Drawable)Target).Alpha) / Duration.TotalMilliseconds;
 		}
     }
 }

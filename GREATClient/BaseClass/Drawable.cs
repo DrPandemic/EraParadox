@@ -42,7 +42,7 @@ namespace GREATClient.BaseClass
 
 		/// <summary>
 		/// Gets or sets the alpha.
-		/// 0 to 1
+		/// 0 to 1.
 		/// </summary>
 		/// <value>The alpha.</value>
 		public float Alpha { get; set; }
