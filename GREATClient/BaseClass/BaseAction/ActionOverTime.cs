@@ -32,6 +32,12 @@ namespace GREATClient.BaseClass.BaseAction
 		public bool Started { get; protected set; }
 
 		/// <summary>
+		/// Gets or sets a value indicating whether this <see cref="GREATClient.BaseClass.BaseAction.ActionOverTime"/> is paused.
+		/// </summary>
+		/// <value><c>true</c> if paused; otherwise, <c>false</c>.</value>
+		public bool Paused { get; protected set; }
+
+		/// <summary>
 		/// Gets or sets the speed of the action.
 		/// </summary>
 		/// <value>The speed.</value>
@@ -86,6 +92,7 @@ namespace GREATClient.BaseClass.BaseAction
 		public ActionOverTime(TimeSpan duration)
         {
 			Started = false;
+			Paused = false;
 			IsDone = false;
 			Speed = 1f;
 			Updatable = true;
@@ -124,12 +131,42 @@ namespace GREATClient.BaseClass.BaseAction
 		protected virtual void OnStop() { }
 
 		/// <summary>
+		/// Pause this instance.
+		/// </summary>
+		public virtual void Pause() 
+		{
+			Paused = true;
+			OnPause();
+		}
+
+		/// <summary>
+		/// Called by Pause().
+		/// </summary>
+		protected virtual void OnPause() { }
+
+		/// <summary>
+		/// Resume this instance.
+		/// </summary>
+		public virtual void Resume() 
+		{
+			if (Started) {
+				Paused = false;
+				OnResume();
+			}
+		}
+
+		/// <summary>
+		/// Called by Resume().
+		/// </summary>
+		protected virtual void OnResume() { }
+
+		/// <summary>
 		/// Update
 		/// Dt is disference of time since last call
 		/// </summary>
 		/// <param name="dt">Dt.</param>
 		public void Update(GameTime dt) {
-			if (Updatable && Started) {
+			if (Updatable && Started && !Paused) {
 				OnUpdate(dt);
 				Duration -= dt.ElapsedGameTime;
 				if (Duration.Ticks <= 0) {
@@ -170,6 +207,7 @@ namespace GREATClient.BaseClass.BaseAction
 		/// </summary>
 		public virtual void Reset() {
 			Started = false;
+			Paused = false;
 			IsDone = false;
 			Updatable = true;
 			Target = null;

@@ -37,6 +37,13 @@ namespace GREATClient.BaseClass.BaseAction
 		protected int RepeatCount { get; set; }
 
 		/// <summary>
+		/// Gets or sets the initial repeat count.
+		/// Is used to be able to reset the instance.
+		/// </summary>
+		/// <value>The initial repeat count.</value>
+		protected int InitialRepeatCount { get; set; }
+
+		/// <summary>
 		/// Gets or sets the action list.
 		/// </summary>
 		/// <value>The action list.</value>
@@ -58,6 +65,7 @@ namespace GREATClient.BaseClass.BaseAction
 			Updatable = false;
 			CurrentAction = 0;
 			RepeatCount = 1;
+			InitialRepeatCount = 1;
 			SetActionList(actions);
         }
 
@@ -73,6 +81,7 @@ namespace GREATClient.BaseClass.BaseAction
 			Updatable = false;
 			CurrentAction = 0;
 			RepeatCount = repeat < 0 ? INFINITE_SEQUENCE : repeat;
+			InitialRepeatCount = RepeatCount;
 			SetActionList(actions);
 		}
 
@@ -125,6 +134,15 @@ namespace GREATClient.BaseClass.BaseAction
 			}
 			RunAction();
 		}
-    }
+
+		public override void Reset()
+		{
+			base.Reset();
+			Updatable = false;
+			CurrentAction = 0;
+			RepeatCount = InitialRepeatCount;
+			ActionList.ForEach((ActionOverTime item) => item.Reset());
+		}
+	}
 }
 

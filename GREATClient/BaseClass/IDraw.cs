@@ -270,6 +270,22 @@ namespace GREATClient.BaseClass
 			ActionsOverTimeToActivate.Clear();
 			ActionsOverTimeToRemove.Clear();
 		}
+
+		/// <summary>
+		/// Pauses all actions.
+		/// </summary>
+		public void PauseAllActions()
+		{
+			ActionsOverTime.ForEach((ActionOverTime item) => item.Pause());
+		}
+
+		/// <summary>
+		/// Resumes all actions.
+		/// </summary>
+		public void ResumeAllActions()
+		{
+			ActionsOverTime.ForEach((ActionOverTime item) => item.Resume());
+		}
 	}
 }
 

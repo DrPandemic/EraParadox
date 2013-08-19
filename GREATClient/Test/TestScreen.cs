@@ -44,6 +44,7 @@ namespace GREATClient.Test
 		KeyboardState oldks;
 		MouseState oldms;
 
+		ActionSequence AS;
 
 		DrawableChampionSprite champSprite;
 
@@ -59,7 +60,7 @@ namespace GREATClient.Test
 
 			AddChild(champSprite);
 
-			ActionSequence AS = new ActionSequence(ActionSequence.INFINITE_SEQUENCE,new ActionMoveBy(new TimeSpan(0,0,1), new Vector2(100, 100)), new ActionMoveBy(new TimeSpan(0,0,1), new Vector2(-100, -100)));
+			AS = new ActionSequence(ActionSequence.INFINITE_SEQUENCE,new ActionMoveBy(new TimeSpan(0,0,1), new Vector2(100, 100)), new ActionMoveBy(new TimeSpan(0,0,1), new Vector2(-100, -100)));
 
 			champSprite.PerformAction(AS);
 
@@ -97,7 +98,8 @@ namespace GREATClient.Test
 
 		private void Jump(object sender, EventArgs e)
 		{
-			champSprite.StopAllActions();
+			AS.Reset();
+			champSprite.PerformAction(AS);
 		}
 
 		private void Jump2(object sender, EventArgs e)
