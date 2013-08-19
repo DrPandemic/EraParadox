@@ -80,6 +80,9 @@
     <Compile Include="BaseClass\BaseAction\ActionMoveTo.cs" />
     <Compile Include="BaseClass\BaseAction\ActionMoveBy.cs" />
     <Compile Include="BaseClass\BaseAction\ActionSequence.cs" />
+    <Compile Include="BaseClass\BaseAction\ActionRotateBy.cs" />
+    <Compile Include="BaseClass\BaseAction\ActionRotateTo.cs" />
+    <Compile Include="BaseClass\BaseAction\ActionOverTimeDrawable.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />

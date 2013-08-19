@@ -78,10 +78,22 @@ namespace GREATClient.BaseClass.BaseAction
 		/// <summary>
 		/// Gets or sets the target.
 		/// The target will be the object on which the action will act.
-		/// The target can be mondify, but it shouldn't.
+		/// The target can be mondify, but it shouldn't. Please don't.
 		/// </summary>
 		/// <value>The target.</value>
-		public IDraw Target { get; set; }
+		IDraw m_Target;
+		public IDraw Target 
+		{ 
+			get {
+				return m_Target;
+			}
+			set {
+				if (m_Target != null) {
+					TargetChanged();
+				}
+				m_Target = value;
+			}
+		}
 
 		/// <summary>
 		/// Gets or sets a value indicating whether this <see cref="GREATClient.BaseClass.Action.ActionOverTime"/> is updatable.
@@ -99,6 +111,11 @@ namespace GREATClient.BaseClass.BaseAction
 			Duration = duration;
 			InitialDuration = duration;
         }
+
+		/// <summary>
+		/// The target changed.
+		/// </summary>
+		protected virtual void TargetChanged() {}
 
 		/// <summary>
 		/// Start this action.
@@ -167,8 +184,12 @@ namespace GREATClient.BaseClass.BaseAction
 		/// <param name="dt">Dt.</param>
 		public void Update(GameTime dt) {
 			if (Updatable && Started && !Paused) {
-				OnUpdate(dt);
 				Duration -= dt.ElapsedGameTime;
+				if (Duration.Ticks >= 0) {
+					OnUpdate(dt);
+				} else {
+					OnUpdate(new GameTime(dt.TotalGameTime, new TimeSpan(dt.ElapsedGameTime.Ticks + Duration.Ticks)));
+				}
 				if (Duration.Ticks <= 0) {
 					Done(null);
 				}

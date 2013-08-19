@@ -75,6 +75,26 @@ namespace GREATClient
 		{
 			return new KeyValuePair<T,V>(key,value);
 		}
+
+		/// <summary>
+		/// Gets the radian.
+		/// </summary>
+		/// <returns>The radian.</returns>
+		/// <param name="degree">Degree.</param>
+		public static float GetRadian(float degree) 
+		{
+			return degree * (float)(Math.PI / 180);
+		}
+
+		/// <summary>
+		/// Gets the degree.
+		/// </summary>
+		/// <returns>The degree.</returns>
+		/// <param name="radian">Radian.</param>
+		public static float GetDegree(float radian) 
+		{
+			return radian * (float)(180 / Math.PI);
+		}
     }
 }
 

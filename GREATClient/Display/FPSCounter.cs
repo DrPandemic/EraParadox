@@ -87,7 +87,7 @@ namespace GREATClient.Display
 			Vector2 FontOrigin = Font.MeasureString( Text ) / 2;
 			// Draw the string
 			batch.DrawString( Font, Text, GetAbsolutePosition(), Tint * Alpha, 
-			                 Orientation, OriginRelative * Font.MeasureString(Text), Scale, Effects, 0 );
+			                 (float)Orientation, OriginRelative * Font.MeasureString(Text), Scale, Effects, 0 );
 			batch.End();
 		}
     }

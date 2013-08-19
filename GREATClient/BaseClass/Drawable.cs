@@ -51,7 +51,7 @@ namespace GREATClient.BaseClass
 		/// Gets or sets the orientation.
 		/// </summary>
 		/// <value>The orientation.</value>
-		public float Orientation { get; set; }
+		public double Orientation { get; set; }
 
 		/// <summary>
 		/// Gets or sets the source rectangle.

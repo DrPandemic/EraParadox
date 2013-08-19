@@ -104,7 +104,7 @@ namespace GREATClient.Test
 
 		private void Jump2(object sender, EventArgs e)
 		{
-			champSprite.PerformAction(new ActionMoveBy(new TimeSpan(0,0,1),new Vector2(50f,0f)));
+			champSprite.PerformAction(new ActionRotateTo(new TimeSpan(0,0,1),300,false));
 		}
 
 		protected override void OnUpdate(GameTime dt)
