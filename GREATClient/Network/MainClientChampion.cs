@@ -41,13 +41,6 @@ namespace GREATClient.Network
 
 		GameMatch Match { get; set; }
 
-		/// <summary>
-		/// The amount of moving actions that we have to make.
-		/// When we move right, we do +1.
-		/// When we move left, we do -1.
-		/// </summary>
-		int xMovement;
-
 		List<PlayerAction> PackagedActions { get; set; }
 
 		public MainClientChampion(ChampionSpawnInfo spawnInfo, GameMatch match)
@@ -57,7 +50,6 @@ namespace GREATClient.Network
 
 			DrawnPosition = Position;
 
-			xMovement = 0;
 			PackagedActions = new List<PlayerAction>();
         }
 
@@ -67,7 +59,7 @@ namespace GREATClient.Network
 		public void Update(GameTime deltaTime)
 		{
 			// client-side prediction
-			Match.ApplyPhysicsUpdate(ID, deltaTime.ElapsedGameTime.TotalSeconds, ref xMovement);
+			Match.ApplyPhysicsUpdate(ID, deltaTime.ElapsedGameTime.TotalSeconds);
 
 			DrawnPosition = Position;
 
@@ -82,11 +74,11 @@ namespace GREATClient.Network
 
 		public void MoveLeft()
 		{
-			Match.Move(ID, HorizontalDirection.Left, ref xMovement);
+			Match.Move(ID, HorizontalDirection.Left);
 		}
 		public void MoveRight()
 		{
-			Match.Move(ID, HorizontalDirection.Right, ref xMovement);
+			Match.Move(ID, HorizontalDirection.Right);
 		}
 		public void Jump()
 		{

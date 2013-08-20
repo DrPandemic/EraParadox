@@ -31,10 +31,19 @@ namespace GREATLib.Physics
     public class PhysicsEngine
     {
 		/// <summary>
-		/// The amount of time between every server physics update.
+		/// Max frame time to avoid spiral of death (http://gafferongames.com/game-physics/fix-your-timestep/)
 		/// </summary>
-		public static readonly TimeSpan UPDATE_RATE = TimeSpan.FromMilliseconds(15.0);
-		static readonly Vec2 GRAVITY = new Vec2(0f, 28f);
+		static readonly TimeSpan MAX_FRAME_TIME = TimeSpan.FromSeconds(0.25);
+		/// <summary>
+		/// The amount of time between every physics update. The users of the class
+		/// may call the update with any delta, but internally we always update with
+		/// the same timestep (and do accomodations to fit the given delta).
+		/// </summary>
+		static readonly TimeSpan FIXED_TIMESTEP = TimeSpan.FromMilliseconds(15.0);
+		/// <summary>
+		/// The gravity force per second applied.
+		/// </summary>
+		static readonly Vec2 GRAVITY = new Vec2(0f, 1866.67f);
 		/// <summary>
 		/// Amount of passes to make a movement.
 		/// Basically this represents in how many portions we split our movement on one frame
@@ -46,11 +55,15 @@ namespace GREATLib.Physics
 
 		CollisionResolver Collisions { get; set; }
 
-		public PhysicsEngine(GameWorld world)
+		static PhysicsEngine()
 		{
-			Debug.Assert(UPDATE_RATE.TotalSeconds > 0.0);
+			Debug.Assert(FIXED_TIMESTEP.TotalSeconds > 0.0);
 			Debug.Assert(GRAVITY.Y > 0f, "Gravity has to go towards the ground.");
 			Debug.Assert(PHYSICS_PASSES > 0);
+		}
+
+		public PhysicsEngine(GameWorld world)
+		{
 			Debug.Assert(world != null);
 
 			TimeSinceLastUpdate = 0.0;
@@ -59,48 +72,114 @@ namespace GREATLib.Physics
 		}
 
 		/// <summary>
-		/// Runs a physics update if we have reached our physics update rate.
-		/// Call this every frame or so with the delta seconds, and it will only update
-		/// the entity when the time reaches the update rate.
+		/// Runs a physics update on the given entity with a given delta seconds.
+		/// Internally, this function calls the physics update with a fixed timestep.
+		/// Therefore, if the delta seconds is not a 
 		/// </summary>
-		public void Update(double deltaSeconds, IEntity entity, ref int xMovement)
+		public void Update(double deltaSeconds, IEntity entity)
 		{
-			Debug.Assert(entity != null);
-			Debug.Assert(deltaSeconds > 0);
-			Debug.Assert(TimeSinceLastUpdate >= 0.0);
+			Debug.Assert(deltaSeconds > 0.0);
+			Debug.Assert(entity != null 
+			             && entity.Position != null
+			             && entity.Velocity != null);
 
-			TimeSinceLastUpdate += deltaSeconds;
-
-			while (TimeSinceLastUpdate >= UPDATE_RATE.TotalSeconds) {
-				ApplyUpdate(UPDATE_RATE.TotalSeconds, entity, ref xMovement);
-
-				TimeSinceLastUpdate -= deltaSeconds;
+			if (deltaSeconds > MAX_FRAME_TIME.TotalSeconds) {
+				deltaSeconds = MAX_FRAME_TIME.TotalSeconds;
+				ILogger.Log("Physics spiral of death. Clipping dt.", LogPriority.Warning);
 			}
 
-			Debug.Assert(TimeSinceLastUpdate < UPDATE_RATE.TotalSeconds);
+			while (deltaSeconds >= FIXED_TIMESTEP.TotalSeconds) {
+				ApplyUpdate(entity);
+				deltaSeconds -= FIXED_TIMESTEP.TotalSeconds;
+			}
+
+			if (deltaSeconds > 0.0) { // we have leftover time to simulate
+				float progress = (float)(deltaSeconds / FIXED_TIMESTEP.TotalSeconds);
+
+				InterpolateUpdate(ref entity, progress);
+			}
+		}
+
+		/// <summary>
+		/// Interpolates between the current entity state and its future state (with one
+		/// more physics update).
+		/// </summary>
+		void InterpolateUpdate(ref IEntity entity, float progress)
+		{
+			Debug.Assert(entity != null
+						 && entity.Position != null
+						 && entity.Velocity != null);
+			Debug.Assert(progress > 0.0 && progress < 1.0);
+
+			// Keep some values that will be interpolated
+			Vec2 initialPos = entity.Position;
+			Vec2 initialVel = entity.Velocity;
+
+			// Simulate the next step
+			ApplyUpdate(entity);
+
+			// interpolate some elements
+			entity.Position = Vec2.Lerp(initialPos, entity.Position, progress);
+			entity.Velocity = Vec2.Lerp(initialVel, entity.Velocity, progress);
+		}
+
+		/// <summary>
+		/// Actually applies a physics update to an entity with a fixed timestep.
+		/// </summary>
+		void ApplyUpdate(IEntity entity)
+		{
+			Debug.Assert(entity != null
+				&& entity.Position != null
+				&& entity.Velocity != null);
+
+			double deltaSeconds = FIXED_TIMESTEP.TotalSeconds;
+
+			// Apply gravity
+			entity.Velocity += GRAVITY * deltaSeconds;
+
+			// reset the flag indicating if we're on the ground
+			entity.IsOnGround = false;
+
+			// Multiple physics passes to reduce the chance of "going through" obstacles when we're too fast.
+			Vec2 passMovement = (entity.Velocity * deltaSeconds) / PHYSICS_PASSES;
+			for (int pass = 0; pass < PHYSICS_PASSES; ++pass) {
+				entity.Position += passMovement;
+				Collisions.UndoCollisions(entity);
+			}
+
+			// Make the movement fade out over time
+			entity.Velocity.X *= (float)Math.Pow(entity.HorizontalAcceleration, deltaSeconds);
+
+			// reset the movement
+			entity.Direction = HorizontalDirection.None;
 		}
 
 		/// <summary>
 		/// Makes the specified entity move in a certain direction for the current frame.
 		/// </summary>
-		public void Move(IEntity entity, HorizontalDirection direction, ref int xMovement)
+		public void Move(IEntity entity, HorizontalDirection direction)
 		{
-			Debug.Assert(entity != null);
-			Debug.Assert(Utilities.MakeList(HorizontalDirection.Left, HorizontalDirection.None, HorizontalDirection.Right).Contains(direction));
+			Debug.Assert(entity != null
+			             && entity.Velocity != null);
+			Debug.Assert(Utilities.MakeList(HorizontalDirection.Left, HorizontalDirection.None, HorizontalDirection.Right)
+			             	.Contains(direction));
 
 			if (direction != HorizontalDirection.None) { // we want to move
 				Debug.Assert(Utilities.MakeList(HorizontalDirection.Left, HorizontalDirection.Right).Contains(direction));
 
-				int current = (int)entity.Direction;
-				int desired = (int)direction;
+				// Find in what direction we should apply the force
+				float moveForce = (int)direction * entity.MoveSpeed;
 
-				xMovement += (int)direction;
+				//TODO: air drag
 
-				if (current == -desired) { // if we're cancelling our movement
-					entity.Direction = HorizontalDirection.None;
-				} else { // we're moving
-					entity.Direction = direction;
-				}
+				// Apply the movement
+				entity.Velocity.X += moveForce;
+
+				// Find our current direction
+				entity.Direction = (HorizontalDirection)Utilities.Clamp(
+									   (int)entity.Direction + (int)direction,
+	                                   (int)HorizontalDirection.Left,
+	                                   (int)HorizontalDirection.Right);
 			}
 		}
 
@@ -118,54 +197,13 @@ namespace GREATLib.Physics
 		}
 
 		/// <summary>
-		/// Actually applies the update (without checking whether we really should update or not with the update rate).
+		/// Resets the movement of the entity.
 		/// </summary>
-		void ApplyUpdate(double deltaSeconds, IEntity entity, ref int xMovement)
+		public void ResetMovement(IEntity entity)
 		{
-			Debug.Assert(deltaSeconds > 0.0);
-			Debug.Assert(entity != null 
-			             && entity.Position != null
-			             && entity.Velocity != null);
-
-			ApplyDesiredMovement(deltaSeconds, entity, xMovement);
-
-			entity.IsOnGround = false; // reset the flag indicating if we're on the ground
-
-			// Multiple physics passes to reduce the chance of "going through" obstacles when we're too fast.
-			for (int pass = 0; pass < PHYSICS_PASSES; ++pass) {
-				entity.Position += (entity.Velocity * deltaSeconds) / PHYSICS_PASSES;
-
-				Collisions.UndoCollisions(entity);
-			}
-
-			// Make the movement fade out over time
-			entity.Velocity.X *= entity.HorizontalAcceleration;
-
-			// reset the movement
-			xMovement = 0;
+			entity.Velocity = Vec2.Zero;
 			entity.Direction = HorizontalDirection.None;
-		}
-
-		/// <summary>
-		/// Applies the desired movement for the entity.
-		/// Basically this function modifies the entity's VELOCITY, NOT the position.
-		/// </summary>
-		void ApplyDesiredMovement(double deltaSeconds, IEntity entity, int xMovement)
-		{
-			Debug.Assert(deltaSeconds > 0);
-			Debug.Assert(entity != null 
-			             && entity.Velocity != null);
-
-			// The minimum speed at which we're supposed to go.
-			float moveXVel = xMovement * entity.MoveSpeed;
-
-			//if (!entity.IsOnGround) moveXVel *= entity.AirAcceleration;
-
-			// Only move if we're not already moving too fast
-			entity.Velocity.X += moveXVel;
-
-			// Apply gravity
-			entity.Velocity += GRAVITY;
+			entity.IsOnGround = false;
 		}
     }
 }

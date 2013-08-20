@@ -35,6 +35,8 @@
   <ItemGroup>
     <Compile Include="Vec2Test.cs" />
     <Compile Include="RectTest.cs" />
+    <Compile Include="PhysicsTest.cs" />
+    <Compile Include="IEntityTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -52,6 +52,10 @@ namespace GREATLib.Network
 			Entities = new Dictionary<uint, IEntity>();
         }
 
+		public void Update(double deltaSeconds)
+		{
+		}
+
 		/// <summary>
 		/// Adds a new entity to the game match.
 		/// </summary>
@@ -70,25 +74,25 @@ namespace GREATLib.Network
 		/// Applies one physics update to an entity (with the given ID) if it should (the physics
 		/// engine only updates at a certain rate).
 		/// </summary>
-		public void ApplyPhysicsUpdate(uint id, double deltaSeconds, ref int xMovement)
+		public void ApplyPhysicsUpdate(uint id, double deltaSeconds)
 		{
 			Debug.Assert(deltaSeconds > 0.0);
 			Debug.Assert(Entities.ContainsKey(id));
 
 			if (Entities.ContainsKey(id)) {
-				Physics.Update(deltaSeconds, Entities[id], ref xMovement);
+				Physics.Update(deltaSeconds, Entities[id]);
 			}
 		}
 
 		/// <summary>
 		/// Moves the specified entity (given its ID) in the specified direction.
 		/// </summary>
-		public void Move(uint id, HorizontalDirection direction, ref int xMovement)
+		public void Move(uint id, HorizontalDirection direction)
 		{
 			Debug.Assert(Entities.ContainsKey(id));
 
 			if (Entities.ContainsKey(id)) {
-				Physics.Move(Entities[id], direction, ref xMovement);
+				Physics.Move(Entities[id], direction);
 			}
 		}
 

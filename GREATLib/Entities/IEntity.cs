@@ -26,7 +26,7 @@ namespace GREATLib.Entities
 	/// <summary>
 	/// Represents a shared entity between the server and the client, e.g. a champion.
 	/// </summary>
-    public class IEntity
+    public class IEntity : ICloneable
     {
 		/// <summary>
 		/// The unique ID of the entity.
@@ -55,7 +55,7 @@ namespace GREATLib.Entities
 		public short JumpForce { get; set; }
 		/// <summary>
 		/// Gets or sets the horizontal acceleration of the entity, which is how much of our horizontal velocity
-		/// we maintain on each physics pass.
+		/// we maintain per second.
 		/// </summary>
 		/// <example>0.9 would keep 90% of the entity's X velocity every frame.</example>
 		public float HorizontalAcceleration { get; set; }
@@ -90,7 +90,7 @@ namespace GREATLib.Entities
 			CollisionWidth = 15f;
 			CollisionHeight = 30f;
 			JumpForce = 750;
-			HorizontalAcceleration = 0.75f;
+			HorizontalAcceleration = 9e-9f;
 
 			ID = id;
 			Position = startingPosition;
@@ -106,6 +106,14 @@ namespace GREATLib.Entities
 		public Rect CreateCollisionRectangle()
 		{
 			return new Rect(Position.X, Position.Y, CollisionWidth, CollisionHeight);
+		}
+
+		public object Clone()
+		{
+			IEntity clone = (IEntity)this.MemberwiseClone();
+			clone.Position = (Vec2)Position.Clone();
+			clone.Velocity = (Vec2)Velocity.Clone();
+			return clone;
 		}
     }
 }

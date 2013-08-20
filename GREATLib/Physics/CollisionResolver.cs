@@ -75,7 +75,7 @@ namespace GREATLib.Physics
 				switch (type)
 				{
 					case CollisionType.Block:
-						UndoCollision(entity, entityRect, rect, World.Map);
+						UndoCollision(entity, entityRect, rect);
 						break;
 
 						case CollisionType.Passable: break; // do nothing then
@@ -89,13 +89,11 @@ namespace GREATLib.Physics
 		/// <summary>
 		/// Fixes a collision between an entity and a single object.
 		/// </summary>
-		static void UndoCollision(IEntity entity, Rect entityRect,
-		                          Rect collided, TileMap map)
+		static void UndoCollision(IEntity entity, Rect entityRect, Rect collided)
 		{
 			Debug.Assert(entity != null);
 			Debug.Assert(entityRect != null);
 			Debug.Assert(collided != null);
-			Debug.Assert(map != null);
 
 			Vec2 intersection = Utilities.GetIntersectionDepth(entityRect, collided);
 

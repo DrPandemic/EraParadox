@@ -26,7 +26,7 @@ namespace GREATLib
 	/// A two-dimensional vector that can either represent a position or a vector.
 	/// The rough equivalent of Vector2 from the framework.
 	/// </summary>
-    public class Vec2
+    public class Vec2 : ICloneable
     {
 		/// <summary>
 		/// A (1,1) vector.
@@ -207,6 +207,11 @@ namespace GREATLib
 		public override int GetHashCode()
 		{
 			return base.GetHashCode();
+		}
+
+		public object Clone()
+		{
+			return MemberwiseClone();
 		}
     }
 }

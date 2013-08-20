@@ -29,39 +29,39 @@ namespace GREATTests
     {
 		void TestCtor(Rect r, float x, float y, float width, float height, string message)
 		{
-			Assert.AreEqual(r.X, x, message + " x");
-			Assert.AreEqual(r.Y, y, message + " y");
-			Assert.AreEqual(r.Width, width, message + " width");
-			Assert.AreEqual(r.Height, height, message + " height");
+			Assert.AreEqual(x, r.X, message + " x");
+			Assert.AreEqual(y, r.Y, message + " y");
+			Assert.AreEqual(width, r.Width, message + " width");
+			Assert.AreEqual(height, r.Height, message + " height");
 		}
 
         [Test()]
         public void TestConstructors()
         {
 			TestCtor(new Rect(), 0f, 0f, 0f, 0f, "default ctor");
-			TestCtor(new Rect(5f, 10f, 15f, 20f), 5f, 10f, 15f, 20f, "(5,10,15,20) ctor");
+			TestCtor(new Rect(5f, 10f, 15f, 20f), 5f, 10f, 15f, 20f, "ctor with data");
         }
 
 		[Test()]
 		public void TestEquality()
 		{
-			Assert.AreEqual(new Rect(), new Rect(0f, 0f, 0f, 0f), "(0,0,0,0) == (0,0,0,0)");
-			Assert.AreNotEqual(new Rect(), new Rect(1f, 1f, 1f, 1f), "(0,0,0,0) != (1,1,1,1)");
+			Assert.AreEqual(new Rect(), new Rect(0f, 0f, 0f, 0f), "empty rect equality");
+			Assert.AreNotEqual(new Rect(), new Rect(1f, 1f, 1f, 1f), "empty rect inequality with rect with data");
 		}
 
 		void TestRectSides(Rect r, float left, float right, float top, float bottom, string message)
 		{
-			Assert.AreEqual(r.Left, left, message + " left");
-			Assert.AreEqual(r.Right, right, message + " right");
-			Assert.AreEqual(r.Top, top, message + " top");
-			Assert.AreEqual(r.Bottom, bottom, message + " bottom");
+			Assert.AreEqual(left, r.Left, message + " left");
+			Assert.AreEqual(right, r.Right, message + " right");
+			Assert.AreEqual(top, r.Top, message + " top");
+			Assert.AreEqual(bottom, r.Bottom, message + " bottom");
 		}
 		[Test()]
 		public void TestSides()
 		{
-			TestRectSides(new Rect(), 0f, 0f, 0f, 0f, "sides(0,0,0,0)");
-			TestRectSides(new Rect(5f, 10f, 20f, 50f), 5f, 25f, 10f, 60f, "sides(5,10,20,50)");
-			TestRectSides(new Rect(0f, 15f, 1f, 1f), 0f, 1f, 15f, 16f, "sides(0,15,1,1)");
+			TestRectSides(new Rect(), 0f, 0f, 0f, 0f, "all empty sides rect");
+			TestRectSides(new Rect(5f, 10f, 20f, 50f), 5f, 25f, 10f, 60f, "rect with data #1");
+			TestRectSides(new Rect(0f, 15f, 1f, 1f), 0f, 1f, 15f, 16f, "rect with data #2");
 		}
     }
 }
