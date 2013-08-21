@@ -70,7 +70,6 @@ namespace GREATClient.BaseClass.BaseAction
 		public override void Reset()
 		{
 			base.Reset();
-
 		}
     }
 }

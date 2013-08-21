@@ -20,6 +20,7 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using Microsoft.Xna.Framework;
+using System.Diagnostics;
 
 namespace GREATClient.BaseClass.BaseAction
 {
@@ -123,6 +124,7 @@ namespace GREATClient.BaseClass.BaseAction
 		/// </summary>
 		public virtual void Start() 
 		{
+			Debug.Assert(Target != null);
 			Started = true;
 			OnStart();
 		}
@@ -138,6 +140,7 @@ namespace GREATClient.BaseClass.BaseAction
 		/// </summary>
 		public virtual void Stop()
 		{
+			Debug.Assert(Target != null);
 			Started = false;
 			OnStop();
 		}
@@ -152,6 +155,7 @@ namespace GREATClient.BaseClass.BaseAction
 		/// </summary>
 		public virtual void Pause() 
 		{
+			Debug.Assert(Target != null);
 			Paused = true;
 			OnPause();
 		}
@@ -166,6 +170,7 @@ namespace GREATClient.BaseClass.BaseAction
 		/// </summary>
 		public virtual void Resume() 
 		{
+			Debug.Assert(Target != null);
 			if (Started) {
 				Paused = false;
 				OnResume();
@@ -188,6 +193,7 @@ namespace GREATClient.BaseClass.BaseAction
 				if (Duration.Ticks >= 0) {
 					OnUpdate(dt);
 				} else {
+					System.Console.WriteLine(dt.ElapsedGameTime.TotalMilliseconds + " : " + Duration.TotalMilliseconds);
 					OnUpdate(new GameTime(dt.TotalGameTime, new TimeSpan(dt.ElapsedGameTime.Ticks + Duration.Ticks)));
 				}
 				if (Duration.Ticks <= 0) {

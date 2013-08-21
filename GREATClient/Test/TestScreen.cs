@@ -60,7 +60,9 @@ namespace GREATClient.Test
 
 			AddChild(champSprite);
 
-			AS = new ActionSequence(ActionSequence.INFINITE_SEQUENCE,new ActionMoveBy(new TimeSpan(0,0,1), new Vector2(100, 100)), new ActionMoveBy(new TimeSpan(0,0,1), new Vector2(-100, -100)));
+			AS = new ActionSequence(ActionSequence.INFINITE_SEQUENCE,
+			                        new ActionMoveBy(new TimeSpan(0,0,1), new Vector2(100, 100)), 
+			                        new ActionMoveBy(new TimeSpan(0,0,1), new Vector2(-100, -100)));
 
 			champSprite.PerformAction(AS);
 
@@ -98,7 +100,16 @@ namespace GREATClient.Test
 
 		private void Jump(object sender, EventArgs e)
 		{
-			champSprite.PerformAction(new ActionFadeTo(new TimeSpan(0,0,1),1));
+			champSprite.StopAllActions();
+			champSprite.PerformAction(new ActionMoveBy(new TimeSpan(0,0,2), (arg1, arg2) => {
+				float a = -0.005f;
+				float b = arg1.Y;
+				int xAddition = 200;
+				float x = (xAddition * arg2) + arg1.X; 
+				float y = (float)(a * Math.Pow(xAddition * arg2 ,2d) + b);
+				System.Console.WriteLine(arg2);
+				return new Vector2(x, y);
+			}));
 		}
 
 		private void Jump2(object sender, EventArgs e)

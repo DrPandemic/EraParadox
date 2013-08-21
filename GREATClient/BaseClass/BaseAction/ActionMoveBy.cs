@@ -27,6 +27,33 @@ namespace GREATClient.BaseClass.BaseAction
 	public class ActionMoveBy : ActionMoveTo
 	{
 		/// <summary>
+		/// Gets or sets a value indicating whether this <see cref="GREATClient.BaseClass.BaseAction.ActionMoveBy"/> is in function mode.
+		/// </summary>
+		/// <value><c>true</c> if function mode; otherwise, <c>false</c>.</value>
+		bool FunctionMode 
+		{ 
+			get {
+				return Movement != null;
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the movement function.
+		/// Vector2 : First position.
+		/// Float : Movement completion ratio (InitialDuration - Duration) / InitialDuration) of this tick.
+		/// Vector2 : Position after the function modification.
+		/// </summary>
+		/// <value>The movement.</value>
+		Func<Vector2,float,Vector2> Movement { get; set; }
+
+		/// <summary>
+		/// Gets or sets the first position.
+		/// Only used with the funciton mode.
+		/// </summary>
+		/// <value>The first position.</value>
+		Vector2 FirstPosition { get; set; }
+
+		/// <summary>
 		/// Initializes a new instance of the <see cref="GREATClient.BaseClass.Action.ActionMoveBy"/> class.
 		/// </summary>
 		/// <param name="duration">Duration.</param>
@@ -34,12 +61,34 @@ namespace GREATClient.BaseClass.BaseAction
 		public ActionMoveBy(TimeSpan duration, Vector2 moveBy) : base(duration,moveBy)
 		{ }
 
+		public ActionMoveBy(TimeSpan duration, Func<Vector2,float,Vector2> movement) : base(duration,Vector2.Zero)
+		{
+			Movement = movement;
+		}
+
 		public override void Ready()
 		{
 			Debug.Assert(Target != null);
+			if (!FunctionMode) {
+				MouvementByMillisecond = new Vector2(Destination.X / (float)Duration.TotalMilliseconds, 
+				                                     Destination.Y / (float)Duration.TotalMilliseconds); 
+			} else {
+				FirstPosition = Target.Position;
+			}
+		}
 
-			MouvementByMillisecond = new Vector2(Destination.X / (float)Duration.TotalMilliseconds, 
-			                                     Destination.Y / (float)Duration.TotalMilliseconds); 
+		protected override void OnUpdate(GameTime dt)
+		{
+			if (!FunctionMode) {				
+				base.OnUpdate(dt);
+			} else {
+				Debug.Assert(Target != null);
+				float ratio = (InitialDuration.Ticks - Duration.Ticks) / (float)InitialDuration.Ticks;
+				if (ratio > 1) {
+					ratio = 1;
+				}
+				Target.Position = Movement(FirstPosition, ratio);
+			}
 		}
 	}
 }
