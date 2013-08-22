@@ -85,6 +85,15 @@ namespace GREATServer
 
 			// 3. Send corrections. We regularly send the state changes of the entities to
 			// other clients.
+			SendCorrections();
+		}
+
+		/// <summary>
+		/// Sends the corrections and deltas to the clients along with the important actions that happened.
+		/// </summary>
+		void SendCorrections()
+		{
+			//TODO
 		}
 
 		/// <summary>
