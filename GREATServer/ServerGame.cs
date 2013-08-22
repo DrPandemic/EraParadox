@@ -72,7 +72,30 @@ namespace GREATServer
 
 		void Update(object sender, EventArgs e)
 		{
+			// The server-side loop of the game
 
+			// 1. Handle actions. We check for recently received player actions
+			// and apply them server-side.
+
+			// 2. Update logic. We update the actual game logic.
+			UpdateLogic();
+
+			// 3. Send corrections. We regularly send the state changes of the entities to
+			// other clients.
+		}
+
+		/// <summary>
+		/// Update the game physics and check for important events that must be reported
+		/// to other clients.
+		/// </summary>
+		void UpdateLogic()
+		{
+			foreach (ServerClient client in Clients.Values) {
+				Match.ApplyPhysicsUpdate(client.Champion.ID, UPDATE_INTERVAL.TotalSeconds);
+
+				//TODO: remove, used for testing purposes
+				ILogger.Log(client.Champion.Position.ToString());
+			}
 		}
 
 		/// <summary>
@@ -86,6 +109,8 @@ namespace GREATServer
 
 			ServerClient client = new ServerClient(connection, champion);
 			Clients.Add(connection, client);
+
+			Match.AddEntity(champion);
 
 			// Send to the client that asked to join
 			SendCommand(connection,
