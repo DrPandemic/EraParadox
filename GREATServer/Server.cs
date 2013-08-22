@@ -121,7 +121,7 @@ namespace GREATServer
 		void OnConnection(NetConnection connection)
 		{
 			//TODO: check which game to join instead of just the first
-			//Game.AddClient(connection);
+			Game.AddClient(connection);
 		}
 	}
 }

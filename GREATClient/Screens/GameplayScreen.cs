@@ -77,13 +77,33 @@ namespace GREATClient.Screens
 			Map = new DrawableTileMap(Match.World.Map);
 			AddChild(Map);
 
-			AddChild(OurChampion = new DrawableChampion(new ChampionSpawnInfo(0, new Vec2(500f, 200f)),
-			                                            ChampionsInfo, 
-			                                            Match));
-			Match.AddEntity(OurChampion.Entity); //TODO: create on "New Player" server message
+			Client.OnNewPlayer += OnNewPlayer;
 
 			AddChild(new FPSCounter());
 			AddChild(new PingCounter(() => {return Client.Instance.GetPing().TotalMilliseconds;}));
+		}
+
+		void OnNewPlayer(object sender, NewPlayerEventArgs e)
+		{
+			Debug.Assert(sender != null && e != null);
+			Debug.Assert(ChampionsInfo != null && Match != null);
+
+			DrawableChampion champion = new DrawableChampion(
+				new ChampionSpawnInfo(e.ID, e.Position),
+				ChampionsInfo,
+				Match);
+
+			AddChild(champion);
+
+			Match.AddEntity(champion.Entity);
+
+			if (e.IsOurID) {
+				OurChampion = champion;
+			}
+
+			ILogger.Log(
+				String.Format("New champion: id={0}, pos={1}, isOurChamp={2}", e.ID, e.Position, e.IsOurID),
+				LogPriority.High);
 		}
 
 		protected override void OnUpdate(Microsoft.Xna.Framework.GameTime dt)
@@ -119,23 +139,25 @@ namespace GREATClient.Screens
 
 			List<PlayerActionType> Actions = new List<PlayerActionType>();
 
-			// This will be replaced by the inputmanager
-			const Keys LEFT = Keys.A;
-			const Keys RIGHT = Keys.D;
-			const Keys JUMP = Keys.W;
-			if (keyboard.IsKeyDown(LEFT)) {
-				Actions.Add(PlayerActionType.MoveLeft);
-			} 
+			if (OurChampion != null) {
+				// This will be replaced by the inputmanager
+				const Keys LEFT = Keys.A;
+				const Keys RIGHT = Keys.D;
+				const Keys JUMP = Keys.W;
+				if (keyboard.IsKeyDown(LEFT)) {
+					Actions.Add(PlayerActionType.MoveLeft);
+				} 
 
-			if (keyboard.IsKeyDown(RIGHT)) {
-				Actions.Add(PlayerActionType.MoveRight);
-			} 
+				if (keyboard.IsKeyDown(RIGHT)) {
+					Actions.Add(PlayerActionType.MoveRight);
+				} 
 
-			if (keyboard.IsKeyDown(JUMP) && oldKeyboard.IsKeyUp(JUMP)) {
-				Actions.Add(PlayerActionType.Jump);
+				if (keyboard.IsKeyDown(JUMP) && oldKeyboard.IsKeyUp(JUMP)) {
+					Actions.Add(PlayerActionType.Jump);
+				}
+
+				Actions.ForEach(OurChampion.PackageAction);
 			}
-
-			Actions.ForEach(OurChampion.PackageAction);
 
 			oldKeyboard = keyboard;
 			oldMouse = mouse;
@@ -156,17 +178,19 @@ namespace GREATClient.Screens
 		/// </summary>
 		void SendInput()
 		{
-			TimeSinceLastInputSent += GameTime.ElapsedGameTime.TotalSeconds;
+			if (OurChampion != null) {
+				TimeSinceLastInputSent += GameTime.ElapsedGameTime.TotalSeconds;
 
-			if (TimeSinceLastInputSent >= SEND_INPUTS_TO_SERVER_INTERVAL.TotalSeconds) {
-				var package = OurChampion.GetActionPackage();
+				if (TimeSinceLastInputSent >= SEND_INPUTS_TO_SERVER_INTERVAL.TotalSeconds) {
+					var package = OurChampion.GetActionPackage();
 
-				if (package.Count > 0) {
-					// Send packaged input
-					Client.SendPlayerActionPackage(package);
-					package.Clear();
+					if (package.Count > 0) {
+						// Send packaged input
+						Client.SendPlayerActionPackage(package);
+						package.Clear();
 
-					TimeSinceLastInputSent = 0f;
+						TimeSinceLastInputSent = 0f;
+					}
 				}
 			}
 		}

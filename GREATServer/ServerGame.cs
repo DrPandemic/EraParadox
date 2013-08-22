@@ -25,6 +25,7 @@ using System.Timers;
 using System.Diagnostics;
 using GREATLib;
 using GREATLib.Network;
+using GREATLib.Entities;
 
 namespace GREATServer
 {
@@ -33,7 +34,7 @@ namespace GREATServer
 	/// </summary>
     public class ServerGame
     {
-		static readonly TimeSpan UPDATE_INTERVAL = TimeSpan.FromMilliseconds(15.0);
+		static readonly TimeSpan UPDATE_INTERVAL = TimeSpan.FromMilliseconds(45.0);
 
 		Random random = new Random();
 
@@ -54,9 +55,68 @@ namespace GREATServer
 			updateTimer.Start();
         }
 
+		/// <summary>
+		/// Sends a player command to a client.
+		/// </summary>
+		/// <param name="fillMessage">The function to call to fill the message with the command</param>
+		void SendCommand(NetConnection connection, ServerCommand command, NetDeliveryMethod method,
+		                 Action<NetOutgoingMessage> fillMessage)
+		{
+			NetOutgoingMessage msg = Server.CreateMessage();
+			msg.Write((byte)command);
+
+			fillMessage(msg);
+
+			Server.SendMessage(msg, connection, method);
+		}
+
 		void Update(object sender, EventArgs e)
 		{
 
+		}
+
+		/// <summary>
+		/// Adds the client to the current game.
+		/// </summary>
+		public void AddClient(NetConnection connection)
+		{
+			ILogger.Log("New player added to the game.", LogPriority.High);
+
+			IEntity champion = CreateRandomChampion();
+
+			ServerClient client = new ServerClient(connection, champion);
+			Clients.Add(connection, client);
+
+			// Send to the client that asked to join
+			SendCommand(connection,
+			       ServerCommand.NewPlayer,
+			       NetDeliveryMethod.ReliableOrdered,
+			       (msg) => FillNewPlayerMessage(msg, champion, true));
+
+			//TODO: send to the other players as well here
+		}
+
+		/// <summary>
+		/// Creates a message indicating that a player has joined the game and that
+		/// the client should create a new drawable champion associated to it.
+		/// </summary>
+		/// <param name="isOwner">Whether this is the new player or not.</param>
+		static void FillNewPlayerMessage(NetOutgoingMessage msg, IEntity champion, bool isOwner)
+		{
+			msg.Write((uint)champion.ID);
+			msg.Write((float)champion.Position.X);
+			msg.Write((float)champion.Position.Y);
+			msg.Write((bool)isOwner);
+		}
+
+		/// <summary>
+		/// Creates a random champion at a random starting position (mainly used
+		/// for testing purposes).
+		/// </summary>
+		static IEntity CreateRandomChampion()
+		{
+			return new IEntity(IDGenerator.GenerateID(), 
+			                   new Vec2(Utilities.RandomFloat(Utilities.Random, 100f, 400f), 0f));
 		}
 
 		/// <summary>

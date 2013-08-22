@@ -130,9 +130,12 @@ namespace GREATClient
 
 			switch (command) {
 				case ServerCommand.NewPlayer:
+					ILogger.Log("New player command.", LogPriority.High);
+					OnNewPlayer(this, new NewPlayerEventArgs(msg));
 					break;
 
 				case ServerCommand.PositionUpdate:
+					ILogger.Log("Position update.", LogPriority.VeryLow);
 					break;
 
 				default:
@@ -163,14 +166,14 @@ namespace GREATClient
 
 	public class NewPlayerEventArgs : EventArgs
 	{
-		public int ID { get; private set; }
+		public uint ID { get; private set; }
 		public bool IsOurID { get; private set; }
 		public Vec2 Position { get; private set; }
 		public NewPlayerEventArgs(NetIncomingMessage msg)
 		{
-			ID = msg.ReadInt32();
-			IsOurID = msg.ReadBoolean();
+			ID = msg.ReadUInt32();
 			Position = new Vec2(msg.ReadFloat(), msg.ReadFloat());
+			IsOurID = msg.ReadBoolean();
 		}
 	}
 	public struct PositionUpdateData

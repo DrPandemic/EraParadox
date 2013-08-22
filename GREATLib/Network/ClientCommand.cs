@@ -22,10 +22,14 @@ using System;
 
 namespace GREATLib.Network
 {
+	/// <summary>
+	/// A command from a client.
+	/// </summary>
+	/// <remarks>The comments are written as if the client directly asked something to the server.</remarks>
     public enum ClientCommand
     {
 		/// <summary>
-		/// The actions (inputs) that the player wants to do.
+		/// Here are the actions (inputs) that I want to do.
 		/// </summary>
 		ActionPackage = 0
     }

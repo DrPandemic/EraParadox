@@ -22,10 +22,21 @@ using System;
 
 namespace GREATLib.Network
 {
+	/// <summary>
+	/// A command from the server.
+	/// </summary>
+	/// <remarks>The comments are written as if the server directly asked something to a client.</remarks>
     public enum ServerCommand
     {
-		NewPlayer = 10,
-		PositionUpdate = 11
+		/// <summary>
+		/// Here is a new player to add to your current game.
+		/// </summary>
+		NewPlayer = 10
+
+		/// <summary>
+		/// Here is a position update of all the entities that changed.
+		/// </summary>
+		, PositionUpdate
     }
 }
 
