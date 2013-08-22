@@ -74,7 +74,7 @@ namespace GREATClient.Test
 			oldks = Keyboard.GetState();
 			oldms = Mouse.GetState();
 
-			Container cc = new Container(Content);
+			Container cc = new Container();
 			cc.AddChild(new FPSCounter());
 			AddChild(cc);
 

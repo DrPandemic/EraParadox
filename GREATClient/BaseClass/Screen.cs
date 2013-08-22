@@ -99,13 +99,15 @@ namespace GREATClient.BaseClass
 		/// Initializes a new instance of the <see cref="GREATClient.Screen"/> class.
 		/// </summary>
 		/// <param name="content">Content.</param>
-		public Screen(ContentManager content, Game game) : base(content)
+		public Screen(ContentManager content, Game game) : base()
         {
+			Content = content;
 			Services = new GameServiceContainer();
 			this.Services.AddService(typeof(InputManager), new InputManager());
 			Exit = false;
 			Game = game;
         }
+
 		/// <summary>
 		/// Loads the content.
 		/// </summary>

@@ -99,7 +99,7 @@ namespace GREATClient.BaseClass.Particle
 		                      int numberOfParticle, 
 		                      TimeSpan? animationLength = null,
 		                      TimeSpan? particleLifeTime = null) 
-							  : base(content)
+							  : base()
         {
 			Console.WriteLine(NumberOfParticules);
 			NumberOfParticules = numberOfParticle;

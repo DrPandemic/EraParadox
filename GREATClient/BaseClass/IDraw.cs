@@ -111,6 +111,12 @@ namespace GREATClient.BaseClass
 		List<ActionOverTime> ActionsOverTimeToActivate { get; set; }
 
 		/// <summary>
+		/// Gets or sets a value indicating whether this <see cref="GREATClient.BaseClass.IDraw"/> is loaded.
+		/// </summary>
+		/// <value><c>true</c> if loaded; otherwise, <c>false</c>.</value>
+		public bool Loaded { get; set; }
+
+		/// <summary>
 		/// Gets the absolute position.
 		/// </summary>
 		/// <returns>The absolute position.</returns>
@@ -134,6 +140,7 @@ namespace GREATClient.BaseClass
 		public IDraw() 
 		{
 			Parent = null;
+			Loaded = false;
 			Z = 0;
 			Visible = true;
 			Updatable = true;
@@ -151,6 +158,7 @@ namespace GREATClient.BaseClass
 		{
 			Parent = container;
 			OnLoad(Parent.Content, gd);
+			Loaded = true;
 		}
 
 		/// <summary>

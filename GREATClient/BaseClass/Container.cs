@@ -32,7 +32,7 @@ namespace GREATClient.BaseClass
 		/// Gets or sets the content manager.
 		/// </summary>
 		/// <value>The content.</value>
-		public ContentManager Content { get; private set; }
+		public ContentManager Content { get; protected set; }
 		/// <summary>
 		/// Gets or sets the children of the container.
 		/// </summary>
@@ -58,9 +58,9 @@ namespace GREATClient.BaseClass
 			return null;
 		}
 
-		public Container(ContentManager content) 
+		public Container() 
         {
-			Content = content;
+			Content = null;
 			Children = new List<IDraw>();
 			toRemove = new List<IDraw>();
         }
@@ -74,7 +74,9 @@ namespace GREATClient.BaseClass
 		{
 			if(child.Parent == null)
 			{
-				child.Load(this, GetGraphics());
+				if (Content != null) {
+					child.Load(this, GetGraphics());
+				}
 				child.Z=z;
 				int index = Children.FindIndex(c => child.Z > c.Z);
 				if(index==-1)				
@@ -86,6 +88,16 @@ namespace GREATClient.BaseClass
 			}
 			else
 				throw new Exception("The IDraw is already in a container");
+		}
+
+		protected override void OnLoad(ContentManager content, GraphicsDevice gd)
+		{
+			Content = content;
+			foreach (IDraw item in Children) {
+				if (!item.Loaded) {
+					item.Load(this,GetGraphics());
+				}
+			}
 		}
 
 		/// <summary>
