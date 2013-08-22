@@ -34,7 +34,9 @@ namespace GREATServer
 	/// </summary>
     public class ServerGame
     {
-		static readonly TimeSpan UPDATE_INTERVAL = TimeSpan.FromMilliseconds(45.0);
+		static readonly TimeSpan UPDATE_INTERVAL = TimeSpan.FromMilliseconds(15.0);
+
+		static readonly TimeSpan MIN_TIME_BETWEEN_ACTIONS = TimeSpan.FromMilliseconds(10.0);
 
 		Random random = new Random();
 
@@ -76,12 +78,47 @@ namespace GREATServer
 
 			// 1. Handle actions. We check for recently received player actions
 			// and apply them server-side.
+			HandleActions();
 
 			// 2. Update logic. We update the actual game logic.
 			UpdateLogic();
 
 			// 3. Send corrections. We regularly send the state changes of the entities to
 			// other clients.
+		}
+
+		/// <summary>
+		/// Checks for new player actions and applies them to the current game logic.
+		/// </summary>
+		void HandleActions()
+		{
+			foreach (ServerClient client in Clients.Values) {
+				Dictionary<PlayerActionType, double> lastTimeOfAction = new Dictionary<PlayerActionType, double>();
+
+				foreach (PlayerAction action in client.ActionsPackage) {
+					switch (action.Type) {
+						case PlayerActionType.MoveLeft:
+							Match.Move(client.Champion.ID, HorizontalDirection.Left);
+							break;
+
+						case PlayerActionType.MoveRight:
+							Match.Move(client.Champion.ID, HorizontalDirection.Right);
+							break;
+
+						case PlayerActionType.Jump:
+							Match.Jump(client.Champion.ID);
+							break;
+
+						default:
+							Debug.Assert(false, "Invalid player action.");
+							ILogger.Log("Invalid player action passed in a package: " + action.Type.ToString(),
+							           LogPriority.Warning);
+							break;
+					}
+				}
+
+				client.ActionsPackage.Clear();
+			}
 		}
 
 		/// <summary>
@@ -117,6 +154,7 @@ namespace GREATServer
 			       ServerCommand.NewPlayer,
 			       NetDeliveryMethod.ReliableOrdered,
 			       (msg) => FillNewPlayerMessage(msg, champion, true));
+			//TODO: send currently existing players to new player
 
 			//TODO: send to the other players as well here
 		}
@@ -165,6 +203,8 @@ namespace GREATServer
 
 		void OnActionPackage(NetIncomingMessage message)
 		{
+			Debug.Assert(Clients.ContainsKey(message.SenderConnection));
+
 			try {
 				byte size = message.ReadByte();
 				for (int i = 0; i < size; ++i) {
@@ -173,6 +213,9 @@ namespace GREATServer
 					PlayerActionType type = (PlayerActionType)message.ReadByte();
 
 					ILogger.Log(String.Format("Action package: size={3}, id={0}, time={1}, type={2}", id,time,type,size));
+					PlayerAction action = new PlayerAction(id, type, time);
+
+					Clients[message.SenderConnection].ActionsPackage.Add(action);
 				}
 			} catch (Exception e) {
 				ILogger.Log("Action package badly formatted: " + e.ToString(), LogPriority.Error);

@@ -31,17 +31,25 @@ namespace GREATLib.Network
 		/// <summary>
 		/// Gets or sets the unique ID of the action.
 		/// </summary>
-		public uint ID { get; set; }
+		public uint ID { get; private set; }
 
 		/// <summary>
 		/// The action that we're making (e.g. go right, jump, shoot, etc.) 
 		/// </summary>
-		public PlayerActionType Type { get; set; }
+		public PlayerActionType Type { get; private set; }
 
 		/// <summary>
 		/// Gets or sets the time, in seconds, when the action was requested.
 		/// </summary>
-		public double Time { get; set; }
+		public double Time { get; private set; }
+
+		public PlayerAction(uint id, PlayerActionType type, double time)
+			: this()
+		{
+			ID = id;
+			Type = type;
+			Time = time;
+		}
     }
 }
 

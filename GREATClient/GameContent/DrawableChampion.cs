@@ -106,11 +106,10 @@ namespace GREATClient
 		{
 			Debug.Assert(FunctionForAction.ContainsKey(action));
 
-			PlayerAction toPackage = new PlayerAction() { 
-				Type = action,
-				Time = Client.Instance.GetTime().TotalSeconds,
-				ID   = IDGenerator.GenerateID()
-			};
+			PlayerAction toPackage = new PlayerAction(
+            	IDGenerator.GenerateID(),
+				action,
+            	Client.Instance.GetTime().TotalSeconds);
 
 			FunctionForAction[action]();
 
