@@ -71,6 +71,24 @@ namespace GREATLib.Network
 		}
 
 		/// <summary>
+		/// Returns whether the game contains an entity with the given ID or not.
+		/// </summary>
+		public bool ContainsEntity(uint id)
+		{
+			return Entities.ContainsKey(id);
+		}
+
+		/// <summary>
+		/// Gets the entity with the specified ID.
+		/// </summary>
+		public IEntity GetEntity(uint id)
+		{
+			Debug.Assert(ContainsEntity(id));
+
+			return Entities[id];
+		}
+
+		/// <summary>
 		/// Applies one physics update to an entity (with the given ID) if it should (the physics
 		/// engine only updates at a certain rate).
 		/// </summary>

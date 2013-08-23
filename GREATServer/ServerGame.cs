@@ -35,6 +35,7 @@ namespace GREATServer
     public class ServerGame
     {
 		static readonly TimeSpan UPDATE_INTERVAL = TimeSpan.FromMilliseconds(15.0);
+		static readonly TimeSpan CORRECTION_INTERVAL = TimeSpan.FromMilliseconds(30.0);
 
 		static readonly TimeSpan MIN_TIME_BETWEEN_ACTIONS = TimeSpan.FromMilliseconds(10.0);
 
@@ -45,12 +46,16 @@ namespace GREATServer
 
 		GameMatch Match { get; set; }
 
+		double TimeSinceLastCorrection { get; set; }
+
 
         public ServerGame(NetServer server)
         {
 			Server = server;
 			Clients = new Dictionary<NetConnection, ServerClient>();
 			Match = new GameMatch();
+
+			TimeSinceLastCorrection = 0.0;
 
 			Timer updateTimer = new Timer(UPDATE_INTERVAL.TotalMilliseconds);
 			updateTimer.Elapsed += Update;
@@ -93,7 +98,30 @@ namespace GREATServer
 		/// </summary>
 		void SendCorrections()
 		{
-			//TODO
+			if (TimeSinceLastCorrection >= CORRECTION_INTERVAL.TotalSeconds) {
+				foreach (NetConnection connection in Clients.Keys) {
+					SendCommand(
+						connection,
+						ServerCommand.StateUpdate,
+						NetDeliveryMethod.ReliableOrdered,
+						FillStateUpdateMessage);
+				}
+				TimeSinceLastCorrection = 0.0;
+			}
+			TimeSinceLastCorrection += UPDATE_INTERVAL.TotalSeconds;
+		}
+
+		/// <summary>
+		/// Fills a message with state update information.
+		/// </summary>
+		void FillStateUpdateMessage(NetOutgoingMessage msg)
+		{
+			foreach (ServerClient client in Clients.Values) {
+				msg.Write((uint)client.Champion.ID);
+				msg.Write((float)client.Champion.Position.X);
+				msg.Write((float)client.Champion.Position.Y);
+				msg.Write((bool)client.Champion.IsOnGround);
+			}
 		}
 
 		/// <summary>
@@ -215,13 +243,12 @@ namespace GREATServer
 			Debug.Assert(Clients.ContainsKey(message.SenderConnection));
 
 			try {
-				byte size = message.ReadByte();
-				for (int i = 0; i < size; ++i) {
+				while (message.Position < message.LengthBits) {
 					uint id = message.ReadUInt32();
 					float time = message.ReadFloat();
 					PlayerActionType type = (PlayerActionType)message.ReadByte();
 
-					ILogger.Log(String.Format("Action package: size={3}, id={0}, time={1}, type={2}", id,time,type,size));
+					ILogger.Log(String.Format("Action package: id={0}, time={1}, type={2}", id,time,type));
 					PlayerAction action = new PlayerAction(id, type, time);
 
 					Clients[message.SenderConnection].ActionsPackage.Add(action);

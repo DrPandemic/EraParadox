@@ -48,6 +48,7 @@ namespace GREATClient
 		NetClient client;
 
 		public EventHandler<NewPlayerEventArgs> OnNewPlayer;
+		public EventHandler<StateUpdateEventArgs> OnStateUpdate;
 
 		public Client()
 		{
@@ -131,11 +132,16 @@ namespace GREATClient
 			switch (command) {
 				case ServerCommand.NewPlayer:
 					ILogger.Log("New player command.", LogPriority.High);
-					OnNewPlayer(this, new NewPlayerEventArgs(msg));
+					if (OnNewPlayer != null) {
+						OnNewPlayer(this, new NewPlayerEventArgs(msg));
+					}
 					break;
 
-				case ServerCommand.PositionUpdate:
-					ILogger.Log("Position update.", LogPriority.VeryLow);
+				case ServerCommand.StateUpdate:
+					ILogger.Log("State update.", LogPriority.VeryLow);
+					if (OnStateUpdate != null) {
+						OnStateUpdate(this, new StateUpdateEventArgs(msg));
+					}
 					break;
 
 				default:
@@ -152,7 +158,6 @@ namespace GREATClient
 			NetOutgoingMessage msg = client.CreateMessage();
 			msg.Write((byte)ClientCommand.ActionPackage);
 
-			msg.Write((byte)actions.Count);
 			foreach (PlayerAction action in actions) {
 				msg.Write((uint)action.ID);
 				msg.Write((float)action.Time);
@@ -176,11 +181,37 @@ namespace GREATClient
 			IsOurID = msg.ReadBoolean();
 		}
 	}
-	public struct PositionUpdateData
+	public struct StateUpdateData
 	{
-		public int ID;
-		public Vec2 Position;
-		public bool FacingLeft;
+		public uint ID { get; private set; }
+		public Vec2 Position { get; private set; }
+		public bool IsOnGround { get; private set; }
+
+		public StateUpdateData(uint id, Vec2 pos, bool isOnGround)
+			: this()
+		{
+			ID = id;
+			Position = pos;
+			IsOnGround = isOnGround;
+		}
+	}
+	public class StateUpdateEventArgs : EventArgs
+	{
+		public List<StateUpdateData> StateUpdate { get; private set; }
+
+		public StateUpdateEventArgs(NetIncomingMessage msg)
+		{
+			StateUpdate = new List<StateUpdateData>();
+			while (msg.Position < msg.LengthBits) {
+				uint id = msg.ReadUInt32();
+				Vec2 pos = new Vec2(msg.ReadFloat(), msg.ReadFloat());
+				bool onGround = msg.ReadBoolean();
+
+				StateUpdate.Add(new StateUpdateData(id, pos, onGround));
+				ILogger.Log(
+					String.Format("state update data: id={0}, pos={1}, onground={2}", id, pos, onGround));
+			}
+		}
 	}
 }
 

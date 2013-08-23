@@ -78,9 +78,24 @@ namespace GREATClient.Screens
 			AddChild(Map);
 
 			Client.OnNewPlayer += OnNewPlayer;
+			Client.OnStateUpdate += OnStateUpdate;
 
 			AddChild(new FPSCounter());
 			AddChild(new PingCounter(() => {return Client.Instance.GetPing().TotalMilliseconds;}));
+		}
+
+		void OnStateUpdate(object sender, StateUpdateEventArgs e)
+		{
+			Debug.Assert(sender != null && e != null);
+			Debug.Assert(e.StateUpdate.TrueForAll(state => Match.ContainsEntity(state.ID)));
+
+			foreach (StateUpdateData state in e.StateUpdate) {
+				ILogger.Log(
+					String.Format("NEW STATE: id={0}, pos={1}, onground={2}", state.ID, state.Position, state.IsOnGround));
+				IEntity entity = Match.GetEntity(state.ID);
+				entity.Position = state.Position; //TODO: remove
+				entity.IsOnGround = state.IsOnGround;
+			}
 		}
 
 		void OnNewPlayer(object sender, NewPlayerEventArgs e)

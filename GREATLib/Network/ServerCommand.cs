@@ -34,9 +34,10 @@ namespace GREATLib.Network
 		NewPlayer = 10
 
 		/// <summary>
-		/// Here is a position update of all the entities that changed.
+		/// Here is an update of the state of all the entities that changed. Force your data to
+		/// fit this.
 		/// </summary>
-		, PositionUpdate
+		, StateUpdate
     }
 }
 
