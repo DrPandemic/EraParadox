@@ -67,12 +67,12 @@ namespace GREATClient.BaseClass
 		public Vector2 Scale { get; set; }
 
 		/// <summary>
-		/// Gets or sets the origin relative.
+		/// Gets or sets the relative relative.
 		/// The range is from 0 to 1
 		/// Instead of pixels
 		/// </summary>
 		/// <value>The origin relative.</value>
-		public Vector2 OriginRelative { get; set; }
+		public Vector2 RelativeOrigin { get; set; }
 
 		/// <summary>
 		/// Gets or sets the tint.
@@ -98,7 +98,7 @@ namespace GREATClient.BaseClass
 			Orientation = 0f;
 			SourceRectangle = null;
 			Scale = new Vector2(1,1);
-			OriginRelative = new Vector2(0,0);
+			RelativeOrigin = new Vector2(0,0);
 			Effects = SpriteEffects.None;
 			IsLoaded = false;
 		}

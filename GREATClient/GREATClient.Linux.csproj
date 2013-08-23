@@ -85,6 +85,7 @@
     <Compile Include="BaseClass\BaseAction\ActionOverTimeDrawable.cs" />
     <Compile Include="BaseClass\BaseAction\ActionFadeBy.cs" />
     <Compile Include="BaseClass\BaseAction\ActionFadeTo.cs" />
+    <Compile Include="BaseClass\Parallax.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />

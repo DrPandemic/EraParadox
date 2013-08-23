@@ -68,8 +68,8 @@ namespace GREATClient.BaseClass
 		protected override void OnDraw(SpriteBatch batch)
 		{
 			batch.Begin();
-			batch.Draw(Texture,new Rectangle((int)(GetAbsolutePosition().X-OriginRelative.X*Size.X),
-			                                 (int)(GetAbsolutePosition().Y-OriginRelative.Y*Size.Y),
+			batch.Draw(Texture,new Rectangle((int)(GetAbsolutePosition().X-RelativeOrigin.X*Size.X),
+			                                 (int)(GetAbsolutePosition().Y-RelativeOrigin.Y*Size.Y),
 			                                 (int)Size.X,(int)Size.Y),
 			           						Tint * Alpha);		
 			batch.End();

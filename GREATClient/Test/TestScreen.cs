@@ -87,6 +87,7 @@ namespace GREATClient.Test
 
 			inputManager.RegisterEvent(InputActions.Spell3, new EventHandler(Jump));
 			inputManager.RegisterEvent(InputActions.Spell4, new EventHandler(Jump2));
+
 		}
 
 

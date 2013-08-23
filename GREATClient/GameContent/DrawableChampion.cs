@@ -85,7 +85,7 @@ namespace GREATClient.GameContent
 				Color.Green);
 			RealPositionDebugRect.Alpha = 0.5f;
 
-			Idle.OriginRelative = Run.OriginRelative = RealPositionDebugRect.OriginRelative = 
+			Idle.RelativeOrigin = Run.RelativeOrigin = RealPositionDebugRect.RelativeOrigin = 
 				new Vector2(0.5f, 1f); // position at the feet
 
 			Run.Visible = false;

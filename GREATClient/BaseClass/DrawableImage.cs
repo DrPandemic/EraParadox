@@ -88,7 +88,7 @@ namespace GREATClient.BaseClass
 			batch.Begin();
 
 			batch.Draw(Texture,GetAbsolutePosition(),SourceRectangle,Tint * Alpha,(float)Orientation,
-			           OriginRelative * new Vector2(Width, Height),Scale,Effects,0);
+			           RelativeOrigin * new Vector2(Width, Height),Scale,Effects,0);
 
 			batch.End();
 

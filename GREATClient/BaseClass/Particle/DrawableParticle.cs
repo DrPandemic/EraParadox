@@ -116,7 +116,7 @@ namespace GREATClient.BaseClass.Particle
 
 			Alive = false;
 
-			OriginRelative = new Vector2(0.5f, 0.5f);
+			RelativeOrigin = new Vector2(0.5f, 0.5f);
         }
 
 		protected override void OnUpdate(GameTime dt)
