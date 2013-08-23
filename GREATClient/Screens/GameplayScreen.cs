@@ -97,7 +97,7 @@ namespace GREATClient.Screens
 				IEntity entity = Match.GetEntity(state.ID);
 				entity.IsOnGround = state.IsOnGround;
 				entity.Velocity = state.Velocity;
-				entity.AuthorativeChangePosition(state.Position);
+				entity.AuthoritativeChangePosition(state.Position);
 			}
 		}
 

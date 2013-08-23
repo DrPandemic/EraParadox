@@ -87,9 +87,10 @@ namespace GREATClient.Network
 		}
 
 		/// <summary>
-		/// Take the new position given by the server
+		/// Take the new position given by the server and resimulate our unacknowledged actions
+		/// from there.
 		/// </summary>
-		public override void AuthorativeChangePosition(Vec2 position)
+		public override void AuthoritativeChangePosition(Vec2 position)
 		{
 			ServerPosition = position;
 
