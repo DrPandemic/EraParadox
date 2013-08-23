@@ -23,6 +23,8 @@ using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using GREATLib.Entities;
 using GREATLib.Network;
+using System.Diagnostics;
+using System;
 
 namespace GREATClient.Network
 {
@@ -33,24 +35,41 @@ namespace GREATClient.Network
     public class MainClientChampion : IEntity, IUpdatable
     {
 		/// <summary>
+		/// Gets or sets the last acknowledged action ID of the player.
+		/// That is to say, the last action from us that the server executed.
+		/// </summary>
+		public uint LastAcknowledgedActionID { get; set; }
+
+		/// <summary>
 		/// Gets the drawn position of the champion.
 		/// This is the position where we should currently draw the champion.
 		/// </summary>
 		/// <value>The drawn position.</value>
 		public Vec2 DrawnPosition { get; private set; }
+		/// <summary>
+		/// Gets or sets the server position.
+		/// This is the last position that we received from the server.
+		/// </summary>
+		/// <remarks>This shouldn't be changed within the class, only set when the server
+		/// gives us a new position.</remarks>
+		Vec2 ServerPosition { get; set; }
 
 		GameMatch Match { get; set; }
 
-		List<PlayerAction> PackagedActions { get; set; }
+		Queue<PlayerAction> PackagedActions { get; set; }
+		Queue<PlayerAction> UnacknowledgedActions { get; set; }
 
 		public MainClientChampion(ChampionSpawnInfo spawnInfo, GameMatch match)
 			: base(spawnInfo.ID, spawnInfo.SpawningPosition)
         {
+			LastAcknowledgedActionID = IDGenerator.NO_ID;
 			Match = match;
 
 			DrawnPosition = Position;
+			ServerPosition = Position;
 
-			PackagedActions = new List<PlayerAction>();
+			PackagedActions = new Queue<PlayerAction>();
+			UnacknowledgedActions = new Queue<PlayerAction>();
         }
 
 		/// <summary>
@@ -67,25 +86,66 @@ namespace GREATClient.Network
 			ILogger.Log(Position.ToString());
 		}
 
+		/// <summary>
+		/// Take the new position given by the server
+		/// </summary>
+		public override void AuthorativeChangePosition(Vec2 position)
+		{
+			ServerPosition = position;
+
+			// resimulate the unacknowledged actions
+			Position = (Vec2)ServerPosition.Clone();
+
+			// remove the acknowledged actions
+			while (UnacknowledgedActions.Count > 0 &&
+			       UnacknowledgedActions.Peek().ID <= LastAcknowledgedActionID) {
+				UnacknowledgedActions.Dequeue();
+			}
+
+			// go through the unacknowledged actions and just replay them
+			float lastActionTime = UnacknowledgedActions.Count > 0 ? UnacknowledgedActions.Peek().Time : 0f;
+			foreach (PlayerAction action in UnacknowledgedActions) {
+				ExecuteAction(action.Type);
+
+				float deltaTime = action.Time - lastActionTime;
+				Debug.Assert(deltaTime >= 0f);
+
+				if (deltaTime > 0f) { // we don't want to do a physics update if we're on the same frame (dt==0)
+					Match.ApplyPhysicsUpdate(ID, deltaTime);
+				}
+			}
+		}
+
 		public void PackageAction(PlayerAction action)
 		{
-			PackagedActions.Add(action);
+			PackagedActions.Enqueue(action);
+			UnacknowledgedActions.Enqueue(action);
+
+			ExecuteAction(action.Type);
 		}
 
-		public void MoveLeft()
+		void ExecuteAction(PlayerActionType type)
 		{
-			Match.Move(ID, HorizontalDirection.Left);
-		}
-		public void MoveRight()
-		{
-			Match.Move(ID, HorizontalDirection.Right);
-		}
-		public void Jump()
-		{
-			Match.Jump(ID);
+			switch (type) {
+				case PlayerActionType.MoveLeft: 
+					Match.Move(ID, HorizontalDirection.Left);
+					break;
+
+					case PlayerActionType.MoveRight:
+					Match.Move(ID, HorizontalDirection.Right);
+					break;
+
+					case PlayerActionType.Jump:
+					Match.Jump(ID);
+					break;
+
+					default:
+					Debug.Fail(String.Format("Invalid action type \"{0}\"", type));
+					break;
+			}
 		}
 
-		public List<PlayerAction> GetActionPackage()
+		public Queue<PlayerAction> GetActionPackage()
 		{
 			return PackagedActions;
 		}

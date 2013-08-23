@@ -153,7 +153,7 @@ namespace GREATClient
 		/// Sends the action package of the player, indicating the inputs that the player
 		/// has done in the past few milliseconds.
 		/// </summary>
-		public void SendPlayerActionPackage(List<PlayerAction> actions)
+		public void SendPlayerActionPackage(IEnumerable<PlayerAction> actions)
 		{
 			NetOutgoingMessage msg = client.CreateMessage();
 			msg.Write((byte)ClientCommand.ActionPackage);
@@ -185,31 +185,35 @@ namespace GREATClient
 	{
 		public uint ID { get; private set; }
 		public Vec2 Position { get; private set; }
+		public Vec2 Velocity { get; private set; }
 		public bool IsOnGround { get; private set; }
 
-		public StateUpdateData(uint id, Vec2 pos, bool isOnGround)
+		public StateUpdateData(uint id, Vec2 pos, Vec2 vel, bool isOnGround)
 			: this()
 		{
 			ID = id;
 			Position = pos;
+			Velocity = vel;
 			IsOnGround = isOnGround;
 		}
 	}
 	public class StateUpdateEventArgs : EventArgs
 	{
-		public List<StateUpdateData> StateUpdate { get; private set; }
+		public uint LastAcknowledgedActionID { get; private set; }
+		public List<StateUpdateData> EntitiesUpdatedState { get; private set; }
 
 		public StateUpdateEventArgs(NetIncomingMessage msg)
 		{
-			StateUpdate = new List<StateUpdateData>();
+			EntitiesUpdatedState = new List<StateUpdateData>();
+
+			LastAcknowledgedActionID = msg.ReadUInt32();
 			while (msg.Position < msg.LengthBits) {
 				uint id = msg.ReadUInt32();
 				Vec2 pos = new Vec2(msg.ReadFloat(), msg.ReadFloat());
+				Vec2 vel = new Vec2(msg.ReadFloat(), msg.ReadFloat());
 				bool onGround = msg.ReadBoolean();
 
-				StateUpdate.Add(new StateUpdateData(id, pos, onGround));
-				ILogger.Log(
-					String.Format("state update data: id={0}, pos={1}, onground={2}", id, pos, onGround));
+				EntitiesUpdatedState.Add(new StateUpdateData(id, pos, vel, onGround));
 			}
 		}
 	}

@@ -35,7 +35,7 @@ namespace GREATServer
     public class ServerGame
     {
 		static readonly TimeSpan UPDATE_INTERVAL = TimeSpan.FromMilliseconds(15.0);
-		static readonly TimeSpan CORRECTION_INTERVAL = TimeSpan.FromMilliseconds(30.0);
+		static readonly TimeSpan CORRECTION_INTERVAL = TimeSpan.FromMilliseconds(UPDATE_INTERVAL.TotalMilliseconds * 2.0);
 
 		static readonly TimeSpan MIN_TIME_BETWEEN_ACTIONS = TimeSpan.FromMilliseconds(10.0);
 
@@ -104,7 +104,7 @@ namespace GREATServer
 						connection,
 						ServerCommand.StateUpdate,
 						NetDeliveryMethod.ReliableOrdered,
-						FillStateUpdateMessage);
+						(msg) => FillStateUpdateMessage(msg, connection));
 				}
 				TimeSinceLastCorrection = 0.0;
 			}
@@ -114,12 +114,18 @@ namespace GREATServer
 		/// <summary>
 		/// Fills a message with state update information.
 		/// </summary>
-		void FillStateUpdateMessage(NetOutgoingMessage msg)
+		void FillStateUpdateMessage(NetBuffer msg, NetConnection playerConnection)
 		{
-			foreach (ServerClient client in Clients.Values) {
+			Debug.Assert(Clients.ContainsKey(playerConnection));
+
+			msg.Write((uint)Clients[playerConnection].LastAcknowledgedActionID);
+			foreach (NetConnection connection in Clients.Keys) {
+				ServerClient client = Clients[connection];
 				msg.Write((uint)client.Champion.ID);
 				msg.Write((float)client.Champion.Position.X);
 				msg.Write((float)client.Champion.Position.Y);
+				msg.Write((float)client.Champion.Velocity.X);
+				msg.Write((float)client.Champion.Velocity.Y);
 				msg.Write((bool)client.Champion.IsOnGround);
 			}
 		}
@@ -133,28 +139,30 @@ namespace GREATServer
 				Dictionary<PlayerActionType, double> lastTimeOfAction = new Dictionary<PlayerActionType, double>();
 
 				foreach (PlayerAction action in client.ActionsPackage) {
-					switch (action.Type) {
-						case PlayerActionType.MoveLeft:
-							Match.Move(client.Champion.ID, HorizontalDirection.Left);
-							break;
-
-						case PlayerActionType.MoveRight:
-							Match.Move(client.Champion.ID, HorizontalDirection.Right);
-							break;
-
-						case PlayerActionType.Jump:
-							Match.Jump(client.Champion.ID);
-							break;
-
-						default:
-							Debug.Assert(false, "Invalid player action.");
-							ILogger.Log("Invalid player action passed in a package: " + action.Type.ToString(),
-							           LogPriority.Warning);
-							break;
-					}
+					HandleAction(client.Champion, action);
+					client.LastAcknowledgedActionID = Math.Max(client.LastAcknowledgedActionID, action.ID);
 				}
 
 				client.ActionsPackage.Clear();
+			}
+		}
+
+		void HandleAction(IEntity champion, PlayerAction action)
+		{
+			switch (action.Type) {
+				case PlayerActionType.MoveLeft:
+					Match.Move(champion.ID, HorizontalDirection.Left);
+					break;
+				case PlayerActionType.MoveRight:
+					Match.Move(champion.ID, HorizontalDirection.Right);
+					break;
+				case PlayerActionType.Jump:
+					Match.Jump(champion.ID);
+					break;
+				default:
+					Debug.Fail("Invalid player action.");
+					ILogger.Log("Invalid player action passed in a package: " + action.Type.ToString(), LogPriority.Warning);
+					break;
 			}
 		}
 
@@ -232,7 +240,7 @@ namespace GREATServer
 					break;
 
 				default:
-					Debug.Assert(false, "Invalid client command.");
+					Debug.Fail("Invalid client command.");
 					ILogger.Log("Invalid client command received: " + command, LogPriority.Warning);
 					break;
 			}

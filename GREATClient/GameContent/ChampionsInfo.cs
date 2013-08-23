@@ -101,7 +101,7 @@ namespace GREATClient
 				if (anim.Name.ToLower() == name.ToLower())
 					return anim;
 
-			Debug.Assert(false, "No animation with the name " + name + " for the champion " + Name + ".");
+			Debug.Fail("No animation with the name " + name + " for the champion " + Name + ".");
 			return null;
 		}
 	}

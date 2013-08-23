@@ -101,6 +101,16 @@ namespace GREATLib.Entities
         }
 
 		/// <summary>
+		/// Called when an authority (i.e. the server) indicates a new position.
+		/// Depending on who the champion is (the local player or a remote client),
+		/// we'll act differently.
+		/// </summary>
+		public virtual void AuthorativeChangePosition(Vec2 position)
+		{
+			Position = position;
+		}
+
+		/// <summary>
 		/// Creates the rectangle that represents the collision rectangle of the entity.
 		/// </summary>
 		public Rect CreateCollisionRectangle()

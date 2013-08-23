@@ -41,9 +41,9 @@ namespace GREATLib.Network
 		/// <summary>
 		/// Gets or sets the time, in seconds, when the action was requested.
 		/// </summary>
-		public double Time { get; private set; }
+		public float Time { get; private set; }
 
-		public PlayerAction(uint id, PlayerActionType type, double time)
+		public PlayerAction(uint id, PlayerActionType type, float time)
 			: this()
 		{
 			ID = id;

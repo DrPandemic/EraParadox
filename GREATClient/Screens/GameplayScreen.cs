@@ -87,14 +87,17 @@ namespace GREATClient.Screens
 		void OnStateUpdate(object sender, StateUpdateEventArgs e)
 		{
 			Debug.Assert(sender != null && e != null);
-			Debug.Assert(e.StateUpdate.TrueForAll(state => Match.ContainsEntity(state.ID)));
+			Debug.Assert(e.EntitiesUpdatedState.TrueForAll(state => Match.ContainsEntity(state.ID)));
 
-			foreach (StateUpdateData state in e.StateUpdate) {
+			OurChampion.SetLastAcknowledgedAction(e.LastAcknowledgedActionID);
+
+			foreach (StateUpdateData state in e.EntitiesUpdatedState) {
 				ILogger.Log(
 					String.Format("NEW STATE: id={0}, pos={1}, onground={2}", state.ID, state.Position, state.IsOnGround));
 				IEntity entity = Match.GetEntity(state.ID);
-				entity.Position = state.Position; //TODO: remove
 				entity.IsOnGround = state.IsOnGround;
+				entity.Velocity = state.Velocity;
+				entity.AuthorativeChangePosition(state.Position);
 			}
 		}
 
@@ -184,7 +187,7 @@ namespace GREATClient.Screens
 		/// </summary>
 		void ApplyServerModifications()
 		{
-			//TODO
+			//TODO: move it here
 		}
 
 		/// <summary>

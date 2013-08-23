@@ -36,11 +36,6 @@ namespace GREATClient
     public class DrawableChampion : IDraw
     {
 		/// <summary>
-		/// Gets or sets the function for action.
-		/// </summary>
-		Dictionary<PlayerActionType, Action> FunctionForAction { get; set; }
-
-		/// <summary>
 		/// Client-side version of the main champion, managing the network interaction and local
 		/// simulation of the client's champion.
 		/// </summary>
@@ -56,7 +51,6 @@ namespace GREATClient
 
         public DrawableChampion(ChampionSpawnInfo spawnInfo, ChampionsInfo championsInfo, GameMatch match) //TODO: new MainClientDrawableChampion
         {
-			FillFunctionsForActions();
 			Champion = new MainClientChampion(spawnInfo, match);
         }
 		protected override void OnLoad(Microsoft.Xna.Framework.Content.ContentManager content, Microsoft.Xna.Framework.Graphics.GraphicsDevice gd)
@@ -79,44 +73,28 @@ namespace GREATClient
 		}
 
 		/// <summary>
-		/// Fills the functions associated to certain player actions.
-		/// </summary>
-		void FillFunctionsForActions()
-		{
-			Debug.Assert(FunctionForAction == null);
-
-			FunctionForAction = new Dictionary<PlayerActionType, Action>();
-
-			FunctionForAction.Add(PlayerActionType.Jump, () => {
-				Champion.Jump(); 
-			});
-			FunctionForAction.Add(PlayerActionType.MoveLeft, () => {
-				Champion.MoveLeft();
-			});
-			FunctionForAction.Add(PlayerActionType.MoveRight, () => {
-				Champion.MoveRight();
-			});
-		}
-
-		/// <summary>
 		/// Packages a client-side action to be sent to the server. This also simulates the action locally
 		/// for client-side prediction.
 		/// </summary>
 		public void PackageAction(PlayerActionType action)
 		{
-			Debug.Assert(FunctionForAction.ContainsKey(action));
-
 			PlayerAction toPackage = new PlayerAction(
             	IDGenerator.GenerateID(),
 				action,
-            	Client.Instance.GetTime().TotalSeconds);
-
-			FunctionForAction[action]();
+            	(float)Client.Instance.GetTime().TotalSeconds);
 
 			Champion.PackageAction(toPackage);
 		}
 
-		public List<PlayerAction> GetActionPackage()
+		/// <summary>
+		/// Sets the last acknowledged action by the server.
+		/// </summary>
+		public void SetLastAcknowledgedAction(uint actionID)
+		{
+			Champion.LastAcknowledgedActionID = actionID;
+		}
+
+		public Queue<PlayerAction> GetActionPackage()
 		{
 			return Champion.GetActionPackage();
 		}

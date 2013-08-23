@@ -35,12 +35,14 @@ namespace GREATServer
 		public NetConnection Connection { get; private set; }
 		public IEntity Champion { get; private set; }
 		public List<PlayerAction> ActionsPackage { get; private set; }
+		public uint LastAcknowledgedActionID { get; set; }
 
         public ServerClient(NetConnection conn, IEntity champion)
         {
 			Connection = conn;
 			Champion = champion;
 			ActionsPackage = new List<PlayerAction>();
+			LastAcknowledgedActionID = IDGenerator.NO_ID;
         }
     }
 }

@@ -28,10 +28,18 @@ namespace GREATLib
 	/// </summary>
     public static class IDGenerator
     {
+		const uint START_ID = 1u;
+		public const uint NO_ID = 0u;
+
 		/// <summary>
 		/// Gets or sets the current ID.
 		/// </summary>
 		static uint CurrentID { get; set; }
+
+		static IDGenerator()
+		{
+			CurrentID = START_ID;
+		}
 
 		/// <summary>
 		/// Generates a unique ID incrementally bigger as time goes on.
@@ -41,7 +49,7 @@ namespace GREATLib
 			try {
 				CurrentID = checked (CurrentID+1); // check for overflow ( http://msdn.microsoft.com/en-us/library/74b4xzyw(v=vs.71).aspx )
 			} catch (OverflowException) {
-				CurrentID = 0u;
+				CurrentID = START_ID;
 			}
 			return CurrentID;
 		}
