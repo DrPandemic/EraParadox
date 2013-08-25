@@ -30,7 +30,12 @@ namespace GREATClient.BaseClass.Input
 		Spell4,
 		Jump,
 		GoLeft,
-		GoRight
+		GoRight,
+		ArrowUp,
+		ArrowDown,
+		ArrowLeft,
+		ArrowRight,
+		Enter
 	}
 
 	public enum KeyState {

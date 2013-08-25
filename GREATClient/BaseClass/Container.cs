@@ -33,6 +33,7 @@ namespace GREATClient.BaseClass
 		/// </summary>
 		/// <value>The content.</value>
 		public ContentManager Content { get; protected set; }
+
 		/// <summary>
 		/// Gets or sets the children of the container.
 		/// </summary>
@@ -70,7 +71,7 @@ namespace GREATClient.BaseClass
 		/// </summary>
 		/// <param name="child">Child.</param>
 		/// <param name="z">The z coordinate.</param>
-		public void AddChild(IDraw child, int z)
+		public virtual void AddChild(IDraw child, int z)
 		{
 			if(child.Parent == null)
 			{
@@ -90,21 +91,24 @@ namespace GREATClient.BaseClass
 				throw new Exception("The IDraw is already in a container");
 		}
 
-		protected override void OnLoad(ContentManager content, GraphicsDevice gd)
+		public override void Load(Container container, GraphicsDevice gd)
 		{
-			Content = content;
+			Parent = container;
+			Content = Parent.Content;
 			foreach (IDraw item in Children) {
 				if (!item.Loaded) {
 					item.Load(this,GetGraphics());
 				}
 			}
+			OnLoad(Parent.Content, gd);
+			Loaded = true;
 		}
 
 		/// <summary>
 		/// Adds the child with a default z-index of 0.
 		/// </summary>
 		/// <param name="child">Child.</param>
-		public void AddChild(IDraw child)
+		public virtual void AddChild(IDraw child)
 		{
 			AddChild(child, 0);
 		}
@@ -115,8 +119,9 @@ namespace GREATClient.BaseClass
 		/// <param name="child">Child.</param>
 		public void RemoveChild(IDraw child)
 		{
-			toRemove.Add(child);
-			child.UnLoad();
+			if (child != null) {
+				toRemove.Add(child);
+			}
 		}
 
 		/// <summary>
@@ -139,7 +144,12 @@ namespace GREATClient.BaseClass
 			Children.ForEach(child => child.Update(dt));
 
 			// We remove the objects that we should
-			toRemove.ForEach(child => Children.Remove(child));
+			toRemove.ForEach((child) => {
+				if (child.Parent != null) {
+					child.UnLoad();
+					Children.Remove(child);
+				}
+			});
 			toRemove.Clear();
 		}
 
@@ -149,7 +159,12 @@ namespace GREATClient.BaseClass
 		/// <param name="batch">The spritebatch, used in the drawing process.</param>
 		protected override void OnDraw(SpriteBatch batch)
 		{
-			Children.ForEach(child => child.Draw(batch));
+			Children.ForEach(child => {
+				if (child.Parent == null) {
+					child.Load(this,GetGraphics());
+				}
+				child.Draw(batch);
+			});
 		}
     }
 }

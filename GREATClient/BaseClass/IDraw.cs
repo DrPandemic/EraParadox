@@ -40,8 +40,12 @@ namespace GREATClient.BaseClass
 				if (m_InputManager != null) {
 					return m_InputManager;
 				} else {
-					m_InputManager = (InputManager)this.GetServices().GetService(typeof(InputManager));
-					return m_InputManager;
+					if (Parent != null || Game != null) {
+						m_InputManager = (InputManager)this.GetServices().GetService(typeof(InputManager));
+						return m_InputManager;
+					} else {
+						return null;
+					}
 				}
 			}
 		}
@@ -64,7 +68,7 @@ namespace GREATClient.BaseClass
 		/// Gets the parent of the object.
 		/// </summary>
 		/// <value>The parent.</value>
-		public Container Parent { get; private set; }
+		public Container Parent { get; protected set; }
 
 		/// <summary>
 		/// Gets or sets the z-index within the parent's container.
@@ -154,7 +158,7 @@ namespace GREATClient.BaseClass
 		/// </summary>
 		/// <param name="container">Its container.</param>
 		/// <param name="content">The content manager, used to draw.</param>
-		public void Load(Container container, GraphicsDevice gd)
+		public virtual void Load(Container container, GraphicsDevice gd)
 		{
 			Parent = container;
 			OnLoad(Parent.Content, gd);
@@ -190,8 +194,9 @@ namespace GREATClient.BaseClass
 		/// <param name="batch">Batch.</param>
 		public virtual void Draw(SpriteBatch batch)
 		{
-			if(Visible)
+			if(Visible) {
 				OnDraw(batch);
+			}
 		}
 
 		/// <summary>

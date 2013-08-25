@@ -3,6 +3,11 @@
         <input action="Jump" key="W" state="Released" deadKey="Control" />
         <input action="GoRight" key="D" state="Released" />
         <input action="GoLeft" key="A" state="Released" />
+        <input action="ArrowUp" key="Up" state="Released" />
+        <input action="ArrowDown" key="Down" state="Released" />
+        <input action="ArrowLeft" key="Left" state="Released" />
+        <input action="ArrowRight" key="Right" state="Released" />
+        <input action="Enter" key="Enter" state="Released" />
     </keyboardInputs>
     <MouseInputs>
         <input action="Spell1" key="Left" state="Released" />

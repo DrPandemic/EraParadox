@@ -34,6 +34,7 @@ using GREATClient.GameContent;
 using GREATClient.Display;
 using GREATClient.BaseClass.Input;
 using GREATClient.BaseClass.BaseAction;
+using GREATClient.BaseClass.Menu;
 
 namespace GREATClient.Test
 {
@@ -85,9 +86,27 @@ namespace GREATClient.Test
 
 			AddChild(new PingCounter(yo));
 
-			inputManager.RegisterEvent(InputActions.Spell3, new EventHandler(Jump));
+			inputManager.RegisterEvent(InputActions.Jump, new EventHandler(Jump));
 			inputManager.RegisterEvent(InputActions.Spell4, new EventHandler(Jump2));
 
+			MenuItem i1 = new MenuItem(new DrawableCircleContour(8)) {
+				StateSelected = new DrawableCircleContour(5)
+			};
+
+			MenuItem i2 = new MenuItem(new DrawableCircleContour(8)) {
+				StateSelected = new DrawableCircleContour(5)
+			};
+
+			MenuItem i3 = new MenuItem(new DrawableCircleContour(8)) {
+				StateSelected = new DrawableCircleContour(5)
+			};
+
+			Menu me = new Menu(i1, i2, i3);
+			me.AllowKeyboard = true;
+			me.Position = new Vector2(100f, 100f);
+			me.AlignItemsVertically(40f);
+
+			AddChild(me);
 		}
 
 

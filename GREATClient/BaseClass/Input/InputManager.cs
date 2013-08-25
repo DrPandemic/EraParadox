@@ -267,8 +267,19 @@ namespace GREATClient.BaseClass.Input
 		/// <param name="callback">Callback.</param>
 		public void RegisterEvent(InputActions action, EventHandler callback)
 		{
-			InputEvents.Add(action,null);
+			if (!InputEvents.ContainsKey(action)) {
+				InputEvents.Add(action,null);
+			}
 			InputEvents[action] += callback;
+		}
+
+		/// <summary>
+		/// Remove all events for a given action.
+		/// </summary>
+		/// <param name="action">Action.</param>
+		public void RemoveAction(InputActions action)
+		{
+			InputEvents.Remove(action);
 		}
 
 		/// <summary>
@@ -294,6 +305,9 @@ namespace GREATClient.BaseClass.Input
 			bool shiftDown = keyboardState.IsKeyDown(Keys.LeftShift) || keyboardState.IsKeyDown(Keys.RightShift);
 			bool controlDown = keyboardState.IsKeyDown(Keys.LeftControl) || keyboardState.IsKeyDown(Keys.LeftControl);
 
+			if (deadKey == DeadKeys.None) {
+				return true;
+			}
 			// Makes sure there is only one dead key pressed.
 			if (altDown ? (!shiftDown && !controlDown) : (shiftDown ^ controlDown)) {
 				switch (deadKey) {

@@ -47,8 +47,10 @@ namespace GREATClient.BaseClass
 		/// <param name="y">The y coordinate.</param>
 		public void SetCurrentRatio(float x, float y)
 		{
-			Children.ForEach((Drawable item) => item.Position = new Vector2((WorldSize.X - item.Texture.Width) * x,
-			                                                                (WorldSize.Y - item.Texture.Height) * y));
+			Children.ForEach((IDraw item) => {
+				item.Position = new Vector2((WorldSize.X - ((Drawable)item).Texture.Width) * x,
+				                            (WorldSize.Y - ((Drawable)item).Texture.Height) * y);
+			});
 		}
     }
 }

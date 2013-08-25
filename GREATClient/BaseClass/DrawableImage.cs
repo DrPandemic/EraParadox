@@ -74,8 +74,9 @@ namespace GREATClient.BaseClass
 		/// <param name="content">Content.</param>
 		protected override void OnLoad(ContentManager content, GraphicsDevice gd)
 		{
-			if(content != null && gd != null)
+			if (content != null && gd != null) {
 				Texture = content.Load<Texture2D>(FileName);
+			}
 		}
 
 		/// <summary>

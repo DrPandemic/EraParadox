@@ -60,7 +60,7 @@ namespace GREATClient.BaseClass.BaseAction
 		/// Won't repeat the actions.
 		/// </summary>
 		/// <param name="actions">Actions.</param>
-		public ActionSequence(params ActionOverTime[] actions) : base(new TimeSpan(0,0,0))
+		public ActionSequence(params ActionOverTime[] actions) : base(new TimeSpan(0))
         {
 			Updatable = false;
 			CurrentAction = 0;
@@ -76,7 +76,7 @@ namespace GREATClient.BaseClass.BaseAction
 		/// </summary>
 		/// <param name="repeat">Repeat count.</param>
 		/// <param name="actions">Actions.</param>
-		public ActionSequence(int repeat, params ActionOverTime[] actions) : base(new TimeSpan(0,0,0))
+		public ActionSequence(int repeat, params ActionOverTime[] actions) : base(new TimeSpan(0))
 		{
 			Updatable = false;
 			CurrentAction = 0;

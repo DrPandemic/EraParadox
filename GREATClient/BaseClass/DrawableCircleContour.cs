@@ -27,12 +27,17 @@ namespace GREATClient.BaseClass
 {
     public class DrawableCircleContour : Drawable
     {
-
+		/// <summary>
+		/// Gets or sets the radius.
+		/// </summary>
+		/// <value>The radius.</value>
 		private int Radius { get; set; }
+
 		public DrawableCircleContour(int radius)
         {
 			Radius = radius;
         }
+
 		public Texture2D CreateCircle(int radius, GraphicsDevice gd)
 		{
 			int outerRadius = radius*2 + 2; // So circle doesn't go out of bounds
@@ -59,10 +64,12 @@ namespace GREATClient.BaseClass
 			texture.SetData(data);
 			return texture;
 		}
-		protected override void OnLoad(ContentManager content, GraphicsDevice gd) {
-			Texture = CreateCircle(Radius,gd);
 
+		protected override void OnLoad(ContentManager content, GraphicsDevice gd)
+		{
+			Texture = CreateCircle(Radius,gd);
 		}
+
 		protected override void OnDraw(SpriteBatch batch)
 		{
 			batch.Begin();

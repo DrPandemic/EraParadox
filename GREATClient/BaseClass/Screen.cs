@@ -131,7 +131,12 @@ namespace GREATClient.BaseClass
 		/// </summary>
 		public virtual void Draw()
 		{
-			Children.ForEach(child => child.Draw(spriteBatch));
+			Children.ForEach(child => {
+				if (child.Parent == null) {
+					child.Load(this,GetGraphics());
+				}
+				child.Draw(spriteBatch);
+			});
 		}
 
 		protected override void OnUpdate(GameTime dt)

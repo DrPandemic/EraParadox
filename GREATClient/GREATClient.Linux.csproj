@@ -86,6 +86,8 @@
     <Compile Include="BaseClass\BaseAction\ActionFadeBy.cs" />
     <Compile Include="BaseClass\BaseAction\ActionFadeTo.cs" />
     <Compile Include="BaseClass\Parallax.cs" />
+    <Compile Include="BaseClass\Menu\Menu.cs" />
+    <Compile Include="BaseClass\Menu\MenuItem.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />
@@ -103,6 +105,7 @@
     <Folder Include="Display\" />
     <Folder Include="BaseClass\Input\" />
     <Folder Include="BaseClass\BaseAction\" />
+    <Folder Include="BaseClass\Menu\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
