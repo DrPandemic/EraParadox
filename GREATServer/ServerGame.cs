@@ -34,6 +34,8 @@ namespace GREATServer
 	/// </summary>
     public class ServerGame
     {
+		const bool CORRECTIONS_ENABLED = false;
+
 		static readonly TimeSpan UPDATE_INTERVAL = TimeSpan.FromMilliseconds(15.0);
 		static readonly TimeSpan CORRECTION_INTERVAL = TimeSpan.FromMilliseconds(UPDATE_INTERVAL.TotalMilliseconds * 2.0);
 
@@ -46,6 +48,9 @@ namespace GREATServer
 
 		GameMatch Match { get; set; }
 
+		/// <summary>
+		/// Time since the last state update (position corrections) was sent.
+		/// </summary>
 		double TimeSinceLastCorrection { get; set; }
 
 
@@ -90,7 +95,9 @@ namespace GREATServer
 
 			// 3. Send corrections. We regularly send the state changes of the entities to
 			// other clients.
-			SendCorrections();
+			if (CORRECTIONS_ENABLED) {
+				SendCorrections();
+			}
 		}
 
 		/// <summary>
