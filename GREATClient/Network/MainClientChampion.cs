@@ -78,7 +78,7 @@ namespace GREATClient.Network
 		public void Update(GameTime deltaTime)
 		{
 			// client-side prediction
-			Match.ApplyPhysicsUpdate(ID, deltaTime.ElapsedGameTime.TotalSeconds);
+			Match.CurrentState.ApplyPhysicsUpdate(ID, deltaTime.ElapsedGameTime.TotalSeconds);
 
 			DrawnPosition = Position;
 
@@ -112,7 +112,7 @@ namespace GREATClient.Network
 				Debug.Assert(deltaTime >= 0f);
 
 				if (deltaTime > 0f) { // we don't want to do a physics update if we're on the same frame (dt==0)
-					Match.ApplyPhysicsUpdate(ID, deltaTime);
+					Match.CurrentState.ApplyPhysicsUpdate(ID, deltaTime);
 				}
 			}
 		}
@@ -129,15 +129,15 @@ namespace GREATClient.Network
 		{
 			switch (type) {
 				case PlayerActionType.MoveLeft: 
-					Match.Move(ID, HorizontalDirection.Left);
+					Match.CurrentState.Move(ID, HorizontalDirection.Left);
 					break;
 
 					case PlayerActionType.MoveRight:
-					Match.Move(ID, HorizontalDirection.Right);
+					Match.CurrentState.Move(ID, HorizontalDirection.Right);
 					break;
 
 					case PlayerActionType.Jump:
-					Match.Jump(ID);
+					Match.CurrentState.Jump(ID);
 					break;
 
 					default:

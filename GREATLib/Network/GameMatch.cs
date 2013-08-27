@@ -40,90 +40,20 @@ namespace GREATLib.Network
 		public static readonly TimeSpan STATE_UPDATE_INTERVAL = TimeSpan.FromMilliseconds(50.0);
 
 		public GameWorld World { get; private set; }
+		public MatchState CurrentState { get; set; }
 
 		PhysicsEngine Physics { get; set; }
-		Dictionary<uint, IEntity> Entities { get; set; }
+
 
         public GameMatch()
         {
 			World = new GameWorld();
 			Physics = new PhysicsEngine(World);
-
-			Entities = new Dictionary<uint, IEntity>();
+			CurrentState = new MatchState(Physics);
         }
 
 		public void Update(double deltaSeconds)
 		{
-		}
-
-		/// <summary>
-		/// Adds a new entity to the game match.
-		/// </summary>
-		/// <param name="entity">Entity.</param>
-		public void AddEntity(IEntity entity)
-		{
-			Debug.Assert(entity != null);
-			Debug.Assert(!Entities.ContainsKey(entity.ID));
-
-			if (!Entities.ContainsKey(entity.ID)) {
-				Entities.Add(entity.ID, entity);
-			}
-		}
-
-		/// <summary>
-		/// Returns whether the game contains an entity with the given ID or not.
-		/// </summary>
-		public bool ContainsEntity(uint id)
-		{
-			return Entities.ContainsKey(id);
-		}
-
-		/// <summary>
-		/// Gets the entity with the specified ID.
-		/// </summary>
-		public IEntity GetEntity(uint id)
-		{
-			Debug.Assert(ContainsEntity(id));
-
-			return Entities[id];
-		}
-
-		/// <summary>
-		/// Applies one physics update to an entity (with the given ID) if it should (the physics
-		/// engine only updates at a certain rate).
-		/// </summary>
-		public void ApplyPhysicsUpdate(uint id, double deltaSeconds)
-		{
-			Debug.Assert(deltaSeconds > 0.0);
-			Debug.Assert(Entities.ContainsKey(id));
-
-			if (Entities.ContainsKey(id)) {
-				Physics.Update(deltaSeconds, Entities[id]);
-			}
-		}
-
-		/// <summary>
-		/// Moves the specified entity (given its ID) in the specified direction.
-		/// </summary>
-		public void Move(uint id, HorizontalDirection direction)
-		{
-			Debug.Assert(Entities.ContainsKey(id));
-
-			if (Entities.ContainsKey(id)) {
-				Physics.Move(Entities[id], direction);
-			}
-		}
-
-		/// <summary>
-		/// Makes the specified entity (given its ID) jump.
-		/// </summary>
-		public void Jump(uint id)
-		{
-			Debug.Assert(Entities.ContainsKey(id));
-
-			if (Entities.ContainsKey(id)) {
-				Physics.Jump(Entities[id]);
-			}
 		}
     }
 }

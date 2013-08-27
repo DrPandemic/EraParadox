@@ -37,6 +37,7 @@
     <Compile Include="RectTest.cs" />
     <Compile Include="PhysicsTest.cs" />
     <Compile Include="IEntityTest.cs" />
+    <Compile Include="MatchTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

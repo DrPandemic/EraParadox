@@ -87,14 +87,14 @@ namespace GREATClient.Screens
 		void OnStateUpdate(object sender, StateUpdateEventArgs e)
 		{
 			Debug.Assert(sender != null && e != null);
-			Debug.Assert(e.EntitiesUpdatedState.TrueForAll(state => Match.ContainsEntity(state.ID)));
+			Debug.Assert(e.EntitiesUpdatedState.TrueForAll(state => Match.CurrentState.ContainsEntity(state.ID)));
 
 			OurChampion.SetLastAcknowledgedAction(e.LastAcknowledgedActionID);
 
 			foreach (StateUpdateData state in e.EntitiesUpdatedState) {
 				ILogger.Log(
 					String.Format("NEW STATE: id={0}, pos={1}, onground={2}", state.ID, state.Position, state.IsOnGround));
-				IEntity entity = Match.GetEntity(state.ID);
+				IEntity entity = Match.CurrentState.GetEntity(state.ID);
 				entity.IsOnGround = state.IsOnGround;
 				entity.Velocity = state.Velocity;
 				entity.AuthoritativeChangePosition(state.Position);
@@ -113,7 +113,7 @@ namespace GREATClient.Screens
 
 			AddChild(champion);
 
-			Match.AddEntity(champion.Entity);
+			Match.CurrentState.AddEntity(champion.Entity);
 
 			if (e.IsOurID) {
 				OurChampion = champion;

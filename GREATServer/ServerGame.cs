@@ -158,13 +158,13 @@ namespace GREATServer
 		{
 			switch (action.Type) {
 				case PlayerActionType.MoveLeft:
-					Match.Move(champion.ID, HorizontalDirection.Left);
+					Match.CurrentState.Move(champion.ID, HorizontalDirection.Left);
 					break;
 				case PlayerActionType.MoveRight:
-					Match.Move(champion.ID, HorizontalDirection.Right);
+					Match.CurrentState.Move(champion.ID, HorizontalDirection.Right);
 					break;
 				case PlayerActionType.Jump:
-					Match.Jump(champion.ID);
+					Match.CurrentState.Jump(champion.ID);
 					break;
 				default:
 					Debug.Fail("Invalid player action.");
@@ -180,7 +180,7 @@ namespace GREATServer
 		void UpdateLogic()
 		{
 			foreach (ServerClient client in Clients.Values) {
-				Match.ApplyPhysicsUpdate(client.Champion.ID, UPDATE_INTERVAL.TotalSeconds);
+				Match.CurrentState.ApplyPhysicsUpdate(client.Champion.ID, UPDATE_INTERVAL.TotalSeconds);
 
 				//TODO: remove, used for testing purposes
 				ILogger.Log(client.Champion.Position.ToString());
@@ -199,7 +199,7 @@ namespace GREATServer
 			ServerClient client = new ServerClient(connection, champion);
 			Clients.Add(connection, client);
 
-			Match.AddEntity(champion);
+			Match.CurrentState.AddEntity(champion);
 
 			// Send to the client that asked to join
 			SendCommand(connection,
