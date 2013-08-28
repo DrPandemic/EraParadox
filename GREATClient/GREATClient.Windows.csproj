@@ -88,6 +88,7 @@
     <Compile Include="BaseClass\Parallax.cs" />
     <Compile Include="BaseClass\Menu\Menu.cs" />
     <Compile Include="BaseClass\Menu\MenuItem.cs" />
+    <Compile Include="Test\TestMenu.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />

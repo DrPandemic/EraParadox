@@ -60,6 +60,22 @@ namespace GREATClient.BaseClass.Menu
 		}
 
 		/// <summary>
+		/// Gets or sets a value indicating whether this <see cref="GREATClient.BaseClass.Menu.MenuItem"/> is clickable.
+		/// </summary>
+		/// <value><c>true</c> if clickable; otherwise, <c>false</c>.</value>
+		bool m_Clickable = true;
+		public bool Clickable 
+		{ 
+			get {
+				return m_Clickable;
+			}
+			set {
+				m_Clickable = value;
+				ItemList.ForEach((item) => item.Clickable = value);
+			}
+		}
+
+		/// <summary>
 		/// Gets a value indicating whether the items were aligned vertically.
 		/// </summary>
 		/// <value><c>true</c> if this instance is vertically aligned; otherwise, <c>false</c>.</value>

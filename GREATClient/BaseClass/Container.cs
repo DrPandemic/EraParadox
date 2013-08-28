@@ -163,7 +163,9 @@ namespace GREATClient.BaseClass
 				if (child.Parent == null) {
 					child.Load(this,GetGraphics());
 				}
-				child.Draw(batch);
+				if (Visible) {					
+					child.Draw(batch);
+				}
 			});
 		}
 

@@ -8,6 +8,7 @@
         <input action="ArrowLeft" key="Left" state="Released" />
         <input action="ArrowRight" key="Right" state="Released" />
         <input action="Enter" key="Enter" state="Released" />
+        <input action="Escape" key="Escape" state="Released" />
     </keyboardInputs>
     <MouseInputs>
         <input action="Spell1" key="Left" state="Released" />
@@ -15,6 +16,7 @@
         <input action="Spell3" key="Left" state="Released" deadKey="Shift"/>
         <input action="Spell4" key="Right" state="Released" deadKey="Shift"/>
         <input action="LeftClick" key="Left" state="Released" />
+        <input action="LeftClicking" key="Left" state="Pressed" />
         <input action="RightClick" key="Right" state="Released" />
     </MouseInputs>
 </inputCollection>

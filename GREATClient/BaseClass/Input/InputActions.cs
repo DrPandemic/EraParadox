@@ -37,7 +37,9 @@ namespace GREATClient.BaseClass.Input
 		ArrowRight,
 		Enter,
 		LeftClick,
-		RightClick
+		RightClick,
+		LeftClicking,
+		Escape
 	}
 
 	public enum KeyState {

@@ -21,6 +21,7 @@
 using System;
 using GREATClient.BaseClass.Input;
 using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace GREATClient.BaseClass.Menu
 {
@@ -40,10 +41,10 @@ namespace GREATClient.BaseClass.Menu
 		public IDraw StateSelected { get; set; }
 
 		/// <summary>
-		/// Gets or sets the clicked state.
+		/// Gets or sets the clicking state.
 		/// </summary>
-		/// <value>The state clicked.</value>
-		public IDraw StateClicked { get; set; }
+		/// <value>The clicking state.</value>
+		public IDraw StateClicking { get; set; }
 
 		/// <summary>
 		/// Gets or sets the hover state.
@@ -58,10 +59,16 @@ namespace GREATClient.BaseClass.Menu
 		protected IDraw CurrentState { get; set; }
 
 		/// <summary>
-		/// Gets or sets the event handler for the click.
+		/// Gets or sets the left clicked event.
 		/// </summary>
-		/// <value>Something clicked.</value>
-		EventHandler SomethingClickedEvent { get; set; }
+		/// <value>The left clicked event.</value>
+		EventHandler LeftClickedEvent { get; set; }
+
+		/// <summary>
+		/// Gets or sets the left clicking event.
+		/// </summary>
+		/// <value>The left clicking event.</value>
+		EventHandler LeftClickingEvent { get; set; }
 
 		/// <summary>
 		/// Gets or sets the click action.
@@ -83,26 +90,35 @@ namespace GREATClient.BaseClass.Menu
 		/// <value><c>true</c> if clickable; otherwise, <c>false</c>.</value>
 		public bool Clickable { get; set; }
 
-		// TODO : hover, clicked
+		// TODO : hover, clicking
         public MenuItem(IDraw stateNormal)
         {
 			ClickAction = null;
-			SomethingClickedEvent = null;
+			LeftClickedEvent = null;
+			LeftClickingEvent = null;
 			Clickable = true;
 			StateNormal = stateNormal;
+			StateHover = null;
+			StateClicking = null;
+			StateSelected = null;
 			Normal();
         }
 
-		protected override void OnLoad(ContentManager content, Microsoft.Xna.Framework.Graphics.GraphicsDevice gd)
+		protected override void OnLoad(ContentManager content, GraphicsDevice gd)
 		{
-			SomethingClickedEvent = new EventHandler(SomethingWasClick);
-			inputManager.RegisterEvent(InputActions.LeftClick, SomethingClickedEvent);
+			LeftClickedEvent = new EventHandler(LeftReleased);
+			LeftClickingEvent = new EventHandler(LeftPressed);
+			inputManager.RegisterEvent(InputActions.LeftClick, LeftClickedEvent);
+			inputManager.RegisterEvent(InputActions.LeftClicking, LeftClickingEvent);
 		}
 
 		protected override void OnUnload()
 		{
-			if (SomethingClickedEvent != null) {				
-				inputManager.RemoveAction(InputActions.LeftClick,SomethingClickedEvent);
+			if (LeftClickedEvent != null) {				
+				inputManager.RemoveAction(InputActions.LeftClick,LeftClickedEvent);
+			}
+			if (LeftClickingEvent != null) {				
+				inputManager.RemoveAction(InputActions.LeftClicking,LeftClickingEvent);
 			}
 		}
 
@@ -129,21 +145,41 @@ namespace GREATClient.BaseClass.Menu
 		}
 
 		/// <summary>
+		/// Change the display to the StateClicking.
+		/// </summary>
+		protected void Clicking()
+		{
+			if (CurrentState != StateClicking) {
+				if (StateClicking != null) {
+					SetState(StateClicking);
+				} else {
+					SetState(StateSelected);
+				}
+			}
+		}
+
+		/// <summary>
 		/// Sets the state.
 		/// Change for the good IDraw.
 		/// </summary>
 		/// <param name="state">State.</param>
 		protected void SetState(IDraw state)
 		{
-			if (state != null) {
-				RemoveChild(CurrentState);
-				AddChild(state);
-			} else if (CurrentState != StateNormal) {
-				RemoveChild(CurrentState);
-				AddChild(StateNormal);
+			if (CurrentState != state) {
+				if (state != null) {
+					RemoveChild(CurrentState);
+					if (state.Parent == null) {
+						AddChild(state);
+					}
+					CurrentState = state;
+				} else if (CurrentState != StateNormal) {
+					RemoveChild(CurrentState);
+					if (StateNormal.Parent == null) {
+						AddChild(StateNormal);
+					}
+					CurrentState = StateNormal;
+				}
 			}
-
-			CurrentState = state;
 		}
 
 		/// <summary>
@@ -172,12 +208,23 @@ namespace GREATClient.BaseClass.Menu
 		/// </summary>
 		/// <param name="sender">Sender.</param>
 		/// <param name="e">E.</param>
-		public void SomethingWasClick(object sender, EventArgs e)
+		public void LeftReleased(object sender, EventArgs e)
+		{
+			InputEventArgs ev = (InputEventArgs)e;
+			if (Clickable && !ev.Handled) {
+				Normal();
+				if (CurrentState.IsBehind(ev.MousePosition)) {
+					Click();
+				}
+			}
+		}
+
+		public void LeftPressed(object sender, EventArgs e)
 		{
 			InputEventArgs ev = (InputEventArgs)e;
 			if (Clickable && !ev.Handled) {
 				if (CurrentState.IsBehind(ev.MousePosition)) {
-					Click();
+					Clicking();
 				}
 			}
 		}

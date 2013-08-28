@@ -56,8 +56,10 @@ namespace GREATClient.Test
         }
 		protected override void OnLoadContent()
 		{
+			AddChild(new TestMenu() {Position = new Vector2(200,100)});
+
 			champSprite = new DrawableChampionSprite(new StickmanChampion() { Position = new Vec2(200f, 100f) }, ChampionsInfo) 
-			{ Position = new Vector2(200f, 100f) };
+			{ Position = new Vector2(200f, 300f) };
 
 			AddChild(champSprite);
 
@@ -89,25 +91,6 @@ namespace GREATClient.Test
 			//inputManager.RegisterEvent(InputActions.Spell1, new EventHandler(Jump));
 			//inputManager.RegisterEvent(InputActions.Jump, new EventHandler(Jump2));
 
-			MenuItem i1 = new MenuItem(new DrawableLabel() {Text = "EP"}) {
-				StateSelected = new DrawableLabel() {Text = "OP"},
-				ClickAction = () => System.Console.WriteLine("a")
-			};
-
-			MenuItem i2 = new MenuItem(new DrawableCircleContour(8)) {
-				StateSelected = new DrawableCircleContour(5)
-			};
-
-			MenuItem i3 = new MenuItem(new DrawableCircleContour(8)) {
-				StateSelected = new DrawableCircleContour(5)
-			};
-
-			Menu me = new Menu(i1, i2, i3);
-			me.AllowKeyboard = true;
-			me.Position = new Vector2(100f, 100f);
-			me.AlignItemsHorizontally(40f);
-
-			AddChild(me);
 		}
 
 		/// <summary>
@@ -149,7 +132,7 @@ namespace GREATClient.Test
 			KeyboardState ks = Keyboard.GetState();
 			MouseState ms = Mouse.GetState();
 
-			if (ks.IsKeyDown(Keys.Escape))
+			if (ks.IsKeyDown(Keys.Escape) && ks.IsKeyDown(Keys.LeftControl))
 				Exit = true;
 
 			if (ks.IsKeyDown(Keys.E)) { champSprite.PlayAnimation(AnimationInfo.JUMP);}
@@ -157,10 +140,6 @@ namespace GREATClient.Test
 
 			oldks = ks;
 			oldms = ms;
-			if (inputManager.IsActionFired(InputActions.GoRight))
-			{
-				int a = 1;
-			}
 
 			base.OnUpdate(dt);
 		}
