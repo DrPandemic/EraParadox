@@ -38,6 +38,7 @@ namespace GREATClient.BaseClass.Menu
 
 		/// <summary>
 		/// Gets or sets a value indicating whether this <see cref="GREATClient.BaseClass.Menu.Menu"/> Enter key was registered.
+		/// Used to not register enter twice.
 		/// </summary>
 		/// <value><c>true</c> if enter registered; otherwise, <c>false</c>.</value>
 		bool EnterRegistered { get; set; }
@@ -82,8 +83,30 @@ namespace GREATClient.BaseClass.Menu
 		/// <value>The old selected item.</value>
 		protected int OldSelectedItem { get; set; }
 
+		/// <summary>
+		/// Called when an item is selected.
+		/// Can be use to change menu focus.
+		/// </summary>
+		/// <value>An item selected.</value>
+		public Action<Menu> AnItemSelected { get; set; }
+
+		// Event handlers for the arrows.
+		EventHandler UpEvent { get; set; }
+		EventHandler DownEvent { get; set; }
+		EventHandler LeftEvent { get; set; }
+		EventHandler RightEvent { get; set; }
+		EventHandler EnterEvent { get; set; }
+
 		public Menu(params MenuItem[] items)
         {
+			UpEvent = new EventHandler(PreviousSelection);
+			DownEvent = new EventHandler(NextSelection);
+			LeftEvent = new EventHandler(PreviousSelection);
+			RightEvent = new EventHandler(NextSelection);
+			EnterEvent = new EventHandler(ChooseSelectedItem);
+
+			AnItemSelected = null;
+
 			EnterRegistered = false;
 			SelectedItem = -1;
 			OldSelectedItem = -1;
@@ -91,8 +114,14 @@ namespace GREATClient.BaseClass.Menu
 			IsHorizontal = false;
 
 			ItemList = items.OfType<MenuItem>().ToList();
-			ItemList.ForEach((MenuItem item) => AddChild(item));
+			ItemList.ForEach((MenuItem item) => AddItem(item));
         }
+
+		void AddItem (MenuItem item)
+		{
+			AddChild(item);
+			item.ClickActionForMenu = (MenuItem menuItem) => ((Menu)menuItem.Parent).AnItemWasClick();
+		}
 
 		/// <summary>
 		/// Aligns the items vertically.
@@ -146,28 +175,28 @@ namespace GREATClient.BaseClass.Menu
 				if (!EnterRegistered) {
 					inputManager.RegisterEvent(InputActions.Enter, new EventHandler(ChooseSelectedItem));
 				}
-				inputManager.RemoveAction(InputActions.ArrowUp);
-				inputManager.RemoveAction(InputActions.ArrowDown);
-				inputManager.RemoveAction(InputActions.ArrowLeft);
-				inputManager.RemoveAction(InputActions.ArrowRight);
+				inputManager.RemoveAction(InputActions.ArrowUp, UpEvent);
+				inputManager.RemoveAction(InputActions.ArrowDown, DownEvent);
+				inputManager.RemoveAction(InputActions.ArrowLeft, LeftEvent);
+				inputManager.RemoveAction(InputActions.ArrowRight, RightEvent);
 
 				if (IsVertical) {
-					inputManager.RegisterEvent(InputActions.ArrowUp, new EventHandler(PreviousSelection));
-					inputManager.RegisterEvent(InputActions.ArrowDown, new EventHandler(NextSelection));
+					inputManager.RegisterEvent(InputActions.ArrowUp, UpEvent);
+					inputManager.RegisterEvent(InputActions.ArrowDown, DownEvent);
 				} else if (IsHorizontal) {
-					inputManager.RegisterEvent(InputActions.ArrowLeft, new EventHandler(PreviousSelection));
-					inputManager.RegisterEvent(InputActions.ArrowRight, new EventHandler(NextSelection));
+					inputManager.RegisterEvent(InputActions.ArrowLeft, LeftEvent);
+					inputManager.RegisterEvent(InputActions.ArrowRight, RightEvent);
 				}
 			}
 		}
 
 		protected override void OnUnload()
 		{
-			inputManager.RemoveAction(InputActions.ArrowUp);
-			inputManager.RemoveAction(InputActions.ArrowDown);
-			inputManager.RemoveAction(InputActions.ArrowLeft);
-			inputManager.RemoveAction(InputActions.ArrowRight);
-			inputManager.RemoveAction(InputActions.Enter);
+			inputManager.RemoveAction(InputActions.ArrowUp, UpEvent);
+			inputManager.RemoveAction(InputActions.ArrowDown, DownEvent);
+			inputManager.RemoveAction(InputActions.ArrowLeft, LeftEvent);
+			inputManager.RemoveAction(InputActions.ArrowRight, RightEvent);
+			inputManager.RemoveAction(InputActions.Enter, EnterEvent);
 		}
 
 		/// <summary>
@@ -223,6 +252,27 @@ namespace GREATClient.BaseClass.Menu
 			if (SelectedItem >= 0) {
 				ItemList[SelectedItem].Click();
 			}
+		}
+
+		/// <summary>
+		/// An item was click.
+		/// Called by MenuItem.
+		/// </summary>
+		public void AnItemWasClick()
+		{
+			UnselectItem();
+			if (AnItemSelected != null) {
+				AnItemSelected(this);
+			}
+		}
+
+		/// <summary>
+		/// Unselects the item.
+		/// </summary>
+		public void UnselectItem()
+		{
+			SelectedItem = -1;
+			SelecteGivenItem(null, null);
 		}
     }
 }

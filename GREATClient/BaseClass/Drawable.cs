@@ -124,6 +124,11 @@ namespace GREATClient.BaseClass
 
 			base.Draw(batch);
 		}
+
+		public override bool IsBehind(Vector2 position)
+		{
+			return false;
+		}
     }
 }
 

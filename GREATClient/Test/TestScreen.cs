@@ -86,11 +86,12 @@ namespace GREATClient.Test
 
 			AddChild(new PingCounter(yo));
 
-			inputManager.RegisterEvent(InputActions.Jump, new EventHandler(Jump));
-			inputManager.RegisterEvent(InputActions.Spell4, new EventHandler(Jump2));
+			//inputManager.RegisterEvent(InputActions.Spell1, new EventHandler(Jump));
+			//inputManager.RegisterEvent(InputActions.Jump, new EventHandler(Jump2));
 
-			MenuItem i1 = new MenuItem(new DrawableCircleContour(8)) {
-				StateSelected = new DrawableCircleContour(5)
+			MenuItem i1 = new MenuItem(new DrawableLabel() {Text = "EP"}) {
+				StateSelected = new DrawableLabel() {Text = "OP"},
+				ClickAction = () => System.Console.WriteLine("a")
 			};
 
 			MenuItem i2 = new MenuItem(new DrawableCircleContour(8)) {
@@ -104,11 +105,10 @@ namespace GREATClient.Test
 			Menu me = new Menu(i1, i2, i3);
 			me.AllowKeyboard = true;
 			me.Position = new Vector2(100f, 100f);
-			me.AlignItemsVertically(40f);
+			me.AlignItemsHorizontally(40f);
 
 			AddChild(me);
 		}
-
 
 		/// <summary>
 		/// Boobies reference
@@ -120,21 +120,27 @@ namespace GREATClient.Test
 
 		private void Jump(object sender, EventArgs e)
 		{
-			champSprite.StopAllActions();
-			champSprite.PerformAction(new ActionMoveBy(new TimeSpan(0,0,2), (arg1, arg2) => {
-				float a = -0.005f;
-				float b = arg1.Y;
-				int xAddition = 200;
-				float x = (xAddition * arg2) + arg1.X; 
-				float y = (float)(a * Math.Pow(xAddition * arg2 ,2d) + b);
-				System.Console.WriteLine(arg2);
-				return new Vector2(x, y);
-			}));
+			if (!((InputEventArgs)e).Handled) {
+				champSprite.StopAllActions();
+				champSprite.PerformAction(new ActionMoveBy(new TimeSpan(0,0,2), (arg1, arg2) => {
+					float a = -0.005f;
+					float b = arg1.Y;
+					int xAddition = 200;
+					float x = (xAddition * arg2) + arg1.X; 
+					float y = (float)(a * Math.Pow(xAddition * arg2 ,2d) + b);
+					System.Console.WriteLine(arg2);
+					return new Vector2(x, y);
+				}));
+				((InputEventArgs)e).Handled = true;
+			}
 		}
 
 		private void Jump2(object sender, EventArgs e)
 		{
-			champSprite.PerformAction(new ActionFadeBy(new TimeSpan(0,0,3),-0.5f));
+			if (!((InputEventArgs)e).Handled) {
+				champSprite.PerformAction(new ActionFadeBy(new TimeSpan(0,0,3),-0.5f));
+				((InputEventArgs)e).Handled = true;
+			}
 		}
 
 		protected override void OnUpdate(GameTime dt)

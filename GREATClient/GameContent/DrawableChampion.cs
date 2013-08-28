@@ -205,5 +205,14 @@ namespace GREATClient.GameContent
 		{
 			PositionSnapshots.Add(new KeyValuePair<double, Vec2>(totalGameSeconds, position));
 		}
+
+		public override bool IsBehind(Vector2 position)
+		{
+			if (Idle.Visible) {
+				return Idle.IsBehind(position);
+			} else {
+				return Run.IsBehind(position);
+			}
+		}
     }
 }

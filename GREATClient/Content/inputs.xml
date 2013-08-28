@@ -14,5 +14,7 @@
         <input action="Spell2" key="Right" state="Released" />
         <input action="Spell3" key="Left" state="Released" deadKey="Shift"/>
         <input action="Spell4" key="Right" state="Released" deadKey="Shift"/>
+        <input action="LeftClick" key="Left" state="Released" />
+        <input action="RightClick" key="Right" state="Released" />
     </MouseInputs>
 </inputCollection>

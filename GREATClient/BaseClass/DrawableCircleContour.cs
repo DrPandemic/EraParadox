@@ -76,7 +76,14 @@ namespace GREATClient.BaseClass
 			batch.Draw(Texture,GetAbsolutePosition(),SourceRectangle,Tint,(float)Orientation,
 			           RelativeOrigin * new Vector2(Texture.Width, Texture.Height),Scale,Effects,0);
 			batch.End();
+		}
 
+		public override bool IsBehind(Vector2 position)
+		{
+			Vector2 realPos = (GetAbsolutePosition() - RelativeOrigin * new Vector2(Texture.Width, Texture.Height)) 
+				+ (new Vector2(Texture.Width, Texture.Height) * new Vector2(0.5f, 0.5f));
+			return (position.X >= realPos.X - Radius && position.X <= realPos.X + Radius) &&
+				   (position.Y >= realPos.Y - Radius && position.Y <= realPos.Y + Radius);
 		}
     }
 }

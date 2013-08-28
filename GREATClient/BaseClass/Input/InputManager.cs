@@ -116,7 +116,7 @@ namespace GREATClient.BaseClass.Input
 				if (!action.Value.IsKeyboard && action.Value.MouseKey != MouseKeys.None) {
 					if (CheckMouseState(keyboardState,mouseState, action.Value)) {
 						if (InputEvents.ContainsKey(action.Key)) {
-							InputEvents[action.Key](this, new InputEventArgs());
+							InputEvents[action.Key](this, new InputEventArgs() { MousePosition = MousePosition });
 						}
 						ActionsFired.Add(action.Key);
 					}
@@ -283,6 +283,17 @@ namespace GREATClient.BaseClass.Input
 		}
 
 		/// <summary>
+		/// Removes the action.
+		/// </summary>
+		/// <param name="e">E.</param>
+		public void RemoveAction(InputActions a, EventHandler e)
+		{
+			if (InputEvents.ContainsKey(a)) {
+				InputEvents[a] -= e;
+			}
+		}
+
+		/// <summary>
 		/// Determines if an action was fired on during since last drop call.
 		/// </summary>
 		/// <returns><c>true</c>, if the event happend, <c>false</c> otherwise.</returns>
@@ -343,9 +354,17 @@ namespace GREATClient.BaseClass.Input
 		/// <value><c>true</c> if handled; otherwise, <c>false</c>.</value>
 		public bool Handled { get; set; }
 
+		/// <summary>
+		/// Gets or sets the mouse position.
+		/// Will be zero for keyboard events.
+		/// </summary>
+		/// <value>The mouse position.</value>
+		public Vector2 MousePosition { get; set; }
+
 		public InputEventArgs() 
 		{
 			Handled = false;
+			MousePosition = Vector2.Zero;
 		}
 	}
 

@@ -92,8 +92,13 @@ namespace GREATClient.BaseClass
 			           RelativeOrigin * new Vector2(Width, Height),Scale,Effects,0);
 
 			batch.End();
-
 		}
+
+		// TODO : this
+		/*public override bool IsBehind(Vector2 position)
+		{
+			return false;
+		}*/
     }
 }
 

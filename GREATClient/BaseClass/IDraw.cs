@@ -178,9 +178,9 @@ namespace GREATClient.BaseClass
 		/// After load was call.
 		/// </summary>
 		public void UnLoad()
-		{
-			Parent = null;
+		{			
 			OnUnload();
+			Parent = null;
 		}
 
 		/// <summary>
@@ -299,6 +299,13 @@ namespace GREATClient.BaseClass
 		{
 			ActionsOverTime.ForEach((ActionOverTime item) => item.Resume());
 		}
+
+		/// <summary>
+		/// Determines whether this instance is beyond the specified position.
+		/// </summary>
+		/// <returns><c>true</c> if this instance is beyond the specified position; otherwise, <c>false</c>.</returns>
+		/// <param name="position">Position.</param>
+		public abstract bool IsBehind(Vector2 position);
 	}
 }
 

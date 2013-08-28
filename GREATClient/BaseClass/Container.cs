@@ -166,6 +166,17 @@ namespace GREATClient.BaseClass
 				child.Draw(batch);
 			});
 		}
+
+		public override bool IsBehind(Vector2 position)
+		{
+			bool test = false;
+			Children.ForEach((IDraw item) => {
+				if (item.IsBehind(position)) {
+					test = true;
+				}
+			});
+			return test;
+		}
     }
 }
 

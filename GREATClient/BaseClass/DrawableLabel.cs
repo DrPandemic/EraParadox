@@ -22,6 +22,7 @@ using System;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
+using GREATClient.Display;
 
 namespace GREATClient.BaseClass
 {
@@ -52,7 +53,7 @@ namespace GREATClient.BaseClass
 		Action<DrawableLabel> UpdateAction { get; set; }
 	
 
-        public DrawableLabel(string fontName, Action<DrawableLabel> update = null) : base()
+		public DrawableLabel(string fontName = UIConstants.UI_FONT, Action<DrawableLabel> update = null) : base()
         {
 			FontName = fontName;
 			UpdateAction = update;
@@ -85,7 +86,17 @@ namespace GREATClient.BaseClass
 
 		protected override void OnUpdate(GameTime dt)
 		{
-			UpdateAction(this);
+			if (UpdateAction != null) {
+				UpdateAction(this);
+			}
+		}
+
+		// TODO : Relative
+		public override bool IsBehind(Vector2 position)
+		{
+			Vector2 labelPos = GetAbsolutePosition() - RelativeOrigin * Font.MeasureString(Text);
+			return (position.X >= labelPos.X && position.X <= (labelPos + Font.MeasureString(Text)).X) &&
+				   (position.Y >= labelPos.Y && position.Y <= (labelPos + Font.MeasureString(Text)).Y);
 		}
     }
 }
