@@ -110,7 +110,7 @@ namespace GREATClient.BaseClass
 		/// <param name="child">Child.</param>
 		public virtual void AddChild(IDraw child)
 		{
-			AddChild(child, 0);
+			AddChild(child, 1);
 		}
 
 		/// <summary>
@@ -144,6 +144,18 @@ namespace GREATClient.BaseClass
 			Children.ForEach(child => child.Update(dt));
 
 			// We remove the objects that we should
+			toRemove.ForEach((child) => {
+				if (child.Parent != null) {
+					child.UnLoad();
+					Children.Remove(child);
+				}
+			});
+			toRemove.Clear();
+		}
+
+		protected override void OnUnload()
+		{
+			RemoveAllChildren();
 			toRemove.ForEach((child) => {
 				if (child.Parent != null) {
 					child.UnLoad();

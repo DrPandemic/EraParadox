@@ -65,6 +65,17 @@ namespace GREATClient.BaseClass
 		}
 
 		/// <summary>
+		/// Gets the screen.
+		/// </summary>
+		public virtual Screen GetScreen()
+		{
+			if (Parent != null) {
+				return Parent.GetScreen();
+			}
+			return null;
+		}
+
+		/// <summary>
 		/// Gets the parent of the object.
 		/// </summary>
 		/// <value>The parent.</value>

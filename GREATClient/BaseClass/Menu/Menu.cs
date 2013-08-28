@@ -148,7 +148,7 @@ namespace GREATClient.BaseClass.Menu
 			IsVertical = true;
 			IsHorizontal = false;
 
-			float current = padding;
+			float current = 0;
 
 			ItemList.ForEach((MenuItem item) => {
 				item.Position = new Vector2(0,current);
@@ -167,7 +167,7 @@ namespace GREATClient.BaseClass.Menu
 			IsVertical = false;
 			IsHorizontal = true;
 
-			float current = padding;
+			float current = 0;
 
 			ItemList.ForEach((MenuItem item) => {
 				item.Position = new Vector2(current,0);
@@ -187,7 +187,7 @@ namespace GREATClient.BaseClass.Menu
 		/// </summary>
 		void SetKeyboardListening()
 		{
-			if (AllowKeyboard && inputManager != null) {
+			if (AllowKeyboard && inputManager != null && Clickable) {
 				if (!EnterRegistered) {
 					inputManager.RegisterEvent(InputActions.Enter, new EventHandler(ChooseSelectedItem));
 				}
@@ -220,8 +220,10 @@ namespace GREATClient.BaseClass.Menu
 		/// </summary>
 		void NextSelection(object sender, EventArgs e)
 		{
-			SelectedItem++;
-			SelecteGivenItem(null,null);
+			if (Clickable) {
+				SelectedItem++;
+				SelecteGivenItem(null,null);
+			}
 		}
 
 		/// <summary>
@@ -229,8 +231,10 @@ namespace GREATClient.BaseClass.Menu
 		/// </summary>
 		void PreviousSelection(object sender, EventArgs e)
 		{
-			SelectedItem--;
-			SelecteGivenItem(null,null);
+			if (Clickable) {
+				SelectedItem--;
+				SelecteGivenItem(null,null);
+			}
 		}
 
 		/// <summary>
@@ -238,6 +242,7 @@ namespace GREATClient.BaseClass.Menu
 		/// </summary>
 		void SelecteGivenItem(object sender, EventArgs e)
 		{
+
 			// Start by the end if you you want to go before the no-item.
 			if (SelectedItem < -1) {
 				SelectedItem = ItemList.Count - 1;
@@ -256,6 +261,7 @@ namespace GREATClient.BaseClass.Menu
 			}
 
 			OldSelectedItem = SelectedItem;
+			
 		}
 
 		/// <summary>
@@ -265,7 +271,7 @@ namespace GREATClient.BaseClass.Menu
 		/// <param name="e">E.</param>
 		void ChooseSelectedItem(object sender, EventArgs e)
 		{
-			if (SelectedItem >= 0) {
+			if (SelectedItem >= 0 && Clickable) {
 				ItemList[SelectedItem].Click();
 			}
 		}
@@ -289,6 +295,17 @@ namespace GREATClient.BaseClass.Menu
 		{
 			SelectedItem = -1;
 			SelecteGivenItem(null, null);
+		}
+
+		/// <summary>
+		/// Active the the menu.
+		/// </summary>
+		/// <param name="active">If set to <c>true</c> active.</param>
+		public void Active(bool active)
+		{
+			Clickable = active;
+			Visible = active;
+			SetKeyboardListening();
 		}
     }
 }

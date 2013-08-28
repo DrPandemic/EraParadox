@@ -152,7 +152,7 @@ namespace GREATClient.BaseClass.Menu
 			if (CurrentState != StateClicking) {
 				if (StateClicking != null) {
 					SetState(StateClicking);
-				} else {
+				} else if (StateSelected != null) {
 					SetState(StateSelected);
 				}
 			}
@@ -211,7 +211,7 @@ namespace GREATClient.BaseClass.Menu
 		public void LeftReleased(object sender, EventArgs e)
 		{
 			InputEventArgs ev = (InputEventArgs)e;
-			if (Clickable && !ev.Handled) {
+			if (Clickable && !ev.Handled) {				
 				Normal();
 				if (CurrentState.IsBehind(ev.MousePosition)) {
 					Click();
