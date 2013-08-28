@@ -54,6 +54,7 @@
     <Compile Include="Network\PlayerActionType.cs" />
     <Compile Include="Network\ServerCommand.cs" />
     <Compile Include="Network\MatchState.cs" />
+    <Compile Include="Network\SnapshotHistory.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -54,6 +54,14 @@ namespace GREATLib
 		}
 
 		/// <summary>
+		/// Makes a pair out of the two given values, deducing the type (less to type and independant of types).
+		/// </summary>
+		public static KeyValuePair<T, V> MakePair<T,V>(T key, V value)
+		{
+			return new KeyValuePair<T,V>(key, value);
+		}
+
+		/// <summary>
 		/// Clamp the specified value in the interval [min, max].
 		/// It forces it to be between both.
 		/// </summary>
