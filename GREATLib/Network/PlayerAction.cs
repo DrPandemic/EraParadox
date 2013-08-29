@@ -43,12 +43,18 @@ namespace GREATLib.Network
 		/// </summary>
 		public float Time { get; private set; }
 
-		public PlayerAction(uint id, PlayerActionType type, float time)
+		/// <summary>
+		/// Gets the position of the player at the moment the action was executed.
+		/// </summary>
+		public Vec2 Position { get; private set; }
+
+		public PlayerAction(uint id, PlayerActionType type, float time, Vec2 position)
 			: this()
 		{
 			ID = id;
 			Type = type;
 			Time = time;
+			Position = position;
 		}
     }
 }

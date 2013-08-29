@@ -28,11 +28,6 @@ namespace GREATLib.Network
 	/// The snapshot could not be found in the history.
 	/// </summary>
 	public class SnapshotNotInHistoryException : Exception { }
-	/// <summary>
-	/// There are snapshots that are newer than the given snapshot, but all
-	/// added snapshots should be new.
-	/// </summary>
-	public class SnapshotNotTheNewestException : Exception { }
 
 	/// <summary>
 	/// Keeps an history of snapshots (keyframes, states, ...) for a certain amount of time.
@@ -56,15 +51,31 @@ namespace GREATLib.Network
 			Debug.Assert(States != null);
 			Debug.Assert(currentSeconds >= 0.0);
 
-			// all states must be older than this one
-			if (States.Count > 0 &&
-			    !States.TrueForAll(s => currentSeconds > s.Key)) {
-				throw new SnapshotNotTheNewestException();
-			}
-
 			CleanOutdated(currentSeconds);
 
-			States.Add(Utilities.MakePair(currentSeconds, snapshot));
+			// Find where our state should go (ordered by time)
+			int i = States.FindIndex(pair => pair.Key >= currentSeconds);
+			if (i < 0) { // latest received state: put it at the end
+				i = States.Count - 1;
+			}
+
+			++i;
+
+			Debug.Assert(0 <= i && i <= States.Count);
+
+			States.Insert(i, Utilities.MakePair(currentSeconds, snapshot));
+
+			Debug.Assert(IsHistorySorted());
+		}
+
+		bool IsHistorySorted()
+		{
+			for (int i = 0; i < States.Count - 1; ++i) {
+				if (States[i].Key > States[i+1].Key) {
+					return false;
+				}
+			}
+			return true;
 		}
 
 		/// <summary>

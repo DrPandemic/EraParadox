@@ -162,6 +162,8 @@ namespace GREATClient
 				msg.Write((uint)action.ID);
 				msg.Write((float)action.Time);
 				msg.Write((byte)action.Type);
+				msg.Write((float)action.Position.X);
+				msg.Write((float)action.Position.Y);
 			}
 
 			client.SendMessage(msg, NetDeliveryMethod.ReliableOrdered);

@@ -81,7 +81,8 @@ namespace GREATClient
 			PlayerAction toPackage = new PlayerAction(
             	IDGenerator.GenerateID(),
 				action,
-            	(float)Client.Instance.GetTime().TotalSeconds);
+            	(float)Client.Instance.GetTime().TotalSeconds,
+				Champion.Position);
 
 			Champion.PackageAction(toPackage);
 		}

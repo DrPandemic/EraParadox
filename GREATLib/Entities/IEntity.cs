@@ -100,6 +100,20 @@ namespace GREATLib.Entities
 			IsOnGround = true;
         }
 
+		public void Clone(IEntity e)
+		{
+			e.CollisionWidth = CollisionWidth;
+			e.CollisionHeight = CollisionHeight;
+			e.Direction = Direction;
+			e.HorizontalAcceleration = HorizontalAcceleration;
+			e.ID = ID;
+			e.IsOnGround = IsOnGround;
+			e.JumpForce = JumpForce;
+			e.MoveSpeed = MoveSpeed;
+			e.Position = Position.Clone() as Vec2;
+			e.Velocity = Velocity.Clone() as Vec2;
+		}
+
 		/// <summary>
 		/// Called when an authority (i.e. the server) indicates a new position.
 		/// Depending on who the champion is (the local player or a remote client),
@@ -118,11 +132,10 @@ namespace GREATLib.Entities
 			return new Rect(Position.X, Position.Y, CollisionWidth, CollisionHeight);
 		}
 
-		public object Clone()
+		public virtual object Clone()
 		{
-			IEntity clone = (IEntity)this.MemberwiseClone();
-			clone.Position = (Vec2)Position.Clone();
-			clone.Velocity = (Vec2)Velocity.Clone();
+			IEntity clone = new IEntity(ID, Position);
+			clone.Clone(this);
 			return clone;
 		}
     }
