@@ -78,6 +78,11 @@ namespace GREATServer
 			server.Shutdown("I'M DYING D:");
 		}
 
+		public TimeSpan GetTime()
+		{
+			return TimeSpan.FromSeconds(NetTime.Now);
+		}
+
 		public void Update()
 		{
 			NetIncomingMessage msg;

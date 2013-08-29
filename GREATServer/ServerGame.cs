@@ -39,6 +39,8 @@ namespace GREATServer
 		static readonly TimeSpan UPDATE_INTERVAL = TimeSpan.FromMilliseconds(15.0);
 		static readonly TimeSpan CORRECTION_INTERVAL = TimeSpan.FromMilliseconds(UPDATE_INTERVAL.TotalMilliseconds * 2.0);
 
+		static readonly TimeSpan HISTORY_MAX_TIME_KEPT = TimeSpan.FromSeconds(1.0);
+
 		static readonly TimeSpan MIN_TIME_BETWEEN_ACTIONS = TimeSpan.FromMilliseconds(10.0);
 
 		Random random = new Random();
@@ -47,7 +49,16 @@ namespace GREATServer
 		Dictionary<NetConnection, ServerClient> Clients { get; set; }
 
 		GameMatch Match { get; set; }
-
+		/// <summary>
+		/// State history of the game, used to simulate a player's action when it happened
+		/// on the client's machine.
+		/// </summary>
+		SnapshotHistory<MatchState> StateHistory { get; set; }
+		/// <summary>
+		/// Player action history, used to simulate a player's action when it happened on
+		/// the client's machine.
+		/// </summary>
+		SnapshotHistory<PlayerAction> PlayerActionHistory { get; set; }
 
 		/// <summary>
 		/// Time since the last state update (position corrections) was sent.
@@ -59,6 +70,9 @@ namespace GREATServer
         {
 			Server = server;
 			Clients = new Dictionary<NetConnection, ServerClient>();
+
+			StateHistory = new SnapshotHistory<MatchState>(HISTORY_MAX_TIME_KEPT);
+			PlayerActionHistory = new SnapshotHistory<PlayerAction>(HISTORY_MAX_TIME_KEPT);
 			Match = new GameMatch();
 
 			TimeSinceLastCorrection = 0.0;
@@ -87,14 +101,17 @@ namespace GREATServer
 		{
 			// The server-side loop of the game
 
-			// 1. Handle actions. We check for recently received player actions
+			// Store the current game state in our history to redo certain player actions.
+			StateHistory.AddSnapshot(Match.CurrentState.Clone() as MatchState, GREATServer.Server.Instance.GetTime().TotalSeconds);
+
+			// Handle actions. We check for recently received player actions
 			// and apply them server-side.
 			HandleActions();
 
-			// 2. Update logic. We update the actual game logic.
+			// Update logic. We update the actual game logic.
 			UpdateLogic();
 
-			// 3. Send corrections. We regularly send the state changes of the entities to
+			// Send corrections. We regularly send the state changes of the entities to
 			// other clients.
 			if (CORRECTIONS_ENABLED) {
 				SendCorrections();
