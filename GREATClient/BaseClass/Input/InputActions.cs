@@ -36,9 +36,10 @@ namespace GREATClient.BaseClass.Input
 		ArrowLeft,
 		ArrowRight,
 		Enter,
+		EnterPressed,
 		LeftClick,
 		RightClick,
-		LeftClicking,
+		LeftPressed,
 		Escape
 	}
 

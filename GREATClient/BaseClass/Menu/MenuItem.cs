@@ -22,6 +22,7 @@ using System;
 using GREATClient.BaseClass.Input;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework;
 
 namespace GREATClient.BaseClass.Menu
 {
@@ -47,28 +48,10 @@ namespace GREATClient.BaseClass.Menu
 		public IDraw StateClicking { get; set; }
 
 		/// <summary>
-		/// Gets or sets the hover state.
-		/// </summary>
-		/// <value>The state hover.</value>
-		public IDraw StateHover { get; set; }
-
-		/// <summary>
 		/// Gets or sets the current state.
 		/// </summary>
 		/// <value>The state of the current.</value>
-		protected IDraw CurrentState { get; set; }
-
-		/// <summary>
-		/// Gets or sets the left clicked event.
-		/// </summary>
-		/// <value>The left clicked event.</value>
-		EventHandler LeftClickedEvent { get; set; }
-
-		/// <summary>
-		/// Gets or sets the left clicking event.
-		/// </summary>
-		/// <value>The left clicking event.</value>
-		EventHandler LeftClickingEvent { get; set; }
+		public IDraw CurrentState { get; protected set; }
 
 		/// <summary>
 		/// Gets or sets the click action.
@@ -78,56 +61,27 @@ namespace GREATClient.BaseClass.Menu
 		public Action ClickAction { get; set; }
 
 		/// <summary>
-		/// Gets or sets the click action for menu.
-		/// Don't change it.
-		/// </summary>
-		/// <value>The click action for menu.</value>
-		public Action<MenuItem> ClickActionForMenu { get; set; }
-
-		/// <summary>
 		/// Gets or sets a value indicating whether this <see cref="GREATClient.BaseClass.Menu.MenuItem"/> is clickable.
 		/// </summary>
 		/// <value><c>true</c> if clickable; otherwise, <c>false</c>.</value>
 		public bool Clickable { get; set; }
 
-		// TODO : hover, clicking
-        public MenuItem(IDraw stateNormal)
+		public MenuItem(IDraw stateNormal, IDraw stateSelected, IDraw stateClicking)
         {
 			ClickAction = null;
-			LeftClickedEvent = null;
-			LeftClickingEvent = null;
 			Clickable = true;
 			StateNormal = stateNormal;
-			StateHover = null;
-			StateClicking = null;
-			StateSelected = null;
+			StateClicking = stateClicking;
+			StateSelected = stateSelected;
 			Normal();
         }
-
-		protected override void OnLoad(ContentManager content, GraphicsDevice gd)
-		{
-			LeftClickedEvent = new EventHandler(LeftReleased);
-			LeftClickingEvent = new EventHandler(LeftPressed);
-			inputManager.RegisterEvent(InputActions.LeftClick, LeftClickedEvent);
-			inputManager.RegisterEvent(InputActions.LeftClicking, LeftClickingEvent);
-		}
-
-		protected override void OnUnload()
-		{
-			if (LeftClickedEvent != null) {				
-				inputManager.RemoveAction(InputActions.LeftClick,LeftClickedEvent);
-			}
-			if (LeftClickingEvent != null) {				
-				inputManager.RemoveAction(InputActions.LeftClicking,LeftClickingEvent);
-			}
-		}
 
 		/// <summary>
 		/// Select this instance.
 		/// Change the display to the StateSelected.
 		/// </summary>
 		public void Select()
-		{
+		{			
 			if (CurrentState != StateSelected) {
 				SetState(StateSelected);
 			}
@@ -138,7 +92,6 @@ namespace GREATClient.BaseClass.Menu
 		/// </summary>
 		public void Normal()
 		{
-			// TODO : le normal ne dois pas casser le hover
 			if (CurrentState != StateNormal) {
 				SetState(StateNormal);
 			}
@@ -147,14 +100,10 @@ namespace GREATClient.BaseClass.Menu
 		/// <summary>
 		/// Change the display to the StateClicking.
 		/// </summary>
-		protected void Clicking()
+		public void Clicking()
 		{
 			if (CurrentState != StateClicking) {
-				if (StateClicking != null) {
-					SetState(StateClicking);
-				} else {
-					SetState(StateSelected);
-				}
+				SetState(StateClicking);
 			}
 		}
 
@@ -172,7 +121,7 @@ namespace GREATClient.BaseClass.Menu
 						AddChild(state);
 					}
 					CurrentState = state;
-				} else if (CurrentState != StateNormal) {
+				} else {
 					RemoveChild(CurrentState);
 					if (StateNormal.Parent == null) {
 						AddChild(StateNormal);
@@ -183,16 +132,25 @@ namespace GREATClient.BaseClass.Menu
 		}
 
 		/// <summary>
+		/// If was in clicking state, the Click() will be call.
+		/// </summary>
+		public void SelectionReleased()
+		{
+			if (CurrentState == StateClicking) {
+				Click();
+			}
+		}
+
+		/// <summary>
 		/// When the item is clicked.
 		/// </summary>
-		public void Click() 
+		protected void Click() 
 		{
 			if (Clickable) {
 				OnClick();
 				if (ClickAction != null) {
 					ClickAction();		
 				}
-				ClickActionForMenu(this);
 			}
 		}
 
@@ -203,30 +161,12 @@ namespace GREATClient.BaseClass.Menu
 		{
 		}
 
-		/// <summary>
-		/// Called by the InputManager.
-		/// </summary>
-		/// <param name="sender">Sender.</param>
-		/// <param name="e">E.</param>
-		public void LeftReleased(object sender, EventArgs e)
+		public override bool IsBehind(Vector2 position)
 		{
-			InputEventArgs ev = (InputEventArgs)e;
-			if (Clickable && !ev.Handled) {
-				Normal();
-				if (CurrentState.IsBehind(ev.MousePosition)) {
-					Click();
-				}
+			if (Visible) {				
+				return CurrentState.IsBehind(position);
 			}
-		}
-
-		public void LeftPressed(object sender, EventArgs e)
-		{
-			InputEventArgs ev = (InputEventArgs)e;
-			if (Clickable && !ev.Handled) {
-				if (CurrentState.IsBehind(ev.MousePosition)) {
-					Clicking();
-				}
-			}
+			return false;
 		}
     }
 }

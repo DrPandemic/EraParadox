@@ -25,6 +25,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using GREATClient.BaseClass.Input;
+using System.Diagnostics;
 
 namespace GREATClient.BaseClass.Menu
 {
@@ -106,12 +107,30 @@ namespace GREATClient.BaseClass.Menu
 		/// <value>An item selected.</value>
 		public Action<Menu> AnItemSelected { get; set; }
 
+		/// <summary>
+		/// Gets or sets a value indicating whether this <see cref="GREATClient.BaseClass.Menu.Menu"/> mouse left is press.
+		/// Is use to stop selection when clicking.
+		/// </summary>
+		/// <value><c>true</c> if mouse left press; otherwise, <c>false</c>.</value>
+		bool MouseLeftPressed { get; set; }
+
 		// Event handlers for the arrows.
 		EventHandler UpEvent { get; set; }
 		EventHandler DownEvent { get; set; }
 		EventHandler LeftEvent { get; set; }
 		EventHandler RightEvent { get; set; }
 		EventHandler EnterEvent { get; set; }
+		EventHandler EnterPressedEvent { get; set; }
+		EventHandler LeftReleasedEvent { get; set; }
+		EventHandler LeftPressedEvent { get; set; }
+
+
+		/*
+		 * Quand tu hover ou change avec les fleche -> selectionne l'objet
+		 * Enter le quel on a pressed et released
+		 * Clic va a lui sur le quel on a pressed et released
+		 */
+
 
 		public Menu(params MenuItem[] items)
         {
@@ -120,9 +139,13 @@ namespace GREATClient.BaseClass.Menu
 			LeftEvent = new EventHandler(PreviousSelection);
 			RightEvent = new EventHandler(NextSelection);
 			EnterEvent = new EventHandler(ChooseSelectedItem);
+			EnterPressedEvent = new EventHandler(PressSelectedItem);
+			LeftPressedEvent = new EventHandler(LeftPressed);
+			LeftReleasedEvent = new EventHandler(LeftReleased);
 
 			AnItemSelected = null;
 
+			MouseLeftPressed = false;
 			EnterRegistered = false;
 			SelectedItem = -1;
 			OldSelectedItem = -1;
@@ -136,7 +159,6 @@ namespace GREATClient.BaseClass.Menu
 		void AddItem (MenuItem item)
 		{
 			AddChild(item);
-			item.ClickActionForMenu = (MenuItem menuItem) => ((Menu)menuItem.Parent).AnItemWasClick();
 		}
 
 		/// <summary>
@@ -148,7 +170,7 @@ namespace GREATClient.BaseClass.Menu
 			IsVertical = true;
 			IsHorizontal = false;
 
-			float current = padding;
+			float current = 0;
 
 			ItemList.ForEach((MenuItem item) => {
 				item.Position = new Vector2(0,current);
@@ -167,7 +189,7 @@ namespace GREATClient.BaseClass.Menu
 			IsVertical = false;
 			IsHorizontal = true;
 
-			float current = padding;
+			float current = 0;
 
 			ItemList.ForEach((MenuItem item) => {
 				item.Position = new Vector2(current,0);
@@ -187,9 +209,12 @@ namespace GREATClient.BaseClass.Menu
 		/// </summary>
 		void SetKeyboardListening()
 		{
-			if (AllowKeyboard && inputManager != null) {
+			if (AllowKeyboard && inputManager != null && Clickable) {
 				if (!EnterRegistered) {
-					inputManager.RegisterEvent(InputActions.Enter, new EventHandler(ChooseSelectedItem));
+					inputManager.RegisterEvent(InputActions.Enter, EnterEvent);
+					inputManager.RegisterEvent(InputActions.EnterPressed, EnterPressedEvent);
+					inputManager.RegisterEvent(InputActions.LeftClick, LeftReleasedEvent);
+					inputManager.RegisterEvent(InputActions.LeftPressed, LeftPressedEvent);
 				}
 				inputManager.RemoveAction(InputActions.ArrowUp, UpEvent);
 				inputManager.RemoveAction(InputActions.ArrowDown, DownEvent);
@@ -213,6 +238,9 @@ namespace GREATClient.BaseClass.Menu
 			inputManager.RemoveAction(InputActions.ArrowLeft, LeftEvent);
 			inputManager.RemoveAction(InputActions.ArrowRight, RightEvent);
 			inputManager.RemoveAction(InputActions.Enter, EnterEvent);
+			inputManager.RemoveAction(InputActions.EnterPressed, EnterPressedEvent);
+			inputManager.RemoveAction(InputActions.LeftClick, LeftReleasedEvent);
+			inputManager.RemoveAction(InputActions.LeftPressed, LeftPressedEvent);
 		}
 
 		/// <summary>
@@ -220,8 +248,10 @@ namespace GREATClient.BaseClass.Menu
 		/// </summary>
 		void NextSelection(object sender, EventArgs e)
 		{
-			SelectedItem++;
-			SelecteGivenItem(null,null);
+			if (Clickable) {
+				SelectedItem++;
+				SelecteGivenItem(null,null);
+			}
 		}
 
 		/// <summary>
@@ -229,8 +259,10 @@ namespace GREATClient.BaseClass.Menu
 		/// </summary>
 		void PreviousSelection(object sender, EventArgs e)
 		{
-			SelectedItem--;
-			SelecteGivenItem(null,null);
+			if (Clickable) {
+				SelectedItem--;
+				SelecteGivenItem(null,null);
+			}
 		}
 
 		/// <summary>
@@ -238,24 +270,28 @@ namespace GREATClient.BaseClass.Menu
 		/// </summary>
 		void SelecteGivenItem(object sender, EventArgs e)
 		{
-			// Start by the end if you you want to go before the no-item.
-			if (SelectedItem < -1) {
-				SelectedItem = ItemList.Count - 1;
-			// Go to the no-item if you bust the max.
-			} else if (SelectedItem >= ItemList.Count) {
-				SelectedItem = -1;;
-			}
+			// To remove the problem where Hover would always reset.
+			if (!MouseLeftPressed) 
+			{
+				// Starts by the end if you you want to go before the no-item.
+				if (SelectedItem < -1) {
+					SelectedItem = ItemList.Count - 1;
+				// Goes to the no-item if you bust the max.
+				} else if (SelectedItem >= ItemList.Count) {
+					SelectedItem = -1;
+				}
 
-			// Select the item.
-			if (SelectedItem >= 0) {
-				ItemList[SelectedItem].Select();
-			}
-			// Deselect the old item.
-			if (OldSelectedItem != SelectedItem && OldSelectedItem >= 0) {
-				ItemList[OldSelectedItem].Normal();
-			}
+				// Deselect/select all items.
+				for (int i = 0 ; i < ItemList.Count; ++i) {
+					if (i != SelectedItem) {
+						ItemList[i].Normal();
+					} else {
+						ItemList[i].Select();
+					}
+				}
 
-			OldSelectedItem = SelectedItem;
+				OldSelectedItem = SelectedItem;
+			}
 		}
 
 		/// <summary>
@@ -265,30 +301,98 @@ namespace GREATClient.BaseClass.Menu
 		/// <param name="e">E.</param>
 		void ChooseSelectedItem(object sender, EventArgs e)
 		{
-			if (SelectedItem >= 0) {
-				ItemList[SelectedItem].Click();
+			if (SelectedItem >= 0 && Clickable) {
+				ItemList[SelectedItem].SelectionReleased();
+				SelectedItem = -1;
+				SelecteGivenItem(null,null);
 			}
 		}
 
 		/// <summary>
-		/// An item was click.
-		/// Called by MenuItem.
+		/// Presses the selected item.
 		/// </summary>
-		public void AnItemWasClick()
+		/// <param name="sender">Sender.</param>
+		/// <param name="e">E.</param>
+		void PressSelectedItem(object sender, EventArgs e)
 		{
-			UnselectItem();
-			if (AnItemSelected != null) {
-				AnItemSelected(this);
+			if (SelectedItem >= 0 && Clickable) {
+				ItemList[SelectedItem].Clicking();
+			}
+
+		}
+
+		/// <summary>
+		/// Left mouse button pressed.
+		/// </summary>
+		/// <param name="sender">Sender.</param>
+		/// <param name="e">E.</param>
+		void LeftPressed(object sender, EventArgs e)
+		{
+			MouseLeftPressed = true;
+			InputEventArgs args = (InputEventArgs)e;
+			if (!args.Handled && Clickable) {
+				foreach (MenuItem item in ItemList) {
+					if (item.IsBehind(args.MousePosition)) {
+						item.Clicking();
+					}
+				}
 			}
 		}
 
 		/// <summary>
-		/// Unselects the item.
+		/// Left mouse button released.
 		/// </summary>
-		public void UnselectItem()
+		/// <param name="sender">Sender.</param>
+		/// <param name="e">E.</param>
+		void LeftReleased(object sender, EventArgs e)
 		{
-			SelectedItem = -1;
-			SelecteGivenItem(null, null);
+			MouseLeftPressed = false;
+			InputEventArgs args = (InputEventArgs)e;
+			if (!args.Handled && Clickable) {
+				foreach (MenuItem item in ItemList) {
+					if (item.IsBehind(args.MousePosition)) {
+						item.SelectionReleased();
+					}
+				}
+				UnselectItems();
+			}
+		}
+
+		/// <summary>
+		/// Unselects the items.
+		/// </summary>
+		public void UnselectItems()
+		{
+			SelectedItem = -1;			
+			SelecteGivenItem(null,null);
+		}
+
+		/// <summary>
+		/// Active the the menu.
+		/// </summary>
+		/// <param name="active">If set to <c>true</c> active.</param>
+		public void Active(bool active)
+		{
+			MouseLeftPressed = !active;
+			Clickable = active;
+			Visible = active;
+			SetKeyboardListening();
+			if (active) {
+				UnselectItems();
+			}
+		}
+
+		protected override void OnUpdate(GameTime dt)
+		{
+			Debug.Assert(inputManager != null);
+			if (Clickable && Visible) {
+				for (int i = 0; i < ItemList.Count; ++i) {
+					if (ItemList[i].IsBehind(inputManager.MousePosition)) {
+						SelectedItem = i;
+						SelecteGivenItem(null,null);
+					}
+				}
+			}
 		}
     }
 }

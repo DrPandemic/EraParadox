@@ -65,6 +65,17 @@ namespace GREATClient.BaseClass
 		}
 
 		/// <summary>
+		/// Gets the screen.
+		/// </summary>
+		public virtual Screen GetScreen()
+		{
+			if (Parent != null) {
+				return Parent.GetScreen();
+			}
+			return null;
+		}
+
+		/// <summary>
 		/// Gets the parent of the object.
 		/// </summary>
 		/// <value>The parent.</value>
@@ -210,7 +221,7 @@ namespace GREATClient.BaseClass
 		/// Dt is disference of time since last call
 		/// </summary>
 		/// <param name="dt">Dt.</param>
-		public void Update(GameTime dt)
+		public virtual void Update(GameTime dt)
 		{
 			if (Updatable) {
 

@@ -35,6 +35,11 @@ namespace GREATClient.BaseClass
 		/// <value>The services.</value>
 		public GameServiceContainer Services { get; private set;}
 
+		public override Screen GetScreen()
+		{
+			return this;
+		}
+
 		/// <summary>
 		/// Gets or sets a value indicating whether it want to exit
 		/// </summary>
