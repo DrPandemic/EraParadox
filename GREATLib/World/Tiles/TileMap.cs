@@ -105,7 +105,7 @@ namespace GREATLib.World.Tiles
 			int centerX = (int)((rectangle.Left + rectangle.Width / 2f) / Tile.WIDTH);
 			int centerY = (int)((rectangle.Top + rectangle.Height / 2f) / Tile.HEIGHT);
 
-			List<KeyValuePair<Rect, CollisionType>> touched = new List<KeyValuePair<Rect, CollisionType>>();
+			List<KeyValuePair<Rect, CollisionType>> touched = new List<KeyValuePair<Rect, CollisionType>>(8); // reserve the space we'll use
 
 			// if we just get the touched tiles with 2 nested loops, we'll get a list in this order:
 			// [1][2][3]
@@ -118,7 +118,7 @@ namespace GREATLib.World.Tiles
 			// [4][1][5]
 			// [8][2][9]
 
-			AddTouchedTile(centerX, centerY, touched);         // center tile
+			// AddTouchedTile(centerX, centerY, touched);         // center tile (usually not necessary, will collide around)
 			AddTouchedTile(centerX, centerY + 1, touched);     // bottom tile
 			AddTouchedTile(centerX, centerY - 1, touched);     // top tile
 			AddTouchedTile(centerX - 1, centerY, touched);     // left tile

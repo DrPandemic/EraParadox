@@ -46,6 +46,7 @@ namespace GREATClient
 		}
 
 		NetClient client;
+		double SharedTime { get; set; }
 
 		public EventHandler<NewPlayerEventArgs> OnNewPlayer;
 		public EventHandler<StateUpdateEventArgs> OnStateUpdate;
@@ -64,6 +65,8 @@ namespace GREATClient
 			#endif
 
 			this.client = new NetClient(config);
+
+			SharedTime = NetTime.Now;
 		}
 
 		public void Start()
@@ -80,8 +83,10 @@ namespace GREATClient
 			client.Disconnect("Client stopped.");
 		}
 
-		public void Update()
+		public void Update(double dt)
 		{
+			SharedTime += dt;
+
 			NetIncomingMessage msg;
 			while ((msg = client.ReadMessage()) != null) {
 				switch (msg.MessageType) {
@@ -121,7 +126,7 @@ namespace GREATClient
 
 		public TimeSpan GetTime()
 		{
-			return TimeSpan.FromSeconds(NetTime.Now);
+			return TimeSpan.FromSeconds(SharedTime);
 		}
 
 		void OnDataReceived(NetIncomingMessage msg)
@@ -133,20 +138,29 @@ namespace GREATClient
 				case ServerCommand.NewPlayer:
 					ILogger.Log("New player command.", LogPriority.High);
 					if (OnNewPlayer != null) {
-						OnNewPlayer(this, new NewPlayerEventArgs(msg));
+						NewPlayerEventArgs e = new NewPlayerEventArgs(msg);
+						OnNewPlayer(this, e);
+						SetSharedTime(e.Time);
 					}
 					break;
 
 				case ServerCommand.StateUpdate:
-					ILogger.Log("State update.", LogPriority.VeryLow);
+					ILogger.Log("State update.", LogPriority.Low);
 					if (OnStateUpdate != null) {
-						OnStateUpdate(this, new StateUpdateEventArgs(msg));
+						StateUpdateEventArgs e = new StateUpdateEventArgs(msg);
+						OnStateUpdate(this, e);
+						SetSharedTime(e.Time);
 					}
 					break;
 
 				default:
 					throw new NotImplementedException();
 			}
+		}
+
+		void SetSharedTime(double time)
+		{
+			SharedTime = time + GetPing().TotalSeconds;
 		}
 
 		/// <summary>
@@ -159,11 +173,17 @@ namespace GREATClient
 			msg.Write((byte)ClientCommand.ActionPackage);
 
 			foreach (PlayerAction action in actions) {
-				msg.Write((uint)action.ID);
-				msg.Write((float)action.Time);
-				msg.Write((byte)action.Type);
-				msg.Write((float)action.Position.X);
-				msg.Write((float)action.Position.Y);
+				uint id = action.ID;
+				float time = action.Time;
+				byte type = (byte)action.Type;
+				float x = action.Position.X;
+				float y = action.Position.Y;
+
+				msg.Write(id);
+				msg.Write(time);
+				msg.Write(type);
+				msg.Write(x);
+				msg.Write(y);
 			}
 
 			client.SendMessage(msg, NetDeliveryMethod.ReliableOrdered);
@@ -173,11 +193,13 @@ namespace GREATClient
 
 	public class NewPlayerEventArgs : EventArgs
 	{
+		public double Time { get; private set; }
 		public uint ID { get; private set; }
 		public bool IsOurID { get; private set; }
 		public Vec2 Position { get; private set; }
 		public NewPlayerEventArgs(NetIncomingMessage msg)
 		{
+			Time = msg.ReadDouble();
 			ID = msg.ReadUInt32();
 			Position = new Vec2(msg.ReadFloat(), msg.ReadFloat());
 			IsOurID = msg.ReadBoolean();
@@ -187,20 +209,17 @@ namespace GREATClient
 	{
 		public uint ID { get; private set; }
 		public Vec2 Position { get; private set; }
-		public Vec2 Velocity { get; private set; }
-		public bool IsOnGround { get; private set; }
 
-		public StateUpdateData(uint id, Vec2 pos, Vec2 vel, bool isOnGround)
+		public StateUpdateData(uint id, Vec2 pos)
 			: this()
 		{
 			ID = id;
 			Position = pos;
-			Velocity = vel;
-			IsOnGround = isOnGround;
 		}
 	}
 	public class StateUpdateEventArgs : EventArgs
 	{
+		public double Time { get; private set; }
 		public uint LastAcknowledgedActionID { get; private set; }
 		public List<StateUpdateData> EntitiesUpdatedState { get; private set; }
 
@@ -208,14 +227,13 @@ namespace GREATClient
 		{
 			EntitiesUpdatedState = new List<StateUpdateData>();
 
+			Time = msg.ReadDouble();
 			LastAcknowledgedActionID = msg.ReadUInt32();
 			while (msg.Position < msg.LengthBits) {
 				uint id = msg.ReadUInt32();
 				Vec2 pos = new Vec2(msg.ReadFloat(), msg.ReadFloat());
-				Vec2 vel = new Vec2(msg.ReadFloat(), msg.ReadFloat());
-				bool onGround = msg.ReadBoolean();
 
-				EntitiesUpdatedState.Add(new StateUpdateData(id, pos, vel, onGround));
+				EntitiesUpdatedState.Add(new StateUpdateData(id, pos));
 			}
 		}
 	}

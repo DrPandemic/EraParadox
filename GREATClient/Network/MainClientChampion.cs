@@ -83,7 +83,8 @@ namespace GREATClient.Network
 			DrawnPosition = Position;
 
 			//TODO: remove, used for testing purposes
-			ILogger.Log(Position.ToString());
+			ILogger.Log(Client.Instance.GetTime().TotalSeconds.ToString());
+			//ILogger.Log(Position.ToString());
 		}
 
 		/// <summary>
@@ -92,7 +93,7 @@ namespace GREATClient.Network
 		/// </summary>
 		public override void AuthoritativeChangePosition(Vec2 position)
 		{
-			ServerPosition = position;
+			/*ServerPosition = position;
 
 			// resimulate the unacknowledged actions
 			Position = (Vec2)ServerPosition.Clone();
@@ -114,7 +115,7 @@ namespace GREATClient.Network
 				if (deltaTime > 0f) { // we don't want to do a physics update if we're on the same frame (dt==0)
 					Match.CurrentState.ApplyPhysicsUpdate(ID, deltaTime);
 				}
-			}
+			}*/
 		}
 
 		public void PackageAction(PlayerAction action)

@@ -34,11 +34,9 @@ namespace GREATServer
 	/// </summary>
     public class ServerGame
     {
-		const bool CORRECTIONS_ENABLED = false;
+		static readonly TimeSpan CORRECTION_INTERVAL = TimeSpan.FromMilliseconds(50.0);
 
-		static readonly TimeSpan UPDATE_INTERVAL = TimeSpan.FromMilliseconds(15.0);
-		static readonly TimeSpan CORRECTION_INTERVAL = TimeSpan.FromMilliseconds(UPDATE_INTERVAL.TotalMilliseconds * 2.0);
-
+		static readonly TimeSpan STORE_HISTORY_INTERVAL = TimeSpan.FromMilliseconds(50.0);
 		static readonly TimeSpan HISTORY_MAX_TIME_KEPT = TimeSpan.FromSeconds(1.0);
 		static readonly float MAX_TOLERATED_OFF_DISTANCE = 50f;
 
@@ -65,6 +63,7 @@ namespace GREATServer
 		/// Time since the last state update (position corrections) was sent.
 		/// </summary>
 		double TimeSinceLastCorrection { get; set; }
+		double TimeSinceLastGameHistory { get; set; }
 
 
         public ServerGame(NetServer server)
@@ -77,10 +76,7 @@ namespace GREATServer
 			Match = new GameMatch();
 
 			TimeSinceLastCorrection = 0.0;
-
-			Timer updateTimer = new Timer(UPDATE_INTERVAL.TotalMilliseconds);
-			updateTimer.Elapsed += Update;
-			updateTimer.Start();
+			TimeSinceLastGameHistory = 0.0;
         }
 
 		/// <summary>
@@ -98,31 +94,38 @@ namespace GREATServer
 			NetServer.SendMessage(msg, connection, method);
 		}
 
-		void Update(object sender, EventArgs e)
+		public void Update(double deltaTime)
 		{
 			// The server-side loop of the game
 
 			// Store the current game state in our history to redo certain player actions.
-			StateHistory.AddSnapshot(Match.CurrentState.Clone() as MatchState, GREATServer.Server.Instance.GetTime().TotalSeconds);
+			StoreGameState(deltaTime);
 
 			// Handle actions. We check for recently received player actions
 			// and apply them server-side.
 			HandleActions();
 
 			// Update logic. We update the actual game logic.
-			UpdateLogic();
+			UpdateLogic(deltaTime);
 
 			// Send corrections. We regularly send the state changes of the entities to
 			// other clients.
-			if (CORRECTIONS_ENABLED) {
-				SendStateChanges();
+			SendStateChanges(deltaTime);
+		}
+
+		void StoreGameState(double dt)
+		{
+			if (TimeSinceLastGameHistory >= STORE_HISTORY_INTERVAL.TotalSeconds) {
+				StateHistory.AddSnapshot(Match.CurrentState.Clone() as MatchState, Server.Instance.GetTime().TotalSeconds);
+				TimeSinceLastGameHistory = 0.0;
 			}
+			TimeSinceLastGameHistory += dt;
 		}
 
 		/// <summary>
 		/// Sends the state deltas to the clients.
 		/// </summary>
-		void SendStateChanges()
+		void SendStateChanges(double dt)
 		{
 			if (TimeSinceLastCorrection >= CORRECTION_INTERVAL.TotalSeconds) {
 				foreach (NetConnection connection in Clients.Keys) {
@@ -134,7 +137,7 @@ namespace GREATServer
 				}
 				TimeSinceLastCorrection = 0.0;
 			}
-			TimeSinceLastCorrection += UPDATE_INTERVAL.TotalSeconds;
+			TimeSinceLastCorrection += dt;
 		}
 
 		/// <summary>
@@ -144,15 +147,21 @@ namespace GREATServer
 		{
 			Debug.Assert(Clients.ContainsKey(playerConnection));
 
-			msg.Write((uint)Clients[playerConnection].LastAcknowledgedActionID);
+			double time = Server.Instance.GetTime().TotalSeconds;
+			uint lastAck = Clients[playerConnection].LastAcknowledgedActionID;
+
+			msg.Write(time);
+			msg.Write(lastAck);
 			foreach (NetConnection connection in Clients.Keys) {
 				ServerClient client = Clients[connection];
-				msg.Write((uint)client.Champion.ID);
-				msg.Write((float)client.Champion.Position.X);
-				msg.Write((float)client.Champion.Position.Y);
-				msg.Write((float)client.Champion.Velocity.X);
-				msg.Write((float)client.Champion.Velocity.Y);
-				msg.Write((bool)client.Champion.IsOnGround);
+
+				uint id = client.Champion.ID;
+				float x = client.Champion.Position.X;
+				float y = client.Champion.Position.Y;
+
+				msg.Write(id);
+				msg.Write(x);
+				msg.Write(y);
 			}
 		}
 
@@ -206,7 +215,7 @@ namespace GREATServer
 					Vec2 position = ValidateActionPosition(player, action);
 
 					// Actually execute the action on our currently simulated state
-					DoAction(player, action);
+					DoAction(state.Value, player, action);
 
 					// Resimulate all the states below our next action so that they are affected
 					// by the player's action.
@@ -266,17 +275,17 @@ namespace GREATServer
 			return position;
 		}
 
-		void DoAction(IEntity champion, PlayerAction action)
+		static void DoAction(MatchState match, IEntity champion, PlayerAction action)
 		{
 			switch (action.Type) {
 				case PlayerActionType.MoveLeft:
-					Match.CurrentState.Move(champion.ID, HorizontalDirection.Left);
+					match.Move(champion.ID, HorizontalDirection.Left);
 					break;
 					case PlayerActionType.MoveRight:
-					Match.CurrentState.Move(champion.ID, HorizontalDirection.Right);
+					match.Move(champion.ID, HorizontalDirection.Right);
 					break;
 					case PlayerActionType.Jump:
-					Match.CurrentState.Jump(champion.ID);
+					match.Jump(champion.ID);
 					break;
 					default:
 					Debug.Fail("Invalid player action.");
@@ -289,13 +298,14 @@ namespace GREATServer
 		/// Update the game physics and check for important events that must be reported
 		/// to other clients.
 		/// </summary>
-		void UpdateLogic()
+		void UpdateLogic(double dt)
 		{
 			foreach (ServerClient client in Clients.Values) {
-				Match.CurrentState.ApplyPhysicsUpdate(client.Champion.ID, UPDATE_INTERVAL.TotalSeconds);
+				Match.CurrentState.ApplyPhysicsUpdate(client.Champion.ID, dt);
 
 				//TODO: remove, used for testing purposes
-				ILogger.Log(client.Champion.Position.ToString());
+				ILogger.Log(Server.Instance.GetTime().TotalSeconds.ToString());
+				//ILogger.Log(client.Champion.Position.ToString());
 			}
 		}
 
@@ -331,12 +341,18 @@ namespace GREATServer
 		/// the client should create a new drawable champion associated to it.
 		/// </summary>
 		/// <param name="isOwner">Whether this is the new player or not.</param>
-		static void FillNewPlayerMessage(NetOutgoingMessage msg, IEntity champion, bool isOwner)
+		static void FillNewPlayerMessage(NetBuffer msg, IEntity champion, bool isOwner)
 		{
-			msg.Write((uint)champion.ID);
-			msg.Write((float)champion.Position.X);
-			msg.Write((float)champion.Position.Y);
-			msg.Write((bool)isOwner);
+			double time = Server.Instance.GetTime().TotalSeconds;
+			uint id = champion.ID;
+			float x = champion.Position.X;
+			float y = champion.Position.Y;
+			bool owner = isOwner;
+			msg.Write(time);
+			msg.Write(id);
+			msg.Write(x);
+			msg.Write(y);
+			msg.Write(owner);
 		}
 
 		/// <summary>

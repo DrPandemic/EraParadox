@@ -97,7 +97,7 @@ namespace GREATClient
 		/// <param name="gameTime">Provides a snapshot of timing values.</param>
 		protected override void Update(GameTime gameTime)
 		{
-			client.Update();
+			client.Update(gameTime.ElapsedGameTime.TotalSeconds);
 
 			gameplay.Update(gameTime);
 

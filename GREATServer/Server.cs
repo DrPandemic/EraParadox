@@ -46,6 +46,7 @@ namespace GREATServer
 
 		// The running game. TODO: replace by a list of current games.
 		ServerGame Game { get; set; }
+		double LastUpdateTime { get; set; }
 
 		Server()
 		{
@@ -71,6 +72,7 @@ namespace GREATServer
 
 			//TODO: Temporary game initialization.
 			Game = new ServerGame(server);
+			LastUpdateTime = GetTime().TotalSeconds;
 		}
 
 		public void Stop()
@@ -118,6 +120,10 @@ namespace GREATServer
 				}
 				server.Recycle(msg);
 			}
+
+			Game.Update(GetTime().TotalSeconds - LastUpdateTime);
+
+			LastUpdateTime = GetTime().TotalSeconds;
 		}
 
 		/// <summary>

@@ -33,6 +33,8 @@ namespace GREATClient.Screens
 {
     public class GameplayScreen : Screen
     {
+		const bool CORRECTIONS_ENABLED = false;
+
 		static readonly TimeSpan SEND_INPUTS_TO_SERVER_INTERVAL = TimeSpan.FromMilliseconds(30.0);
 
 		Client Client { get; set; }
@@ -93,10 +95,8 @@ namespace GREATClient.Screens
 
 			foreach (StateUpdateData state in e.EntitiesUpdatedState) {
 				ILogger.Log(
-					String.Format("NEW STATE: id={0}, pos={1}, onground={2}", state.ID, state.Position, state.IsOnGround));
+					String.Format("NEW STATE: id={0}, pos={1}", state.ID, state.Position));
 				IEntity entity = Match.CurrentState.GetEntity(state.ID);
-				entity.IsOnGround = state.IsOnGround;
-				entity.Velocity = state.Velocity;
 				entity.AuthoritativeChangePosition(state.Position);
 			}
 		}
