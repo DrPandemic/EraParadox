@@ -52,6 +52,8 @@ namespace GREATClient
 		GraphicsDeviceManager graphics;
 		Screen gameplay;
 
+		bool WasResize;
+
 		public GreatGame()
 		{
 			Console.WriteLine("Game created.");
@@ -62,9 +64,9 @@ namespace GREATClient
 			Window.Title = SCREEN_NAME;
 
 			Window.AllowUserResizing = true;
-			graphics.PreferredBackBufferWidth = SCREEN_W;
-			graphics.PreferredBackBufferHeight = SCREEN_H;
-			graphics.ApplyChanges();
+
+			WasResize = false;
+
 		}
 
 		/// <summary>
@@ -76,8 +78,8 @@ namespace GREATClient
 		protected override void Initialize()
 		{
 			Console.WriteLine("Starting client...");
-			gameplay = new GameplayScreen(Content, this, client); // when testing: new TestScreen(Content);
-			//gameplay = new TestScreen(Content,this);
+			//gameplay = new GameplayScreen(Content, this, client); // when testing: new TestScreen(Content);
+			gameplay = new TestScreen(Content,this);
 			client.Start();
 
 			base.Initialize();
@@ -101,6 +103,13 @@ namespace GREATClient
 		/// <param name="gameTime">Provides a snapshot of timing values.</param>
 		protected override void Update(GameTime gameTime)
 		{
+			if (!WasResize) {
+				graphics.PreferredBackBufferWidth = SCREEN_W;
+				graphics.PreferredBackBufferHeight = SCREEN_H;
+				graphics.ApplyChanges();
+				WasResize = true;
+			}
+
 			client.Update();
 
 			gameplay.Update(gameTime);

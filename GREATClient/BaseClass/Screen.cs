@@ -109,6 +109,7 @@ namespace GREATClient.BaseClass
 			Content = content;
 			Services = new GameServiceContainer();
 			this.Services.AddService(typeof(InputManager), new InputManager());
+			this.Services.AddService(typeof(ScreenService), new ScreenService());
 			Exit = false;
 			Game = game;
         }

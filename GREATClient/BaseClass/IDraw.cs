@@ -40,9 +40,29 @@ namespace GREATClient.BaseClass
 				if (m_InputManager != null) {
 					return m_InputManager;
 				} else {
-					if (Parent != null || Game != null) {
+					if (Parent != null) {
 						m_InputManager = (InputManager)this.GetServices().GetService(typeof(InputManager));
 						return m_InputManager;
+					} else {
+						return null;
+					}
+				}
+			}
+		}
+
+		/// <summary>
+		/// Gets the screen service.
+		/// </summary>
+		/// <returns>The screen service.</returns>
+		ScreenService m_ScreenService;
+		public ScreenService screenService {
+			get {
+				if (m_ScreenService != null) {
+					return m_ScreenService;
+				} else {
+					if (Parent != null) {
+						m_ScreenService = (ScreenService)this.GetServices().GetService(typeof(ScreenService));
+						return m_ScreenService;
 					} else {
 						return null;
 					}
