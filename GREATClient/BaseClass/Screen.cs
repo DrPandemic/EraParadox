@@ -109,7 +109,8 @@ namespace GREATClient.BaseClass
 			Content = content;
 			Services = new GameServiceContainer();
 			this.Services.AddService(typeof(InputManager), new InputManager());
-			this.Services.AddService(typeof(ScreenService), new ScreenService());
+			this.Services.AddService(typeof(ScreenService), new ScreenService(
+									(GraphicsDeviceManager)game.Services.GetService(typeof(IGraphicsDeviceService))));
 			Exit = false;
 			Game = game;
         }
@@ -148,6 +149,7 @@ namespace GREATClient.BaseClass
 		protected override void OnUpdate(GameTime dt)
 		{
 			((InputManager)Services.GetService(typeof(InputManager))).Update();
+			((ScreenService)Services.GetService(typeof(ScreenService))).Update();
 			base.OnUpdate(dt);
 		}
     }

@@ -98,11 +98,13 @@ namespace GREATClient.Test
 			// Video
 			MenuItem video1 = new MenuItem(new DrawableLabel() { Text = "Big Texture" },
 			                               new DrawableLabel() { Text = "Big Texture", Tint = Color.Chocolate },
-			                               new DrawableLabel() { Text = "Big Texture", Tint = Color.Aquamarine });
+			                               new DrawableLabel() { Text = "Big Texture", Tint = Color.Aquamarine })
+			{ ClickAction = () => screenService.GameWindowSize = screenService.ScreenSize };
 
 			MenuItem video2 = new MenuItem(new DrawableLabel() { Text = "Small Texture" },
 			                               new DrawableLabel() { Text = "Small Texture", Tint = Color.Chocolate },
-			                               new DrawableLabel() { Text = "Small Texture", Tint = Color.Aquamarine });
+			                               new DrawableLabel() { Text = "Small Texture", Tint = Color.Aquamarine })
+			{ ClickAction = () => screenService.GameWindowSize = new Vector2(800,600) };
 
 			MenuItem video3 = new MenuItem(new DrawableLabel() { Text = "Return to Main Menu" },
 			                               new DrawableLabel() { Text = "Return to Main Menu", Tint = Color.Chocolate },

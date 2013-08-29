@@ -44,15 +44,15 @@ namespace GREATClient
 		/// The screen name
 		const string SCREEN_NAME = "GREAT";
 		/// The screen dimensions
-		const int SCREEN_W = 1366;
-		const int SCREEN_H = 768;
+		const int SCREEN_W = 800;
+		const int SCREEN_H = 600;
 
 		Client client;
 
 		GraphicsDeviceManager graphics;
 		Screen gameplay;
 
-		bool WasResize;
+		bool WasResize { get; set; }
 
 		public GreatGame()
 		{
@@ -104,8 +104,8 @@ namespace GREATClient
 		protected override void Update(GameTime gameTime)
 		{
 			if (!WasResize) {
-				graphics.PreferredBackBufferWidth = SCREEN_W;
-				graphics.PreferredBackBufferHeight = SCREEN_H;
+				graphics.PreferredBackBufferWidth = graphics.GraphicsDevice.DisplayMode.Width;
+				graphics.PreferredBackBufferHeight = graphics.GraphicsDevice.DisplayMode.Height;
 				graphics.ApplyChanges();
 				WasResize = true;
 			}
