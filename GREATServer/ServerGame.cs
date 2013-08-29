@@ -48,6 +48,7 @@ namespace GREATServer
 
 		GameMatch Match { get; set; }
 
+
 		/// <summary>
 		/// Time since the last state update (position corrections) was sent.
 		/// </summary>

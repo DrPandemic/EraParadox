@@ -25,17 +25,27 @@ using System.Diagnostics;
 namespace GREATLib.Network
 {
 	/// <summary>
+	/// The snapshot could not be found in the history.
+	/// </summary>
+	public class SnapshotNotInHistoryException : Exception { }
+	/// <summary>
+	/// There are snapshots that are newer than the given snapshot, but all
+	/// added snapshots should be new.
+	/// </summary>
+	public class SnapshotNotTheNewestException : Exception { }
+
+	/// <summary>
 	/// Keeps an history of snapshots (keyframes, states, ...) for a certain amount of time.
 	/// </summary>
     public class SnapshotHistory<TState>
     {
 		TimeSpan MaxHistoryTime { get; set; }
-		Queue<KeyValuePair<double, TState>> States { get; set; }
+		List<KeyValuePair<double, TState>> States { get; set; }
 
 		public SnapshotHistory(TimeSpan maxHistoryTime)
 		{
 			MaxHistoryTime = maxHistoryTime;
-			States = new Queue<KeyValuePair<double, TState>>();
+			States = new List<KeyValuePair<double, TState>>();
 		}
 
 		/// <summary>
@@ -45,11 +55,16 @@ namespace GREATLib.Network
 		{
 			Debug.Assert(States != null);
 			Debug.Assert(currentSeconds >= 0.0);
-			Debug.Assert(IsEmpty() || States.Peek().Key <= currentSeconds); // at least the first one is older (can't check the others)
+
+			// all states must be older than this one
+			if (States.Count > 0 &&
+			    !States.TrueForAll(s => currentSeconds > s.Key)) {
+				throw new SnapshotNotTheNewestException();
+			}
 
 			CleanOutdated(currentSeconds);
 
-			States.Enqueue(Utilities.MakePair(currentSeconds, snapshot));
+			States.Add(Utilities.MakePair(currentSeconds, snapshot));
 		}
 
 		/// <summary>
@@ -60,7 +75,7 @@ namespace GREATLib.Network
 		{
 			Debug.Assert(time >= 0.0);
 
-			KeyValuePair<double, TState> state = States.Peek();
+			KeyValuePair<double, TState> state = States[0];
 
 			foreach (KeyValuePair<double, TState> pair in States) {
 				if (Math.Abs(pair.Key - time) < Math.Abs(state.Key - time)) { // take the closest snapshot
@@ -69,6 +84,33 @@ namespace GREATLib.Network
 			}
 
 			return state;
+		}
+
+		/// <summary>
+		/// Gets the next snapshot after the one provided. If there are no other snapshots, returns null.
+		/// </summary>
+		public KeyValuePair<double, TState>? GetNext(KeyValuePair<double, TState> snapshot)
+		{
+			if (!States.Contains(snapshot)) {
+				throw new SnapshotNotInHistoryException();
+			}
+
+			Debug.Assert(States.FindAll((s) => IsSameSnapshot(s, snapshot)).Count == 1); // only there once
+
+			int index = States.FindIndex((s) => IsSameSnapshot(s, snapshot));
+
+			Debug.Assert(index >= 0);
+
+			++index; // go to the next element in history
+
+			return index < States.Count ? States[index] : new KeyValuePair<double, TState>?();
+		}
+
+		bool IsSameSnapshot(KeyValuePair<double, TState> s1,
+		                    KeyValuePair<double, TState> s2)
+		{
+			return s1.Key == s2.Key &&
+				s1.Value.Equals(s2.Value);
 		}
 
 		/// <summary>
@@ -90,8 +132,8 @@ namespace GREATLib.Network
 			if (!IsEmpty()) {
 				double minTime = Math.Max(currentSeconds - MaxHistoryTime.TotalSeconds, 0.0); // keep a positive minimum time
 
-				while (!IsEmpty() && States.Peek().Key < minTime) { // remove old states
-					States.Dequeue();
+				while (!IsEmpty() && States[0].Key < minTime) { // remove old states
+					States.RemoveAt(0);
 				}
 			}
 		}

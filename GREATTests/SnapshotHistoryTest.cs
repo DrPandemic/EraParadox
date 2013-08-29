@@ -78,6 +78,28 @@ namespace GREATTests
 
 			Assert.AreEqual(2, h.GetClosestSnapshot(0.0).Value, "elem 1 cleaned t=1001");
         }
+
+		[Test()]
+		public void TestGetNext()
+		{
+			SnapshotHistory<int> h = new SnapshotHistory<int>(TimeSpan.FromSeconds(1000.0));
+
+			h.AddSnapshot(1, 0.0);
+
+			h.AddSnapshot(2, 1.0);
+
+			h.AddSnapshot(3, 2.0);
+
+			var s = h.GetClosestSnapshot(0.0);
+			Assert.AreEqual(1, s.Value, "get first with closest");
+			s = h.GetNext(s).Value;
+			Assert.AreEqual(2, s.Value, "next to first is second");
+			s = h.GetNext(s).Value;
+			Assert.AreEqual(3, s.Value, "next to second is third");
+			Assert.False(h.GetNext(s).HasValue, "next to last is null");
+
+			Assert.AreEqual(3, h.GetNext(h.GetClosestSnapshot(1.0)).Value.Value, "next to closest to second is third");
+		}
     }
 }
 
