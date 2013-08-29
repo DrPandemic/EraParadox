@@ -53,65 +53,75 @@ namespace GREATClient.Test
         {
 			State = MenuState.AllClosed;
 			// Main
-			MenuItem main1 = new MenuItem(new DrawableLabel() { Text = "Video settings" }) {
-				StateSelected = new DrawableLabel() {Text = "Video settings", Tint = Color.Chocolate},
-				ClickAction = () => OpenVideo()
-			};
-			MenuItem main2 = new MenuItem(new DrawableLabel() { Text = "Audio settings" }) {
-				StateSelected = new DrawableLabel() {Text = "Audio settings", Tint = Color.Chocolate},
-				ClickAction = () => OpenAudio()
-			};
-			MenuItem main3 = new MenuItem(new DrawableLabel() { Text = "Return to Game" }) {
-				StateSelected = new DrawableLabel() {Text = "Return to Game", Tint = Color.Chocolate},
-				ClickAction = () => OpenOrCloseMainMenu(null,null)
-			};
-			MenuItem main4 = new MenuItem(new DrawableLabel() { Text = "Exit Game" }) {
-				StateSelected = new DrawableLabel() {Text = "Exit Game", Tint = Color.Chocolate},
-				ClickAction = () => OpenExit()
-			};
+			MenuItem main1 = new MenuItem(new DrawableLabel() {Text = "Video settings" }, 
+							 			  new DrawableLabel() {Text = "Video settings", Tint = Color.Chocolate},
+										  new DrawableLabel() {Text = "Video settings", Tint = Color.Aquamarine}) 
+			{ ClickAction = () => OpenVideo() };
+
+			MenuItem main2 = new MenuItem(new DrawableLabel() {Text = "Audio settings" },
+										  new DrawableLabel() {Text = "Audio settings", Tint = Color.Chocolate},
+										  new DrawableLabel() {Text = "Audio settings", Tint = Color.Aquamarine}) 
+			{ ClickAction = () => OpenAudio() };
+
+			MenuItem main3 = new MenuItem(new DrawableLabel() {Text = "Return to Game" },
+										  new DrawableLabel() {Text = "Return to Game", Tint = Color.Chocolate},
+										  new DrawableLabel() {Text = "Return to Game", Tint = Color.Aquamarine}) 
+			{ ClickAction = () => OpenOrCloseMainMenu(null,null) };
+
+			MenuItem main4 = new MenuItem(new DrawableLabel() {Text = "Exit Game" },
+										  new DrawableLabel() {Text = "Exit Game", Tint = Color.Chocolate},
+									      new DrawableLabel() {Text = "Exit Game", Tint = Color.Aquamarine}) 
+			{ ClickAction = () => OpenExit() };
 
 			MainMenu = new Menu(main1, main2, main3, main4);
 			MainMenu.AlignItemsVertically(30f);
 			MainMenu.AllowKeyboard = true;
 
 			// Audio
-			MenuItem audio1 = new MenuItem(new DrawableLabel() { Text = "Less boomboom" }) {
-				StateSelected = new DrawableLabel() {Text = "Less boomboom", Tint = Color.Chocolate}
-			};
-			MenuItem audio2 = new MenuItem(new DrawableLabel() { Text = "More boomboom" }) {
-				StateSelected = new DrawableLabel() {Text = "More boomboom", Tint = Color.Chocolate}
-			};
-			MenuItem audio3 = new MenuItem(new DrawableLabel() { Text = "Return to Main Menu" }) {
-				StateSelected = new DrawableLabel() {Text = "Return to Main Menu", Tint = Color.Chocolate},
-				ClickAction = () => OpenOrCloseMainMenu(null,null)
-			};
+			MenuItem audio1 = new MenuItem(new DrawableLabel() {Text = "Less boomboom" },
+										   new DrawableLabel() {Text = "Less boomboom", Tint = Color.Chocolate},
+										   new DrawableLabel() {Text = "Less boomboom", Tint = Color.Aquamarine});
+
+			MenuItem audio2 = new MenuItem(new DrawableLabel() {Text = "More boomboom" },
+										   new DrawableLabel() {Text = "More boomboom", Tint = Color.Chocolate},
+										   new DrawableLabel() {Text = "More boomboom", Tint = Color.Aquamarine});
+
+			MenuItem audio3 = new MenuItem(new DrawableLabel() { Text = "Return to Main Menu" },
+										   new DrawableLabel() {Text = "Return to Main Menu", Tint = Color.Chocolate},
+										   new DrawableLabel() {Text = "Return to Main Menu", Tint = Color.Aquamarine}) 
+			{ ClickAction = () => OpenOrCloseMainMenu(null,null) };
+
 			AudioMenu = new Menu(audio1,audio2,audio3);
 			AudioMenu.AlignItemsVertically(30f);
 			AudioMenu.AllowKeyboard = true;
 
 			// Video
-			MenuItem video1 = new MenuItem(new DrawableLabel() { Text = "Big Texture" }) {
-				StateSelected = new DrawableLabel() {Text = "Big Texture", Tint = Color.Chocolate}
-			};
-			MenuItem video2 = new MenuItem(new DrawableLabel() { Text = "Small Texture" }) {
-				StateSelected = new DrawableLabel() {Text = "Small Texture", Tint = Color.Chocolate}
-			};
-			MenuItem video3 = new MenuItem(new DrawableLabel() { Text = "Return to Main Menu" }) {
-				StateSelected = new DrawableLabel() {Text = "Return to Main Menu", Tint = Color.Chocolate},
-				ClickAction = () => OpenOrCloseMainMenu(null,null)
-			};
+			MenuItem video1 = new MenuItem(new DrawableLabel() { Text = "Big Texture" },
+			                               new DrawableLabel() { Text = "Big Texture", Tint = Color.Chocolate },
+			                               new DrawableLabel() { Text = "Big Texture", Tint = Color.Aquamarine });
+
+			MenuItem video2 = new MenuItem(new DrawableLabel() { Text = "Small Texture" },
+			                               new DrawableLabel() { Text = "Small Texture", Tint = Color.Chocolate },
+			                               new DrawableLabel() { Text = "Small Texture", Tint = Color.Aquamarine });
+
+			MenuItem video3 = new MenuItem(new DrawableLabel() { Text = "Return to Main Menu" },
+			                               new DrawableLabel() { Text = "Return to Main Menu", Tint = Color.Chocolate },
+			                               new DrawableLabel() { Text = "Return to Main Menu", Tint = Color.Aquamarine }) 
+			{ ClickAction = () => OpenOrCloseMainMenu(null,null) };
 
 			VideoMenu = new Menu(video1,video2,video3);
 			VideoMenu.AlignItemsVertically(30f);
 			VideoMenu.AllowKeyboard = true;
 
 			// Exit
-			MenuItem exit1 = new MenuItem(new DrawableLabel() { Text = "No" }) {
-				StateSelected = new DrawableLabel() {Text = "Nice", Tint = Color.Chocolate},
-				ClickAction = () => OpenOrCloseMainMenu(null,null)
-			};
-			MenuItem exit2 = new MenuItem(new DrawableLabel() { Text = "Yes" }) {
-				StateSelected = new DrawableLabel() {Text = "Why", Tint = Color.Chocolate},
+			MenuItem exit1 = new MenuItem(new DrawableLabel() { Text = "No" },
+			                              new DrawableLabel() { Text = "Nice", Tint = Color.Chocolate },
+			                              new DrawableLabel() { Text = "Nice", Tint = Color.Aquamarine }) 
+			{ ClickAction = () => OpenOrCloseMainMenu(null,null) };
+
+			MenuItem exit2 = new MenuItem(new DrawableLabel() { Text = "Yes" },
+			                              new DrawableLabel() { Text = "Why", Tint = Color.Chocolate },
+			                              new DrawableLabel() { Text = "Why", Tint = Color.Aquamarine }) {	
 				ClickAction = () => {
 					Screen s = GetScreen();
 					if (s != null) {
@@ -168,7 +178,7 @@ namespace GREATClient.Test
 			} else if (State == MenuState.MainOpened) {
 				State = MenuState.AllClosed;
 				MainRectangle.Visible = false;
-				MainMenu.UnselectItem();
+				MainMenu.UnselectItems();
 				MainMenu.Active(false);
 			} else if (State == MenuState.AudioOpened) {
 				State = MenuState.MainOpened;

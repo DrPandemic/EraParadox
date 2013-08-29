@@ -221,7 +221,7 @@ namespace GREATClient.BaseClass
 		/// Dt is disference of time since last call
 		/// </summary>
 		/// <param name="dt">Dt.</param>
-		public void Update(GameTime dt)
+		public virtual void Update(GameTime dt)
 		{
 			if (Updatable) {
 

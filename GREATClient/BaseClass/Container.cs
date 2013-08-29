@@ -139,7 +139,7 @@ namespace GREATClient.BaseClass
 		/// Update the container and its children.
 		/// </summary>
 		/// <param name="dt">Delta time (time since the last frame).</param>
-		protected override void OnUpdate(GameTime dt)
+		public override void Update(GameTime dt)
 		{
 			Children.ForEach(child => child.Update(dt));
 
@@ -151,6 +151,8 @@ namespace GREATClient.BaseClass
 				}
 			});
 			toRemove.Clear();
+
+			base.Update(dt);
 		}
 
 		protected override void OnUnload()
