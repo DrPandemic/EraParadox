@@ -34,11 +34,12 @@ namespace GREATTests
 			IEntity e = new IEntity(0, new Vec2(100f, 0f));
 			IEntity clone = (IEntity)e.Clone();
 
-			Assert.AreEqual(e.Position.X, clone.Position.X, "clone has same values");
+			Assert.AreEqual(100f, e.Position.X, "original unchanged");
+			Assert.AreEqual(100f, clone.Position.X, "clone has same values");
 
 			e.Position.X = 2f;
 
-			Assert.AreNotEqual(e.Position.X, clone.Position.X, "clone unchanged after modification or original");
+			Assert.AreEqual(100f, clone.Position.X, "clone unchanged after modification or original");
         }
     }
 }

@@ -136,7 +136,6 @@ namespace GREATClient
 
 			switch (command) {
 				case ServerCommand.NewPlayer:
-					ILogger.Log("New player command.", LogPriority.High);
 					if (OnNewPlayer != null) {
 						NewPlayerEventArgs e = new NewPlayerEventArgs(msg);
 						OnNewPlayer(this, e);
@@ -145,7 +144,6 @@ namespace GREATClient
 					break;
 
 				case ServerCommand.StateUpdate:
-					ILogger.Log("State update.", LogPriority.Low);
 					if (OnStateUpdate != null) {
 						StateUpdateEventArgs e = new StateUpdateEventArgs(msg);
 						OnStateUpdate(this, e);
@@ -160,7 +158,7 @@ namespace GREATClient
 
 		void SetSharedTime(double time)
 		{
-			SharedTime = time + GetPing().TotalSeconds;
+			SharedTime = time + GetPing().TotalSeconds / 2.0;
 		}
 
 		/// <summary>

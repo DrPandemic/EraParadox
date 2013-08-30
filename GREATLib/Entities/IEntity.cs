@@ -102,16 +102,16 @@ namespace GREATLib.Entities
 
 		public void Clone(IEntity e)
 		{
-			e.CollisionWidth = CollisionWidth;
-			e.CollisionHeight = CollisionHeight;
-			e.Direction = Direction;
-			e.HorizontalAcceleration = HorizontalAcceleration;
-			e.ID = ID;
-			e.IsOnGround = IsOnGround;
-			e.JumpForce = JumpForce;
-			e.MoveSpeed = MoveSpeed;
-			e.Position = Position.Clone() as Vec2;
-			e.Velocity = Velocity.Clone() as Vec2;
+			CollisionWidth = e.CollisionWidth;
+            CollisionHeight = e.CollisionHeight;
+            Direction = e.Direction;
+            HorizontalAcceleration = e.HorizontalAcceleration;
+            ID = e.ID;
+            IsOnGround = e.IsOnGround;
+            JumpForce = e.JumpForce;
+            MoveSpeed = e.MoveSpeed;
+            Position = e.Position.Clone() as Vec2;
+            Velocity = e.Velocity.Clone() as Vec2;
 		}
 
 		/// <summary>

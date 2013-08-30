@@ -31,10 +31,6 @@ namespace GREATLib.Physics
     public class PhysicsEngine
     {
 		/// <summary>
-		/// Max frame time to avoid spiral of death (http://gafferongames.com/game-physics/fix-your-timestep/)
-		/// </summary>
-		static readonly TimeSpan MAX_FRAME_TIME = TimeSpan.FromSeconds(0.25);
-		/// <summary>
 		/// The amount of time between every physics update. The users of the class
 		/// may call the update with any delta, but internally we always update with
 		/// the same timestep (and do accomodations to fit the given delta).
@@ -83,11 +79,6 @@ namespace GREATLib.Physics
 			             && entity.Position != null
 			             && entity.Velocity != null);
 
-			if (deltaSeconds > MAX_FRAME_TIME.TotalSeconds) {
-				deltaSeconds = MAX_FRAME_TIME.TotalSeconds;
-				ILogger.Log("Physics spiral of death. Clipping dt.", LogPriority.Warning);
-			}
-
 			while (deltaSeconds >= FIXED_TIMESTEP.TotalSeconds) {
 				ApplyUpdate(entity);
 				deltaSeconds -= FIXED_TIMESTEP.TotalSeconds;
@@ -109,7 +100,7 @@ namespace GREATLib.Physics
 			Debug.Assert(entity != null
 						 && entity.Position != null
 						 && entity.Velocity != null);
-			Debug.Assert(progress > 0.0 && progress < 1.0);
+			Debug.Assert(progress + double.Epsilon > 0.0 && progress < 1.0 + double.Epsilon);
 
 			// Keep some values that will be interpolated
 			Vec2 initialPos = entity.Position;

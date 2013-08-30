@@ -20,6 +20,7 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Diagnostics;
+using System.IO;
 
 namespace GREATLib
 {
@@ -46,7 +47,7 @@ namespace GREATLib
 		/// <summary>
 		/// The default logger to use.
 		/// </summary>
-		public static ILogger Default = new CustomLogger();
+		public static ILogger Default = new CustomLogger(false); // true: log to file, false: log to console
 
 		protected const LogPriority DEFAULT_MESSAGE_PRIORITY = LogPriority.VeryLow;
 		protected const LogPriority DEFAULT_MIN_PRIORITY = LogPriority.VeryLow;

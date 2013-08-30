@@ -37,6 +37,19 @@ namespace GREATTests
 		}
 
 		[Test()]
+		public void TestAddSnapshot()
+		{
+			SnapshotHistory<double> h = new SnapshotHistory<double>(TimeSpan.FromSeconds(1000.0));
+			h.AddSnapshot(0.0, 0.0);
+			h.AddSnapshot(1.0, 1.0);
+			h.AddSnapshot(2.0, 2.0);
+			h.AddSnapshot(1.5, 1.5);
+			h.AddSnapshot(3.0, 3.0);
+			h.AddSnapshot(0.5, 0.5);
+			Assert.AreEqual(2.0, h.GetClosestSnapshot(2.1).Key, "select snapshot from added");
+		}
+
+		[Test()]
 		public void TestClosest()
 		{
 			SnapshotHistory<int> h = new SnapshotHistory<int>(TimeSpan.FromSeconds(1000.0));

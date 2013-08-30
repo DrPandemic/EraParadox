@@ -30,6 +30,11 @@ namespace GREATLib.Network
 	public class SnapshotNotInHistoryException : Exception { }
 
 	/// <summary>
+	/// No snapshot could be given since the history is empty.
+	/// </summary>
+	public class EmptyHistoryException : Exception { }
+
+	/// <summary>
 	/// Keeps an history of snapshots (keyframes, states, ...) for a certain amount of time.
 	/// </summary>
     public class SnapshotHistory<TState>
@@ -54,15 +59,7 @@ namespace GREATLib.Network
 			CleanOutdated(currentSeconds);
 
 			// Find where our state should go (ordered by time)
-			int i = States.FindIndex(pair => pair.Key >= currentSeconds);
-			if (i < 0) { // latest received state: put it at the end
-				i = States.Count - 1;
-			}
-
-			++i;
-
-			Debug.Assert(0 <= i && i <= States.Count);
-
+			int i = States.FindLastIndex(pair => pair.Key < currentSeconds) + 1;
 			States.Insert(i, Utilities.MakePair(currentSeconds, snapshot));
 
 			Debug.Assert(IsHistorySorted());
@@ -71,7 +68,7 @@ namespace GREATLib.Network
 		bool IsHistorySorted()
 		{
 			for (int i = 0; i < States.Count - 1; ++i) {
-				if (States[i].Key > States[i+1].Key) {
+				if (States[i].Key - States[i+1].Key > float.Epsilon) {
 					return false;
 				}
 			}
@@ -95,6 +92,19 @@ namespace GREATLib.Network
 			}
 
 			return state;
+		}
+
+		/// <summary>
+		/// Gets the last snapshot, if it exists, of the history.
+		/// </summary>
+		/// <returns>The last.</returns>
+		public KeyValuePair<double, TState> GetLast()
+		{
+			if (States.Count == 0) {
+				throw new EmptyHistoryException();
+			}
+
+			return States[States.Count - 1];
 		}
 
 		/// <summary>

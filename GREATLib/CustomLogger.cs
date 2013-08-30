@@ -53,6 +53,16 @@ namespace GREATLib
 		}
 
 		/// <summary>
+		/// Initializes a new instance of the <see cref="GREATLib.CustomLogger"/> class.
+		/// </summary>
+		/// <param name="logToFile">If set to <c>true</c>, log to file. Otherwise, log to console.</param>
+		/// <param name="priority">Priority.</param>
+		public CustomLogger(bool logToFile, LogPriority priority = DEFAULT_MIN_PRIORITY)
+			: this(logToFile ? File.CreateText("log.txt") : Console.Out, priority)
+		{
+		}
+
+		/// <summary>
 		/// Log the specified message (if the priority is high enough) on the output of the logger.
 		/// </summary>
 		/// <param name="message">Message.</param>

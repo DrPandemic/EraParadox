@@ -171,14 +171,19 @@ namespace GREATServer
 		void HandleActions()
 		{
 			foreach (ServerClient client in Clients.Values) {
-				Dictionary<PlayerActionType, double> lastTimeOfAction = new Dictionary<PlayerActionType, double>();
+				if (client.ActionsPackage.Count > 0) {
+					Dictionary<PlayerActionType, double> lastTimeOfAction = new Dictionary<PlayerActionType, double>();
 
-				foreach (PlayerAction action in client.ActionsPackage) {
-					HandleAction(client.Champion, action);
-					client.LastAcknowledgedActionID = Math.Max(client.LastAcknowledgedActionID, action.ID);
+					foreach (PlayerAction action in client.ActionsPackage) {
+						ILogger.Log("Handling action #" + action.ID, LogPriority.Low);
+						ILogger.Log("Player position before handle action: " + client.Champion.Position, LogPriority.Low);
+						HandleAction(client.Champion, action);
+						ILogger.Log("Player position after handle action: " + client.Champion.Position, LogPriority.Low);
+						client.LastAcknowledgedActionID = Math.Max(client.LastAcknowledgedActionID, action.ID);
+					}
+
+					client.ActionsPackage.Clear();
 				}
-
-				client.ActionsPackage.Clear();
 			}
 		}
 
@@ -203,16 +208,15 @@ namespace GREATServer
 					// Go to the closest game snapshot to the action that we're simulating
 					KeyValuePair<double, MatchState> state = StateHistory.GetClosestSnapshot(time);
 
-					IEntity player = state.Value.GetEntity(champion.ID);
-
-					// Simulate from our closest snapshot to be up-to-date (if we have something to simulate)
+					// Simulate from our closest snapshot to our current action to be up-to-date
 					float deltaT = Math.Abs(time - (float)state.Key);
-					if (deltaT > 0f) {
-						state.Value.ApplyPhysicsUpdate(player.ID, deltaT);
+					if (deltaT > 0f) { // if we have something to simulate...
+						//state.Value.ApplyPhysicsUpdate(champion.ID, deltaT);
 					}
 
 					// Make sure we're not using hacked positions
-					Vec2 position = ValidateActionPosition(player, action);
+					IEntity player = state.Value.GetEntity(champion.ID);
+					player.Position = ValidateActionPosition(player, action);
 
 					// Actually execute the action on our currently simulated state
 					DoAction(state.Value, player, action);
@@ -223,22 +227,27 @@ namespace GREATServer
 					float limitTime = nextActionState.HasValue ? (float)nextActionState.Value.Key : now; // we don't want to simulate at or after that time
 
 					var nextState = StateHistory.GetNext(state);
-					while (nextState.HasValue && nextState.Value.Key < limitTime) { // while we have not reached our simulation target time (next action or now)
+					while (nextState.HasValue && nextState.Value.Key <= limitTime) { // while we have not reached our simulation target time (next action or now)
 						// get how much time we have to simulate for next state
 						float timeUntilNextState = (float)nextState.Value.Key - time;
 						Debug.Assert(timeUntilNextState >= 0f);
 
-						// simulate the current state
-						state.Value.ApplyPhysicsUpdate(champion.ID, deltaT);
-
-						// apply the simulation modifications to the next state
-						nextState.Value.Value.GetEntity(champion.ID).Clone(state.Value.GetEntity(champion.ID));
+						// simulate the next state
+                        nextState.Value.Value.GetEntity(champion.ID).Clone(state.Value.GetEntity(champion.ID));
+						if (timeUntilNextState > 0f) {
+                            nextState.Value.Value.ApplyPhysicsUpdate(champion.ID, timeUntilNextState);
+						}
+						
 
 						// switch to the next state
 						state = nextState.Value;
+                        nextState = StateHistory.GetNext(state);
 					}
 
 				} while ((actionState = actionHistory.GetNext(actionState.Value)).HasValue); // while there are actions to simulate
+
+				// Modify our current game state to apply our simulation modifications.
+				Match.CurrentState.GetEntity(champion.ID).Clone(StateHistory.GetLast().Value.GetEntity(champion.ID));
 			}
 		}
 
@@ -250,13 +259,17 @@ namespace GREATServer
 			float oldestAcceptedTime = (float)(currentTime - HISTORY_MAX_TIME_KEPT.TotalSeconds);
 			if (action.Time < oldestAcceptedTime) {
 				time = oldestAcceptedTime;
-				ILogger.Log("Action " + action.ID + " seems a bit late. Accepting it, but might be a hacker/extreme lag.", LogPriority.Warning);
+				ILogger.Log(String.Format("Action {0} seems a bit late. Accepting it, but might be a hacker/extreme lag. Given time: {1}, server time: {2}",
+				                          action.ID, action.Time, currentTime), 
+				            LogPriority.Warning);
 			}
 
 			// action time seems too recent? might be a hacker/time error. Log it, keep it but clamp it
 			if (action.Time > currentTime) {
 				time = currentTime;
-				ILogger.Log("Action " + action.ID + " seems a bit too new. Accepting it, but might be a hacker/time error.", LogPriority.Warning);
+				ILogger.Log(String.Format("Action {0} seems a bit too new. Accepting it, but might be a hacker/time error. Given time: {1}, server time: {2}",
+				                          action.ID, action.Time, currentTime),
+				            LogPriority.Warning);
 			}
 
 			return time;
@@ -304,8 +317,8 @@ namespace GREATServer
 				Match.CurrentState.ApplyPhysicsUpdate(client.Champion.ID, dt);
 
 				//TODO: remove, used for testing purposes
-				ILogger.Log(Server.Instance.GetTime().TotalSeconds.ToString());
-				//ILogger.Log(client.Champion.Position.ToString());
+				//ILogger.Log(Server.Instance.GetTime().TotalSeconds.ToString());
+				ILogger.Log(client.Champion.Position.ToString());
 			}
 		}
 
@@ -395,7 +408,7 @@ namespace GREATServer
 					PlayerActionType type = (PlayerActionType)message.ReadByte();
 					Vec2 position = new Vec2(message.ReadFloat(), message.ReadFloat());
 
-					ILogger.Log(String.Format("Action package: id={0}, time={1}, type={2}", id,time,type));
+					ILogger.Log(String.Format("Action package: id={0}, time={1}, type={2}, pos={3}", id,time,type,position), LogPriority.Low);
 					PlayerAction action = new PlayerAction(id, type, time, position);
 
 					Clients[message.SenderConnection].ActionsPackage.Add(action);

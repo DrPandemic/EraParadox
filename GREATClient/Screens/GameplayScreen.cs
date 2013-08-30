@@ -89,15 +89,17 @@ namespace GREATClient.Screens
 		void OnStateUpdate(object sender, StateUpdateEventArgs e)
 		{
 			Debug.Assert(sender != null && e != null);
-			Debug.Assert(e.EntitiesUpdatedState.TrueForAll(state => Match.CurrentState.ContainsEntity(state.ID)));
 
-			OurChampion.SetLastAcknowledgedAction(e.LastAcknowledgedActionID);
+			if (OurChampion != null) {
+				OurChampion.SetLastAcknowledgedAction(e.LastAcknowledgedActionID);
 
-			foreach (StateUpdateData state in e.EntitiesUpdatedState) {
-				ILogger.Log(
-					String.Format("NEW STATE: id={0}, pos={1}", state.ID, state.Position));
-				IEntity entity = Match.CurrentState.GetEntity(state.ID);
-				entity.AuthoritativeChangePosition(state.Position);
+				foreach (StateUpdateData state in e.EntitiesUpdatedState) {
+					if (Match.CurrentState.ContainsEntity(state.ID)) {
+						ILogger.Log(String.Format("State update: time={2} id={0}, pos={1}", state.ID, state.Position, Client.GetTime().TotalSeconds));
+						IEntity entity = Match.CurrentState.GetEntity(state.ID);
+						entity.AuthoritativeChangePosition(state.Position);
+					}
+				}
 			}
 		}
 
@@ -166,7 +168,7 @@ namespace GREATClient.Screens
 					Actions.Add(PlayerActionType.MoveLeft);
 				} 
 
-				if (keyboard.IsKeyDown(RIGHT)) {
+				if (oldKeyboard.IsKeyDown(RIGHT) && keyboard.IsKeyUp(RIGHT)) {
 					Actions.Add(PlayerActionType.MoveRight);
 				} 
 
