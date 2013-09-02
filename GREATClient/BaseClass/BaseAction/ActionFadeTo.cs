@@ -1,10 +1,10 @@
 //
-//  DrawableTriangle.cs
+//  ActionFadeTo.cs
 //
 //  Author:
-//       The Parasithe <bipbip500@hotmail.com>
+//       Jean-Samuel Aubry-Guzzi <bipbip500@gmail.com>
 //
-//  Copyright (c) 2013 The Parasithe
+//  Copyright (c) 2013 Jean-Samuel Aubry-Guzzi
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -19,25 +19,22 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using Microsoft.Xna.Framework.Graphics;
+using System.Diagnostics;
 
-namespace GREATClient.BaseClass
+namespace GREATClient.BaseClass.BaseAction
 {
-    public class DrawableTriangle : DrawableImage
+    public class ActionFadeTo : ActionFadeBy
     {
-		/// <summary>
-		/// Gets or sets a value indicating whether this <see cref="GREATClient.DrawableTriangle"/> is ascendant.
-		/// </summary>
-		/// <value><c>true</c> if ascendant; otherwise, <c>false</c>.</value>
-		public bool Ascendant { 
-			get { return Effects == SpriteEffects.FlipHorizontally; }
-			set {  Effects = value ? SpriteEffects.FlipHorizontally :SpriteEffects.None; }
-		}
-
-		public DrawableTriangle(bool ascendant) : base("triangle")
+		public ActionFadeTo(TimeSpan duration, float alpha) : base(duration,alpha)
         {
-			Ascendant=ascendant;
         }
+
+		public override void Ready()
+		{
+			Debug.Assert(Target != null);
+
+			AlphaChangeBeMillisecond = (Alpha - ((Drawable)Target).Alpha) / Duration.TotalMilliseconds;
+		}
     }
 }
 

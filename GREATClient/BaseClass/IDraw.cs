@@ -19,19 +19,67 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
+using GREATClient.BaseClass.BaseAction;
+using GREATClient.BaseClass.Input;
+using System.Collections.Generic;
 
-namespace GREATClient
+namespace GREATClient.BaseClass
 {
 	public abstract class IDraw : IUpdatable
     {
 		/// <summary>
+		/// Gets the input manager.
+		/// </summary>
+		/// <returns>The input manager.</returns>
+		InputManager m_InputManager;
+		public InputManager inputManager {
+			get {
+				if (m_InputManager != null) {
+					return m_InputManager;
+				} else {
+					if (Parent != null || Game != null) {
+						m_InputManager = (InputManager)this.GetServices().GetService(typeof(InputManager));
+						return m_InputManager;
+					} else {
+						return null;
+					}
+				}
+			}
+		}
+
+		/// <summary>
+		/// Gets the services.
+		/// Is used to replace Game.Services.
+		/// Only the screen hold the reference to the object.
+		/// </summary>
+		/// <value>The services.</value>
+		public virtual GameServiceContainer GetServices() 
+		{
+			if (Parent != null) {
+				return Parent.GetServices();
+			}
+			return null;
+		}
+
+		/// <summary>
+		/// Gets the screen.
+		/// </summary>
+		public virtual Screen GetScreen()
+		{
+			if (Parent != null) {
+				return Parent.GetScreen();
+			}
+			return null;
+		}
+
+		/// <summary>
 		/// Gets the parent of the object.
 		/// </summary>
 		/// <value>The parent.</value>
-		public Container Parent { get; private set; }
+		public Container Parent { get; protected set; }
 
 		/// <summary>
 		/// Gets or sets the z-index within the parent's container.
@@ -60,6 +108,30 @@ namespace GREATClient
 		public bool Updatable { get; set; }
 
 		/// <summary>
+		/// Gets or sets the actions over time.
+		/// </summary>
+		/// <value>The actions over time.</value>
+		protected List<ActionOverTime> ActionsOverTime { get; set; }
+
+		/// <summary>
+		/// Gets or sets the actions over time to remove.
+		/// </summary>
+		/// <value>The actions over time to remove.</value>
+		List<ActionOverTime> ActionsOverTimeToRemove { get; set; }
+
+		/// <summary>
+		/// Gets or sets the actions over time to activate.
+		/// </summary>
+		/// <value>The actions over time to activate.</value>
+		List<ActionOverTime> ActionsOverTimeToActivate { get; set; }
+
+		/// <summary>
+		/// Gets or sets a value indicating whether this <see cref="GREATClient.BaseClass.IDraw"/> is loaded.
+		/// </summary>
+		/// <value><c>true</c> if loaded; otherwise, <c>false</c>.</value>
+		public bool Loaded { get; set; }
+
+		/// <summary>
 		/// Gets the absolute position.
 		/// </summary>
 		/// <returns>The absolute position.</returns>
@@ -77,15 +149,19 @@ namespace GREATClient
 			get {
 				return Parent == null ? null : Parent.Game;
 			}
-			protected set { throw new NotImplementedException("Only the screen can set the Game");}
+			protected set { throw new NotImplementedException("Only the screen can set the Game"); }
 		}
 
 		public IDraw() 
 		{
 			Parent = null;
+			Loaded = false;
 			Z = 0;
 			Visible = true;
 			Updatable = true;
+			ActionsOverTime = new List<ActionOverTime>();
+			ActionsOverTimeToRemove = new List<ActionOverTime>();
+			ActionsOverTimeToActivate = new List<ActionOverTime>();
 		}
 
 		/// <summary>
@@ -93,11 +169,13 @@ namespace GREATClient
 		/// </summary>
 		/// <param name="container">Its container.</param>
 		/// <param name="content">The content manager, used to draw.</param>
-		public void Load(Container container, GraphicsDevice gd)
+		public virtual void Load(Container container, GraphicsDevice gd)
 		{
 			Parent = container;
 			OnLoad(Parent.Content, gd);
+			Loaded = true;
 		}
+
 		/// <summary>
 		/// Raises the load event.
 		/// Will be call after it is had to a container
@@ -111,10 +189,11 @@ namespace GREATClient
 		/// After load was call.
 		/// </summary>
 		public void UnLoad()
-		{
-			Parent = null;
+		{			
 			OnUnload();
+			Parent = null;
 		}
+
 		/// <summary>
 		///  After Unload was call.
 		/// </summary>
@@ -126,8 +205,9 @@ namespace GREATClient
 		/// <param name="batch">Batch.</param>
 		public virtual void Draw(SpriteBatch batch)
 		{
-			if(Visible)
+			if(Visible) {
 				OnDraw(batch);
+			}
 		}
 
 		/// <summary>
@@ -141,19 +221,102 @@ namespace GREATClient
 		/// Dt is disference of time since last call
 		/// </summary>
 		/// <param name="dt">Dt.</param>
-		public void Update(GameTime dt)
+		public virtual void Update(GameTime dt)
 		{
-			if(Updatable)
+			if (Updatable) {
+
+				foreach(ActionOverTime action in ActionsOverTime) {
+					action.Update(dt);
+				}
+				foreach (ActionOverTime action in ActionsOverTimeToRemove) {
+					ActionsOverTime.Remove(action);
+				}
+				ActionsOverTimeToRemove.Clear();
+
+				ActivateAction();
+
 				OnUpdate(dt);
+			}
 		}
 
 		/// <summary>
-		/// Called afet Update if Updatable
+		/// Called after Update if Updatable
 		/// </summary>
 		/// <param name="dt">Dt.</param>
 		protected virtual void OnUpdate(GameTime dt)
+		{ }
+
+		/// <summary>
+		/// Performs the action.
+		/// </summary>
+		/// <param name="action">Action.</param>
+		public virtual void PerformAction(ActionOverTime action)
 		{
+			ActionsOverTimeToActivate.Add(action);
 		}
-    }
+
+		private void ActivateAction()
+		{
+			int size = ActionsOverTimeToActivate.Count;
+
+			for (int i = size - 1; i>= 0 ; i--) {
+				ActionsOverTime.Add(ActionsOverTimeToActivate[i]);
+				// Set the target.
+				ActionsOverTimeToActivate[i].Target = this;
+				ActionsOverTimeToActivate[i].Ready();
+				// Start the action.
+				ActionsOverTimeToActivate[i].Start();
+			}
+
+			ActionsOverTimeToActivate.RemoveRange(0, size);
+		}
+
+		/// <summary>
+		/// Called by an action when it's done.
+		/// Will remove itself from the dictionary.
+		/// Can be override but don't forget to call the base().
+		/// </summary>
+		/// <param name="action">Action.</param>
+		/// <param name="args">Argument.</param>
+		public virtual void ActionDone(ActionOverTime action, Object args)
+		{
+			action.Stop();
+			ActionsOverTimeToRemove.Add(action);
+		}
+
+		/// <summary>
+		/// Stops all actions and clear all action lists.
+		/// </summary>
+		public void StopAllActions() 
+		{
+			ActionsOverTime.ForEach((ActionOverTime item) => item.Stop());
+			ActionsOverTime.Clear();
+			ActionsOverTimeToActivate.Clear();
+			ActionsOverTimeToRemove.Clear();
+		}
+
+		/// <summary>
+		/// Pauses all actions.
+		/// </summary>
+		public void PauseAllActions()
+		{
+			ActionsOverTime.ForEach((ActionOverTime item) => item.Pause());
+		}
+
+		/// <summary>
+		/// Resumes all actions.
+		/// </summary>
+		public void ResumeAllActions()
+		{
+			ActionsOverTime.ForEach((ActionOverTime item) => item.Resume());
+		}
+
+		/// <summary>
+		/// Determines whether this instance is beyond the specified position.
+		/// </summary>
+		/// <returns><c>true</c> if this instance is beyond the specified position; otherwise, <c>false</c>.</returns>
+		/// <param name="position">Position.</param>
+		public abstract bool IsBehind(Vector2 position);
+	}
 }
 

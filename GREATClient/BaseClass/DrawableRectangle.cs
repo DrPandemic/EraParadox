@@ -24,7 +24,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using GREATLib;
 
-namespace GREATClient
+namespace GREATClient.BaseClass
 {
 	/// <summary>
 	/// Dr. Rectangle
@@ -68,11 +68,19 @@ namespace GREATClient
 		protected override void OnDraw(SpriteBatch batch)
 		{
 			batch.Begin();
-			batch.Draw(Texture,new Rectangle((int)(GetAbsolutePosition().X-OriginRelative.X*Size.X),
-			                                 (int)(GetAbsolutePosition().Y-OriginRelative.Y*Size.Y),
+			batch.Draw(Texture,new Rectangle((int)(GetAbsolutePosition().X-RelativeOrigin.X*Size.X),
+			                                 (int)(GetAbsolutePosition().Y-RelativeOrigin.Y*Size.Y),
 			                                 (int)Size.X,(int)Size.Y),
 			           						Tint * Alpha);		
 			batch.End();
+		}
+
+		public override bool IsBehind(Vector2 position)
+		{
+			return new Rectangle((int)(GetAbsolutePosition().X - RelativeOrigin.X * Size.X),
+			                     (int)(GetAbsolutePosition().Y - RelativeOrigin.Y * Size.Y),
+			                     (int)Size.X, (int)Size.Y)
+								 .Contains((int)position.X, (int)position.Y);
 		}
     }
 }

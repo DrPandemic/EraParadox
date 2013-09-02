@@ -1,0 +1,23 @@
+<inputCollection>
+    <keyboardInputs>
+        <input action="Jump" key="W" state="Released" deadKey="Control" />
+        <input action="GoRight" key="D" state="Released" />
+        <input action="GoLeft" key="A" state="Released" />
+        <input action="ArrowUp" key="Up" state="Released" />
+        <input action="ArrowDown" key="Down" state="Released" />
+        <input action="ArrowLeft" key="Left" state="Released" />
+        <input action="ArrowRight" key="Right" state="Released" />
+        <input action="Enter" key="Enter" state="Released" />
+        <input action="EnterPressed" key="Enter" state="Pressed" />
+        <input action="Escape" key="Escape" state="Released" />
+    </keyboardInputs>
+    <MouseInputs>
+        <input action="Spell1" key="Left" state="Released" />
+        <input action="Spell2" key="Right" state="Released" />
+        <input action="Spell3" key="Left" state="Released" deadKey="Shift"/>
+        <input action="Spell4" key="Right" state="Released" deadKey="Shift"/>
+        <input action="LeftClick" key="Left" state="Released" />
+        <input action="LeftPressed" key="Left" state="Pressed" />
+        <input action="RightClick" key="Right" state="Released" />
+    </MouseInputs>
+</inputCollection>

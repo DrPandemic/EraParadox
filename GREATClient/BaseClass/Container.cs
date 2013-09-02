@@ -25,7 +25,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework.Content;
 using System.Diagnostics;
 
-namespace GREATClient
+namespace GREATClient.BaseClass
 {
     public class Container : IDraw
     {
@@ -33,7 +33,8 @@ namespace GREATClient
 		/// Gets or sets the content manager.
 		/// </summary>
 		/// <value>The content.</value>
-		public ContentManager Content { get; private set; }
+		public ContentManager Content { get; protected set; }
+
 		/// <summary>
 		/// Gets or sets the children of the container.
 		/// </summary>
@@ -43,14 +44,13 @@ namespace GREATClient
 		/// <summary>
 		/// A list of the children that want to be removed. This is used because it is impossible
 		/// to remove an object from a collection while iterating it (e.g. remove an object in its Update method).
-		/// Instead, we remove the items
-		/// when the frame ends.
+		/// Instead, we remove the items when the frame ends.
 		/// </summary>
 		private List<IDraw> toRemove = new List<IDraw>();
 
 		/// <summary>
 		/// Gets the graphics.
-		/// Only the screen hold the reference to the object
+		/// Only the screen hold the reference to the object.
 		/// </summary>
 		/// <returns>The graphics.</returns>
 		public virtual GraphicsDevice GetGraphics()
@@ -60,9 +60,9 @@ namespace GREATClient
 			return null;
 		}
 
-		public Container(ContentManager content) 
+		public Container() 
         {
-			Content = content;
+			Content = null;
 			Children = new List<IDraw>();
 			toRemove = new List<IDraw>();
         }
@@ -72,13 +72,15 @@ namespace GREATClient
 		/// </summary>
 		/// <param name="child">Child.</param>
 		/// <param name="z">The z coordinate.</param>
-		public void AddChild(IDraw child, int z)
+		public virtual void AddChild(IDraw child, int z)
 		{
 			Debug.Assert(child != null);
 
 			if(child.Parent == null)
 			{
-				child.Load(this, GetGraphics());
+				if (Content != null) {
+					child.Load(this, GetGraphics());
+				}
 				child.Z=z;
 				int index = Children.FindIndex(c => child.Z > c.Z);
 				if(index==-1)				
@@ -92,13 +94,26 @@ namespace GREATClient
 				throw new Exception("The IDraw is already in a container");
 		}
 
+		public override void Load(Container container, GraphicsDevice gd)
+		{
+			Parent = container;
+			Content = Parent.Content;
+			foreach (IDraw item in Children) {
+				if (!item.Loaded) {
+					item.Load(this,GetGraphics());
+				}
+			}
+			OnLoad(Parent.Content, gd);
+			Loaded = true;
+		}
+
 		/// <summary>
 		/// Adds the child with a default z-index of 0.
 		/// </summary>
 		/// <param name="child">Child.</param>
-		public void AddChild(IDraw child)
+		public virtual void AddChild(IDraw child)
 		{
-			AddChild(child, 0);
+			AddChild(child, 1);
 		}
 
 		/// <summary>
@@ -107,8 +122,9 @@ namespace GREATClient
 		/// <param name="child">Child.</param>
 		public void RemoveChild(IDraw child)
 		{
-			toRemove.Add(child);
-			child.UnLoad();
+			if (child != null) {
+				toRemove.Add(child);
+			}
 		}
 
 		/// <summary>
@@ -126,12 +142,31 @@ namespace GREATClient
 		/// Update the container and its children.
 		/// </summary>
 		/// <param name="dt">Delta time (time since the last frame).</param>
-		protected override void OnUpdate(GameTime dt)
+		public override void Update(GameTime dt)
 		{
 			Children.ForEach(child => child.Update(dt));
 
 			// We remove the objects that we should
-			toRemove.ForEach(child => Children.Remove(child));
+			toRemove.ForEach((child) => {
+				if (child.Parent != null) {
+					child.UnLoad();
+					Children.Remove(child);
+				}
+			});
+			toRemove.Clear();
+
+			base.Update(dt);
+		}
+
+		protected override void OnUnload()
+		{
+			RemoveAllChildren();
+			toRemove.ForEach((child) => {
+				if (child.Parent != null) {
+					child.UnLoad();
+					Children.Remove(child);
+				}
+			});
 			toRemove.Clear();
 		}
 
@@ -141,7 +176,25 @@ namespace GREATClient
 		/// <param name="batch">The spritebatch, used in the drawing process.</param>
 		protected override void OnDraw(SpriteBatch batch)
 		{
-			Children.ForEach(child => child.Draw(batch));
+			Children.ForEach(child => {
+				if (child.Parent == null) {
+					child.Load(this,GetGraphics());
+				}
+				if (Visible) {					
+					child.Draw(batch);
+				}
+			});
+		}
+
+		public override bool IsBehind(Vector2 position)
+		{
+			bool test = false;
+			Children.ForEach((IDraw item) => {
+				if (item.IsBehind(position)) {
+					test = true;
+				}
+			});
+			return test;
 		}
     }
 }

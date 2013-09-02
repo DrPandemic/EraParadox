@@ -37,9 +37,15 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="MonoGame.Framework" />
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="nunit.core, Version=2.6.0.12051, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Game1.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Client.cs" />
@@ -66,7 +72,23 @@
     <Compile Include="Display\FPSCounter.cs" />
     <Compile Include="Display\UIConstants.cs" />
     <Compile Include="Display\PingCounter.cs" />
-    <Compile Include="BaseClass\InputManager.cs" />
+    <Compile Include="BaseClass\Input\InputManager.cs" />
+    <Compile Include="BaseClass\Input\InputInfo.cs" />
+    <Compile Include="GreatGame.cs" />
+    <Compile Include="BaseClass\Input\InputActions.cs" />
+    <Compile Include="BaseClass\BaseAction\ActionOverTime.cs" />
+    <Compile Include="BaseClass\BaseAction\ActionMoveTo.cs" />
+    <Compile Include="BaseClass\BaseAction\ActionMoveBy.cs" />
+    <Compile Include="BaseClass\BaseAction\ActionSequence.cs" />
+    <Compile Include="BaseClass\BaseAction\ActionRotateBy.cs" />
+    <Compile Include="BaseClass\BaseAction\ActionRotateTo.cs" />
+    <Compile Include="BaseClass\BaseAction\ActionOverTimeDrawable.cs" />
+    <Compile Include="BaseClass\BaseAction\ActionFadeBy.cs" />
+    <Compile Include="BaseClass\BaseAction\ActionFadeTo.cs" />
+    <Compile Include="BaseClass\Parallax.cs" />
+    <Compile Include="BaseClass\Menu\Menu.cs" />
+    <Compile Include="BaseClass\Menu\MenuItem.cs" />
+    <Compile Include="Test\TestMenu.cs" />
     <Compile Include="Network\MainClientChampion.cs" />
     <Compile Include="BaseClass\IUpdatable.cs" />
     <Compile Include="GameHelper.cs" />
@@ -85,7 +107,9 @@
     <Folder Include="BaseClass\Particle\" />
     <Folder Include="Screens\" />
     <Folder Include="Display\" />
-    <Folder Include="Network\" />
+    <Folder Include="BaseClass\Input\" />
+    <Folder Include="BaseClass\BaseAction\" />
+    <Folder Include="BaseClass\Menu\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -128,6 +152,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Ubuntu.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\inputs.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

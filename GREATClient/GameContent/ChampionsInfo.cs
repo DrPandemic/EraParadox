@@ -24,7 +24,7 @@ using System.Diagnostics;
 using System.Xml.Serialization;
 using System.IO;
 
-namespace GREATClient
+namespace GREATClient.GameContent
 {
 	//TODO: TEMP REPLACE ME
 	public enum ChampionTypes

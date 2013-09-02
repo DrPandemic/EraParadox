@@ -22,8 +22,9 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using GREATClient.BaseClass;
 
-namespace GREATClient
+namespace GREATClient.Display
 {
     public class FPSCounter : DrawableLabel
     {
@@ -86,7 +87,7 @@ namespace GREATClient
 			Vector2 FontOrigin = Font.MeasureString( Text ) / 2;
 			// Draw the string
 			batch.DrawString( Font, Text, GetAbsolutePosition(), Tint * Alpha, 
-			                 Orientation, OriginRelative * Font.MeasureString(Text), Scale, Effects, 0 );
+			                 (float)Orientation, RelativeOrigin * Font.MeasureString(Text), Scale, Effects, 0 );
 			batch.End();
 		}
     }

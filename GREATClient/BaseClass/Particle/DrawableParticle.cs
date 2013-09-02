@@ -24,7 +24,7 @@ using Microsoft.Xna.Framework.Graphics;
 using GREATLib;
 
 
-namespace GREATClient
+namespace GREATClient.BaseClass.Particle
 {
 	public class DrawableParticle : DrawableImage
     {
@@ -117,7 +117,7 @@ namespace GREATClient
 
 			Alive = false;
 
-			OriginRelative = new Vector2(0.5f, 0.5f);
+			RelativeOrigin = new Vector2(0.5f, 0.5f);
         }
 
 		protected override void OnUpdate(GameTime dt)

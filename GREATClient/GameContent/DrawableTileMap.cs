@@ -24,8 +24,9 @@ using GREATClient;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
+using GREATClient.BaseClass;
 
-namespace GREATClient
+namespace GREATClient.GameContent
 {
 	/// <summary>
 	/// Draws a tilemap.
@@ -65,6 +66,13 @@ namespace GREATClient
 							(int)(position.Y + y * Tile.HEIGHT),
 							Tile.WIDTH, Tile.HEIGHT), Color.Red);
 			batch.End();
+		}
+
+		// TODO : test this
+		public override bool IsBehind(Vector2 position)
+		{
+			return Map.IsValidXIndex((int)((position.X - GetAbsolutePosition().X) / Tile.WIDTH)) &&
+				   Map.IsValidYIndex((int)((position.Y - GetAbsolutePosition().Y) / Tile.HEIGHT));
 		}
     }
 }

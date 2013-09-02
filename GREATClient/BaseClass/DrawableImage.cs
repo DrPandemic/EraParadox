@@ -23,7 +23,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework;
 
-namespace GREATClient
+namespace GREATClient.BaseClass
 {
 	/// <summary>
 	/// Dr. image.
@@ -74,8 +74,9 @@ namespace GREATClient
 		/// <param name="content">Content.</param>
 		protected override void OnLoad(ContentManager content, GraphicsDevice gd)
 		{
-			if(content != null && gd != null)
+			if (content != null && gd != null) {
 				Texture = content.Load<Texture2D>(FileName);
+			}
 		}
 
 		/// <summary>
@@ -87,12 +88,17 @@ namespace GREATClient
 
 			batch.Begin();
 
-			batch.Draw(Texture,GetAbsolutePosition(),SourceRectangle,Tint * Alpha,Orientation,
-			           OriginRelative * new Vector2(Width, Height),Scale,Effects,0);
+			batch.Draw(Texture,GetAbsolutePosition(),SourceRectangle,Tint * Alpha,(float)Orientation,
+			           RelativeOrigin * new Vector2(Width, Height),Scale,Effects,0);
 
 			batch.End();
-
 		}
+
+		// TODO : this
+		/*public override bool IsBehind(Vector2 position)
+		{
+			return false;
+		}*/
     }
 }
 

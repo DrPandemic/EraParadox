@@ -24,7 +24,7 @@ using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace GREATClient
+namespace GREATClient.BaseClass.Particle
 {
     public class ParticleSystem : Container
     {
@@ -99,7 +99,7 @@ namespace GREATClient
 		                      int numberOfParticle, 
 		                      TimeSpan? animationLength = null,
 		                      TimeSpan? particleLifeTime = null) 
-							  : base(content)
+							  : base()
         {
 			Console.WriteLine(NumberOfParticules);
 			NumberOfParticules = numberOfParticle;

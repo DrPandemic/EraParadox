@@ -24,8 +24,14 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
 using System;
+using GREATClient.BaseClass;
+using GREATClient.GameContent;
+using GREATClient.Display;
+using GREATClient.BaseClass.Input;
+using GREATClient.BaseClass.BaseAction;
+using GREATClient.BaseClass.Menu;
 
-namespace GREATClient
+namespace GREATClient.Test
 {
     public class TestScreen : Screen
     {
@@ -33,6 +39,8 @@ namespace GREATClient
 
 		KeyboardState oldks;
 		MouseState oldms;
+
+		ActionSequence AS;
 
 		DrawableChampionSprite champSprite;
 
@@ -43,8 +51,18 @@ namespace GREATClient
         }
 		protected override void OnLoadContent()
 		{
-			champSprite = new DrawableChampionSprite(ChampionTypes.StickMan, ChampionsInfo);
+			AddChild(new TestMenu() {Position = new Vector2(200,100)});
+
+			champSprite = new DrawableChampionSprite(new StickmanChampion() { Position = new Vec2(200f, 100f) }, ChampionsInfo) 
+			{ Position = new Vector2(200f, 300f) };
+
 			AddChild(champSprite);
+
+			AS = new ActionSequence(ActionSequence.INFINITE_SEQUENCE,
+			                        new ActionMoveBy(new TimeSpan(0,0,1), new Vector2(100, 100)), 
+			                        new ActionMoveBy(new TimeSpan(0,0,1), new Vector2(-100, -100)));
+
+			champSprite.PerformAction(AS);
 
 			DrawableTriangle tr =  new DrawableTriangle(true);
 			tr.Ascendant = false;
@@ -54,11 +72,9 @@ namespace GREATClient
 			oldks = Keyboard.GetState();
 			oldms = Mouse.GetState();
 
-			Container cc = new Container(Content);
+			Container cc = new Container();
 			cc.AddChild(new FPSCounter());
 			AddChild(cc);
-
-
 
 			//Test particle
 			/*ParticleSystem sys = new ParticleSystem(Content, 1000, null);
@@ -66,6 +82,40 @@ namespace GREATClient
 			AddChild(sys);*/
 
 			AddChild(new PingCounter(() => Client.Instance.GetPing().TotalMilliseconds));
+			//inputManager.RegisterEvent(InputActions.Spell1, new EventHandler(Jump));
+			//inputManager.RegisterEvent(InputActions.Jump, new EventHandler(Jump2));
+
+		}
+
+		}
+		protected double yo()
+		{
+			return 32d;
+		}
+
+		private void Jump(object sender, EventArgs e)
+		{
+			if (!((InputEventArgs)e).Handled) {
+				champSprite.StopAllActions();
+				champSprite.PerformAction(new ActionMoveBy(new TimeSpan(0,0,2), (arg1, arg2) => {
+					float a = -0.005f;
+					float b = arg1.Y;
+					int xAddition = 200;
+					float x = (xAddition * arg2) + arg1.X; 
+					float y = (float)(a * Math.Pow(xAddition * arg2 ,2d) + b);
+					System.Console.WriteLine(arg2);
+					return new Vector2(x, y);
+				}));
+				((InputEventArgs)e).Handled = true;
+			}
+		}
+
+		private void Jump2(object sender, EventArgs e)
+		{
+			if (!((InputEventArgs)e).Handled) {
+				champSprite.PerformAction(new ActionFadeBy(new TimeSpan(0,0,3),-0.5f));
+				((InputEventArgs)e).Handled = true;
+			}
 		}
 
 		protected override void OnUpdate(GameTime dt)
@@ -74,7 +124,7 @@ namespace GREATClient
 			KeyboardState ks = Keyboard.GetState();
 			MouseState ms = Mouse.GetState();
 
-			if (ks.IsKeyDown(Keys.Escape))
+			if (ks.IsKeyDown(Keys.Escape) && ks.IsKeyDown(Keys.LeftControl))
 				Exit = true;
 
 			if (ks.IsKeyDown(Keys.E)) { champSprite.PlayAnimation(AnimationInfo.JUMP);}

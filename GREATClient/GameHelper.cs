@@ -37,6 +37,39 @@ namespace GREATClient
 		{
 			return (T)game.Services.GetService(typeof(T));
 		}
+
+		/// <summary>
+		/// Utility function to easily make a KeyValuePair.
+		/// </summary>
+		/// <returns>The pair.</returns>
+		/// <param name="key">Key.</param>
+		/// <param name="value">Value.</param>
+		/// <typeparam name="T">The 1st type parameter.</typeparam>
+		/// <typeparam name="V">The 2nd type parameter.</typeparam>
+		public static KeyValuePair<T,V> MakePair<T,V>(T key, V value)
+		{
+			return new KeyValuePair<T,V>(key,value);
+		}
+
+		/// <summary>
+		/// Gets the radian.
+		/// </summary>
+		/// <returns>The radian.</returns>
+		/// <param name="degree">Degree.</param>
+		public static float GetRadian(float degree) 
+		{
+			return degree * (float)(Math.PI / 180);
+		}
+
+		/// <summary>
+		/// Gets the degree.
+		/// </summary>
+		/// <returns>The degree.</returns>
+		/// <param name="radian">Radian.</param>
+		public static float GetDegree(float radian) 
+		{
+			return radian * (float)(180 / Math.PI);
+		}
     }
 }
 

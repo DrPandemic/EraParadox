@@ -23,7 +23,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 
-namespace GREATClient
+namespace GREATClient.BaseClass
 {
     public abstract class Drawable : IDraw
     {
@@ -42,7 +42,7 @@ namespace GREATClient
 
 		/// <summary>
 		/// Gets or sets the alpha.
-		/// 0 to 1
+		/// 0 to 1.
 		/// </summary>
 		/// <value>The alpha.</value>
 		public float Alpha { get; set; }
@@ -51,7 +51,7 @@ namespace GREATClient
 		/// Gets or sets the orientation.
 		/// </summary>
 		/// <value>The orientation.</value>
-		public float Orientation { get; set; }
+		public double Orientation { get; set; }
 
 		/// <summary>
 		/// Gets or sets the source rectangle.
@@ -67,12 +67,12 @@ namespace GREATClient
 		public Vector2 Scale { get; set; }
 
 		/// <summary>
-		/// Gets or sets the origin relative.
+		/// Gets or sets the relative relative.
 		/// The range is from 0 to 1
 		/// Instead of pixels
 		/// </summary>
 		/// <value>The origin relative.</value>
-		public Vector2 OriginRelative { get; set; }
+		public Vector2 RelativeOrigin { get; set; }
 
 		/// <summary>
 		/// Gets or sets the tint.
@@ -98,7 +98,7 @@ namespace GREATClient
 			Orientation = 0f;
 			SourceRectangle = null;
 			Scale = new Vector2(1,1);
-			OriginRelative = new Vector2(0,0);
+			RelativeOrigin = new Vector2(0,0);
 			Effects = SpriteEffects.None;
 			IsLoaded = false;
 		}
@@ -118,10 +118,16 @@ namespace GREATClient
 		public override void Draw(SpriteBatch batch)
 		{
 			//If the texture wasn't load, beacause of the order of layer add
-			if(Texture == null || !IsLoaded)
-				OnLoad(Parent.Content,Parent.GetGraphics());
+			if (Texture == null || !IsLoaded) {
+				Load(Parent, Parent.GetGraphics());
+			}
 
 			base.Draw(batch);
+		}
+
+		public override bool IsBehind(Vector2 position)
+		{
+			return false;
 		}
     }
 }

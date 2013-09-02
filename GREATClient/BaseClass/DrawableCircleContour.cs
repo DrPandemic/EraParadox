@@ -23,16 +23,21 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 
-namespace GREATClient
+namespace GREATClient.BaseClass
 {
     public class DrawableCircleContour : Drawable
     {
-
+		/// <summary>
+		/// Gets or sets the radius.
+		/// </summary>
+		/// <value>The radius.</value>
 		private int Radius { get; set; }
+
 		public DrawableCircleContour(int radius)
         {
 			Radius = radius;
         }
+
 		public Texture2D CreateCircle(int radius, GraphicsDevice gd)
 		{
 			int outerRadius = radius*2 + 2; // So circle doesn't go out of bounds
@@ -59,17 +64,26 @@ namespace GREATClient
 			texture.SetData(data);
 			return texture;
 		}
-		protected override void OnLoad(ContentManager content, GraphicsDevice gd) {
-			Texture = CreateCircle(Radius,gd);
 
+		protected override void OnLoad(ContentManager content, GraphicsDevice gd)
+		{
+			Texture = CreateCircle(Radius,gd);
 		}
+
 		protected override void OnDraw(SpriteBatch batch)
 		{
 			batch.Begin();
-			batch.Draw(Texture,GetAbsolutePosition(),SourceRectangle,Tint,Orientation,
-			           OriginRelative * new Vector2(Texture.Width, Texture.Height),Scale,Effects,0);
+			batch.Draw(Texture,GetAbsolutePosition(),SourceRectangle,Tint,(float)Orientation,
+			           RelativeOrigin * new Vector2(Texture.Width, Texture.Height),Scale,Effects,0);
 			batch.End();
+		}
 
+		public override bool IsBehind(Vector2 position)
+		{
+			Vector2 realPos = (GetAbsolutePosition() - RelativeOrigin * new Vector2(Texture.Width, Texture.Height)) 
+				+ (new Vector2(Texture.Width, Texture.Height) * new Vector2(0.5f, 0.5f));
+			return (position.X >= realPos.X - Radius && position.X <= realPos.X + Radius) &&
+				   (position.Y >= realPos.Y - Radius && position.Y <= realPos.Y + Radius);
 		}
     }
 }

@@ -1,10 +1,10 @@
 //
-//  UIConst.cs
+//  ActionOverTimeDrawable.cs
 //
 //  Author:
-//       The Parasithe <bipbip500@hotmail.com>
+//       Jean-Samuel Aubry-Guzzi <bipbip500@gmail.com>
 //
-//  Copyright (c) 2013 The Parasithe
+//  Copyright (c) 2013 Jean-Samuel Aubry-Guzzi
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -19,13 +19,22 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using System.Diagnostics;
 
-namespace GREATClient.Display
+namespace GREATClient.BaseClass.BaseAction
 {
-
-    public class UIConstants
+    public class ActionOverTimeDrawable : ActionOverTime
     {
-		public const string UI_FONT = "Ubuntu";
+		public ActionOverTimeDrawable(TimeSpan duration) : base(duration)
+        { }
+
+		protected override void TargetChanged()
+		{
+			if (!(Target != null && Target is Drawable)) {
+				Stop();
+				Debug.Fail("The target should have been a Drawable.");
+			}
+		}
     }
 }
 

@@ -22,11 +22,24 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
+using GREATClient.BaseClass.Input;
 
-namespace GREATClient
+namespace GREATClient.BaseClass
 {
     public class Screen : Container
     {
+		/// <summary>
+		/// Gets the services.
+		/// Is used to replace Game.Services.
+		/// </summary>
+		/// <value>The services.</value>
+		public GameServiceContainer Services { get; private set;}
+
+		public override Screen GetScreen()
+		{
+			return this;
+		}
+
 		/// <summary>
 		/// Gets or sets a value indicating whether it want to exit
 		/// </summary>
@@ -55,6 +68,17 @@ namespace GREATClient
 			return Position;
 		}
 
+		/// <summary>
+		/// Gets the services.
+		/// Is used to replace Game.Services.
+		/// Only the screen hold the reference to the object.
+		/// </summary>
+		/// <value>The services.</value>
+		public override GameServiceContainer GetServices() 
+		{
+			return Services;
+		}
+
 		Game game;
 		public override Game Game 
 		{ 
@@ -80,11 +104,15 @@ namespace GREATClient
 		/// Initializes a new instance of the <see cref="GREATClient.Screen"/> class.
 		/// </summary>
 		/// <param name="content">Content.</param>
-		public Screen(ContentManager content, Game game) : base(content)
+		public Screen(ContentManager content, Game game) : base()
         {
+			Content = content;
+			Services = new GameServiceContainer();
+			this.Services.AddService(typeof(InputManager), new InputManager());
 			Exit = false;
 			Game = game;
         }
+
 		/// <summary>
 		/// Loads the content.
 		/// </summary>
@@ -108,7 +136,18 @@ namespace GREATClient
 		/// </summary>
 		public virtual void Draw()
 		{
-			Children.ForEach(child => child.Draw(spriteBatch));
+			Children.ForEach(child => {
+				if (child.Parent == null) {
+					child.Load(this,GetGraphics());
+				}
+				child.Draw(spriteBatch);
+			});
+		}
+
+		protected override void OnUpdate(GameTime dt)
+		{
+			((InputManager)Services.GetService(typeof(InputManager))).Update();
+			base.OnUpdate(dt);
 		}
     }
 }

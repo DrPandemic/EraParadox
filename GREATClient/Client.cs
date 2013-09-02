@@ -24,9 +24,7 @@ using Lidgren.Network;
 using GREATLib;
 using System.Collections.Generic;
 using System.Diagnostics;
-using GREATClient.Network;
-using GREATLib.Network;
-
+using GREATClient.Network;using GREATLib.Network;
 namespace GREATClient
 {
 	public class Client

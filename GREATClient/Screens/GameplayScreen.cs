@@ -28,6 +28,9 @@ using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using GREATLib.Entities;
 using GREATLib.Network;
+using GREATClient.BaseClass;
+using GREATClient.GameContent;
+using GREATClient.Display;
 
 namespace GREATClient.Screens
 {
@@ -56,7 +59,6 @@ namespace GREATClient.Screens
 
         public GameplayScreen(ContentManager content, Game game, Client client)
 			: base(content, game)
-
         {
 			Client = client;
 			ChampionsInfo = new ChampionsInfo();

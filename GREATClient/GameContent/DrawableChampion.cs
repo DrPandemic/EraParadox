@@ -28,7 +28,7 @@ using GREATClient.Network;
 using GREATLib.Entities;
 using GREATLib.Network;
 
-namespace GREATClient
+namespace GREATClient.GameContent
 {
 	/// <summary>
 	/// Represents a champion in the game.
@@ -102,6 +102,15 @@ namespace GREATClient
 		public Queue<PlayerAction> GetActionPackage()
 		{
 			return Champion.GetActionPackage();
+		}
+
+		public override bool IsBehind(Vector2 position)
+		{
+			if (Idle.Visible) {
+				return Idle.IsBehind(position);
+			} else {
+				return Run.IsBehind(position);
+			}
 		}
     }
 }

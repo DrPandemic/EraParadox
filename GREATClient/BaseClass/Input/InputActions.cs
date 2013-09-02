@@ -1,5 +1,5 @@
 //
-//  DrawableTriangle.cs
+//  InputActions.cs
 //
 //  Author:
 //       The Parasithe <bipbip500@hotmail.com>
@@ -19,25 +19,51 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using Microsoft.Xna.Framework.Graphics;
 
-namespace GREATClient.BaseClass
+namespace GREATClient.BaseClass.Input
 {
-    public class DrawableTriangle : DrawableImage
-    {
-		/// <summary>
-		/// Gets or sets a value indicating whether this <see cref="GREATClient.DrawableTriangle"/> is ascendant.
-		/// </summary>
-		/// <value><c>true</c> if ascendant; otherwise, <c>false</c>.</value>
-		public bool Ascendant { 
-			get { return Effects == SpriteEffects.FlipHorizontally; }
-			set {  Effects = value ? SpriteEffects.FlipHorizontally :SpriteEffects.None; }
-		}
+    public enum InputActions {
+		None,
+		Spell1,
+		Spell2,
+		Spell3,
+		Spell4,
+		Jump,
+		GoLeft,
+		GoRight,
+		ArrowUp,
+		ArrowDown,
+		ArrowLeft,
+		ArrowRight,
+		Enter,
+		EnterPressed,
+		LeftClick,
+		RightClick,
+		LeftPressed,
+		Escape
+	}
 
-		public DrawableTriangle(bool ascendant) : base("triangle")
-        {
-			Ascendant=ascendant;
-        }
-    }
+	public enum KeyState {
+		Up,
+		Down,
+		Pressed,
+		Released
+	}
+
+	public enum DeadKeys {
+		None,
+		Control,
+		Alt,
+		Shift
+	}
+
+	public enum MouseKeys {
+		None,
+		Left,
+		Right,
+		Wheel,
+		WheelUp,
+		WheelDown
+	}
 }
 
