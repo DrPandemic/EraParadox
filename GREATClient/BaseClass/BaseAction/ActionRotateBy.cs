@@ -21,6 +21,7 @@
 using System;
 using Microsoft.Xna.Framework;
 using System.Diagnostics;
+using GREATLib;
 
 namespace GREATClient.BaseClass.BaseAction
 {
@@ -43,12 +44,12 @@ namespace GREATClient.BaseClass.BaseAction
 		/// Gets or sets the rotation by millisecond.
 		/// </summary>
 		/// <value>The rotation by millisecond.</value>
-		protected double RotationByMillisecond { get; set; }
+		protected float RotationByMillisecond { get; set; }
 
 		public ActionRotateBy(TimeSpan duration, float rotation, bool isRadian) : base (duration)
         {
 			if (!isRadian) {
-				rotation = Utilities.GetRadian(rotation);
+				rotation = MathHelper.ToRadians(rotation);
 			}
 			Rotation = rotation;
 			InitialRotation = rotation;
@@ -58,14 +59,14 @@ namespace GREATClient.BaseClass.BaseAction
 		{
 			Debug.Assert(Target != null);
 
-			((Drawable)Target).Orientation += RotationByMillisecond * dt.ElapsedGameTime.TotalMilliseconds;
+			((Drawable)Target).Orientation += RotationByMillisecond * (float)dt.ElapsedGameTime.TotalMilliseconds;
 		}
 
 		public override void Ready()
 		{
 			Debug.Assert(Target != null);				
 
-			RotationByMillisecond = Rotation / Duration.TotalMilliseconds;
+			RotationByMillisecond = Rotation / (float)Duration.TotalMilliseconds;
 		}
 
 		public override void Reset()

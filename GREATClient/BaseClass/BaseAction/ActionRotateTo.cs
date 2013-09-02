@@ -33,7 +33,7 @@ namespace GREATClient.BaseClass.BaseAction
 		{
 			Debug.Assert(Target != null);			
 
-			RotationByMillisecond = (Rotation - ((Drawable)Target).Orientation) / Duration.TotalMilliseconds;
+			RotationByMillisecond = (Rotation - ((Drawable)Target).Orientation) / (float)Duration.TotalMilliseconds;
 		}
     }
 }

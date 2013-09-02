@@ -21,7 +21,7 @@
 using System;
 using Microsoft.Xna.Framework;
 
-namespace GREATClient
+namespace GREATClient.BaseClass
 {
 	/// <summary>
 	/// Represents an object that can be updated on every frame.

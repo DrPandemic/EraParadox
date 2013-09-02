@@ -370,7 +370,7 @@ namespace GREATClient.BaseClass.Input
 
 	public class NotImplementedActionException : Exception
 	{
-		public NotImplementedActionException() : base("You fucked the XML(" + Inputs.INPUT_FILE + "). Don't do it again!") {}
+		public NotImplementedActionException() : base("Couldn't read the XML(" + Inputs.INPUT_FILE + ").") {}
 	}
 
 	public class ActionDeserializationException : NotImplementedActionException

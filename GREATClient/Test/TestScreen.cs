@@ -53,7 +53,7 @@ namespace GREATClient.Test
 		{
 			AddChild(new TestMenu() {Position = new Vector2(200,100)});
 
-			champSprite = new DrawableChampionSprite(new StickmanChampion() { Position = new Vec2(200f, 100f) }, ChampionsInfo) 
+			champSprite = new DrawableChampionSprite(ChampionTypes.StickMan, ChampionsInfo) 
 			{ Position = new Vector2(200f, 300f) };
 
 			AddChild(champSprite);
@@ -87,7 +87,6 @@ namespace GREATClient.Test
 
 		}
 
-		}
 		protected double yo()
 		{
 			return 32d;

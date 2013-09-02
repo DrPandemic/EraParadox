@@ -63,6 +63,5 @@
     <Folder Include="Entities\" />
     <Folder Include="Physics\" />
     <Folder Include="Network\" />
-    <Folder Include="Debug\" />
   </ItemGroup>
 </Project>

@@ -25,6 +25,7 @@ using GREATLib.Entities;
 using GREATLib.Network;
 using System.Diagnostics;
 using System;
+using GREATClient.BaseClass;
 
 namespace GREATClient.Network
 {

@@ -38,6 +38,15 @@ namespace GREATClient
 		{
 			return new Vector2(vec.X, vec.Y);
 		}
+
+		public static Rectangle ToRectangle(this Rect rect)
+		{
+			return new Rectangle(
+				(int)rect.X, 
+				(int)rect.Y, 
+				(int)rect.Width, 
+				(int)rect.Height);
+		}
     }
 }
 

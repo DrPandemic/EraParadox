@@ -18,15 +18,14 @@
 //
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-using System;
 using GREATClient;
 using Microsoft.Xna.Framework;
 using GREATLib;
 using System.Collections.Generic;
-using System.Diagnostics;
-using GREATClient.Network;
 using GREATLib.Entities;
 using GREATLib.Network;
+using GREATClient.BaseClass;
+using GREATClient.Network;
 
 namespace GREATClient.GameContent
 {
@@ -106,11 +105,10 @@ namespace GREATClient.GameContent
 
 		public override bool IsBehind(Vector2 position)
 		{
-			if (Idle.Visible) {
-				return Idle.IsBehind(position);
-			} else {
-				return Run.IsBehind(position);
-			}
+			//TODO: use the rectangle of the current animation?
+			return GameLibHelper.ToRectangle(Champion.CreateCollisionRectangle()).Contains(
+				(int)position.X,
+				(int)position.Y);
 		}
     }
 }
