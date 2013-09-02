@@ -50,6 +50,34 @@ namespace GREATTests
 		}
 
 		[Test()]
+		public void TestBefore()
+		{
+			SnapshotHistory<int> h = new SnapshotHistory<int>(TimeSpan.FromSeconds(1000.0));
+
+			h.AddSnapshot(1, 1.0);
+
+			Assert.AreEqual(1, h.GetSnapshotBefore(2.0).Value, "first element with one element(1.0) and t=2");
+			Assert.AreEqual(1, h.GetSnapshotBefore(1.0).Value, "first element with one element(1.0) and t=1");
+			Assert.AreEqual(1, h.GetSnapshotBefore(0.0).Value, "gives first element when given time before the first snapshot");
+
+			h.AddSnapshot(2, 2.0);
+
+			Assert.AreEqual(2, h.GetSnapshotBefore(5.0).Value, "second element before with 2 elements(1.0,2.0) and t=5");
+			Assert.AreEqual(2, h.GetSnapshotBefore(2.0).Value, "second element before with 2 elements(1.0,2.0) and t=2");
+			Assert.AreEqual(1, h.GetSnapshotBefore(1.0).Value, "first element before with 2 elements(1.0,2.0) and t=1");
+			Assert.AreEqual(1, h.GetSnapshotBefore(0.0).Value, "gives first element when given time before the first snapshot (2 elements)");
+
+			h.AddSnapshot(5, 5.0);
+
+			Assert.AreEqual(5, h.GetSnapshotBefore(7.0).Value, "third element before with 3 elements(1.0,2.0,5.0) and t=7");
+			Assert.AreEqual(5, h.GetSnapshotBefore(5.0).Value, "third element before with 3 elements(1.0,2.0,5.0) and t=5");
+			Assert.AreEqual(2, h.GetSnapshotBefore(2.0).Value, "second element before with 3 elements(1.0,2.0,5.0) and t=2");
+			Assert.AreEqual(1, h.GetSnapshotBefore(1.5).Value, "first element before with 3 elements(1.0,2.0,5.0) and t=1");
+			Assert.AreEqual(1, h.GetSnapshotBefore(1.0).Value, "first element before with 3 elements(1.0,2.0,5.0) and t=1.5");
+			Assert.AreEqual(1, h.GetSnapshotBefore(0.0).Value, "gives first element when given time before the first snapshot (3 elements)");
+		}
+
+		[Test()]
 		public void TestClosest()
 		{
 			SnapshotHistory<int> h = new SnapshotHistory<int>(TimeSpan.FromSeconds(1000.0));

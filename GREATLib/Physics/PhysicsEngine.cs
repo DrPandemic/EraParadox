@@ -100,7 +100,7 @@ namespace GREATLib.Physics
 			Debug.Assert(entity != null
 						 && entity.Position != null
 						 && entity.Velocity != null);
-			Debug.Assert(progress + double.Epsilon > 0.0 && progress < 1.0 + double.Epsilon);
+			Debug.Assert(progress + double.Epsilon >= 0.0 && progress <= 1.0 + double.Epsilon);
 
 			// Keep some values that will be interpolated
 			Vec2 initialPos = entity.Position;

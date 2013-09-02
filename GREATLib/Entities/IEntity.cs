@@ -100,6 +100,9 @@ namespace GREATLib.Entities
 			IsOnGround = true;
         }
 
+		/// <summary>
+		/// Clone the specified entity to copy its values.
+		/// </summary>
 		public void Clone(IEntity e)
 		{
 			CollisionWidth = e.CollisionWidth;

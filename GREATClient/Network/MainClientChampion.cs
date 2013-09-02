@@ -52,7 +52,7 @@ namespace GREATClient.Network
 		/// </summary>
 		/// <remarks>This shouldn't be changed within the class, only set when the server
 		/// gives us a new position.</remarks>
-		Vec2 ServerPosition { get; set; }
+		public Vec2 ServerPosition { get; private set; }
 
 		GameMatch Match { get; set; }
 
@@ -83,7 +83,6 @@ namespace GREATClient.Network
 			DrawnPosition = Position;
 
 			//TODO: remove, used for testing purposes
-			//ILogger.Log(Client.Instance.GetTime().TotalSeconds.ToString());
 			ILogger.Log(Position.ToString());
 		}
 
@@ -93,10 +92,10 @@ namespace GREATClient.Network
 		/// </summary>
 		public override void AuthoritativeChangePosition(Vec2 position)
 		{
-			/*ServerPosition = position;
+			ServerPosition = position;
 
 			// resimulate the unacknowledged actions
-			Position = (Vec2)ServerPosition.Clone();
+			/*Position = ServerPosition.Clone() as Vec2;
 
 			// remove the acknowledged actions
 			while (UnacknowledgedActions.Count > 0 &&

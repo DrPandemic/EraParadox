@@ -38,7 +38,7 @@ namespace GREATServer
 
 		static readonly TimeSpan STORE_HISTORY_INTERVAL = TimeSpan.FromMilliseconds(50.0);
 		static readonly TimeSpan HISTORY_MAX_TIME_KEPT = TimeSpan.FromSeconds(1.0);
-		static readonly float MAX_TOLERATED_OFF_DISTANCE = 50f;
+		const float MAX_TOLERATED_OFF_DISTANCE = 150f;
 
 		static readonly TimeSpan MIN_TIME_BETWEEN_ACTIONS = TimeSpan.FromMilliseconds(10.0);
 
@@ -53,11 +53,6 @@ namespace GREATServer
 		/// on the client's machine.
 		/// </summary>
 		SnapshotHistory<MatchState> StateHistory { get; set; }
-		/// <summary>
-		/// Player action history for every player, used to simulate a player's action when it happened on
-		/// the client's machine.
-		/// </summary>
-		Dictionary<uint, SnapshotHistory<PlayerAction>> PlayerActionHistory { get; set; }
 
 		/// <summary>
 		/// Time since the last state update (position corrections) was sent.
@@ -72,7 +67,6 @@ namespace GREATServer
 			Clients = new Dictionary<NetConnection, ServerClient>();
 
 			StateHistory = new SnapshotHistory<MatchState>(HISTORY_MAX_TIME_KEPT);
-			PlayerActionHistory = new Dictionary<uint, SnapshotHistory<PlayerAction>>();
 			Match = new GameMatch();
 
 			TimeSinceLastCorrection = 0.0;
@@ -172,13 +166,9 @@ namespace GREATServer
 		{
 			foreach (ServerClient client in Clients.Values) {
 				if (client.ActionsPackage.Count > 0) {
-					Dictionary<PlayerActionType, double> lastTimeOfAction = new Dictionary<PlayerActionType, double>();
 
 					foreach (PlayerAction action in client.ActionsPackage) {
-						ILogger.Log("Handling action #" + action.ID, LogPriority.Low);
-						ILogger.Log("Player position before handle action: " + client.Champion.Position, LogPriority.Low);
-						HandleAction(client.Champion, action);
-						ILogger.Log("Player position after handle action: " + client.Champion.Position, LogPriority.Low);
+						HandleAction(client.Champion.ID, action);
 						client.LastAcknowledgedActionID = Math.Max(client.LastAcknowledgedActionID, action.ID);
 					}
 
@@ -187,7 +177,7 @@ namespace GREATServer
 			}
 		}
 
-		void HandleAction(IEntity champion, PlayerAction action)
+		void HandleAction(uint id, PlayerAction action)
 		{
 			float now = (float)Server.Instance.GetTime().TotalSeconds;
 			float time = action.Time;
@@ -195,59 +185,53 @@ namespace GREATServer
 			// Make sure we're not using weird times
 			time = ValidateActionTime(action, now);
 
-			// Store the action in our history
-			Debug.Assert(PlayerActionHistory.ContainsKey(champion.ID));
-			SnapshotHistory<PlayerAction> actionHistory = PlayerActionHistory[champion.ID];
-			actionHistory.AddSnapshot(action, time);
+			// Go to the given action time if we have a state history
+			if (!StateHistory.IsEmpty()) {
+				// Go to the game snapshot before the action that we're simulating
+				KeyValuePair<double, MatchState> stateBefore = StateHistory.GetSnapshotBefore(time);
+				KeyValuePair<double, MatchState> state = new KeyValuePair<double, MatchState>(
+					stateBefore.Key,
+					stateBefore.Value.Clone() as MatchState);
 
-			// Go to the given action time and resimulate all the other actions by the player until now
-			if (!actionHistory.IsEmpty() && !StateHistory.IsEmpty()) {
-				KeyValuePair<double, PlayerAction>? actionState = actionHistory.GetClosestSnapshot(time);
-				Debug.Assert(actionState.HasValue);
-				do {
-					// Go to the closest game snapshot to the action that we're simulating
-					KeyValuePair<double, MatchState> state = StateHistory.GetClosestSnapshot(time);
+				// Simulate from our previous snapshot to our current action to be up-to-date
+				IEntity player = state.Value.GetEntity(id);
+				float deltaT = (float)(time - state.Key);
+				if (deltaT > 0f) { // if we have something to simulate...
+					state.Value.ApplyPhysicsUpdate(id, deltaT);
+				}
 
-					// Simulate from our closest snapshot to our current action to be up-to-date
-					float deltaT = Math.Abs(time - (float)state.Key);
-					if (deltaT > 0f) { // if we have something to simulate...
-						//state.Value.ApplyPhysicsUpdate(champion.ID, deltaT);
+				// Make sure we're not using hacked positions
+				player.Position = ValidateActionPosition(player, action);
+
+				// Actually execute the action on our currently simulated state
+				DoAction(state.Value, player, action);
+
+				// Store our intermediate state at the action time.
+				state = StateHistory.AddSnapshot(state.Value, time);
+
+
+
+				// Resimulate all the states up to now so that they are affected
+				// by the player's action.
+				var nextState = StateHistory.GetNext(state);
+				while (nextState.HasValue) {
+					// get how much time we have to simulate for next state
+					float timeUntilNextState = (float)nextState.Value.Key - time;
+					Debug.Assert(timeUntilNextState >= 0f);
+
+					// simulate the next state
+					nextState.Value.Value.GetEntity(id).Clone(state.Value.GetEntity(id));
+					if (timeUntilNextState > 0f) {
+						nextState.Value.Value.ApplyPhysicsUpdate(id, timeUntilNextState);
 					}
 
-					// Make sure we're not using hacked positions
-					IEntity player = state.Value.GetEntity(champion.ID);
-					player.Position = ValidateActionPosition(player, action);
-
-					// Actually execute the action on our currently simulated state
-					DoAction(state.Value, player, action);
-
-					// Resimulate all the states below our next action so that they are affected
-					// by the player's action.
-					var nextActionState = actionHistory.GetNext(actionState.Value);
-					float limitTime = nextActionState.HasValue ? (float)nextActionState.Value.Key : now; // we don't want to simulate at or after that time
-
-					var nextState = StateHistory.GetNext(state);
-					while (nextState.HasValue && nextState.Value.Key <= limitTime) { // while we have not reached our simulation target time (next action or now)
-						// get how much time we have to simulate for next state
-						float timeUntilNextState = (float)nextState.Value.Key - time;
-						Debug.Assert(timeUntilNextState >= 0f);
-
-						// simulate the next state
-                        nextState.Value.Value.GetEntity(champion.ID).Clone(state.Value.GetEntity(champion.ID));
-						if (timeUntilNextState > 0f) {
-                            nextState.Value.Value.ApplyPhysicsUpdate(champion.ID, timeUntilNextState);
-						}
-						
-
-						// switch to the next state
-						state = nextState.Value;
-                        nextState = StateHistory.GetNext(state);
-					}
-
-				} while ((actionState = actionHistory.GetNext(actionState.Value)).HasValue); // while there are actions to simulate
+					// switch to the next state
+					state = nextState.Value;
+                    nextState = StateHistory.GetNext(state);
+				}
 
 				// Modify our current game state to apply our simulation modifications.
-				Match.CurrentState.GetEntity(champion.ID).Clone(StateHistory.GetLast().Value.GetEntity(champion.ID));
+	            Match.CurrentState.GetEntity(id).Clone(StateHistory.GetLast().Value.GetEntity(id));
 			}
 		}
 
@@ -317,7 +301,6 @@ namespace GREATServer
 				Match.CurrentState.ApplyPhysicsUpdate(client.Champion.ID, dt);
 
 				//TODO: remove, used for testing purposes
-				//ILogger.Log(Server.Instance.GetTime().TotalSeconds.ToString());
 				ILogger.Log(client.Champion.Position.ToString());
 			}
 		}
@@ -333,9 +316,6 @@ namespace GREATServer
 
 			ServerClient client = new ServerClient(connection, champion);
 			Clients.Add(connection, client);
-
-			Debug.Assert(!PlayerActionHistory.ContainsKey(champion.ID));
-			PlayerActionHistory.Add(champion.ID, new SnapshotHistory<PlayerAction>(HISTORY_MAX_TIME_KEPT));
 
 			Match.CurrentState.AddEntity(champion);
 

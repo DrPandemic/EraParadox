@@ -51,7 +51,8 @@ namespace GREATLib.Network
 		/// <summary>
 		/// Adds the snapshot to the history and cleans outdated snapshots.
 		/// </summary>
-		public void AddSnapshot(TState snapshot, double currentSeconds)
+		/// <returns>The added snapshot.</returns>
+		public KeyValuePair<double, TState> AddSnapshot(TState snapshot, double currentSeconds)
 		{
 			Debug.Assert(States != null);
 			Debug.Assert(currentSeconds >= 0.0);
@@ -60,9 +61,12 @@ namespace GREATLib.Network
 
 			// Find where our state should go (ordered by time)
 			int i = States.FindLastIndex(pair => pair.Key < currentSeconds) + 1;
-			States.Insert(i, Utilities.MakePair(currentSeconds, snapshot));
+			var added = Utilities.MakePair(currentSeconds, snapshot);
+			States.Insert(i, added);
 
 			Debug.Assert(IsHistorySorted());
+
+			return added;
 		}
 
 		bool IsHistorySorted()
@@ -89,6 +93,22 @@ namespace GREATLib.Network
 				if (Math.Abs(pair.Key - time) < Math.Abs(state.Key - time)) { // take the closest snapshot
 					state = pair;
 				}
+			}
+
+			return state;
+		}
+
+		/// <summary>
+		/// Returns the snapshot right before the given time.
+		/// </summary>
+		public KeyValuePair<double, TState> GetSnapshotBefore(double time)
+		{
+			Debug.Assert(time >= 0.0);
+
+			KeyValuePair<double, TState> state = States[0];
+
+			for (int i = 0; i < States.Count && States[i].Key <= time; ++i) {
+				state = States[i];
 			}
 
 			return state;

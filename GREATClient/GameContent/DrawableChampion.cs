@@ -46,6 +46,7 @@ namespace GREATClient
 		/// TODO: class for debug info
 		/// </summary>
 		DrawableRectangle ChampionDrawnRect { get; set; }
+		DrawableRectangle ChampionServerRect { get; set; } 
 
 
 
@@ -57,6 +58,8 @@ namespace GREATClient
 		{
 			base.OnLoad(content, gd);
 
+			Parent.AddChild(ChampionServerRect = new DrawableRectangle(new Rectangle(0, 0, 15, 30), Color.Green));
+
 			ChampionDrawnRect = new DrawableRectangle(new Rectangle(0, 0, 15, 30), Color.White);
 			Parent.AddChild(ChampionDrawnRect);
 		}
@@ -64,6 +67,7 @@ namespace GREATClient
 		{
 			Champion.Update(dt);
 
+			ChampionServerRect.Position = GameLibHelper.ToVector2(Champion.ServerPosition);
 			ChampionDrawnRect.Position = GameLibHelper.ToVector2(Champion.DrawnPosition);
 		}
 
