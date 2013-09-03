@@ -75,6 +75,7 @@ namespace GREATClient
 		{
 			if (!ScreenInitialized) {
 				SetupScreen();
+				Window.ClientSizeChanged += (object sender, EventArgs e) => SetupScreen();
 				ScreenInitialized = true;
 
 				Console.WriteLine("Starting client...");
@@ -86,7 +87,7 @@ namespace GREATClient
 
 				gameplay.LoadContent(GraphicsDevice);
 			}
-			Console.WriteLine(graphics.GraphicsDevice.Viewport.Height);
+			Console.WriteLine(graphics.PreferredBackBufferHeight);
 
 			client.Update();
 
