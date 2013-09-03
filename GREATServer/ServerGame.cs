@@ -34,9 +34,7 @@ namespace GREATServer
 	/// </summary>
     public class ServerGame
     {
-		static readonly TimeSpan CORRECTION_INTERVAL = TimeSpan.FromMilliseconds(50.0);
-
-		static readonly TimeSpan STORE_HISTORY_INTERVAL = TimeSpan.FromMilliseconds(50.0);
+		static readonly TimeSpan STORE_HISTORY_INTERVAL = GameMatch.STATE_UPDATE_INTERVAL;
 		static readonly TimeSpan HISTORY_MAX_TIME_KEPT = TimeSpan.FromSeconds(1.0);
 		const float MAX_TOLERATED_OFF_DISTANCE = 150f;
 
@@ -121,7 +119,7 @@ namespace GREATServer
 		/// </summary>
 		void SendStateChanges(double dt)
 		{
-			if (TimeSinceLastCorrection >= CORRECTION_INTERVAL.TotalSeconds) {
+			if (TimeSinceLastCorrection >= GameMatch.STATE_UPDATE_INTERVAL.TotalSeconds) {
 				foreach (NetConnection connection in Clients.Keys) {
 					SendCommand(
 						connection,

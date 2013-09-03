@@ -36,6 +36,13 @@ namespace GREATClient.Network
     public class MainClientChampion : IEntity, IUpdatable
     {
 		/// <summary>
+		/// The distance required between the simulated position and the drawn position
+		/// that makes us snap directly to it (instead of interpolating to it, we just 
+		/// directly set it).
+		/// </summary>
+		const float POSITION_DISTANCE_TO_SNAP = 50f;
+
+		/// <summary>
 		/// Gets or sets the last acknowledged action ID of the player.
 		/// That is to say, the last action from us that the server executed.
 		/// </summary>
@@ -55,6 +62,9 @@ namespace GREATClient.Network
 		/// gives us a new position.</remarks>
 		public Vec2 ServerPosition { get; private set; }
 
+		Vec2 PositionBeforeLerp { get; set; }
+		double TimeSinceLastServerUpdate { get; set; }
+
 		GameMatch Match { get; set; }
 
 		Queue<PlayerAction> PackagedActions { get; set; }
@@ -71,6 +81,9 @@ namespace GREATClient.Network
 
 			PackagedActions = new Queue<PlayerAction>();
 			UnacknowledgedActions = new Queue<PlayerAction>();
+
+			TimeSinceLastServerUpdate = 0.0;
+			PositionBeforeLerp = Position;
         }
 
 		/// <summary>
@@ -81,10 +94,33 @@ namespace GREATClient.Network
 			// client-side prediction
 			Match.CurrentState.ApplyPhysicsUpdate(ID, deltaTime.ElapsedGameTime.TotalSeconds);
 
-			DrawnPosition = Position;
+			LerpTowardsServerPosition(deltaTime.ElapsedGameTime.TotalSeconds);
 
 			//TODO: remove, used for testing purposes
 			ILogger.Log(Position.ToString());
+		}
+
+		void LerpTowardsServerPosition(double deltaSeconds)
+		{
+			float distanceSq = Vec2.DistanceSquared(Position, DrawnPosition);
+
+			// If we must interpolate our position (we're not too far)
+			if (distanceSq < POSITION_DISTANCE_TO_SNAP * POSITION_DISTANCE_TO_SNAP) {
+
+				Debug.Assert(TimeSinceLastServerUpdate >= 0.0);
+
+				TimeSinceLastServerUpdate += deltaSeconds;
+				double progress = TimeSinceLastServerUpdate / GameMatch.STATE_UPDATE_INTERVAL.TotalSeconds;
+				progress = Math.Min(1.0, progress);
+
+				DrawnPosition = Vec2.Lerp(PositionBeforeLerp, Position, (float)progress);
+
+			} else { // if we must snap directly to the simulated position
+				ILogger.Log(String.Format("Snapping position({0}) to simulated({1}). -> distance squared:{2}", DrawnPosition, Position, distanceSq), LogPriority.High);
+				DrawnPosition = Position;
+				TimeSinceLastServerUpdate = 0.0;
+				PositionBeforeLerp = DrawnPosition;
+			}
 		}
 
 		/// <summary>
@@ -116,6 +152,9 @@ namespace GREATClient.Network
 					Match.CurrentState.ApplyPhysicsUpdate(ID, deltaTime);
 				}
 			}*/
+
+			TimeSinceLastServerUpdate = 0.0;
+			PositionBeforeLerp = Position;
 		}
 
 		public void PackageAction(PlayerAction action)
