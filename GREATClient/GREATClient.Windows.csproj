@@ -89,7 +89,8 @@
     <Compile Include="BaseClass\Menu\Menu.cs" />
     <Compile Include="BaseClass\Menu\MenuItem.cs" />
     <Compile Include="Test\TestMenu.cs" />
-    <Compile Include="BaseClass\ScreenService.cs" />
+    <Compile Include="BaseClass\ScreenInformation\ScreenInfo.cs" />
+    <Compile Include="BaseClass\ScreenInformation\ScreenService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />
@@ -109,6 +110,7 @@
     <Folder Include="BaseClass\Input\" />
     <Folder Include="BaseClass\BaseAction\" />
     <Folder Include="BaseClass\Menu\" />
+    <Folder Include="BaseClass\ScreenInformation\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -142,6 +144,9 @@
     </Content>
     <Content Include="Content\inputs.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\screen.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 </Project>

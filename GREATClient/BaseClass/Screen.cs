@@ -23,6 +23,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using GREATClient.BaseClass.Input;
+using GREATClient.BaseClass.ScreenInformation;
 
 namespace GREATClient.BaseClass
 {
@@ -149,7 +150,6 @@ namespace GREATClient.BaseClass
 		protected override void OnUpdate(GameTime dt)
 		{
 			((InputManager)Services.GetService(typeof(InputManager))).Update();
-			((ScreenService)Services.GetService(typeof(ScreenService))).Update();
 			base.OnUpdate(dt);
 		}
     }

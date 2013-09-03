@@ -21,7 +21,7 @@
 using System;
 using Microsoft.Xna.Framework;
 
-namespace GREATClient.BaseClass
+namespace GREATClient.BaseClass.ScreenInformation
 {
     public class ScreenService
     {
@@ -33,14 +33,45 @@ namespace GREATClient.BaseClass
 		GraphicsDeviceManager m_GraphicsDeviceManager { get; set; }
 
 		/// <summary>
+		/// Gets or sets the screen info.
+		/// This object contains the XML with the information.
+		/// </summary>
+		/// <value>The screen info.</value>
+		ScreenInfo m_ScreenInfo;
+		ScreenInfo screenInfo 
+		{ 
+			get {
+				return m_ScreenInfo;
+			}
+			set {
+				m_ScreenInfo = value;
+			}
+		}
+
+		/// <summary>
+		/// Gets a value indicating whether this instance is full screen.
+		/// </summary>
+		/// <value><c>true</c> if this instance is full screen; otherwise, <c>false</c>.</value>
+		public bool IsFullScreen 
+		{
+			get {
+				return screenInfo.Fullscreen;
+			}
+			set {
+				screenInfo.Fullscreen = value;
+				screenInfo.SaveInfo();
+			}
+		}
+
+		/// <summary>
 		/// Gets the size of the physical screen not the game window.
 		/// </summary>
 		/// <value>The size of the screen.</value>
 		public Vector2 ScreenSize
 		{
 			get {
-				return new Vector2(m_GraphicsDeviceManager.GraphicsDevice.DisplayMode.Width,
-				                   m_GraphicsDeviceManager.GraphicsDevice.DisplayMode.Height);
+				return new Vector2(screenInfo.ScreenWidth,
+				                   screenInfo.ScreenHeight);
 			}
 		}
 
@@ -51,48 +82,28 @@ namespace GREATClient.BaseClass
 		public Vector2 GameWindowSize
 		{
 			get {
-				return new Vector2(m_GraphicsDeviceManager.GraphicsDevice.Viewport.Width,
-				                   m_GraphicsDeviceManager.GraphicsDevice.Viewport.Height);
+				return new Vector2(screenInfo.WindowWidth,
+				                   screenInfo.WindowHeight);
 			}
 			set {
-				NextWindowSize = value;
-				WindowSizeChanged = true;
+				screenInfo.WindowWidth = (int)value.X;
+				screenInfo.WindowHeight = (int)value.Y;
+				screenInfo.SaveInfo();
 			}
 		}
-
-		/// <summary>
-		/// Gets or sets the next size of the window.
-		/// Is used to update the PreferredBackBuffer in the update.
-		/// </summary>
-		/// <value>The size of the next window.</value>
-		public Vector2 NextWindowSize { get; set; }
-
-		/// <summary>
-		/// Gets or sets a value indicating whether this <see cref="GREATClient.BaseClass.ScreenService"/> window size changed.
-		/// </summary>
-		/// <value><c>true</c> if window size changed; otherwise, <c>false</c>.</value>
-		bool WindowSizeChanged { get; set; }
 
 		public ScreenService(GraphicsDeviceManager gdm)
         {
 			m_GraphicsDeviceManager = gdm;
-			WindowSizeChanged = false;
-			NextWindowSize = new Vector2(500,500);
+			screenInfo = ScreenInfo.GetInfo();
         }
 
-		public void SetFullscreen(bool fullscreen) {
-			m_GraphicsDeviceManager.IsFullScreen = fullscreen;
-		}
-    
-		public void Update()
+		/// <summary>
+		/// Switchs the display from windowed to fullscreen or the other way around.
+		/// </summary>
+		public void SwitchFullscreen()
 		{
-			if (WindowSizeChanged) {
-				m_GraphicsDeviceManager.PreferredBackBufferHeight = (int)NextWindowSize.Y;
-				m_GraphicsDeviceManager.PreferredBackBufferWidth = (int)NextWindowSize.X;
-				m_GraphicsDeviceManager.ApplyChanges();
-
-				WindowSizeChanged = false;
-			}
+			IsFullScreen = !IsFullScreen;
 		}
 	}
 }

@@ -32,6 +32,7 @@ using GREATClient.Screens;
 using GREATClient.BaseClass;
 using GREATClient.Test;
 using GREATClient.BaseClass.Input;
+using GREATClient.BaseClass.ScreenInformation;
 
 
 namespace GREATClient
@@ -52,7 +53,7 @@ namespace GREATClient
 		GraphicsDeviceManager graphics;
 		Screen gameplay;
 
-		bool WasResize { get; set; }
+		bool ScreenInitialized { get; set; }
 
 		public GreatGame()
 		{
@@ -60,40 +61,9 @@ namespace GREATClient
 			client = Client.Instance;
 			graphics = new GraphicsDeviceManager(this);
 			Content.RootDirectory = "Content";
-			graphics.IsFullScreen = false;
+			//SetupScreen();
 			Window.Title = SCREEN_NAME;
-
-			Window.AllowUserResizing = true;
-
-			WasResize = false;
-
-		}
-
-		/// <summary>
-		/// Allows the game to perform any initialization it needs to before starting to run.
-		/// This is where it can query for any required services and load any non-graphic
-		/// related content.  Calling base.Initialize will enumerate through any components
-		/// and initialize them as well.
-		/// </summary>
-		protected override void Initialize()
-		{
-			Console.WriteLine("Starting client...");
-			//gameplay = new GameplayScreen(Content, this, client); // when testing: new TestScreen(Content);
-			gameplay = new TestScreen(Content,this);
-			client.Start();
-
-			base.Initialize();
-		}
-
-		/// <summary>
-		/// LoadContent will be called once per game and is the place to load
-		/// all of your content.
-		/// </summary>
-		protected override void LoadContent()
-		{
-			Console.WriteLine("Loading game content...");
-
-			gameplay.LoadContent(GraphicsDevice);
+			ScreenInitialized = false;
 		}
 
 		/// <summary>
@@ -103,12 +73,20 @@ namespace GREATClient
 		/// <param name="gameTime">Provides a snapshot of timing values.</param>
 		protected override void Update(GameTime gameTime)
 		{
-			if (!WasResize) {
-				graphics.PreferredBackBufferWidth = graphics.GraphicsDevice.DisplayMode.Width;
-				graphics.PreferredBackBufferHeight = graphics.GraphicsDevice.DisplayMode.Height;
-				graphics.ApplyChanges();
-				WasResize = true;
+			if (!ScreenInitialized) {
+				SetupScreen();
+				ScreenInitialized = true;
+
+				Console.WriteLine("Starting client...");
+				//gameplay = new GameplayScreen(Content, this, client); // when testing: new TestScreen(Content);
+				gameplay = new TestScreen(Content,this);
+				client.Start();
+
+				Console.WriteLine("Loading game content...");
+
+				gameplay.LoadContent(GraphicsDevice);
 			}
+			Console.WriteLine(graphics.GraphicsDevice.Viewport.Height);
 
 			client.Update();
 
@@ -126,7 +104,7 @@ namespace GREATClient
 		/// <param name="gameTime">Provides a snapshot of timing values.</param>
 		protected override void Draw(GameTime gameTime)
 		{
-			graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
+			GraphicsDevice.Clear(Color.CornflowerBlue);
 
 			gameplay.Draw();
 
@@ -141,6 +119,41 @@ namespace GREATClient
 		protected override void OnExiting(object sender, EventArgs args)
 		{
 			client.Stop();
+		}
+
+		void SetupScreen() {
+			ScreenInfo screenInfo = ScreenInfo.GetInfo();
+
+			if (screenInfo.WindowHeight < 480) {
+				screenInfo.WindowHeight = 480;
+			}
+			if (screenInfo.WindowWidth < 800) {
+				screenInfo.WindowWidth = 800;
+			}
+			
+			screenInfo.ScreenHeight = GraphicsDevice.DisplayMode.Height;
+			screenInfo.ScreenWidth = GraphicsDevice.DisplayMode.Width;
+
+			screenInfo.SaveInfo();
+
+			if (screenInfo.AutoResolution) {
+				graphics.PreferredBackBufferWidth = screenInfo.ScreenWidth;
+				graphics.PreferredBackBufferHeight = screenInfo.ScreenHeight;
+			} else {
+				graphics.PreferredBackBufferWidth = screenInfo.WindowWidth;
+				graphics.PreferredBackBufferHeight = screenInfo.WindowHeight;
+			}
+
+			graphics.IsFullScreen = screenInfo.Fullscreen;
+			Window.AllowUserResizing = false;
+			graphics.ApplyChanges();
+
+			Viewport view = graphics.GraphicsDevice.Viewport;
+			view.Bounds = new Rectangle(0,
+			                            0,
+			                            graphics.PreferredBackBufferWidth,
+			                            graphics.PreferredBackBufferHeight);
+			graphics.GraphicsDevice.Viewport = view;
 		}
 	}
 }

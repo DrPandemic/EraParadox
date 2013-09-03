@@ -35,6 +35,7 @@ using GREATClient.Display;
 using GREATClient.BaseClass.Input;
 using GREATClient.BaseClass.BaseAction;
 using GREATClient.BaseClass.Menu;
+using GREATClient.BaseClass.ScreenInformation;
 
 namespace GREATClient.Test
 {
@@ -90,7 +91,6 @@ namespace GREATClient.Test
 
 			//inputManager.RegisterEvent(InputActions.Spell1, new EventHandler(Jump));
 			//inputManager.RegisterEvent(InputActions.Jump, new EventHandler(Jump2));
-
 		}
 
 		/// <summary>

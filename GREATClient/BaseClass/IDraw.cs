@@ -25,6 +25,7 @@ using Microsoft.Xna.Framework.Graphics;
 using GREATClient.BaseClass.BaseAction;
 using GREATClient.BaseClass.Input;
 using System.Collections.Generic;
+using GREATClient.BaseClass.ScreenInformation;
 
 namespace GREATClient.BaseClass
 {

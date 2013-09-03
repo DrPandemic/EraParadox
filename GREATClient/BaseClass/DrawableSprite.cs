@@ -193,7 +193,6 @@ namespace GREATClient.BaseClass
 		private void CalculateTimeByFrame()
 		{
 			Debug.Assert(FrameRate > 0, "The frame rate must be positive.");
-			//TODO calculer le nobre de temps que dure une frame
 			TimeByFrame = TimeSpan.FromMilliseconds(1000.0/FrameRate);
 		}
 
