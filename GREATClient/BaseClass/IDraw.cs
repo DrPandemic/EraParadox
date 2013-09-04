@@ -41,7 +41,7 @@ namespace GREATClient.BaseClass
 				if (m_InputManager != null) {
 					return m_InputManager;
 				} else {
-					if (Parent != null) {
+					if (GetServices() != null) {
 						m_InputManager = (InputManager)this.GetServices().GetService(typeof(InputManager));
 						return m_InputManager;
 					} else {

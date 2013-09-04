@@ -89,7 +89,7 @@ namespace GREATClient.Test
 
 			AddChild(new PingCounter(yo));
 
-			//inputManager.RegisterEvent(InputActions.Spell1, new EventHandler(Jump));
+			inputManager.RegisterEvent(InputActions.Spell3, new EventHandler(Jump));
 			//inputManager.RegisterEvent(InputActions.Jump, new EventHandler(Jump2));
 		}
 
@@ -132,7 +132,7 @@ namespace GREATClient.Test
 			KeyboardState ks = Keyboard.GetState();
 			MouseState ms = Mouse.GetState();
 
-			if (ks.IsKeyDown(Keys.Escape) && ks.IsKeyDown(Keys.LeftControl))
+			if (ks.IsKeyDown(Keys.Escape) && ks.IsKeyDown(Keys.LeftShift))
 				Exit = true;
 
 			if (ks.IsKeyDown(Keys.E)) { champSprite.PlayAnimation(AnimationInfo.JUMP);}

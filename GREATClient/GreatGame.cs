@@ -61,6 +61,7 @@ namespace GREATClient
 			client = Client.Instance;
 			graphics = new GraphicsDeviceManager(this);
 			Content.RootDirectory = "Content";
+			IsMouseVisible = true;
 			//SetupScreen();
 			Window.Title = SCREEN_NAME;
 			ScreenInitialized = false;
@@ -75,7 +76,6 @@ namespace GREATClient
 		{
 			if (!ScreenInitialized) {
 				SetupScreen();
-				Window.ClientSizeChanged += (object sender, EventArgs e) => SetupScreen();
 				ScreenInitialized = true;
 
 				Console.WriteLine("Starting client...");
@@ -87,7 +87,6 @@ namespace GREATClient
 
 				gameplay.LoadContent(GraphicsDevice);
 			}
-			Console.WriteLine(graphics.PreferredBackBufferHeight);
 
 			client.Update();
 
