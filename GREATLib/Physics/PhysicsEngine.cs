@@ -181,7 +181,7 @@ namespace GREATLib.Physics
 
 			// We may only jump when we're on the ground
 			if (entity.IsOnGround) {
-				entity.Velocity.Y -= entity.JumpForce;
+				entity.Velocity.Y = -entity.JumpForce;
 				// assume that we'll lift off the ground to avoid multi-jump.
 				entity.IsOnGround = false;
 			}
