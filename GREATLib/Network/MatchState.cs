@@ -118,7 +118,7 @@ namespace GREATLib.Network
 		{
 			MatchState state = new MatchState(Physics);
 			foreach (IEntity entity in Entities.Values) {
-				state.Entities.Add(entity.ID, (entity.Clone() as IEntity));
+				state.Entities.Add(entity.ID, (IEntity)entity.Clone());
 			}
 			return state;
 		}

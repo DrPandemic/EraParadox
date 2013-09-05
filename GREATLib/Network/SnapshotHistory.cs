@@ -62,7 +62,11 @@ namespace GREATLib.Network
 			// Find where our state should go (ordered by time)
 			int i = States.FindLastIndex(pair => pair.Key < currentSeconds) + 1;
 			var added = Utilities.MakePair(currentSeconds, snapshot);
-			States.Insert(i, added);
+			if (States.Count == 0 || i == States.Count || !States[i].Key.Equals(currentSeconds)) { // first element or is not a duplicate
+				States.Insert(i, added);
+			} else { // we're adding a duplicate
+				States[i] = added; // replace it instead
+			}
 
 			Debug.Assert(IsHistorySorted());
 
@@ -136,9 +140,8 @@ namespace GREATLib.Network
 				throw new SnapshotNotInHistoryException();
 			}
 
-			Debug.Assert(States.FindAll((s) => IsSameSnapshot(s, snapshot)).Count == 1); // only there once
-
-			int index = States.FindIndex((s) => IsSameSnapshot(s, snapshot));
+			Debug.Assert(States.FindAll(s => IsSameSnapshot(s, snapshot)).Count == 1); // only there once
+			int index = States.FindLastIndex((s) => IsSameSnapshot(s, snapshot));
 
 			Debug.Assert(index >= 0);
 
@@ -150,7 +153,7 @@ namespace GREATLib.Network
 		bool IsSameSnapshot(KeyValuePair<double, TState> s1,
 		                    KeyValuePair<double, TState> s2)
 		{
-			return s1.Key == s2.Key &&
+			return s1.Key.Equals(s2.Key) &&
 				s1.Value.Equals(s2.Value);
 		}
 

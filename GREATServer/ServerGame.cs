@@ -308,8 +308,9 @@ namespace GREATServer
 				double time = StateHistory.IsEmpty() ? dt : 
 					Server.Instance.GetTime().TotalSeconds - StateHistory.GetLast().Key;
 				Debug.Assert(time >= 0.0);
-
-				Match.CurrentState.ApplyPhysicsUpdate(client.Champion.ID, (float)time);
+                if (time > 0.0) {
+                    Match.CurrentState.ApplyPhysicsUpdate(client.Champion.ID, (float)time);
+                }
 			}
 		}
 

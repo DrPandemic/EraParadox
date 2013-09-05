@@ -103,7 +103,7 @@ namespace GREATClient.Screens
 					if (Match.CurrentState.ContainsEntity(state.ID)) {
 						ILogger.Log(String.Format("State update: lastack={3} time={2} id={0}, pos={1}", state.ID, state.Position, Client.GetTime().TotalSeconds, e.LastAcknowledgedActionID));
 						IEntity entity = Match.CurrentState.GetEntity(state.ID);
-						entity.AuthoritativeChangePosition(state.Position);
+						entity.AuthoritativeChangePosition(state.Position, e.Time);
 					}
 				}
 			}

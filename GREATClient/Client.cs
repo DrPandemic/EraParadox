@@ -58,9 +58,9 @@ namespace GREATClient
 
 			#if DEBUG
 			// LAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGGGGGGGG (MonoDevelop is saying bullshit, it works)
-			config.SimulatedLoss = 0.01f;
-			config.SimulatedMinimumLatency = 0.05f;
-			config.SimulatedRandomLatency = 0.05f;
+			//config.SimulatedLoss = 0.01f;
+			config.SimulatedMinimumLatency = 0.4f;//05f;
+			//config.SimulatedRandomLatency = 0.05f;
 			#endif
 
 			this.client = new NetClient(config);
@@ -121,9 +121,13 @@ namespace GREATClient
 
 		public TimeSpan GetPing()
 		{
-			return client.ServerConnection != null ?
+            TimeSpan ping = client.ServerConnection != null && client.ServerConnection.AverageRoundtripTime >= 0f ?
 				TimeSpan.FromSeconds((double)client.ServerConnection.AverageRoundtripTime) : 
 				TimeSpan.Zero;
+
+            Debug.Assert(0.0 <= ping.TotalSeconds);
+
+            return ping;
 		}
 
 		public TimeSpan GetTime()
@@ -131,7 +135,7 @@ namespace GREATClient
 			return TimeSpan.FromSeconds(SharedTime);
 		}
 
-		void OnDataReceived(NetIncomingMessage msg)
+		void OnDataReceived(NetBuffer msg)
 		{
 			byte code = msg.ReadByte();
 			ServerCommand command = (ServerCommand)code;
@@ -183,8 +187,12 @@ namespace GREATClient
 
 		void SetSharedTime(double time)
 		{
+			Debug.Assert(time >= 0.0);
+
 			// Take the given server time + our approximation of how long it took to get the message.
 			SharedTime = time + GetPing().TotalSeconds / 2.0;
+
+			Debug.Assert(0.0 <= SharedTime && time <= SharedTime);
 		}
 
 		/// <summary>

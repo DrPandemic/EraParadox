@@ -1,4 +1,4 @@
-//
+///
 //  Server.cs
 //
 //  Author:
@@ -58,9 +58,9 @@ namespace GREATServer
 
 #if DEBUG
 			// LAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGGGGGGGG (MonoDevelop is saying bullshit, it works)
-			config.SimulatedLoss = 0.01f;
-			config.SimulatedMinimumLatency = 0.05f;
-			config.SimulatedRandomLatency = 0.05f;
+			//config.SimulatedLoss = 0.01f;
+			config.SimulatedMinimumLatency = 0.1f;//05f;
+			//config.SimulatedRandomLatency = 0.05f;
 #endif
 
 			this.server = new NetServer(config);

@@ -88,9 +88,6 @@ namespace GREATClient.Network
 			Match.CurrentState.ApplyPhysicsUpdate(ID, deltaTime.ElapsedGameTime.TotalSeconds);
 
 			LerpTowardsServerPosition(deltaTime.ElapsedGameTime.TotalSeconds);
-
-			//TODO: remove, used for testing purposes
-			ILogger.Log(Position.ToString());
 		}
 
 		void LerpTowardsServerPosition(double deltaSeconds)
@@ -120,7 +117,7 @@ namespace GREATClient.Network
 		/// Take the new position given by the server and resimulate our unacknowledged actions
 		/// from there.
 		/// </summary>
-		public override void AuthoritativeChangePosition(Vec2 position)
+		public override void AuthoritativeChangePosition(Vec2 position, double time)
 		{
 			ServerPosition = position;
 

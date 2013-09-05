@@ -122,7 +122,7 @@ namespace GREATLib.Entities
 		/// Depending on who the champion is (the local player or a remote client),
 		/// we'll act differently.
 		/// </summary>
-		public virtual void AuthoritativeChangePosition(Vec2 position)
+		public virtual void AuthoritativeChangePosition(Vec2 position, double time)
 		{
 			Position = position;
 		}
