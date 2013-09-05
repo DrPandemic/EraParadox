@@ -26,6 +26,8 @@ namespace GREATServer
 {
 	class MainClass
 	{
+		static readonly TimeSpan SLEEP_TIME = TimeSpan.FromMilliseconds(50.0);
+
 		static Server server;
 
 		public static void Main(string[] args)
@@ -34,8 +36,8 @@ namespace GREATServer
 			server.Start();
 
 			while (!Console.KeyAvailable || Console.ReadKey().Key != ConsoleKey.Q) {
-				server.Update();
-				Thread.Sleep(50);
+				server.Update(SLEEP_TIME.TotalSeconds);
+				Thread.Sleep(SLEEP_TIME);
 			}
 
 			server.Stop();
