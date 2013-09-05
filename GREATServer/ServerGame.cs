@@ -92,9 +92,6 @@ namespace GREATServer
 		{
 			// The server-side loop of the game
 
-			// Store the current game state in our history to redo certain player actions.
-			StoreGameState(deltaTime);
-
 			// Handle actions. We check for recently received player actions
 			// and apply them server-side.
 			HandleActions();
@@ -105,6 +102,9 @@ namespace GREATServer
 			// Send corrections. We regularly send the state changes of the entities to
 			// other clients.
 			SendStateChanges(deltaTime);
+
+			// Store the current game state in our history to redo certain player actions.
+			StoreGameState(deltaTime);
 		}
 
 		void StoreGameState(double dt)
@@ -179,8 +179,8 @@ namespace GREATServer
 
 		void HandleAction(uint id, PlayerAction action)
 		{
-			float now = (float)Server.Instance.GetTime().TotalSeconds;
-			float time = action.Time;
+			double now = Server.Instance.GetTime().TotalSeconds;
+			double time = action.Time;
 
 			// Make sure we're not using weird times
 			time = ValidateActionTime(action, now);
@@ -216,7 +216,7 @@ namespace GREATServer
 				var nextState = StateHistory.GetNext(state);
 				while (nextState.HasValue) {
 					// get how much time we have to simulate for next state
-					float timeUntilNextState = (float)nextState.Value.Key - time;
+					float timeUntilNextState = (float)(nextState.Value.Key - time);
 					Debug.Assert(timeUntilNextState >= 0f);
 
 					// simulate the next state
@@ -227,6 +227,7 @@ namespace GREATServer
 
 					// switch to the next state
 					state = nextState.Value;
+                    time = state.Key;
                     nextState = StateHistory.GetNext(state);
 				}
 
@@ -235,12 +236,12 @@ namespace GREATServer
 			}
 		}
 
-		static float ValidateActionTime(PlayerAction action, float currentTime)
+		static double ValidateActionTime(PlayerAction action, double currentTime)
 		{
-			float time = action.Time;
+			double time = action.Time;
 
 			// action time is too old? might be a hacker/extreme lag. Log it, keep it but clamp it
-			float oldestAcceptedTime = (float)(currentTime - HISTORY_MAX_TIME_KEPT.TotalSeconds);
+			double oldestAcceptedTime = currentTime - HISTORY_MAX_TIME_KEPT.TotalSeconds;
 			if (action.Time < oldestAcceptedTime) {
 				time = oldestAcceptedTime;
 				ILogger.Log(String.Format("Action {0} seems a bit late. Accepting it, but might be a hacker/extreme lag. Given time: {1}, server time: {2}",
