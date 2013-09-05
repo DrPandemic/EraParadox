@@ -194,20 +194,22 @@ namespace GREATServer
 					stateBefore.Value.Clone() as MatchState);
 
 				// Simulate from our previous snapshot to our current action to be up-to-date
-				IEntity player = state.Value.GetEntity(id);
-				float deltaT = (float)(time - state.Key);
-				if (deltaT > 0f) { // if we have something to simulate...
-					state.Value.ApplyPhysicsUpdate(id, deltaT);
+				if (state.Value.ContainsEntity(id)) {
+					IEntity player = state.Value.GetEntity(id);
+					float deltaT = (float)(time - state.Key);
+					if (deltaT > 0f) { // if we have something to simulate...
+						state.Value.ApplyPhysicsUpdate(id, deltaT);
+					}
+
+					// Make sure we're not using hacked positions
+					player.Position = ValidateActionPosition(player, action);
+
+					// Actually execute the action on our currently simulated state
+					DoAction(state.Value, player, action);
+
+					// Store our intermediate state at the action time.
+					state = StateHistory.AddSnapshot(state.Value, time);
 				}
-
-				// Make sure we're not using hacked positions
-				player.Position = ValidateActionPosition(player, action);
-
-				// Actually execute the action on our currently simulated state
-				DoAction(state.Value, player, action);
-
-				// Store our intermediate state at the action time.
-				state = StateHistory.AddSnapshot(state.Value, time);
 
 
 
@@ -220,9 +222,11 @@ namespace GREATServer
 					Debug.Assert(timeUntilNextState >= 0f);
 
 					// simulate the next state
-					nextState.Value.Value.GetEntity(id).Clone(state.Value.GetEntity(id));
-					if (timeUntilNextState > 0f) {
-						nextState.Value.Value.ApplyPhysicsUpdate(id, timeUntilNextState);
+					if (nextState.Value.Value.ContainsEntity(id)) {
+						nextState.Value.Value.GetEntity(id).Clone(state.Value.GetEntity(id));
+						if (timeUntilNextState > 0f) {
+							nextState.Value.Value.ApplyPhysicsUpdate(id, timeUntilNextState);
+						}
 					}
 
 					// switch to the next state
@@ -232,7 +236,10 @@ namespace GREATServer
 				}
 
 				// Modify our current game state to apply our simulation modifications.
-	            Match.CurrentState.GetEntity(id).Clone(StateHistory.GetLast().Value.GetEntity(id));
+				var last = StateHistory.GetLast();
+				if (Match.CurrentState.ContainsEntity(id) && last.Value.ContainsEntity(id)) {
+					Match.CurrentState.GetEntity(id).Clone(last.Value.GetEntity(id));
+				}
 			}
 		}
 
@@ -299,7 +306,12 @@ namespace GREATServer
 		void UpdateLogic(double dt)
 		{
 			foreach (ServerClient client in Clients.Values) {
-				Match.CurrentState.ApplyPhysicsUpdate(client.Champion.ID, dt);
+				// Use the time elapsed since our last snapshot as a delta time
+				double time = StateHistory.IsEmpty() ? dt : 
+					Server.Instance.GetTime().TotalSeconds - StateHistory.GetLast().Key;
+				Debug.Assert(time >= 0f);
+
+				Match.CurrentState.ApplyPhysicsUpdate(client.Champion.ID, (float)dt);
 
 				//TODO: remove, used for testing purposes
 				ILogger.Log(client.Champion.Position.ToString());

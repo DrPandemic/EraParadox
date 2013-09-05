@@ -45,6 +45,7 @@ namespace GREATServer
 
 
 		// The running game. TODO: replace by a list of current games.
+		double Time { get; set; }
 		ServerGame Game { get; set; }
 		double LastUpdateTime { get; set; }
 
@@ -70,6 +71,7 @@ namespace GREATServer
 			server.Start();
 			server.UPnP.ForwardPort(server.Port, "GREAT Server");
 
+			Time = 0.0;
 			//TODO: Temporary game initialization.
 			Game = new ServerGame(server);
 			LastUpdateTime = GetTime().TotalSeconds;
@@ -82,10 +84,10 @@ namespace GREATServer
 
 		public TimeSpan GetTime()
 		{
-			return TimeSpan.FromSeconds(NetTime.Now);
+			return TimeSpan.FromSeconds(Time);
 		}
 
-		public void Update()
+		public void Update(double dt)
 		{
 			NetIncomingMessage msg;
 			while ((msg = server.ReadMessage()) != null) {
@@ -121,9 +123,12 @@ namespace GREATServer
 				server.Recycle(msg);
 			}
 
-			Game.Update(GetTime().TotalSeconds - LastUpdateTime);
+			double time = GetTime().TotalSeconds;
+			Game.Update(time - LastUpdateTime);
 
-			LastUpdateTime = GetTime().TotalSeconds;
+			LastUpdateTime = time;
+
+			Time += dt;
 		}
 
 		/// <summary>
