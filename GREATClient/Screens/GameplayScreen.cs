@@ -81,16 +81,18 @@ namespace GREATClient.Screens
 			Map = new DrawableTileMap(Match.World.Map);
 			AddChild(Map);
 
-			Client.OnNewPlayer += OnNewPlayer;
-			Client.OnStateUpdate += OnStateUpdate;
+			Client.RegisterCommandHandler(ServerCommand.JoinedGame, OnJoinedGame);
+			Client.RegisterCommandHandler(ServerCommand.NewRemotePlayer, OnNewRemotePlayer);
+			Client.RegisterCommandHandler(ServerCommand.StateUpdate, OnStateUpdate);
 
 			AddChild(new FPSCounter());
 			AddChild(new PingCounter(() => {return Client.Instance.GetPing().TotalMilliseconds;}));
 		}
 
-		void OnStateUpdate(object sender, StateUpdateEventArgs e)
+		void OnStateUpdate(object sender, CommandEventArgs args)
 		{
-			Debug.Assert(sender != null && e != null);
+			StateUpdateEventArgs e = args as StateUpdateEventArgs;
+			Debug.Assert(e != null);
 
 			if (OurChampion != null) {
 				OurChampion.SetLastAcknowledgedAction(e.LastAcknowledgedActionID);
@@ -106,27 +108,35 @@ namespace GREATClient.Screens
 			}
 		}
 
-		void OnNewPlayer(object sender, NewPlayerEventArgs e)
+		void OnJoinedGame(object sender, CommandEventArgs args)
 		{
-			Debug.Assert(sender != null && e != null);
+			JoinedGameEventArgs e = args as JoinedGameEventArgs;
+			Debug.Assert(e != null);
 			Debug.Assert(ChampionsInfo != null && Match != null);
 
 			DrawableChampion champion = new DrawableChampion(
-				new ChampionSpawnInfo(e.ID, e.Position),
+				new ChampionSpawnInfo(e.OurData.ID, e.OurData.Position),
 				ChampionsInfo,
 				Match);
 
 			AddChild(champion);
 
 			Match.CurrentState.AddEntity(champion.Entity);
+			OurChampion = champion;
 
-			if (e.IsOurID) {
-				OurChampion = champion;
-			}
+			//TODO: add other players as well (RemoteDrawableChampion and MainDrawableChampion)
 
-			ILogger.Log(
+			/*ILogger.Log(
 				String.Format("New champion: id={0}, pos={1}, isOurChamp={2}", e.ID, e.Position, e.IsOurID),
-				LogPriority.High);
+				LogPriority.High);*/ // TODO: add to function
+		}
+
+		void OnNewRemotePlayer(object sender, CommandEventArgs args)
+		{
+			NewRemotePlayerEventArgs e = args as NewRemotePlayerEventArgs;
+			Debug.Assert(e != null);
+			Debug.Assert(ChampionsInfo != null && Match != null);
+			//TODO: add remote player here (creation function for that taking bool)
 		}
 
 		protected override void OnUpdate(Microsoft.Xna.Framework.GameTime dt)

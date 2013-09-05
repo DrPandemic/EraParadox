@@ -29,15 +29,21 @@ namespace GREATLib.Network
     public enum ServerCommand
     {
 		/// <summary>
-		/// Here is a new player to add to your current game.
+		/// You just joined the game. Here is the data about your freshly created champion along with
+		/// the data of all the players already in the game.
 		/// </summary>
-		NewPlayer = 10
+		JoinedGame = 10
 
 		/// <summary>
 		/// Here is an update of the state of all the entities that changed. Force your data to
 		/// fit this.
 		/// </summary>
 		, StateUpdate
+
+		/// <summary>
+		/// A new player joined your game. Here is the data about his freshly created champion.
+		/// </summary>
+		, NewRemotePlayer
     }
 }
 

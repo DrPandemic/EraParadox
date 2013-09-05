@@ -92,6 +92,7 @@
     <Compile Include="Network\MainClientChampion.cs" />
     <Compile Include="BaseClass\IUpdatable.cs" />
     <Compile Include="GameHelper.cs" />
+    <Compile Include="ServerCommandEvent.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />

@@ -297,9 +297,6 @@ namespace GREATServer
 		{
 			foreach (ServerClient client in Clients.Values) {
 				Match.CurrentState.ApplyPhysicsUpdate(client.Champion.ID, dt);
-
-				//TODO: remove, used for testing purposes
-				ILogger.Log(client.Champion.Position.ToString());
 			}
 		}
 
@@ -312,38 +309,64 @@ namespace GREATServer
 
 			IEntity champion = CreateRandomChampion();
 
-			ServerClient client = new ServerClient(connection, champion);
-			Clients.Add(connection, client);
-
-			Match.CurrentState.AddEntity(champion);
-
-			// Send to the client that asked to join
+			// Send to the client that asked to join, along with the info of the current players
+			List<IEntity> remoteChampions = new List<IEntity>();
+			foreach (ServerClient remote in Clients.Values) {
+				remoteChampions.Add(remote.Champion);
+			}
 			SendCommand(connection,
-			       ServerCommand.NewPlayer,
-			       NetDeliveryMethod.ReliableOrdered,
-			       (msg) => FillNewPlayerMessage(msg, champion, true));
-			//TODO: send currently existing players to new player
+			            ServerCommand.JoinedGame,
+			            NetDeliveryMethod.ReliableUnordered,
+			       		(msg) => FillJoinedGameMessage(msg, champion, remoteChampions));
 
-			//TODO: send to the other players as well here
+			// Send the new player event to other players
+			foreach (NetConnection clientConn in Clients.Keys) {
+				if (clientConn != connection) {
+					SendCommand(clientConn,
+					           ServerCommand.NewRemotePlayer,
+					           NetDeliveryMethod.ReliableUnordered,
+					           (msg) => FillNewRemotePlayerMessage(msg, champion));
+				}
+			}
+
+			// Apply the changes to our game state
+	        ServerClient client = new ServerClient(connection, champion);
+	        Clients.Add(connection, client);
+	        Match.CurrentState.AddEntity(champion);
 		}
 
 		/// <summary>
-		/// Creates a message indicating that a player has joined the game and that
+		/// Fills a message for the players already in a game to indicate that a new player joined the game.
+		/// </summary>
+		static void FillNewRemotePlayerMessage(NetBuffer msg, IEntity champion)
+		{
+			FillChampionInfo(msg, champion);
+		}
+
+		/// <summary>
+		/// Creates a message indicating that he has joined the game and that
 		/// the client should create a new drawable champion associated to it.
 		/// </summary>
-		/// <param name="isOwner">Whether this is the new player or not.</param>
-		static void FillNewPlayerMessage(NetBuffer msg, IEntity champion, bool isOwner)
+		static void FillJoinedGameMessage(NetBuffer msg, IEntity champion, List<IEntity> remoteChampions)
 		{
 			double time = Server.Instance.GetTime().TotalSeconds;
+			remoteChampions.Insert(0, champion); // add our champion to the beginning
+
+			// and send all the champions together
+			foreach (IEntity champ in remoteChampions) {
+				FillChampionInfo(msg, champ);
+			}
+		}
+
+		static void FillChampionInfo(NetBuffer msg, IEntity champion)
+		{
 			uint id = champion.ID;
 			float x = champion.Position.X;
 			float y = champion.Position.Y;
-			bool owner = isOwner;
-			msg.Write(time);
+
 			msg.Write(id);
 			msg.Write(x);
 			msg.Write(y);
-			msg.Write(owner);
 		}
 
 		/// <summary>
