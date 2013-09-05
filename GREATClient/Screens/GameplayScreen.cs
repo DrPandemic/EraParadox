@@ -34,7 +34,7 @@ using GREATClient.Display;
 
 namespace GREATClient.Screens
 {
-    public class GameplayScreen : Screen
+    public sealed class GameplayScreen : Screen
     {
 		const bool CORRECTIONS_ENABLED = false;
 
@@ -51,7 +51,7 @@ namespace GREATClient.Screens
 		DrawableTileMap Map { get; set; }
 
 		ChampionsInfo ChampionsInfo { get; set; }
-		DrawableChampion OurChampion { get; set; }
+		MainDrawableChampion OurChampion { get; set; }
 
 		GameTime GameTime { get; set; }
 
@@ -114,17 +114,15 @@ namespace GREATClient.Screens
 			Debug.Assert(e != null);
 			Debug.Assert(ChampionsInfo != null && Match != null);
 
-			DrawableChampion champion = new DrawableChampion(
+			OurChampion = new MainDrawableChampion(
 				new ChampionSpawnInfo(e.OurData.ID, e.OurData.Position),
-				ChampionsInfo,
 				Match);
 
-			AddChild(champion);
+			AddChild(OurChampion);
 
-			Match.CurrentState.AddEntity(champion.Entity);
-			OurChampion = champion;
+			Match.CurrentState.AddEntity(OurChampion.Entity);
 
-			//TODO: add other players as well (RemoteDrawableChampion and MainDrawableChampion)
+			//TODO: add other players as well (RemoteDrawableChampion)
 
 			/*ILogger.Log(
 				String.Format("New champion: id={0}, pos={1}, isOurChamp={2}", e.ID, e.Position, e.IsOurID),

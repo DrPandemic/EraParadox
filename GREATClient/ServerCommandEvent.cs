@@ -26,7 +26,7 @@ namespace GREATClient
 	/// <summary>
 	/// Class containing all the things to do when a new server event comes in.
 	/// </summary>
-	public class ServerCommandEvent
+	public sealed class ServerCommandEvent
     {
 		Func<NetBuffer, CommandEventArgs> CreateEventArgs { get; set; }
 		public EventHandler<CommandEventArgs> Handler { get; set; }

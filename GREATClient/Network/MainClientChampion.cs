@@ -33,7 +33,7 @@ namespace GREATClient.Network
 	/// Represents the champion's data of the main player, the one playing the game on
 	/// this instance of the program.
 	/// </summary>
-    public class MainClientChampion : IEntity, IUpdatable
+    public sealed class MainClientChampion : ClientChampion
     {
 		/// <summary>
 		/// The distance required between the simulated position and the drawn position
@@ -48,12 +48,6 @@ namespace GREATClient.Network
 		/// </summary>
 		public uint LastAcknowledgedActionID { get; set; }
 
-		/// <summary>
-		/// Gets the drawn position of the champion.
-		/// This is the position where we should currently draw the champion.
-		/// </summary>
-		/// <value>The drawn position.</value>
-		public Vec2 DrawnPosition { get; private set; }
 		/// <summary>
 		/// Gets or sets the server position.
 		/// This is the last position that we received from the server.
@@ -71,12 +65,11 @@ namespace GREATClient.Network
 		Queue<PlayerAction> UnacknowledgedActions { get; set; }
 
 		public MainClientChampion(ChampionSpawnInfo spawnInfo, GameMatch match)
-			: base(spawnInfo.ID, spawnInfo.SpawningPosition)
+			: base(spawnInfo)
         {
 			LastAcknowledgedActionID = IDGenerator.NO_ID;
 			Match = match;
 
-			DrawnPosition = Position;
 			ServerPosition = Position;
 
 			PackagedActions = new Queue<PlayerAction>();
@@ -89,7 +82,7 @@ namespace GREATClient.Network
 		/// <summary>
 		/// Update the champion, applying client-side prediction.
 		/// </summary>
-		public void Update(GameTime deltaTime)
+		public override void Update(GameTime deltaTime)
 		{
 			// client-side prediction
 			Match.CurrentState.ApplyPhysicsUpdate(ID, deltaTime.ElapsedGameTime.TotalSeconds);

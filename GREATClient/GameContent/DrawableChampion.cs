@@ -32,32 +32,21 @@ namespace GREATClient.GameContent
 	/// <summary>
 	/// Represents a champion in the game.
 	/// </summary>
-    public class DrawableChampion : IDraw
+	public abstract class DrawableChampion<ChampionT> : Container 
+		where ChampionT : ClientChampion
     {
-		/// <summary>
-		/// Client-side version of the main champion, managing the network interaction and local
-		/// simulation of the client's champion.
-		/// </summary>
-		MainClientChampion Champion { get; set; }
 		public IEntity Entity { get { return Champion; } }
+		protected ChampionT Champion { get; set; }
 
-		/// <summary>
-		/// TODO: class for debug info
-		/// </summary>
 		DrawableRectangle ChampionDrawnRect { get; set; }
-		DrawableRectangle ChampionServerRect { get; set; } 
 
-
-
-        public DrawableChampion(ChampionSpawnInfo spawnInfo, ChampionsInfo championsInfo, GameMatch match) //TODO: new MainClientDrawableChampion
+		public DrawableChampion(ChampionT champion)
         {
-			Champion = new MainClientChampion(spawnInfo, match);
+			Champion = champion;
         }
 		protected override void OnLoad(Microsoft.Xna.Framework.Content.ContentManager content, Microsoft.Xna.Framework.Graphics.GraphicsDevice gd)
 		{
 			base.OnLoad(content, gd);
-
-			Parent.AddChild(ChampionServerRect = new DrawableRectangle(new Rectangle(0, 0, 15, 30), Color.Green));
 
 			ChampionDrawnRect = new DrawableRectangle(new Rectangle(0, 0, 15, 30), Color.White);
 			Parent.AddChild(ChampionDrawnRect);
@@ -66,41 +55,12 @@ namespace GREATClient.GameContent
 		{
 			Champion.Update(dt);
 
-			ChampionServerRect.Position = GameLibHelper.ToVector2(Champion.ServerPosition);
 			ChampionDrawnRect.Position = GameLibHelper.ToVector2(Champion.DrawnPosition);
 		}
 
 		protected override void OnDraw(Microsoft.Xna.Framework.Graphics.SpriteBatch batch)
 		{
 			// The champion's animations take care of the drawing.
-		}
-
-		/// <summary>
-		/// Packages a client-side action to be sent to the server. This also simulates the action locally
-		/// for client-side prediction.
-		/// </summary>
-		public void PackageAction(PlayerActionType action)
-		{
-			PlayerAction toPackage = new PlayerAction(
-            	IDGenerator.GenerateID(),
-				action,
-            	(float)Client.Instance.GetTime().TotalSeconds,
-				Champion.Position);
-
-			Champion.PackageAction(toPackage);
-		}
-
-		/// <summary>
-		/// Sets the last acknowledged action by the server.
-		/// </summary>
-		public void SetLastAcknowledgedAction(uint actionID)
-		{
-			Champion.LastAcknowledgedActionID = actionID;
-		}
-
-		public Queue<PlayerAction> GetActionPackage()
-		{
-			return Champion.GetActionPackage();
 		}
 
 		public override bool IsBehind(Vector2 position)

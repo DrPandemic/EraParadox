@@ -28,7 +28,7 @@ using System.Diagnostics;
 using GREATLib.Network;
 namespace GREATClient
 {
-	public class Client
+	public sealed class Client
 	{
 		static volatile Client instance;
 		static object syncInstance = new object();

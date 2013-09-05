@@ -91,6 +91,8 @@
     <Compile Include="BaseClass\IUpdatable.cs" />
     <Compile Include="Network\MainClientChampion.cs" />
     <Compile Include="ServerCommandEvent.cs" />
+    <Compile Include="GameContent\MainDrawableChampion.cs" />
+    <Compile Include="Network\ClientChampion.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />

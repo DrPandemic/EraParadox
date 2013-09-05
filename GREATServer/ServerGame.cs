@@ -32,7 +32,7 @@ namespace GREATServer
 	/// <summary>
 	/// Represents a game on the server.
 	/// </summary>
-    public class ServerGame
+    public sealed class ServerGame
     {
 		static readonly TimeSpan STORE_HISTORY_INTERVAL = GameMatch.STATE_UPDATE_INTERVAL;
 		static readonly TimeSpan HISTORY_MAX_TIME_KEPT = TimeSpan.FromSeconds(1.0);
