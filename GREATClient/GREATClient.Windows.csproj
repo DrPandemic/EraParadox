@@ -93,6 +93,8 @@
     <Compile Include="ServerCommandEvent.cs" />
     <Compile Include="GameContent\MainDrawableChampion.cs" />
     <Compile Include="Network\ClientChampion.cs" />
+    <Compile Include="Network\RemoteClientChampion.cs" />
+    <Compile Include="GameContent\RemoteDrawableChampion.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />

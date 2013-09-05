@@ -31,6 +31,7 @@ using GREATLib.Network;
 using GREATClient.BaseClass;
 using GREATClient.GameContent;
 using GREATClient.Display;
+using GREATClient.Network;
 
 namespace GREATClient.Screens
 {
@@ -114,19 +115,11 @@ namespace GREATClient.Screens
 			Debug.Assert(e != null);
 			Debug.Assert(ChampionsInfo != null && Match != null);
 
-			OurChampion = new MainDrawableChampion(
-				new ChampionSpawnInfo(e.OurData.ID, e.OurData.Position),
-				Match);
+			AddChampionToGame(e.OurData, true);
 
-			AddChild(OurChampion);
-
-			Match.CurrentState.AddEntity(OurChampion.Entity);
-
-			//TODO: add other players as well (RemoteDrawableChampion)
-
-			/*ILogger.Log(
-				String.Format("New champion: id={0}, pos={1}, isOurChamp={2}", e.ID, e.Position, e.IsOurID),
-				LogPriority.High);*/ // TODO: add to function
+			foreach (PlayerData remote in e.RemotePlayers) {
+				AddChampionToGame(remote, false);
+			}
 		}
 
 		void OnNewRemotePlayer(object sender, CommandEventArgs args)
@@ -134,7 +127,33 @@ namespace GREATClient.Screens
 			NewRemotePlayerEventArgs e = args as NewRemotePlayerEventArgs;
 			Debug.Assert(e != null);
 			Debug.Assert(ChampionsInfo != null && Match != null);
-			//TODO: add remote player here (creation function for that taking bool)
+
+			AddChampionToGame(e.Data, false);
+		}
+		void AddChampionToGame(PlayerData data, bool ourChampion)
+		{
+			ChampionSpawnInfo spawn = new ChampionSpawnInfo(data.ID, data.Position);
+
+			IDraw idraw;
+			IEntity ientity;
+
+			if (ourChampion) {
+				OurChampion = new MainDrawableChampion(spawn, Match);
+				idraw = OurChampion;
+				ientity = OurChampion.Entity;
+			} else {
+				var remote = new RemoteDrawableChampion(spawn);
+				idraw = remote;
+				ientity = remote.Entity;
+			}
+
+			AddChild(idraw);
+
+			Match.CurrentState.AddEntity(ientity);
+
+			ILogger.Log(
+				String.Format("New champion: id={0}, pos={1}, isOurChamp={2}", spawn.ID, spawn.SpawningPosition, ourChampion),
+				LogPriority.High);
 		}
 
 		protected override void OnUpdate(Microsoft.Xna.Framework.GameTime dt)
