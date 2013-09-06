@@ -91,6 +91,10 @@ namespace GREATClient.Test
 
 			inputManager.RegisterEvent(InputActions.Spell3, new EventHandler(Jump));
 			//inputManager.RegisterEvent(InputActions.Jump, new EventHandler(Jump2));
+
+			DrawableCircle circle = new DrawableCircle();
+			circle.SetPositionRelativeToScreen(ScreenBound.BottomRight, new Vector2(-20,-20));
+			AddChild(circle);
 		}
 
 		/// <summary>

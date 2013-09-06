@@ -62,8 +62,9 @@ namespace GREATClient
 			graphics = new GraphicsDeviceManager(this);
 			Content.RootDirectory = "Content";
 			IsMouseVisible = true;
-			//SetupScreen();
 			Window.Title = SCREEN_NAME;
+			Window.AllowUserResizing = false;
+			graphics.ApplyChanges();
 			ScreenInitialized = false;
 		}
 

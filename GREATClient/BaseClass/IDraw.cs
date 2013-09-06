@@ -110,11 +110,49 @@ namespace GREATClient.BaseClass
 		/// <value>The z.</value>
 		public int Z { get; set; }
 
+
+		// Position.
 		/// <summary>
 		/// Gets or sets the position.
+		/// It is the absolute position.
+		/// If the position mode is not at Normal, this value can't be changed from the outside.
 		/// </summary>
 		/// <value>The position.</value>
-		public Vector2 Position { get; set; }
+		Vector2 m_Position;
+		public Vector2 Position 
+		{ 
+			get {
+				return m_Position;
+			}
+			set {
+				if (PositionMode == PositionType.Normal) {
+					m_Position = value;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Gets the absolute position.
+		/// </summary>
+		/// <returns>The absolute position.</returns>
+		public virtual Vector2 GetAbsolutePosition()
+		{
+			return Position+Parent.GetAbsolutePosition();
+		}
+
+		/// <summary>
+		/// Gets or sets the position mode.
+		/// </summary>
+		/// <value>The position mode.</value>
+		public PositionType PositionMode { get; set; }
+
+		// % of the screen.
+		int XPercentOfTheScreen { get; set; }
+		int YPercentOfTheScreen { get; set; }
+
+		// Bound to screen.
+		ScreenBound Bound { get; set; }
+		Vector2 ScreenBoundOffset { get; set; }
 
 		/// <summary>
 		/// Gets or sets a value indicating whether this <see cref="GREATClient.IDraw"/> is visible.
@@ -152,14 +190,7 @@ namespace GREATClient.BaseClass
 		/// <value><c>true</c> if loaded; otherwise, <c>false</c>.</value>
 		public bool Loaded { get; set; }
 
-		/// <summary>
-		/// Gets the absolute position.
-		/// </summary>
-		/// <returns>The absolute position.</returns>
-		public virtual Vector2 GetAbsolutePosition()
-		{
-			return Position+Parent.GetAbsolutePosition();
-		}
+
 
 		/// <summary>
 		/// Gets or sets the game.
@@ -175,6 +206,11 @@ namespace GREATClient.BaseClass
 
 		public IDraw() 
 		{
+			PositionMode = PositionType.Normal;
+			Bound = ScreenBound.TopLeft;
+			ScreenBoundOffset = Vector2.Zero;
+			XPercentOfTheScreen = 0;
+			YPercentOfTheScreen = 0;
 			Parent = null;
 			Loaded = false;
 			Z = 0;
@@ -194,6 +230,13 @@ namespace GREATClient.BaseClass
 		{
 			Parent = container;
 			OnLoad(Parent.Content, gd);
+
+			if (PositionMode == PositionType.ScreenRelativeInPercent) {
+				SetPositionInScreenPercent(XPercentOfTheScreen,YPercentOfTheScreen);
+			} else if (PositionMode == PositionType.ScreenRelative) {
+				SetPositionRelativeToScreen(Bound,ScreenBoundOffset);
+			}
+
 			Loaded = true;
 		}
 
@@ -202,9 +245,7 @@ namespace GREATClient.BaseClass
 		/// Will be call after it is had to a container
 		/// </summary>
 		/// <param name="content">Content.</param>
-		protected virtual void OnLoad(ContentManager content, GraphicsDevice gd) {
-
-		}
+		protected virtual void OnLoad(ContentManager content, GraphicsDevice gd) {}
 
 		/// <summary>
 		/// After load was call.
@@ -264,8 +305,7 @@ namespace GREATClient.BaseClass
 		/// Called after Update if Updatable
 		/// </summary>
 		/// <param name="dt">Dt.</param>
-		protected virtual void OnUpdate(GameTime dt)
-		{ }
+		protected virtual void OnUpdate(GameTime dt) { }
 
 		/// <summary>
 		/// Performs the action.
@@ -338,6 +378,48 @@ namespace GREATClient.BaseClass
 		/// <returns><c>true</c> if this instance is beyond the specified position; otherwise, <c>false</c>.</returns>
 		/// <param name="position">Position.</param>
 		public abstract bool IsBehind(Vector2 position);
+
+		/// <summary>
+		/// Sets the position in screen percent.
+		/// </summary>
+		/// <param name="x">The x coordinate.</param>
+		/// <param name="y">The y coordinate.</param>
+		public void SetPositionInScreenPercent(int x, int y)
+		{
+			PositionMode = PositionType.ScreenRelativeInPercent;
+			// Limit x and y since they are %.
+			XPercentOfTheScreen = x;
+			YPercentOfTheScreen = y;
+
+			if (screenService != null) {
+				m_Position = new Vector2(XPercentOfTheScreen * screenService.GameWindowSize.X / 100, 
+				                         YPercentOfTheScreen * screenService.GameWindowSize.Y / 100);
+			}
+		}
+
+		public void SetPositionRelativeToScreen(ScreenBound bound, Vector2 offset) {
+			PositionMode = PositionType.ScreenRelative;
+
+			Bound = bound;
+			ScreenBoundOffset = offset;
+
+			if (screenService != null) {
+				switch(bound) {
+					case ScreenBound.TopLeft:
+						m_Position = offset;
+						break;
+					case ScreenBound.TopRight:
+						m_Position = Vector2.Add(offset,new Vector2(screenService.GameWindowSize.X,0));
+						break;
+					case ScreenBound.BottomRight:
+						m_Position = Vector2.Add(offset,screenService.GameWindowSize);
+						break;
+					case ScreenBound.BottomLeft:
+						m_Position = Vector2.Add(offset,new Vector2(0,screenService.GameWindowSize.Y));
+						break;
+				}
+			}
+		}
 	}
 }
 

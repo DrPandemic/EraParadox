@@ -118,7 +118,7 @@ namespace GREATClient.BaseClass
 		public override void Draw(SpriteBatch batch)
 		{
 			//If the texture wasn't load, beacause of the order of layer add
-			if (Texture == null || !IsLoaded) {
+			if (Texture == null && !IsLoaded) {
 				Load(Parent, Parent.GetGraphics());
 			}
 
