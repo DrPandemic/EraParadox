@@ -153,9 +153,6 @@ namespace GREATClient.Network
 			UnacknowledgedActions.Enqueue(action);
 
 			ExecuteAction(action.Type);
-			ILogger.Log(String.Format("Doing action: id={0}, time={1}, type={2}, pos={3}", 
-			                          action.ID,action.Time,action.Type,action.Position), 
-			            LogPriority.Low);
 		}
 
 		void ExecuteAction(PlayerActionType type)

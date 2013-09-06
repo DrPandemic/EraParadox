@@ -423,7 +423,6 @@ namespace GREATServer
 					PlayerActionType type = (PlayerActionType)message.ReadByte();
 					Vec2 position = new Vec2(message.ReadFloat(), message.ReadFloat());
 
-					ILogger.Log(String.Format("Action package: id={0}, time={1}, type={2}, pos={3}", id,time,type,position), LogPriority.Low);
 					PlayerAction action = new PlayerAction(id, type, time, position);
 
 					Clients[message.SenderConnection].ActionsPackage.Add(action);
