@@ -38,4 +38,3 @@ namespace GREATClient.BaseClass
 		BottomLeft
 	}
 }
-

@@ -112,6 +112,10 @@ namespace GREATClient.BaseClass
 
 
 		// Position.
+		// Movement event.
+		delegate void MovementEventHandler(IDraw bound);
+		event MovementEventHandler Moved;
+
 		/// <summary>
 		/// Gets or sets the position.
 		/// It is the absolute position.
@@ -125,8 +129,9 @@ namespace GREATClient.BaseClass
 				return m_Position;
 			}
 			set {
-				if (PositionMode == PositionType.Normal) {
-					m_Position = value;
+				m_Position = value;
+				if (Moved != null) {
+					Moved(this);
 				}
 			}
 		}
@@ -153,6 +158,12 @@ namespace GREATClient.BaseClass
 		// Bound to screen.
 		ScreenBound Bound { get; set; }
 		Vector2 ScreenBoundOffset { get; set; }
+
+		//Bound to object
+		IDraw ObjectBound { get; set; }
+		Vector2 ObjectBoundOffset { get; set; }
+		MovementEventHandler MoveEvent { get; set; }
+
 
 		/// <summary>
 		/// Gets or sets a value indicating whether this <see cref="GREATClient.IDraw"/> is visible.
@@ -190,8 +201,6 @@ namespace GREATClient.BaseClass
 		/// <value><c>true</c> if loaded; otherwise, <c>false</c>.</value>
 		public bool Loaded { get; set; }
 
-
-
 		/// <summary>
 		/// Gets or sets the game.
 		/// </summary>
@@ -211,6 +220,8 @@ namespace GREATClient.BaseClass
 			ScreenBoundOffset = Vector2.Zero;
 			XPercentOfTheScreen = 0;
 			YPercentOfTheScreen = 0;
+			MoveEvent = null;
+
 			Parent = null;
 			Loaded = false;
 			Z = 0;
@@ -397,7 +408,13 @@ namespace GREATClient.BaseClass
 			}
 		}
 
-		public void SetPositionRelativeToScreen(ScreenBound bound, Vector2 offset) {
+		/// <summary>
+		/// Sets the position relative to screen bound.
+		/// </summary>
+		/// <param name="bound">Bound.</param>
+		/// <param name="offset">Offset.</param>
+		public void SetPositionRelativeToScreen(ScreenBound bound, Vector2 offset) 
+		{
 			PositionMode = PositionType.ScreenRelative;
 
 			Bound = bound;
@@ -420,6 +437,40 @@ namespace GREATClient.BaseClass
 				}
 			}
 		}
+
+		/// <summary>
+		/// Sets the position relative to object.
+		/// </summary>
+		/// <param name="objectBound">Object bound.</param>
+		/// <param name="offset">Offset.</param>
+		public void SetPositionRelativeToObject(IDraw objectBound, Vector2 offset)
+		{
+
+			PositionMode = PositionType.ObjectRelative;
+			ObjectBoundOffset = offset;
+
+			// I put it here to have to the movement code at the same place.
+			if (MoveEvent == null) {
+				MoveEvent = (Bound) => {
+					// Replace the current IDraw.
+					Position = Vector2.Add(offset,Bound.Position);
+				};
+			}
+
+			// If there is currently no bound, it can simply add everyting.
+			if (ObjectBound == null) {
+				ObjectBound = objectBound;
+				objectBound.Moved += MoveEvent;
+			} 
+			// If it is a new bound, remove old event handler.
+			else if (ObjectBound != objectBound) {
+				ObjectBound.Moved -= MoveEvent;
+				ObjectBound = objectBound;
+				objectBound.Moved += MoveEvent;
+			}
+
+			MoveEvent(objectBound);
+		}		
 	}
 }
 
