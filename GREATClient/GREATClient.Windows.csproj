@@ -114,11 +114,8 @@
     <Folder Include="BaseClass\Input\" />
     <Folder Include="BaseClass\BaseAction\" />
     <Folder Include="BaseClass\Menu\" />
-<<<<<<< HEAD
     <Folder Include="Network\" />
-=======
     <Folder Include="BaseClass\ScreenInformation\" />
->>>>>>> relativePosition
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
