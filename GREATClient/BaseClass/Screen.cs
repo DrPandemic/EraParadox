@@ -23,6 +23,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using GREATClient.BaseClass.Input;
+using GREATClient.BaseClass.ScreenInformation;
 
 namespace GREATClient.BaseClass
 {
@@ -109,6 +110,8 @@ namespace GREATClient.BaseClass
 			Content = content;
 			Services = new GameServiceContainer();
 			this.Services.AddService(typeof(InputManager), new InputManager());
+			this.Services.AddService(typeof(ScreenService), new ScreenService(
+									(GraphicsDeviceManager)game.Services.GetService(typeof(IGraphicsDeviceService))));
 			Exit = false;
 			Game = game;
         }

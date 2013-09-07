@@ -36,7 +36,9 @@
     <Reference Include="System" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
-    <Reference Include="MonoGame.Framework" />
+    <Reference Include="MonoGame.Framework">
+      <HintPath>..\assemblies\WindowsGL\MonoGame.Framework.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Office.Interop.Word, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
       <Private>False</Private>
     </Reference>
@@ -90,6 +92,9 @@
     <Compile Include="Test\TestMenu.cs" />
     <Compile Include="BaseClass\IUpdatable.cs" />
     <Compile Include="Network\MainClientChampion.cs" />
+    <Compile Include="BaseClass\ScreenInformation\ScreenInfo.cs" />
+    <Compile Include="BaseClass\ScreenInformation\ScreenService.cs" />
+    <Compile Include="BaseClass\Position.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />
@@ -109,7 +114,11 @@
     <Folder Include="BaseClass\Input\" />
     <Folder Include="BaseClass\BaseAction\" />
     <Folder Include="BaseClass\Menu\" />
+<<<<<<< HEAD
     <Folder Include="Network\" />
+=======
+    <Folder Include="BaseClass\ScreenInformation\" />
+>>>>>>> relativePosition
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -143,6 +152,9 @@
     </Content>
     <Content Include="Content\inputs.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\screen.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 </Project>

@@ -98,18 +98,25 @@ namespace GREATClient.Test
 			// Video
 			MenuItem video1 = new MenuItem(new DrawableLabel() { Text = "Big Texture" },
 			                               new DrawableLabel() { Text = "Big Texture", Tint = Color.Chocolate },
-			                               new DrawableLabel() { Text = "Big Texture", Tint = Color.Aquamarine });
+			                               new DrawableLabel() { Text = "Big Texture", Tint = Color.Aquamarine })
+			{ ClickAction = () => screenService.GameWindowSize = screenService.ScreenSize };
 
 			MenuItem video2 = new MenuItem(new DrawableLabel() { Text = "Small Texture" },
 			                               new DrawableLabel() { Text = "Small Texture", Tint = Color.Chocolate },
-			                               new DrawableLabel() { Text = "Small Texture", Tint = Color.Aquamarine });
+			                               new DrawableLabel() { Text = "Small Texture", Tint = Color.Aquamarine })
+			{ ClickAction = () => screenService.GameWindowSize = new Vector2(800,600) };
+
+			MenuItem video25 = new MenuItem(new DrawableLabel() { Text = "Fullscreen" },
+											new DrawableLabel() { Text = "Fullscreen", Tint = Color.Chocolate },
+											new DrawableLabel() { Text = "Fullscreen", Tint = Color.Aquamarine })
+			{ ClickAction = () => screenService.SwitchFullscreen() };
 
 			MenuItem video3 = new MenuItem(new DrawableLabel() { Text = "Return to Main Menu" },
 			                               new DrawableLabel() { Text = "Return to Main Menu", Tint = Color.Chocolate },
 			                               new DrawableLabel() { Text = "Return to Main Menu", Tint = Color.Aquamarine }) 
 			{ ClickAction = () => OpenOrCloseMainMenu(null,null) };
 
-			VideoMenu = new Menu(video1,video2,video3);
+			VideoMenu = new Menu(video1,video2,video25,video3);
 			VideoMenu.AlignItemsVertically(30f);
 			VideoMenu.AllowKeyboard = true;
 
@@ -139,7 +146,7 @@ namespace GREATClient.Test
 
 			MainRectangle = new DrawableRectangle(new Vector2(150, 120), new Vector2(0, 0), Color.DarkGray);
 			AudioRectangle = new DrawableRectangle(new Vector2(200, 85), new Vector2(0, 0), Color.DarkGray);
-			VideoRectangle = new DrawableRectangle(new Vector2(200, 85), new Vector2(0, 0), Color.DarkGray);
+			VideoRectangle = new DrawableRectangle(new Vector2(200, 120), new Vector2(0, 0), Color.DarkGray);
 			MainRectangle.Visible = false;
 			AudioRectangle.Visible = false;
 			VideoRectangle.Visible = false;
