@@ -163,7 +163,7 @@ namespace GREATClient.BaseClass.Menu
 
 		public override bool IsBehind(Vector2 position)
 		{
-			if (Visible) {				
+			if (Visible && CurrentState != null) {				
 				return CurrentState.IsBehind(position);
 			}
 			return false;

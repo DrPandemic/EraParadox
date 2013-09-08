@@ -96,6 +96,8 @@
     <Compile Include="BaseClass\ScreenInformation\ScreenService.cs" />
     <Compile Include="BaseClass\Position.cs" />
     <Compile Include="Display\GameUI.cs" />
+    <Compile Include="Display\SpellMenu.cs" />
+    <Compile Include="Display\SpellMenuItem.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />

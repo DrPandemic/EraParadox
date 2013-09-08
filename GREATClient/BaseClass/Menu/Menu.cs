@@ -26,6 +26,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using GREATClient.BaseClass.Input;
 using System.Diagnostics;
+using GREATClient.Display;
 
 namespace GREATClient.BaseClass.Menu
 {
@@ -43,6 +44,12 @@ namespace GREATClient.BaseClass.Menu
 		/// </summary>
 		/// <value><c>true</c> if enter registered; otherwise, <c>false</c>.</value>
 		bool EnterRegistered { get; set; }
+
+		/// <summary>
+		/// Gets or sets a value indicating whether this <see cref="GREATClient.BaseClass.Menu.Menu"/> mouse registered.
+		/// </summary>
+		/// <value><c>true</c> if mouse registered; otherwise, <c>false</c>.</value>
+		bool MouseRegistered { get; set; }
 
 		/// <summary>
 		/// Gets or sets a value indicating whether this <see cref="GREATClient.BaseClass.Menu.Menu"/> allow keyboard.
@@ -146,6 +153,7 @@ namespace GREATClient.BaseClass.Menu
 			AnItemSelected = null;
 
 			MouseLeftPressed = false;
+			MouseRegistered = false;
 			EnterRegistered = false;
 			SelectedItem = -1;
 			OldSelectedItem = -1;
@@ -153,11 +161,12 @@ namespace GREATClient.BaseClass.Menu
 			IsHorizontal = false;
 
 			ItemList = items.OfType<MenuItem>().ToList();
-			ItemList.ForEach((MenuItem item) => AddItem(item));
+			ItemList.ForEach((MenuItem item) => AddChild(item));
         }
 
-		void AddItem (MenuItem item)
+		public void AddItem (MenuItem item)
 		{
+			ItemList.Add(item);
 			AddChild(item);
 		}
 
@@ -209,24 +218,30 @@ namespace GREATClient.BaseClass.Menu
 		/// </summary>
 		void SetKeyboardListening()
 		{
-			if (AllowKeyboard && inputManager != null && Clickable) {
-				if (!EnterRegistered) {
-					inputManager.RegisterEvent(InputActions.Enter, EnterEvent);
-					inputManager.RegisterEvent(InputActions.EnterPressed, EnterPressedEvent);
+			if (inputManager != null) {
+				if (!MouseRegistered) {
 					inputManager.RegisterEvent(InputActions.LeftClick, LeftReleasedEvent);
 					inputManager.RegisterEvent(InputActions.LeftPressed, LeftPressedEvent);
+					MouseRegistered = true;
 				}
-				inputManager.RemoveAction(InputActions.ArrowUp, UpEvent);
-				inputManager.RemoveAction(InputActions.ArrowDown, DownEvent);
-				inputManager.RemoveAction(InputActions.ArrowLeft, LeftEvent);
-				inputManager.RemoveAction(InputActions.ArrowRight, RightEvent);
+				if (AllowKeyboard && Clickable) {
+					if (!EnterRegistered) {
+						inputManager.RegisterEvent(InputActions.Enter, EnterEvent);
+						inputManager.RegisterEvent(InputActions.EnterPressed, EnterPressedEvent);
+						EnterRegistered = true;
+					}
+					inputManager.RemoveAction(InputActions.ArrowUp, UpEvent);
+					inputManager.RemoveAction(InputActions.ArrowDown, DownEvent);
+					inputManager.RemoveAction(InputActions.ArrowLeft, LeftEvent);
+					inputManager.RemoveAction(InputActions.ArrowRight, RightEvent);
 
-				if (IsVertical) {
-					inputManager.RegisterEvent(InputActions.ArrowUp, UpEvent);
-					inputManager.RegisterEvent(InputActions.ArrowDown, DownEvent);
-				} else if (IsHorizontal) {
-					inputManager.RegisterEvent(InputActions.ArrowLeft, LeftEvent);
-					inputManager.RegisterEvent(InputActions.ArrowRight, RightEvent);
+					if (IsVertical) {
+						inputManager.RegisterEvent(InputActions.ArrowUp, UpEvent);
+						inputManager.RegisterEvent(InputActions.ArrowDown, DownEvent);
+					} else if (IsHorizontal) {
+						inputManager.RegisterEvent(InputActions.ArrowLeft, LeftEvent);
+						inputManager.RegisterEvent(InputActions.ArrowRight, RightEvent);
+					}
 				}
 			}
 		}
@@ -268,7 +283,7 @@ namespace GREATClient.BaseClass.Menu
 		/// <summary>
 		/// Selecteds the given item.
 		/// </summary>
-		void SelecteGivenItem(object sender, EventArgs e)
+		protected void SelecteGivenItem(object sender, EventArgs e)
 		{
 			// To remove the problem where Hover would always reset.
 			if (!MouseLeftPressed) 

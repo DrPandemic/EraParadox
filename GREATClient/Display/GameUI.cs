@@ -40,6 +40,8 @@ namespace GREATClient.Display
 		//DrawableImage ObjectBackground { get; set; }
 		//DrawableImage StatBackground { get; set; }
 
+		SpellMenu UISpellMenu { get; set; }
+
         public GameUI()
         {
 			UIFPSCounter = new FPSCounter();
@@ -62,6 +64,9 @@ namespace GREATClient.Display
 			AddChild(ObjectBackground);
 			StatBackground = new DrawableImage("UIObjects/boxBackground");
 			AddChild(StatBackground);*/
+
+			UISpellMenu = new SpellMenu();
+			AddChild(UISpellMenu,2);
         }
 
 		protected override void OnLoad(ContentManager content, GraphicsDevice gd)
@@ -75,6 +80,8 @@ namespace GREATClient.Display
 			SpellBackground.SetPositionRelativeToObject(Life, new Vector2(-SpellBackground.Texture.Width - 10, 
 	                                                              			Life.Texture.Height - SpellBackground.Texture.Height), 
 			                                            false);
+			UISpellMenu.SetPositionRelativeToObject(SpellBackground, new Vector2(18,15));
+
 
 			MoneyBackground.SetPositionRelativeToScreen(ScreenBound.BottomLeft, 
 			                                            new Vector2(10, - MoneyBackground.Texture.Height - 10));

@@ -94,11 +94,13 @@ namespace GREATClient.BaseClass
 			batch.End();
 		}
 
-		// TODO : this
-		/*public override bool IsBehind(Vector2 position)
+		// TODO : Improve this.
+		public override bool IsBehind(Vector2 position)
 		{
-			return false;
-		}*/
+			Rectangle rect = new Rectangle((int)GetAbsolutePosition().X, (int)GetAbsolutePosition().Y,
+			                               Texture.Width, Texture.Height);
+			return rect.Contains(position);
+		}
     }
 }
 
