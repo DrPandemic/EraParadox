@@ -339,7 +339,6 @@ namespace GREATClient.BaseClass.Input
 						break;
 						case DeadKeys.None:
 						return true;
-						break;
 				}
 			}
 			return false;

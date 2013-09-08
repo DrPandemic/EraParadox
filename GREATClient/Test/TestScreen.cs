@@ -52,6 +52,8 @@ namespace GREATClient.Test
         }
 		protected override void OnLoadContent()
 		{
+			AddChild(new GameUI(),10);
+
 			AddChild(new TestMenu() {Position = new Vector2(200,100)});
 
 			champSprite = new DrawableChampionSprite(ChampionTypes.StickMan, ChampionsInfo) 
@@ -73,10 +75,6 @@ namespace GREATClient.Test
 			oldks = Keyboard.GetState();
 			oldms = Mouse.GetState();
 
-			Container cc = new Container();
-			cc.AddChild(new FPSCounter());
-			AddChild(cc);
-
 			//Test particle
 			/*ParticleSystem sys = new ParticleSystem(Content, 1000, null);
 			sys.Position = new Vector2(100, 100);
@@ -85,8 +83,6 @@ namespace GREATClient.Test
 			//AddChild(new PingCounter(() => Client.Instance.GetPing().TotalMilliseconds));
 			//inputManager.RegisterEvent(InputActions.Spell1, new EventHandler(Jump));
 
-			AddChild(new PingCounter(yo));
-
 			inputManager.RegisterEvent(InputActions.Spell3, new EventHandler(Jump));
 
 			//inputManager.RegisterEvent(InputActions.Jump, new EventHandler(Jump2));
@@ -94,11 +90,6 @@ namespace GREATClient.Test
 			DrawableCircle circle = new DrawableCircle();
 			circle.SetPositionRelativeToObject(champSprite, new Vector2(-150, -30));
 			AddChild(circle);
-		}
-
-		protected double yo()
-		{
-			return 32d;
 		}
 
 		private void Jump(object sender, EventArgs e)

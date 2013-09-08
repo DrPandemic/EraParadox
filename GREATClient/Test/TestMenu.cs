@@ -104,7 +104,7 @@ namespace GREATClient.Test
 			MenuItem video2 = new MenuItem(new DrawableLabel() { Text = "Small Texture" },
 			                               new DrawableLabel() { Text = "Small Texture", Tint = Color.Chocolate },
 			                               new DrawableLabel() { Text = "Small Texture", Tint = Color.Aquamarine })
-			{ ClickAction = () => screenService.GameWindowSize = new Vector2(800,600) };
+			{ ClickAction = () => screenService.GameWindowSize = new Vector2(900,700) };
 
 			MenuItem video25 = new MenuItem(new DrawableLabel() { Text = "Fullscreen" },
 											new DrawableLabel() { Text = "Fullscreen", Tint = Color.Chocolate },
