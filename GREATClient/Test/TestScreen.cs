@@ -54,7 +54,9 @@ namespace GREATClient.Test
 		{
 			AddChild(new GameUI(),10);
 
-			AddChild(new TestMenu() {Position = new Vector2(200,100)});
+			ESCMenu menu = new ESCMenu();
+			AddChild(menu);
+			menu.SetPositionInScreenPercent(50, 50);
 
 			champSprite = new DrawableChampionSprite(ChampionTypes.StickMan, ChampionsInfo) 
 			{ Position = new Vector2(200f, 300f) };

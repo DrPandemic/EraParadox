@@ -97,9 +97,12 @@ namespace GREATClient.BaseClass
 		// TODO : Improve this.
 		public override bool IsBehind(Vector2 position)
 		{
-			Rectangle rect = new Rectangle((int)GetAbsolutePosition().X, (int)GetAbsolutePosition().Y,
-			                               Texture.Width, Texture.Height);
-			return rect.Contains(position);
+			if (Parent != null) {
+				Rectangle rect = new Rectangle((int)GetAbsolutePosition().X, (int)GetAbsolutePosition().Y,
+				                               Texture.Width, Texture.Height);
+				return rect.Contains(position);
+			}
+			return false;
 		}
     }
 }

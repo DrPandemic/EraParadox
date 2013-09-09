@@ -1,5 +1,5 @@
 //
-//  SpellMenuItem.cs
+//  CurrentChampionState.cs
 //
 //  Author:
 //       Jean-Samuel Aubry-Guzzi <bipbip500@gmail.com>
@@ -19,34 +19,14 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using GREATClient.BaseClass.Menu;
-using GREATClient.BaseClass;
-using Microsoft.Xna.Framework;
 
-namespace GREATClient.Display
+namespace GameContent
 {
-    public class SpellMenuItem : MenuItem
+    public class CurrentChampionState
     {
-		public SpellMenuItem() : base(new DrawableImage("UIObjects/spellBox"),
-		                              new DrawableImage("UIObjects/spellBox"),
-		                              new DrawableImage("UIObjects/spellBox"))
+        public CurrentChampionState()
         {
-			Clickable = false;
-			StateClicking.Position = new Vector2(2, 2);
-			AddChild(new DrawableImage("UIObjects/spellBoxDropShadow"){Position = new Vector2(2,2)},0);
-
-			ClickAction = () => Cast();
         }
-
-		public void SetSpell()
-		{
-
-		}
-
-		public void Cast()
-		{
-
-		}
     }
 }
 

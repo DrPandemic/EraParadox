@@ -105,10 +105,13 @@ namespace GREATClient.GameContent
 
 		public override bool IsBehind(Vector2 position)
 		{
-			//TODO: use the rectangle of the current animation?
-			return GameLibHelper.ToRectangle(Champion.CreateCollisionRectangle()).Contains(
-				(int)position.X,
-				(int)position.Y);
+			if (Parent != null) {
+				//TODO: use the rectangle of the current animation?
+				return GameLibHelper.ToRectangle(Champion.CreateCollisionRectangle()).Contains(
+					(int)position.X,
+					(int)position.Y);
+			}
+			return false;
 		}
     }
 }

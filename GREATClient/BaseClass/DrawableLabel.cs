@@ -93,9 +93,12 @@ namespace GREATClient.BaseClass
 
 		public override bool IsBehind(Vector2 position)
 		{
-			Vector2 labelPos = GetAbsolutePosition() - RelativeOrigin * Font.MeasureString(Text);
-			return (position.X >= labelPos.X && position.X <= (labelPos + Font.MeasureString(Text)).X) &&
-				   (position.Y >= labelPos.Y && position.Y <= (labelPos + Font.MeasureString(Text)).Y);
+			if (Parent != null) {
+				Vector2 labelPos = GetAbsolutePosition() - RelativeOrigin * Font.MeasureString(Text);
+				return (position.X >= labelPos.X && position.X <= (labelPos + Font.MeasureString(Text)).X) &&
+					(position.Y >= labelPos.Y && position.Y <= (labelPos + Font.MeasureString(Text)).Y);
+			}
+			return false;
 		}
     }
 }

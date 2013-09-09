@@ -27,7 +27,7 @@ using Microsoft.Xna.Framework;
 using GREATClient.BaseClass.Input;
 using System.Diagnostics;
 
-namespace GREATClient.Test
+namespace GREATClient.Display
 {
 	public enum MenuState {
 		MainOpened,
@@ -36,8 +36,9 @@ namespace GREATClient.Test
 		AudioOpened,
 		ExitOpened
 	}
-    public class TestMenu : Container
+    public class ESCMenu : Container
     {
+		public Vector2 MenuSize { get; set; }
 
 		MenuState State { get; set; }
 		Menu MainMenu { get; set; }
@@ -48,8 +49,9 @@ namespace GREATClient.Test
 		DrawableRectangle AudioRectangle { get; set; }
 		DrawableRectangle VideoRectangle { get; set; }
 		Container ExitLayer { get; set; }
+		Container PlacementLayer { get; set; }
 
-        public TestMenu()
+        public ESCMenu()
         {
 			State = MenuState.AllClosed;
 			// Main
@@ -145,6 +147,7 @@ namespace GREATClient.Test
 			ExitMenu.Position = new Vector2(130,50);
 
 			MainRectangle = new DrawableRectangle(new Vector2(150, 120), new Vector2(0, 0), Color.DarkGray);
+			MenuSize = new Vector2(150,120);
 			AudioRectangle = new DrawableRectangle(new Vector2(200, 85), new Vector2(0, 0), Color.DarkGray);
 			VideoRectangle = new DrawableRectangle(new Vector2(200, 120), new Vector2(0, 0), Color.DarkGray);
 			MainRectangle.Visible = false;
@@ -156,17 +159,22 @@ namespace GREATClient.Test
 			ExitLayer.AddChild(new DrawableLabel(){Text = "Do you really want to quit?"});
 			ExitLayer.AddChild(ExitMenu);
 			ExitLayer.Visible = false;
+
+			PlacementLayer = new Container();
+			PlacementLayer.Position = new Vector2(-MenuSize.X / 2, -MenuSize.Y);
 		}
 
 		protected override void OnLoad(ContentManager content, GraphicsDevice gd)
 		{
-			AddChild(MainMenu);
-			AddChild(AudioMenu);
-			AddChild(VideoMenu);
-			AddChild(MainRectangle,0);
-			AddChild(AudioRectangle,0);
-			AddChild(VideoRectangle,0);
-			AddChild(ExitLayer,0);
+			AddChild(PlacementLayer);
+
+			PlacementLayer.AddChild(MainMenu);
+			PlacementLayer.AddChild(AudioMenu);
+			PlacementLayer.AddChild(VideoMenu);
+			PlacementLayer.AddChild(MainRectangle,0);
+			PlacementLayer.AddChild(AudioRectangle,0);
+			PlacementLayer.AddChild(VideoRectangle,0);
+			PlacementLayer.AddChild(ExitLayer,0);
 
 			inputManager.RegisterEvent(InputActions.Escape, new EventHandler(OpenOrCloseMainMenu));
 

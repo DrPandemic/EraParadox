@@ -86,13 +86,14 @@
     <Compile Include="BaseClass\Parallax.cs" />
     <Compile Include="BaseClass\Menu\Menu.cs" />
     <Compile Include="BaseClass\Menu\MenuItem.cs" />
-    <Compile Include="Test\TestMenu.cs" />
     <Compile Include="BaseClass\IUpdatable.cs" />
     <Compile Include="Network\MainClientChampion.cs" />
     <Compile Include="BaseClass\ScreenInformation\ScreenInfo.cs" />
     <Compile Include="BaseClass\ScreenInformation\ScreenService.cs" />
     <Compile Include="BaseClass\Position.cs" />
     <Compile Include="Display\GameUI.cs" />
+    <Compile Include="GameContent\CurrentChampionState.cs" />
+    <Compile Include="Display\ESCMenu.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />

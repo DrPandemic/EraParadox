@@ -190,13 +190,16 @@ namespace GREATClient.BaseClass
 
 		public override bool IsBehind(Vector2 position)
 		{
-			bool test = false;
-			Children.ForEach((IDraw item) => {
-				if (item.IsBehind(position)) {
-					test = true;
-				}
-			});
-			return test;
+			if (Parent != null) {
+				bool test = false;
+				Children.ForEach((IDraw item) => {
+					if (item.IsBehind(position)) {
+						test = true;
+					}
+				});
+				return test;
+			}
+			return false;
 		}
     }
 }

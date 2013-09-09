@@ -24,27 +24,28 @@ using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using GREATClient.BaseClass.Input;
 
 namespace GREATClient.Display
 {
     public class SpellMenu : Menu
     {
-		SpellMenuItem Spell1 { get; set; }
-		SpellMenuItem Spell2 { get; set; }
-		SpellMenuItem Spell3 { get; set; }
-		SpellMenuItem Spell4 { get; set; }
+		SpellMenuItem Spell1Item { get; set; }
+		SpellMenuItem Spell2Item { get; set; }
+		SpellMenuItem Spell3Item { get; set; }
+		SpellMenuItem Spell4Item { get; set; }
 
         public SpellMenu()
         {
-			Spell1 = new SpellMenuItem();
-			Spell2 = new SpellMenuItem();
-			Spell3 = new SpellMenuItem();
-			Spell4 = new SpellMenuItem();
+			Spell1Item = new SpellMenuItem();
+			Spell2Item = new SpellMenuItem();
+			Spell3Item = new SpellMenuItem();
+			Spell4Item = new SpellMenuItem();
 
-			AddItem(Spell1);
-			AddItem(Spell2);
-			AddItem(Spell3);
-			AddItem(Spell4);
+			AddItem(Spell1Item);
+			AddItem(Spell2Item);
+			AddItem(Spell3Item);
+			AddItem(Spell4Item);
 
         }
 
@@ -54,27 +55,71 @@ namespace GREATClient.Display
 
 			// Set all spell infos.
 
-
+			inputManager.RegisterEvent(InputActions.Spell1, new EventHandler(Spell1Event));
+			inputManager.RegisterEvent(InputActions.Spell2, new EventHandler(Spell2Event));
+			inputManager.RegisterEvent(InputActions.Spell3, new EventHandler(Spell3Event));
+			inputManager.RegisterEvent(InputActions.Spell4, new EventHandler(Spell4Event));
 		}
-
-		protected override void OnUpdate(GameTime dt)
-		{
-			Debug.Assert(inputManager != null);
-			if (Clickable && Visible) {
-				bool noHit = true;
-				for (int i = 0; i < ItemList.Count; ++i) {
-					if (ItemList[i].IsBehind(inputManager.MousePosition)) {
-						SelectedItem = i;
-						SelecteGivenItem(null,null);
-						noHit = false;
-					}
-					if (noHit) {
-						SelectedItem = -1;
-						SelecteGivenItem(null,null);
-					}
+		  
+		/// <summary>
+		/// When spell 1 is casted.
+		/// </summary>
+		/// <param name="sender">Sender.</param>
+		/// <param name="e">E.</param>
+		void Spell1Event(object sender, EventArgs e) {
+			if (e != null && e is InputEventArgs) {
+				InputEventArgs args = (InputEventArgs)e;
+				if (!args.Handled) {
+					Spell1Item.Cast();
+					args.Handled = true;
 				}
 			}
 		}
-    }
+
+		/// <summary>
+		/// When spell 2 is casted.
+		/// </summary>
+		/// <param name="sender">Sender.</param>
+		/// <param name="e">E.</param>
+		void Spell2Event(object sender, EventArgs e) {
+			if (e != null && e is InputEventArgs) {
+				InputEventArgs args = (InputEventArgs)e;
+				if (!args.Handled) {
+					Spell2Item.Cast();
+					args.Handled = true;
+				}
+			}
+		}
+
+		/// <summary>
+		/// When spell 3 is casted.
+		/// </summary>
+		/// <param name="sender">Sender.</param>
+		/// <param name="e">E.</param>
+		void Spell3Event(object sender, EventArgs e) {
+			if (e != null && e is InputEventArgs) {
+				InputEventArgs args = (InputEventArgs)e;
+				if (!args.Handled) {
+					Spell3Item.Cast();
+					args.Handled = true;
+				}
+			}
+		}
+
+		/// <summary>
+		/// When spell 4 is casted.
+		/// </summary>
+		/// <param name="sender">Sender.</param>
+		/// <param name="e">E.</param>
+		void Spell4Event(object sender, EventArgs e) {
+			if (e != null && e is InputEventArgs) {
+				InputEventArgs args = (InputEventArgs)e;
+				if (!args.Handled) {
+					Spell4Item.Cast();
+					args.Handled = true;
+				}
+			}
+		}
+	}
 }
 

@@ -135,6 +135,7 @@ namespace GREATClient
 
 			screenInfo.SaveInfo();
 
+
 			if (screenInfo.AutoResolution) {
 				graphics.PreferredBackBufferWidth = screenInfo.ScreenWidth;
 				graphics.PreferredBackBufferHeight = screenInfo.ScreenHeight;
@@ -145,6 +146,14 @@ namespace GREATClient
 
 			graphics.IsFullScreen = screenInfo.Fullscreen;
 			Window.AllowUserResizing = false;
+
+			#if DEBUG
+			graphics.PreferredBackBufferWidth = screenInfo.WindowWidth;
+			graphics.PreferredBackBufferHeight = screenInfo.WindowHeight;
+
+			graphics.IsFullScreen = false;
+			#endif
+
 			graphics.ApplyChanges();
 
 			Viewport view = graphics.GraphicsDevice.Viewport;
