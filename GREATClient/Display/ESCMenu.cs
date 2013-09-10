@@ -45,11 +45,15 @@ namespace GREATClient.Display
 		Menu VideoMenu { get; set; }
 		Menu AudioMenu { get; set; }
 		Menu ExitMenu { get; set; }
-		DrawableRectangle MainRectangle { get; set; }
+		DrawableImage MainBackground { get; set; }
+		Container MainBackgroundLayer { get; set; }
 		DrawableRectangle AudioRectangle { get; set; }
 		DrawableRectangle VideoRectangle { get; set; }
 		Container ExitLayer { get; set; }
 		Container PlacementLayer { get; set; }
+
+		// Gear
+		DrawableImage Gear { get; set; }
 
         public ESCMenu()
         {
@@ -141,16 +145,18 @@ namespace GREATClient.Display
 				}
 			};
 
+			MainBackgroundLayer = new Container();
+
 			ExitMenu = new Menu(exit1, exit2);
 			ExitMenu.AlignItemsHorizontally(80);
 			ExitMenu.AllowKeyboard = true;
 			ExitMenu.Position = new Vector2(130,50);
 
-			MainRectangle = new DrawableRectangle(new Vector2(150, 120), new Vector2(0, 0), Color.DarkGray);
-			MenuSize = new Vector2(150,120);
+			MainBackground = new DrawableImage("UIObjects/menu");
+			MenuSize = new Vector2(200,170);
 			AudioRectangle = new DrawableRectangle(new Vector2(200, 85), new Vector2(0, 0), Color.DarkGray);
 			VideoRectangle = new DrawableRectangle(new Vector2(200, 120), new Vector2(0, 0), Color.DarkGray);
-			MainRectangle.Visible = false;
+			MainBackgroundLayer.Visible = false;
 			AudioRectangle.Visible = false;
 			VideoRectangle.Visible = false;
 
@@ -160,21 +166,28 @@ namespace GREATClient.Display
 			ExitLayer.AddChild(ExitMenu);
 			ExitLayer.Visible = false;
 
+			MainMenu.Position = new Vector2(30,25);
+
+			Gear = new DrawableImage("UIObjects/menuGear");
+			Gear.Position = new Vector2(-40,-25);
+
 			PlacementLayer = new Container();
-			PlacementLayer.Position = new Vector2(-MenuSize.X / 2, -MenuSize.Y);
+			PlacementLayer.Position = new Vector2(-MenuSize.X / 2, -MenuSize.Y /2);
 		}
 
 		protected override void OnLoad(ContentManager content, GraphicsDevice gd)
 		{
 			AddChild(PlacementLayer);
 
-			PlacementLayer.AddChild(MainMenu);
-			PlacementLayer.AddChild(AudioMenu);
-			PlacementLayer.AddChild(VideoMenu);
-			PlacementLayer.AddChild(MainRectangle,0);
-			PlacementLayer.AddChild(AudioRectangle,0);
-			PlacementLayer.AddChild(VideoRectangle,0);
-			PlacementLayer.AddChild(ExitLayer,0);
+			PlacementLayer.AddChild(MainMenu,2);
+			PlacementLayer.AddChild(AudioMenu,2);
+			PlacementLayer.AddChild(VideoMenu,2);
+			PlacementLayer.AddChild(MainBackgroundLayer,1);
+			PlacementLayer.AddChild(AudioRectangle,1);
+			PlacementLayer.AddChild(VideoRectangle,1);
+			PlacementLayer.AddChild(ExitLayer,1);
+			MainBackgroundLayer.AddChild(Gear,0);
+			MainBackgroundLayer.AddChild(MainBackground,1);
 
 			inputManager.RegisterEvent(InputActions.Escape, new EventHandler(OpenOrCloseMainMenu));
 
@@ -188,29 +201,29 @@ namespace GREATClient.Display
 		{
 			if (State == MenuState.AllClosed) {
 				State = MenuState.MainOpened;
-				MainRectangle.Visible = true;
+				MainBackgroundLayer.Visible = true;
 				MainMenu.Active(true);
 			} else if (State == MenuState.MainOpened) {
 				State = MenuState.AllClosed;
-				MainRectangle.Visible = false;
+				MainBackgroundLayer.Visible = false;
 				MainMenu.UnselectItems();
 				MainMenu.Active(false);
 			} else if (State == MenuState.AudioOpened) {
 				State = MenuState.MainOpened;
 				AudioRectangle.Visible = false;
-				MainRectangle.Visible = true;
+				MainBackgroundLayer.Visible = true;
 				AudioMenu.Active(false);
 				MainMenu.Active(true);
 			} else if (State == MenuState.VideoOpened) {
 				State = MenuState.MainOpened;
 				VideoRectangle.Visible = false;
-				MainRectangle.Visible = true;
+				MainBackgroundLayer.Visible = true;
 				VideoMenu.Active(false);
 				MainMenu.Active(true);
 			} else if (State == MenuState.ExitOpened) {
 				State = MenuState.MainOpened;
 				ExitLayer.Visible = false;
-				MainRectangle.Visible = true;
+				MainBackgroundLayer.Visible = true;
 				ExitMenu.Active(false);
 				MainMenu.Active(true);
 			}
@@ -222,7 +235,7 @@ namespace GREATClient.Display
 			AudioMenu.Active(true);
 			State = MenuState.AudioOpened;
 			AudioRectangle.Visible = true;
-			MainRectangle.Visible = false;
+			MainBackgroundLayer.Visible = false;
 		}
 
 		void OpenVideo()
@@ -231,7 +244,7 @@ namespace GREATClient.Display
 			VideoMenu.Active(true);
 			State = MenuState.VideoOpened;
 			VideoRectangle.Visible = true;
-			MainRectangle.Visible = false;
+			MainBackgroundLayer.Visible = false;
 		}
 
 		void OpenExit()
@@ -239,7 +252,7 @@ namespace GREATClient.Display
 			MainMenu.Active(false);
 			ExitMenu.Active(true);
 			State = MenuState.ExitOpened;
-			MainRectangle.Visible = false;
+			MainBackgroundLayer.Visible = false;
 			ExitLayer.Visible = true;
 		}
     }

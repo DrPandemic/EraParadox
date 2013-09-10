@@ -66,7 +66,7 @@ namespace GREATClient.Display
 			AddChild(StatBackground);*/
 
 			UISpellMenu = new SpellMenu();
-			AddChild(UISpellMenu,2);
+			AddChild(UISpellMenu,3);
         }
 
 		protected override void OnLoad(ContentManager content, GraphicsDevice gd)

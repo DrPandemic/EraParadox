@@ -401,17 +401,11 @@ namespace GREATClient.BaseClass.Menu
 		{
 			Debug.Assert(inputManager != null);
 			if (Clickable && Visible) {
-				bool noHit = true;
 				for (int i = 0; i < ItemList.Count; ++i) {
 					if (ItemList[i].IsBehind(inputManager.MousePosition)) {
 						SelectedItem = i;
 						SelecteGivenItem(null,null);
-						noHit = false;
 					}
-				}
-				if (noHit) {
-					SelectedItem = -1;
-					SelecteGivenItem(null,null);
 				}
 			}
 		}
