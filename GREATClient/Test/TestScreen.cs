@@ -31,6 +31,7 @@ using GREATClient.BaseClass.Input;
 using GREATClient.BaseClass.BaseAction;
 using GREATClient.BaseClass.Menu;
 using GREATClient.BaseClass.ScreenInformation;
+using GameContent;
 
 namespace GREATClient.Test
 {
@@ -38,21 +39,22 @@ namespace GREATClient.Test
     {
 		ChampionsInfo ChampionsInfo { get; set; }
 
-		KeyboardState oldks;
-		MouseState oldms;
-
 		ActionSequence AS;
 
 		DrawableChampionSprite champSprite;
 
+		CurrentChampionState CCS;
+
 		public TestScreen(ContentManager content, Game game) : base(content, game)
         {
-			oldms = new MouseState();
 			ChampionsInfo = new ChampionsInfo();
         }
 		protected override void OnLoadContent()
 		{
-			AddChild(new GameUI(),10);
+
+			CCS = new CurrentChampionState(1000,100);
+
+			AddChild(new GameUI(CCS),10);
 
 			ESCMenu menu = new ESCMenu();
 			AddChild(menu, 5);
@@ -74,8 +76,6 @@ namespace GREATClient.Test
 			tr.Tint = Color.Blue;
 			tr.Scale = new Vector2(1f,2f);
 
-			oldks = Keyboard.GetState();
-			oldms = Mouse.GetState();
 
 			//Test particle
 			/*ParticleSystem sys = new ParticleSystem(Content, 1000, null);
@@ -121,6 +121,7 @@ namespace GREATClient.Test
 
 		protected override void OnUpdate(GameTime dt)
 		{
+			CCS.CurrentLife --;
 			//TODO: remove. testing the physics engine
 			KeyboardState ks = Keyboard.GetState();
 			MouseState ms = Mouse.GetState();
@@ -131,8 +132,6 @@ namespace GREATClient.Test
 			if (ks.IsKeyDown(Keys.E)) { champSprite.PlayAnimation(AnimationInfo.JUMP);}
 			if (ks.IsKeyDown(Keys.Q)) { champSprite.PlayAnimation(AnimationInfo.RUN);}
 
-			oldks = ks;
-			oldms = ms;
 
 			base.OnUpdate(dt);
 		}

@@ -50,9 +50,12 @@ namespace GameContent
 		/// <value>The current resource.</value>
 		public int CurrentResource { get; set; }
 
-        public CurrentChampionState()
+        public CurrentChampionState(int maxLife, int maxResource)
         {
-
+			MaxLife = maxLife;
+			CurrentLife = maxLife;
+			MaxResource = maxResource;
+			CurrentResource = maxResource;
         }
     }
 }

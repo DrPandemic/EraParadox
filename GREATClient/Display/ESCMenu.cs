@@ -199,7 +199,6 @@ namespace GREATClient.Display
 			GearExitMini.Position = new Vector2(115,130);
 			GearExitMini.PerformAction(new ActionSequence(-1,new ActionRotateBy(new TimeSpan(0,0,0,0,350),-2,false), new ActionRotateBy(new TimeSpan(0,0,0,0,200),-18,false), new ActionDelay(new TimeSpan(0,0,0,0,450))));
 
-
 			//Main
 			MainBackground = new DrawableImage("UIObjects/menu");
 			MainBackgroundLayer.Visible = false;

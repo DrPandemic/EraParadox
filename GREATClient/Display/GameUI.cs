@@ -23,18 +23,21 @@ using GREATClient.BaseClass;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
+using GameContent;
 
 namespace GREATClient.Display
 {
     public class GameUI : Container
     {
+		// Counters
 		PingCounter UIPingCounter { get; set; }
 		FPSCounter UIFPSCounter { get; set; }
 
 		DrawableImage Map { get; set; }
 		DrawableImage SpellBackground { get; set; }
+		// Bars
 		DrawableImage Life { get; set; }
-		DrawableImage Mana { get; set; }
+		DrawableImage Resource { get; set; }
 
 		DrawableImage MoneyBackground { get; set; }
 		//DrawableImage ObjectBackground { get; set; }
@@ -42,8 +45,17 @@ namespace GREATClient.Display
 
 		SpellMenu UISpellMenu { get; set; }
 
-        public GameUI()
+		/// <summary>
+		/// Gets or sets the state of the champion.
+		/// Can be updated live.
+		/// </summary>
+		/// <value>The state of the champion.</value>
+		CurrentChampionState ChampionState { get; set; }
+
+        public GameUI(CurrentChampionState ccs)
         {
+			ChampionState = ccs;
+
 			UIFPSCounter = new FPSCounter();
 			AddChild(UIFPSCounter,2);
 			UIPingCounter = new PingCounter(GetPing);
@@ -54,9 +66,11 @@ namespace GREATClient.Display
 			SpellBackground = new DrawableImage("UIObjects/spellBackground");
 			AddChild(SpellBackground);
 			Life = new DrawableImage("UIObjects/life");
+			Life.RelativeOrigin = new Vector2(0f,1f);
 			AddChild(Life);
-			Mana = new DrawableImage("UIObjects/mana");
-			AddChild(Mana);
+			Resource = new DrawableImage("UIObjects/mana");
+			Resource.RelativeOrigin = new Vector2(0f,1f);
+			AddChild(Resource);
 
 			MoneyBackground = new DrawableImage("UIObjects/boxBackground");
 			AddChild(MoneyBackground);
@@ -73,10 +87,10 @@ namespace GREATClient.Display
 		{
 			Map.SetPositionRelativeToScreen(ScreenBound.BottomRight, 
 			                                new Vector2(- Map.Texture.Width - 10, - Map.Texture.Height - 10));
-			Mana.SetPositionRelativeToObject(Map, new Vector2(-Mana.Texture.Width - 6, 
-			                                                   Map.Texture.Height - Mana.Texture.Height), false);
-			Life.SetPositionRelativeToObject(Mana, new Vector2(-Life.Texture.Width - 6, 
-			                                                   Mana.Texture.Height - Life.Texture.Height), false);
+			Resource.SetPositionRelativeToObject(Map, new Vector2(-Resource.Texture.Width - 6, 
+			                                                   Map.Texture.Height), false);
+			Life.SetPositionRelativeToObject(Resource, new Vector2(-Life.Texture.Width - 6, 
+			                                                   0), false);
 			SpellBackground.SetPositionRelativeToObject(Life, new Vector2(-SpellBackground.Texture.Width - 10, 
 	                                                              			Life.Texture.Height - SpellBackground.Texture.Height), 
 			                                            false);
@@ -87,6 +101,29 @@ namespace GREATClient.Display
 			                                            new Vector2(10, - MoneyBackground.Texture.Height - 10));
 			UIFPSCounter.SetPositionRelativeToObject(MoneyBackground, new Vector2(20, 10));
 			UIPingCounter.SetPositionRelativeToObject(UIFPSCounter, new Vector2(200, 0));
+
+			SetLifeAndResource();
+		}
+
+		protected override void OnUpdate(GameTime dt)
+		{
+			SetLifeAndResource();
+		}
+
+		/// <summary>
+		/// Sets the life and resource.
+		/// Will update the UI bars.
+		/// </summary>
+		void SetLifeAndResource()
+		{
+			Vector2 v = Life.Scale; 
+			v.Y = (float)ChampionState.CurrentLife / ChampionState.MaxLife;
+			v.Y = v.Y >= 0 ? v.Y : 0;
+			Life.Scale = v;;
+			v = Resource.Scale;
+			v.Y = (float)ChampionState.CurrentResource / ChampionState.MaxResource;
+			v.Y = v.Y >= 0 ? v.Y : 0;
+			Resource.Scale = v;
 		}
 
 		protected double GetPing()
