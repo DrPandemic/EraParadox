@@ -94,6 +94,7 @@
     <Compile Include="Display\GameUI.cs" />
     <Compile Include="GameContent\CurrentChampionState.cs" />
     <Compile Include="Display\ESCMenu.cs" />
+    <Compile Include="BaseClass\BaseAction\ActionDelay.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />
@@ -180,6 +181,15 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\UIObjects\menuGear.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\UIObjects\menuAudio.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\UIObjects\menuVideo.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\UIObjects\menuExit.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

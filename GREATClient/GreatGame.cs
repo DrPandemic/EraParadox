@@ -135,16 +135,18 @@ namespace GREATClient
 
 			screenInfo.SaveInfo();
 
+			graphics.IsFullScreen = screenInfo.Fullscreen;
 
-			if (screenInfo.AutoResolution) {
+			if (screenInfo.AutoResolution || graphics.IsFullScreen) {
 				graphics.PreferredBackBufferWidth = screenInfo.ScreenWidth;
 				graphics.PreferredBackBufferHeight = screenInfo.ScreenHeight;
+				screenInfo.WindowWidth = screenInfo.ScreenWidth;
+				screenInfo.WindowHeight = screenInfo.ScreenHeight;
+				screenInfo.SaveInfo();
 			} else {
 				graphics.PreferredBackBufferWidth = screenInfo.WindowWidth;
 				graphics.PreferredBackBufferHeight = screenInfo.WindowHeight;
 			}
-
-			graphics.IsFullScreen = screenInfo.Fullscreen;
 			Window.AllowUserResizing = false;
 
 			#if DEBUG
@@ -155,13 +157,6 @@ namespace GREATClient
 			#endif
 
 			graphics.ApplyChanges();
-
-			Viewport view = graphics.GraphicsDevice.Viewport;
-			view.Bounds = new Rectangle(0,
-			                            0,
-			                            graphics.PreferredBackBufferWidth,
-			                            graphics.PreferredBackBufferHeight);
-			graphics.GraphicsDevice.Viewport = view;
 		}
 	}
 }

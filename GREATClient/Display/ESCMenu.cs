@@ -26,6 +26,7 @@ using GREATClient.BaseClass.Menu;
 using Microsoft.Xna.Framework;
 using GREATClient.BaseClass.Input;
 using System.Diagnostics;
+using GREATClient.BaseClass.BaseAction;
 
 namespace GREATClient.Display
 {
@@ -41,23 +42,50 @@ namespace GREATClient.Display
 		public Vector2 MenuSize { get; set; }
 
 		MenuState State { get; set; }
+		// Menus
 		Menu MainMenu { get; set; }
 		Menu VideoMenu { get; set; }
 		Menu AudioMenu { get; set; }
 		Menu ExitMenu { get; set; }
+
+		//Main
 		DrawableImage MainBackground { get; set; }
 		Container MainBackgroundLayer { get; set; }
-		DrawableRectangle AudioRectangle { get; set; }
-		DrawableRectangle VideoRectangle { get; set; }
-		Container ExitLayer { get; set; }
-		Container PlacementLayer { get; set; }
-
 		// Gear
-		DrawableImage Gear { get; set; }
+		DrawableImage GearMain { get; set; }
+		DrawableImage GearMiniMain { get; set; }
+
+		//Audio
+		DrawableImage AudioBackground { get; set; }
+		Container AudioBackgroundLayer { get; set; }
+		// Gear
+		DrawableImage GearAudio { get; set; }
+
+		// Video
+		DrawableImage VideoBackground { get; set; }
+		Container VideoBackgroundLayer { get; set; }
+		// Gear
+		DrawableImage GearVideo { get; set; }
+		DrawableImage GearVideo2 { get; set; }
+
+		// Exit
+		DrawableImage ExitBackground { get; set; }
+		Container ExitLayer { get; set; }
+		// Gear 
+		DrawableImage GearExit { get; set; }
+		DrawableImage GearExit2 { get; set; }
+		DrawableImage GearExitMini { get; set; }
+
+		Container PlacementLayer { get; set; }
 
         public ESCMenu()
         {
 			State = MenuState.AllClosed;
+			PlacementLayer = new Container();			
+			MainBackgroundLayer = new Container();
+			VideoBackgroundLayer = new Container();
+			AudioBackgroundLayer = new Container();
+
 			// Main
 			MenuItem main1 = new MenuItem(new DrawableLabel() {Text = "Video settings" }, 
 							 			  new DrawableLabel() {Text = "Video settings", Tint = Color.Chocolate},
@@ -145,34 +173,74 @@ namespace GREATClient.Display
 				}
 			};
 
-			MainBackgroundLayer = new Container();
 
+			//Exit
 			ExitMenu = new Menu(exit1, exit2);
 			ExitMenu.AlignItemsHorizontally(80);
 			ExitMenu.AllowKeyboard = true;
-			ExitMenu.Position = new Vector2(130,50);
-
-			MainBackground = new DrawableImage("UIObjects/menu");
-			MenuSize = new Vector2(200,170);
-			AudioRectangle = new DrawableRectangle(new Vector2(200, 85), new Vector2(0, 0), Color.DarkGray);
-			VideoRectangle = new DrawableRectangle(new Vector2(200, 120), new Vector2(0, 0), Color.DarkGray);
-			MainBackgroundLayer.Visible = false;
-			AudioRectangle.Visible = false;
-			VideoRectangle.Visible = false;
-
+			ExitMenu.Position = new Vector2(160,95);
 			ExitLayer = new Container();
-			ExitLayer.AddChild(new DrawableRectangle(new Vector2(250, 80), new Vector2(0, 0), Color.DarkGray));
-			ExitLayer.AddChild(new DrawableLabel(){Text = "Do you really want to quit?"});
-			ExitLayer.AddChild(ExitMenu);
+			ExitBackground = new DrawableImage("UIObjects/menuExit");
 			ExitLayer.Visible = false;
+			// Exit gear
+			GearExit = new DrawableImage("UIObjects/menuGear");
+			GearExit.Scale = new Vector2(0.9f, 0.9f);
+			GearExit.RelativeOrigin = new Vector2(0.5f,0.5f);
+			GearExit.Position = new Vector2(25,130);
+			GearExit.PerformAction(new ActionSequence(-1,new ActionRotateBy(new TimeSpan(0,0,0,0,350),2,false), new ActionRotateBy(new TimeSpan(0,0,0,0,200),18,false), new ActionDelay(new TimeSpan(0,0,0,0,450))));
+			GearExit2 = new DrawableImage("UIObjects/menuGear");
+			GearExit2.Scale = new Vector2(0.8f, 0.8f);
+			GearExit2.RelativeOrigin = new Vector2(0.5f,0.5f);
+			GearExit2.Position = new Vector2(200,130);
+			GearExit2.PerformAction(new ActionSequence(-1,new ActionRotateBy(new TimeSpan(0,0,0,0,350),2,false), new ActionRotateBy(new TimeSpan(0,0,0,0,200),18,false), new ActionDelay(new TimeSpan(0,0,0,0,450))));
+			GearExitMini = new DrawableImage("UIObjects/menuGear");
+			GearExitMini.Scale = new Vector2(0.6f, 0.6f);
+			GearExitMini.RelativeOrigin = new Vector2(0.5f,0.5f);
+			GearExitMini.Position = new Vector2(115,130);
+			GearExitMini.PerformAction(new ActionSequence(-1,new ActionRotateBy(new TimeSpan(0,0,0,0,350),-2,false), new ActionRotateBy(new TimeSpan(0,0,0,0,200),-18,false), new ActionDelay(new TimeSpan(0,0,0,0,450))));
 
+
+			//Main
+			MainBackground = new DrawableImage("UIObjects/menu");
+			MainBackgroundLayer.Visible = false;
 			MainMenu.Position = new Vector2(30,25);
+			// Main gear
+			GearMain = new DrawableImage("UIObjects/menuGear");
+			GearMain.RelativeOrigin = new Vector2(0.5f,0.5f);
+			GearMain.Position = new Vector2(25,35);
+			GearMain.PerformAction(new ActionSequence(-1,new ActionRotateBy(new TimeSpan(0,0,0,0,350),2,false), new ActionRotateBy(new TimeSpan(0,0,0,0,200),18,false), new ActionDelay(new TimeSpan(0,0,0,0,450))));
+			GearMiniMain = new DrawableImage("UIObjects/menuGear");
+			GearMiniMain.Scale = new Vector2(0.5f, 0.5f);
+			GearMiniMain.RelativeOrigin = new Vector2(0.5f,0.5f);
+			GearMiniMain.Position = new Vector2(13,115);
+			GearMiniMain.PerformAction(new ActionSequence(-1,new ActionRotateBy(new TimeSpan(0,0,0,0,350),-2,false), new ActionRotateBy(new TimeSpan(0,0,0,0,200),-18,false), new ActionDelay(new TimeSpan(0,0,0,0,450))));
 
-			Gear = new DrawableImage("UIObjects/menuGear");
-			Gear.Position = new Vector2(-40,-25);
+			//Audio
+			AudioBackground = new DrawableImage("UIObjects/menuAudio");
+			AudioBackgroundLayer.Visible = false;
+			AudioMenu.Position = new Vector2(30,27);
+			// Audio gear
+			GearAudio = new DrawableImage("UIObjects/menuGear");
+			GearAudio.RelativeOrigin = new Vector2(0.5f,0.5f);
+			GearAudio.Position = new Vector2(130,35);
+			GearAudio.PerformAction(new ActionSequence(-1,new ActionRotateBy(new TimeSpan(0,0,0,0,350),2,false), new ActionRotateBy(new TimeSpan(0,0,0,0,200),18,false), new ActionDelay(new TimeSpan(0,0,0,0,450))));
 
-			PlacementLayer = new Container();
-			PlacementLayer.Position = new Vector2(-MenuSize.X / 2, -MenuSize.Y /2);
+			//Video
+			VideoBackground = new DrawableImage("UIObjects/menuVideo");
+			VideoBackgroundLayer.Visible = false;
+			VideoMenu.Position = new Vector2(30,25);
+			//Gear
+			GearVideo = new DrawableImage("UIObjects/menuGear");
+			GearVideo.Scale = new Vector2(0.6f, 0.6f);
+			GearVideo.RelativeOrigin = new Vector2(0.5f,0.5f);
+			GearVideo.Position = new Vector2(290,130);
+			GearVideo.PerformAction(new ActionSequence(-1,new ActionRotateBy(new TimeSpan(0,0,0,0,350),2,false), new ActionRotateBy(new TimeSpan(0,0,0,0,200),18,false), new ActionDelay(new TimeSpan(0,0,0,0,450))));
+			// Gear2
+			GearVideo2 = new DrawableImage("UIObjects/menuGear");
+			GearVideo2.Scale = new Vector2(0.6f, 0.6f);
+			GearVideo2.RelativeOrigin = new Vector2(0.5f,0.5f);
+			GearVideo2.Position = new Vector2(250,170);
+			GearVideo2.PerformAction(new ActionSequence(-1,new ActionRotateBy(new TimeSpan(0,0,0,0,350),-2,false), new ActionRotateBy(new TimeSpan(0,0,0,0,200),-18,false), new ActionDelay(new TimeSpan(0,0,0,0,450))));
 		}
 
 		protected override void OnLoad(ContentManager content, GraphicsDevice gd)
@@ -183,11 +251,31 @@ namespace GREATClient.Display
 			PlacementLayer.AddChild(AudioMenu,2);
 			PlacementLayer.AddChild(VideoMenu,2);
 			PlacementLayer.AddChild(MainBackgroundLayer,1);
-			PlacementLayer.AddChild(AudioRectangle,1);
-			PlacementLayer.AddChild(VideoRectangle,1);
+			PlacementLayer.AddChild(AudioBackgroundLayer,1);
+			PlacementLayer.AddChild(VideoBackgroundLayer,1);
 			PlacementLayer.AddChild(ExitLayer,1);
-			MainBackgroundLayer.AddChild(Gear,0);
+
+			VideoBackgroundLayer.AddChild(VideoBackground,1);
+			VideoBackgroundLayer.AddChild(new DrawableLabel(){Text = "*Changes will take effect after the next restart.", 
+															  Scale = new Vector2(0.6f,0.6f),
+															  Position = new Vector2(20,150)});
+
+			VideoBackgroundLayer.AddChild(GearVideo,0);
+			VideoBackgroundLayer.AddChild(GearVideo2,0);
+
+			AudioBackgroundLayer.AddChild(AudioBackground, 1);
+			AudioBackgroundLayer.AddChild(GearAudio, 0);
+
+			MainBackgroundLayer.AddChild(GearMain,0);
+			MainBackgroundLayer.AddChild(GearMiniMain,0);
 			MainBackgroundLayer.AddChild(MainBackground,1);
+
+			ExitLayer.AddChild(ExitBackground,1);
+			ExitLayer.AddChild(new DrawableLabel(){Text = "Do you really want to quit?", Position = new Vector2(30,25)});
+			ExitLayer.AddChild(ExitMenu,2);
+			ExitLayer.AddChild(GearExit,0);
+			ExitLayer.AddChild(GearExit2,0);
+			ExitLayer.AddChild(GearExitMini,0);
 
 			inputManager.RegisterEvent(InputActions.Escape, new EventHandler(OpenOrCloseMainMenu));
 
@@ -195,6 +283,17 @@ namespace GREATClient.Display
 			AudioMenu.Active(false);
 			VideoMenu.Active(false);
 			ExitMenu.Active(false);
+
+			SetMenuSize(new Vector2(MainBackground.Texture.Width,MainBackground.Texture.Height));
+		}
+
+		/// <summary>
+		/// Replaces the placement layer.
+		/// </summary>
+		void SetMenuSize(Vector2 size)
+		{			
+			MenuSize = size;
+			PlacementLayer.Position = new Vector2(-MenuSize.X / 2, -MenuSize.Y /2);
 		}
 
 		public void OpenOrCloseMainMenu(object sender, EventArgs e)
@@ -203,6 +302,7 @@ namespace GREATClient.Display
 				State = MenuState.MainOpened;
 				MainBackgroundLayer.Visible = true;
 				MainMenu.Active(true);
+				SetMenuSize(new Vector2(MainBackground.Texture.Width,MainBackground.Texture.Height));
 			} else if (State == MenuState.MainOpened) {
 				State = MenuState.AllClosed;
 				MainBackgroundLayer.Visible = false;
@@ -210,22 +310,25 @@ namespace GREATClient.Display
 				MainMenu.Active(false);
 			} else if (State == MenuState.AudioOpened) {
 				State = MenuState.MainOpened;
-				AudioRectangle.Visible = false;
+				AudioBackgroundLayer.Visible = false;
 				MainBackgroundLayer.Visible = true;
 				AudioMenu.Active(false);
 				MainMenu.Active(true);
+				SetMenuSize(new Vector2(MainBackground.Texture.Width,MainBackground.Texture.Height));
 			} else if (State == MenuState.VideoOpened) {
 				State = MenuState.MainOpened;
-				VideoRectangle.Visible = false;
+				VideoBackgroundLayer.Visible = false;
 				MainBackgroundLayer.Visible = true;
 				VideoMenu.Active(false);
 				MainMenu.Active(true);
+				SetMenuSize(new Vector2(MainBackground.Texture.Width,MainBackground.Texture.Height));
 			} else if (State == MenuState.ExitOpened) {
 				State = MenuState.MainOpened;
 				ExitLayer.Visible = false;
 				MainBackgroundLayer.Visible = true;
 				ExitMenu.Active(false);
 				MainMenu.Active(true);
+				SetMenuSize(new Vector2(MainBackground.Texture.Width,MainBackground.Texture.Height));
 			}
 		}
 
@@ -234,8 +337,9 @@ namespace GREATClient.Display
 			MainMenu.Active(false);
 			AudioMenu.Active(true);
 			State = MenuState.AudioOpened;
-			AudioRectangle.Visible = true;
+			AudioBackgroundLayer.Visible = true;
 			MainBackgroundLayer.Visible = false;
+			SetMenuSize(new Vector2(AudioBackground.Texture.Width,AudioBackground.Texture.Height));
 		}
 
 		void OpenVideo()
@@ -243,8 +347,9 @@ namespace GREATClient.Display
 			MainMenu.Active(false);
 			VideoMenu.Active(true);
 			State = MenuState.VideoOpened;
-			VideoRectangle.Visible = true;
+			VideoBackgroundLayer.Visible = true;
 			MainBackgroundLayer.Visible = false;
+			SetMenuSize(new Vector2(VideoBackground.Texture.Width,VideoBackground.Texture.Height));
 		}
 
 		void OpenExit()
@@ -254,6 +359,7 @@ namespace GREATClient.Display
 			State = MenuState.ExitOpened;
 			MainBackgroundLayer.Visible = false;
 			ExitLayer.Visible = true;
+			SetMenuSize(new Vector2(ExitBackground.Texture.Width,ExitBackground.Texture.Height));
 		}
     }
 }
