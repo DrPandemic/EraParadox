@@ -87,24 +87,24 @@ namespace GREATClient.Display
 			AudioBackgroundLayer = new Container();
 
 			// Main
-			MenuItem main1 = new MenuItem(new DrawableLabel() {Text = "Video settings" }, 
-							 			  new DrawableLabel() {Text = "Video settings", Tint = Color.Chocolate},
-										  new DrawableLabel() {Text = "Video settings", Tint = Color.Aquamarine}) 
+			MenuItem main1 = new MenuItem(new DrawableLabel() {Text = "Video settings", RelativeOrigin = new Vector2(0.5f,0.0f) }, 
+				new DrawableLabel() {Text = "Video settings", RelativeOrigin = new Vector2(0.5f,0.0f), Tint = Color.Chocolate},
+				new DrawableLabel() {Text = "Video settings", RelativeOrigin = new Vector2(0.5f,0.0f), Tint = Color.Aquamarine}) 
 			{ ClickAction = () => OpenVideo() };
 
-			MenuItem main2 = new MenuItem(new DrawableLabel() {Text = "Audio settings" },
-										  new DrawableLabel() {Text = "Audio settings", Tint = Color.Chocolate},
-										  new DrawableLabel() {Text = "Audio settings", Tint = Color.Aquamarine}) 
+			MenuItem main2 = new MenuItem(new DrawableLabel() {Text = "Audio settings" , RelativeOrigin = new Vector2(0.5f,0.0f)},
+				new DrawableLabel() {Text = "Audio settings", RelativeOrigin = new Vector2(0.5f,0.0f), Tint = Color.Chocolate},
+				new DrawableLabel() {Text = "Audio settings", RelativeOrigin = new Vector2(0.5f,0.0f), Tint = Color.Aquamarine}) 
 			{ ClickAction = () => OpenAudio() };
 
-			MenuItem main3 = new MenuItem(new DrawableLabel() {Text = "Return to Game" },
-										  new DrawableLabel() {Text = "Return to Game", Tint = Color.Chocolate},
-										  new DrawableLabel() {Text = "Return to Game", Tint = Color.Aquamarine}) 
+			MenuItem main3 = new MenuItem(new DrawableLabel() {Text = "Return to Game", RelativeOrigin = new Vector2(0.5f,0.0f)},
+				new DrawableLabel() {Text = "Return to Game", RelativeOrigin = new Vector2(0.5f,0.0f), Tint = Color.Chocolate},
+				new DrawableLabel() {Text = "Return to Game", RelativeOrigin = new Vector2(0.5f,0.0f), Tint = Color.Aquamarine}) 
 			{ ClickAction = () => OpenOrCloseMainMenu(null,null) };
 
-			MenuItem main4 = new MenuItem(new DrawableLabel() {Text = "Exit Game" },
-										  new DrawableLabel() {Text = "Exit Game", Tint = Color.Chocolate},
-									      new DrawableLabel() {Text = "Exit Game", Tint = Color.Aquamarine}) 
+			MenuItem main4 = new MenuItem(new DrawableLabel() {Text = "Exit Game" , RelativeOrigin = new Vector2(0.5f,0.0f)},
+				new DrawableLabel() {Text = "Exit Game", RelativeOrigin = new Vector2(0.5f,0.0f), Tint = Color.Chocolate},
+				new DrawableLabel() {Text = "Exit Game", RelativeOrigin = new Vector2(0.5f,0.0f), Tint = Color.Aquamarine}) 
 			{ ClickAction = () => OpenExit() };
 
 			MainMenu = new Menu(main1, main2, main3, main4);
@@ -112,17 +112,17 @@ namespace GREATClient.Display
 			MainMenu.AllowKeyboard = true;
 
 			// Audio
-			MenuItem audio1 = new MenuItem(new DrawableLabel() {Text = "Less boomboom" },
-										   new DrawableLabel() {Text = "Less boomboom", Tint = Color.Chocolate},
-										   new DrawableLabel() {Text = "Less boomboom", Tint = Color.Aquamarine});
+			MenuItem audio1 = new MenuItem(new DrawableLabel() {Text = "Less boomboom", RelativeOrigin = new Vector2(0.5f,0.0f)},
+				new DrawableLabel() {Text = "Less boomboom", RelativeOrigin = new Vector2(0.5f,0.0f), Tint = Color.Chocolate},
+				new DrawableLabel() {Text = "Less boomboom", RelativeOrigin = new Vector2(0.5f,0.0f), Tint = Color.Aquamarine});
 
-			MenuItem audio2 = new MenuItem(new DrawableLabel() {Text = "More boomboom" },
-										   new DrawableLabel() {Text = "More boomboom", Tint = Color.Chocolate},
-										   new DrawableLabel() {Text = "More boomboom", Tint = Color.Aquamarine});
+			MenuItem audio2 = new MenuItem(new DrawableLabel() {Text = "More boomboom", RelativeOrigin = new Vector2(0.5f,0.0f) },
+				new DrawableLabel() {Text = "More boomboom", RelativeOrigin = new Vector2(0.5f,0.0f), Tint = Color.Chocolate},
+				new DrawableLabel() {Text = "More boomboom", RelativeOrigin = new Vector2(0.5f,0.0f), Tint = Color.Aquamarine});
 
-			MenuItem audio3 = new MenuItem(new DrawableLabel() { Text = "Return to Main Menu" },
-										   new DrawableLabel() {Text = "Return to Main Menu", Tint = Color.Chocolate},
-										   new DrawableLabel() {Text = "Return to Main Menu", Tint = Color.Aquamarine}) 
+			MenuItem audio3 = new MenuItem(new DrawableLabel() { Text = "Return to Main Menu", RelativeOrigin = new Vector2(0.5f,0.0f) },
+				new DrawableLabel() {Text = "Return to Main Menu", RelativeOrigin = new Vector2(0.5f,0.0f), Tint = Color.Chocolate},
+				new DrawableLabel() {Text = "Return to Main Menu", RelativeOrigin = new Vector2(0.5f,0.0f), Tint = Color.Aquamarine}) 
 			{ ClickAction = () => OpenOrCloseMainMenu(null,null) };
 
 			AudioMenu = new Menu(audio1,audio2,audio3);
@@ -130,24 +130,24 @@ namespace GREATClient.Display
 			AudioMenu.AllowKeyboard = true;
 
 			// Video
-			MenuItem video1 = new MenuItem(new DrawableLabel() { Text = "Big Texture" },
-			                               new DrawableLabel() { Text = "Big Texture", Tint = Color.Chocolate },
-			                               new DrawableLabel() { Text = "Big Texture", Tint = Color.Aquamarine })
+			MenuItem video1 = new MenuItem(new DrawableLabel() { Text = "Big Texture", RelativeOrigin = new Vector2(0.5f,0.0f) },
+				new DrawableLabel() { Text = "Big Texture", RelativeOrigin = new Vector2(0.5f,0.0f), Tint = Color.Chocolate },
+				new DrawableLabel() { Text = "Big Texture", RelativeOrigin = new Vector2(0.5f,0.0f), Tint = Color.Aquamarine })
 			{ ClickAction = () => screenService.GameWindowSize = screenService.ScreenSize };
 
-			MenuItem video2 = new MenuItem(new DrawableLabel() { Text = "Small Texture" },
-			                               new DrawableLabel() { Text = "Small Texture", Tint = Color.Chocolate },
-			                               new DrawableLabel() { Text = "Small Texture", Tint = Color.Aquamarine })
+			MenuItem video2 = new MenuItem(new DrawableLabel() { Text = "Small Texture", RelativeOrigin = new Vector2(0.5f,0.0f) },
+				new DrawableLabel() { Text = "Small Texture", RelativeOrigin = new Vector2(0.5f,0.0f), Tint = Color.Chocolate },
+				new DrawableLabel() { Text = "Small Texture", RelativeOrigin = new Vector2(0.5f,0.0f), Tint = Color.Aquamarine })
 			{ ClickAction = () => screenService.GameWindowSize = new Vector2(900,700) };
 
-			MenuItem video25 = new MenuItem(new DrawableLabel() { Text = "Fullscreen" },
-											new DrawableLabel() { Text = "Fullscreen", Tint = Color.Chocolate },
-											new DrawableLabel() { Text = "Fullscreen", Tint = Color.Aquamarine })
+			MenuItem video25 = new MenuItem(new DrawableLabel() { Text = "Fullscreen", RelativeOrigin = new Vector2(0.5f,0.0f) },
+				new DrawableLabel() { Text = "Fullscreen", RelativeOrigin = new Vector2(0.5f,0.0f), Tint = Color.Chocolate },
+				new DrawableLabel() { Text = "Fullscreen", RelativeOrigin = new Vector2(0.5f,0.0f), Tint = Color.Aquamarine })
 			{ ClickAction = () => screenService.SwitchFullscreen() };
 
-			MenuItem video3 = new MenuItem(new DrawableLabel() { Text = "Return to Main Menu" },
-			                               new DrawableLabel() { Text = "Return to Main Menu", Tint = Color.Chocolate },
-			                               new DrawableLabel() { Text = "Return to Main Menu", Tint = Color.Aquamarine }) 
+			MenuItem video3 = new MenuItem(new DrawableLabel() { Text = "Return to Main Menu", RelativeOrigin = new Vector2(0.5f,0.0f) },
+				new DrawableLabel() { Text = "Return to Main Menu", RelativeOrigin = new Vector2(0.5f,0.0f), Tint = Color.Chocolate },
+				new DrawableLabel() { Text = "Return to Main Menu", RelativeOrigin = new Vector2(0.5f,0.0f), Tint = Color.Aquamarine }) 
 			{ ClickAction = () => OpenOrCloseMainMenu(null,null) };
 
 			VideoMenu = new Menu(video1,video2,video25,video3);
@@ -202,7 +202,7 @@ namespace GREATClient.Display
 			//Main
 			MainBackground = new DrawableImage("UIObjects/menu");
 			MainBackgroundLayer.Visible = false;
-			MainMenu.Position = new Vector2(30,25);
+			MainMenu.Position = new Vector2(100,25);
 			// Main gear
 			GearMain = new DrawableImage("UIObjects/menuGear");
 			GearMain.RelativeOrigin = new Vector2(0.5f,0.5f);
@@ -217,7 +217,7 @@ namespace GREATClient.Display
 			//Audio
 			AudioBackground = new DrawableImage("UIObjects/menuAudio");
 			AudioBackgroundLayer.Visible = false;
-			AudioMenu.Position = new Vector2(30,27);
+			AudioMenu.Position = new Vector2(130,27);
 			// Audio gear
 			GearAudio = new DrawableImage("UIObjects/menuGear");
 			GearAudio.RelativeOrigin = new Vector2(0.5f,0.5f);
@@ -227,7 +227,7 @@ namespace GREATClient.Display
 			//Video
 			VideoBackground = new DrawableImage("UIObjects/menuVideo");
 			VideoBackgroundLayer.Visible = false;
-			VideoMenu.Position = new Vector2(30,25);
+			VideoMenu.Position = new Vector2(150,25);
 			//Gear
 			GearVideo = new DrawableImage("UIObjects/menuGear");
 			GearVideo.Scale = new Vector2(0.6f, 0.6f);

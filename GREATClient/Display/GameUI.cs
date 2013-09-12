@@ -92,7 +92,7 @@ namespace GREATClient.Display
 			Life.SetPositionRelativeToObject(Resource, new Vector2(-Life.Texture.Width - 6, 
 			                                                   0), false);
 			SpellBackground.SetPositionRelativeToObject(Life, new Vector2(-SpellBackground.Texture.Width - 10, 
-	                                                              			Life.Texture.Height - SpellBackground.Texture.Height), 
+	                                                              			- SpellBackground.Texture.Height), 
 			                                            false);
 			UISpellMenu.SetPositionRelativeToObject(SpellBackground, new Vector2(18,15));
 
