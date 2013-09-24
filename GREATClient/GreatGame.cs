@@ -61,6 +61,7 @@ namespace GREATClient
 		Screen gameplay;
 
 		bool ScreenInitialized { get; set; }
+		int Locked { get; set; }
 
 		public GreatGame()
 		{
@@ -70,9 +71,10 @@ namespace GREATClient
 			Content.RootDirectory = "Content";
 			Window.Title = SCREEN_NAME;
 			IsMouseVisible = true;
-			Window.AllowUserResizing = false;
+			//Window.AllowUserResizing = false;
 			graphics.ApplyChanges();
 			ScreenInitialized = false;
+			Locked = 0;
 		}
 
 		/// <summary>
@@ -94,10 +96,7 @@ namespace GREATClient
 				Console.WriteLine("Loading game content...");
 
 				gameplay.LoadContent(GraphicsDevice);
-			} else {
-				Window.LockScreenForLinux = true;
-				graphics.ApplyChanges();
-			}
+			}					
 
 			client.Update(gameTime.ElapsedGameTime.TotalSeconds);
 
@@ -109,12 +108,29 @@ namespace GREATClient
 			base.Update(gameTime);
 		}
 
+		void OnScreenSizeChanged()
+		{
+			if (!Window.LockScreenForLinux) 
+			{
+				Window.LockScreenForLinux = true;
+				graphics.ApplyChanges();
+
+			}
+		}
+
 		/// <summary>
 		/// This is called when the game should draw itself.
 		/// </summary>
 		/// <param name="gameTime">Provides a snapshot of timing values.</param>
 		protected override void Draw(GameTime gameTime)
 		{
+			// Plz don't hit me. It's really, really dirty hack, but I had too. If it's really horrible it's all Jesse's fault.
+			if (Locked <= 1) {
+				++Locked;
+				if (Locked == 2) {					
+					((OpenTKGameWindow)Window).FixBorder();
+				}
+			}
 			GraphicsDevice.Clear(Color.CornflowerBlue);
 
 			gameplay.Draw();
