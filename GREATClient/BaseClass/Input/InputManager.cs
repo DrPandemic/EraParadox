@@ -30,6 +30,18 @@ namespace GREATClient.BaseClass.Input
     public class InputManager
     {
 		/// <summary>
+		/// Gets or sets a value indicating whether the window is ready.
+		/// </summary>
+		/// <value><c>true</c> if this instance is window ready; otherwise, <c>false</c>.</value>
+		public bool IsWindowReady { get; set; }
+
+		/// <summary>
+		/// Gets or sets the cursor.
+		/// </summary>
+		/// <value>The cursor.</value>
+		public DrawableImage Cursor { get; set; }
+
+		/// <summary>
 		/// Gets or sets the inputs.
 		/// </summary>
 		/// <value>The inputs.</value>
@@ -98,6 +110,7 @@ namespace GREATClient.BaseClass.Input
 
         public InputManager()
         {
+			IsWindowReady = false;
 			Inputs = new Inputs();
 			InputEvents = new Dictionary<InputActions,EventHandler>();
 			ActionsFired = new List<InputActions>();
@@ -166,6 +179,10 @@ namespace GREATClient.BaseClass.Input
 			}
 			OldKeyboard = keyboardState;
 			OldMouse = mouseState;
+
+			if (IsWindowReady) {
+				Cursor.Position = MousePosition;
+			}
 		}
 
 		public void Update()

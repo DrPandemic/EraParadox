@@ -60,6 +60,12 @@ namespace GREATClient.BaseClass
 		public GraphicsDevice Graphics { get; private set; }
 
 		/// <summary>
+		/// Gets or sets the cursor.
+		/// </summary>
+		/// <value>The cursor.</value>
+		public DrawableImage Cursor { get; set; }
+
+		/// <summary>
 		/// Gets the absolute position.
 		/// Is overriden in screen, because it's the base class
 		/// </summary>
@@ -126,6 +132,10 @@ namespace GREATClient.BaseClass
 			Graphics = gd;
 			spriteBatch = new SpriteBatch(gd);
 			OnLoadContent();
+
+			Cursor = new DrawableImage("cursor");
+			AddChild(Cursor,100);
+			((InputManager)Services.GetService(typeof(InputManager))).Cursor = Cursor;
 		}
 
 		/// <summary>
@@ -159,7 +169,7 @@ namespace GREATClient.BaseClass
 		/// </summary>
 		public void WindowIsReady()
 		{
-			((ScreenService)Services.GetService(typeof(ScreenService))).IsWindowReady = true;
+			((InputManager)Services.GetService(typeof(InputManager))).IsWindowReady = true;
 		}
     }
 }

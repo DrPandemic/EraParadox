@@ -114,6 +114,7 @@ namespace GREATClient
 		void OnScreenSizeChanged(object sender, EventArgs args)
 		{
 			((OpenTKGameWindow)Window).FixBorder();
+			Mouse.SetPosition(400,240);
 			gameplay.WindowIsReady();
 		}
 

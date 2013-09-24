@@ -104,7 +104,7 @@ namespace GREATClient.Test
 					int xAddition = 200;
 					float x = (xAddition * arg2) + arg1.X; 
 					float y = (float)(a * Math.Pow(xAddition * arg2 ,2d) + b);
-					System.Console.WriteLine(arg2);
+					//System.Console.WriteLine(arg2);
 					return new Vector2(x, y);
 				}));
 				((InputEventArgs)e).Handled = true;
@@ -121,7 +121,7 @@ namespace GREATClient.Test
 
 		protected override void OnUpdate(GameTime dt)
 		{
-			Console.WriteLine(inputManager.MousePosition);
+			//Console.WriteLine(inputManager.MousePosition);
 
 			CCS.CurrentLife --;
 			//TODO: remove. testing the physics engine
