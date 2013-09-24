@@ -26,6 +26,8 @@ namespace GREATClient.BaseClass.ScreenInformation
 {
     public class ScreenService
     {
+		public bool IsWindowReady { get; set; }
+
 		/// <summary>
 		/// Gets or sets the graphics device manager.
 		/// Is use to change the screen resolution / fullscreen.
@@ -97,6 +99,7 @@ namespace GREATClient.BaseClass.ScreenInformation
         {
 			m_GraphicsDeviceManager = gdm;
 			screenInfo = ScreenInfo.GetInfo();
+			IsWindowReady = false;
         }
 
 		/// <summary>
@@ -109,7 +112,9 @@ namespace GREATClient.BaseClass.ScreenInformation
 
 		public void Update()
 		{
-			//Mouse.SetPosition(10,10);
+			if (IsWindowReady) {				
+				Mouse.SetPosition((int)GameWindowSize.X/2,(int)GameWindowSize.Y/2);
+			}
 		}
 	}
 }

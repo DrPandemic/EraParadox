@@ -153,6 +153,14 @@ namespace GREATClient.BaseClass
 			((InputManager)Services.GetService(typeof(InputManager))).Update();
 			base.OnUpdate(dt);
 		}
+
+		/// <summary>
+		/// Called when the window from monogame is ready.
+		/// </summary>
+		public void WindowIsReady()
+		{
+			((ScreenService)Services.GetService(typeof(ScreenService))).IsWindowReady = true;
+		}
     }
 }
 

@@ -70,7 +70,7 @@ namespace GREATClient
 			graphics = new GraphicsDeviceManager(this);
 			Content.RootDirectory = "Content";
 			Window.Title = SCREEN_NAME;
-			IsMouseVisible = true;
+			IsMouseVisible = false;
 			//Window.AllowUserResizing = false;
 			graphics.ApplyChanges();
 			ScreenInitialized = false;
@@ -84,6 +84,7 @@ namespace GREATClient
 		/// <param name="gameTime">Provides a snapshot of timing values.</param>
 		protected override void Update(GameTime gameTime)
 		{
+
 			if (!ScreenInitialized) {
 				SetupScreen();
 				ScreenInitialized = true;
@@ -96,6 +97,8 @@ namespace GREATClient
 				Console.WriteLine("Loading game content...");
 
 				gameplay.LoadContent(GraphicsDevice);
+
+				Window.ClientSizeChanged += OnScreenSizeChanged;
 			}					
 
 			client.Update(gameTime.ElapsedGameTime.TotalSeconds);
@@ -108,14 +111,10 @@ namespace GREATClient
 			base.Update(gameTime);
 		}
 
-		void OnScreenSizeChanged()
+		void OnScreenSizeChanged(object sender, EventArgs args)
 		{
-			if (!Window.LockScreenForLinux) 
-			{
-				Window.LockScreenForLinux = true;
-				graphics.ApplyChanges();
-
-			}
+			((OpenTKGameWindow)Window).FixBorder();
+			gameplay.WindowIsReady();
 		}
 
 		/// <summary>
@@ -124,13 +123,6 @@ namespace GREATClient
 		/// <param name="gameTime">Provides a snapshot of timing values.</param>
 		protected override void Draw(GameTime gameTime)
 		{
-			// Plz don't hit me. It's really, really dirty hack, but I had too. If it's really horrible it's all Jesse's fault.
-			if (Locked <= 1) {
-				++Locked;
-				if (Locked == 2) {					
-					((OpenTKGameWindow)Window).FixBorder();
-				}
-			}
 			GraphicsDevice.Clear(Color.CornflowerBlue);
 
 			gameplay.Draw();
@@ -175,7 +167,6 @@ namespace GREATClient
 				graphics.PreferredBackBufferWidth = screenInfo.WindowWidth;
 				graphics.PreferredBackBufferHeight = screenInfo.WindowHeight;
 			}
-
 
 			#if DEBUG
 			graphics.PreferredBackBufferWidth = screenInfo.WindowWidth;
