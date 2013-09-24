@@ -32,6 +32,7 @@ using GREATClient.BaseClass.BaseAction;
 using GREATClient.BaseClass.Menu;
 using GREATClient.BaseClass.ScreenInformation;
 using GameContent;
+using GREATLib.Entities;
 
 namespace GREATClient.Test
 {
@@ -92,6 +93,7 @@ namespace GREATClient.Test
 			DrawableCircle circle = new DrawableCircle();
 			circle.SetPositionRelativeToObject(champSprite, new Vector2(-150, -30));
 			AddChild(circle);
+
 		}
 
 		private void Jump(object sender, EventArgs e)

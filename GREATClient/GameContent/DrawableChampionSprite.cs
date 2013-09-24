@@ -32,6 +32,12 @@ namespace GREATClient.GameContent
 		/// <value>The infos.</value>
 		ChampionInfo Information { get; set; }
 
+		/// <summary>
+		/// Gets or sets the current animation.
+		/// </summary>
+		/// <value>The current animation.</value>
+		public ChampionAnimation CurrentAnimation { get; set; }
+
 		public DrawableChampionSprite(ChampionTypes type, ChampionsInfo championsInfo)
 			: base (championsInfo.GetInfo(type).AssetName,
 			        championsInfo.GetInfo(type).FrameWidth,
@@ -41,6 +47,7 @@ namespace GREATClient.GameContent
 			        championsInfo.GetInfo(type).GetAnimation(ChampionAnimation.idle).FrameCount)
         {
 			Information = championsInfo.GetInfo(type);
+			CurrentAnimation = ChampionAnimation.idle;
         }
 
 		/// <summary>
@@ -55,6 +62,7 @@ namespace GREATClient.GameContent
 			Debug.Assert(anim != null, "The animation does not exist.");
 
 			if (anim!=null) {
+				CurrentAnimation = name;
 				Line = anim.Line;
 				FrameCount = anim.FrameCount;
 				FrameRate = anim.FrameRate;
