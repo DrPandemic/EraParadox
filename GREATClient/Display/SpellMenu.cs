@@ -46,7 +46,6 @@ namespace GREATClient.Display
 			AddItem(Spell2Item);
 			AddItem(Spell3Item);
 			AddItem(Spell4Item);
-
         }
 
 		protected override void OnLoad(ContentManager content, GraphicsDevice gd)

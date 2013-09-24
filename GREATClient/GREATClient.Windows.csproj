@@ -37,7 +37,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="MonoGame.Framework">
-      <HintPath>..\assemblies\WindowsGL\MonoGame.Framework.dll</HintPath>
+      <HintPath>..\assemblies\Linux\MonoGame.Framework.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Private>False</Private>
@@ -95,6 +95,8 @@
     <Compile Include="GameContent\CurrentChampionState.cs" />
     <Compile Include="Display\ESCMenu.cs" />
     <Compile Include="BaseClass\BaseAction\ActionDelay.cs" />
+    <Compile Include="Display\SpellMenu.cs" />
+    <Compile Include="Display\SpellMenuItem.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />

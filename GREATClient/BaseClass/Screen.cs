@@ -149,6 +149,7 @@ namespace GREATClient.BaseClass
 
 		protected override void OnUpdate(GameTime dt)
 		{
+			((ScreenService)Services.GetService(typeof(ScreenService))).Update();
 			((InputManager)Services.GetService(typeof(InputManager))).Update();
 			base.OnUpdate(dt);
 		}

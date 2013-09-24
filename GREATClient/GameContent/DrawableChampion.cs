@@ -68,6 +68,8 @@ namespace GREATClient.GameContent
 
 			ChampionServerRect.Position = GameLibHelper.ToVector2(Champion.ServerPosition);
 			ChampionDrawnRect.Position = GameLibHelper.ToVector2(Champion.DrawnPosition);
+
+
 		}
 
 		protected override void OnDraw(Microsoft.Xna.Framework.Graphics.SpriteBatch batch)

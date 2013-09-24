@@ -36,9 +36,9 @@ namespace GREATClient.GameContent
 			: base (championsInfo.GetInfo(type).AssetName,
 			        championsInfo.GetInfo(type).FrameWidth,
 			        championsInfo.GetInfo(type).FrameHeight,
-			        championsInfo.GetInfo(type).GetAnimation(AnimationInfo.IDLE).Line,
-			        championsInfo.GetInfo(type).GetAnimation(AnimationInfo.IDLE).FrameRate,
-			        championsInfo.GetInfo(type).GetAnimation(AnimationInfo.IDLE).FrameCount)
+			        championsInfo.GetInfo(type).GetAnimation(ChampionAnimation.idle).Line,
+			        championsInfo.GetInfo(type).GetAnimation(ChampionAnimation.idle).FrameRate,
+			        championsInfo.GetInfo(type).GetAnimation(ChampionAnimation.idle).FrameCount)
         {
 			Information = championsInfo.GetInfo(type);
         }
@@ -48,10 +48,8 @@ namespace GREATClient.GameContent
 		/// If the animation doesn't exist, this call is ignored;
 		/// </summary>
 		/// <param name="name">Name.</param>
-		public void PlayAnimation(string name)
+		public void PlayAnimation(ChampionAnimation name)
 		{
-			Debug.Assert(!String.IsNullOrWhiteSpace(name), "No animation specified");
-
 			AnimationInfo anim = Information.GetAnimation(name);
 
 			Debug.Assert(anim != null, "The animation does not exist.");

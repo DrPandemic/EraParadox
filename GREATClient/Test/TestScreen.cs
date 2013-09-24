@@ -121,6 +121,8 @@ namespace GREATClient.Test
 
 		protected override void OnUpdate(GameTime dt)
 		{
+			Console.WriteLine(inputManager.MousePosition);
+
 			CCS.CurrentLife --;
 			//TODO: remove. testing the physics engine
 			KeyboardState ks = Keyboard.GetState();
@@ -129,8 +131,8 @@ namespace GREATClient.Test
 			if (ks.IsKeyDown(Keys.Escape) && ks.IsKeyDown(Keys.LeftShift))
 				Exit = true;
 
-			if (ks.IsKeyDown(Keys.E)) { champSprite.PlayAnimation(AnimationInfo.JUMP);}
-			if (ks.IsKeyDown(Keys.Q)) { champSprite.PlayAnimation(AnimationInfo.RUN);}
+			/*if (ks.IsKeyDown(Keys.E)) { champSprite.PlayAnimation(AnimationInfo.JUMP);}
+			if (ks.IsKeyDown(Keys.Q)) { champSprite.PlayAnimation(AnimationInfo.RUN);}*/
 
 
 			base.OnUpdate(dt);

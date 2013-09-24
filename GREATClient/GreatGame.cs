@@ -40,6 +40,15 @@ namespace GREATClient
 	/// </summary>
 	public class GreatGame : Game
 	{
+		public static bool IsLinux
+		{
+			get
+			{
+				int p = (int)Environment.OSVersion.Platform;
+				return (p == 4) || (p == 6) || (p == 128);
+			}
+		}
+
 		/// The screen name
 		const string SCREEN_NAME = "GREAT";
 		/// The screen dimensions
@@ -59,8 +68,8 @@ namespace GREATClient
 			client = Client.Instance;
 			graphics = new GraphicsDeviceManager(this);
 			Content.RootDirectory = "Content";
-			IsMouseVisible = true;
 			Window.Title = SCREEN_NAME;
+			IsMouseVisible = true;
 			Window.AllowUserResizing = false;
 			graphics.ApplyChanges();
 			ScreenInitialized = false;
@@ -79,12 +88,15 @@ namespace GREATClient
 
 				Console.WriteLine("Starting client...");
 				//gameplay = new GameplayScreen(Content, this, client); // when testing: new TestScreen(Content);
-				gameplay = new TestScreen(Content,this);
+				gameplay = new TestScreen(Content, this);
 				client.Start();
 
 				Console.WriteLine("Loading game content...");
 
 				gameplay.LoadContent(GraphicsDevice);
+			} else {
+				Window.LockScreenForLinux = true;
+				graphics.ApplyChanges();
 			}
 
 			client.Update(gameTime.ElapsedGameTime.TotalSeconds);
@@ -147,7 +159,7 @@ namespace GREATClient
 				graphics.PreferredBackBufferWidth = screenInfo.WindowWidth;
 				graphics.PreferredBackBufferHeight = screenInfo.WindowHeight;
 			}
-			Window.AllowUserResizing = false;
+
 
 			#if DEBUG
 			graphics.PreferredBackBufferWidth = screenInfo.WindowWidth;
