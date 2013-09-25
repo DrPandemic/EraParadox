@@ -144,8 +144,13 @@ namespace GREATServer
 			uint lac = Clients[playerConnection].LastAcknowledgedActionID;
 			double time = Server.Instance.GetTime().TotalSeconds;
 
+			float vx = Clients[playerConnection].Champion.Velocity.X;
+			float vy = Clients[playerConnection].Champion.Velocity.Y;
+
 			msg.Write(lac);
 			msg.Write(time);
+			msg.Write(vx);
+			msg.Write(vy);
 			foreach (NetConnection connection in Clients.Keys) {
 				ServerClient client = Clients[connection];
 

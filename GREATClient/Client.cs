@@ -290,6 +290,7 @@ namespace GREATClient
 	public class StateUpdateEventArgs : CommandEventArgs
 	{
 		public uint LastAcknowledgedActionID { get; private set; }
+		public Vec2 Velocity { get; private set; }
 		public double Time { get; private set; }
 		public List<StateUpdateData> EntitiesUpdatedState { get; private set; }
 
@@ -299,6 +300,7 @@ namespace GREATClient
 
 			LastAcknowledgedActionID = msg.ReadUInt32();
 			Time = msg.ReadDouble();
+			Velocity = new Vec2(msg.ReadFloat(), msg.ReadFloat());
 			while (msg.Position < msg.LengthBits) {
 				uint id = msg.ReadUInt32();
 				Vec2 pos = new Vec2(msg.ReadFloat(), msg.ReadFloat());

@@ -37,7 +37,6 @@ namespace GREATClient.GameContent
 		DrawableRectangle ChampionDrawnRect { get; set; }
 		DrawableRectangle ChampionServerRect { get; set; }
 		DrawableRectangle ChampionSimulatedRect { get; set; }
-		DrawableRectangle ChampionBeforeCorrectionRect { get; set; }
 
 		public MainDrawableChampion(ChampionSpawnInfo spawnInfo, GameMatch match)
 			: base(new MainClientChampion(spawnInfo, match))
@@ -46,9 +45,9 @@ namespace GREATClient.GameContent
 
 		protected override void OnLoad(Microsoft.Xna.Framework.Content.ContentManager content, Microsoft.Xna.Framework.Graphics.GraphicsDevice gd)
 		{
-			Parent.AddChild(ChampionBeforeCorrectionRect = new DrawableRectangle(new Rectangle(0,0,15,30), Color.Blue));
 			Parent.AddChild(ChampionServerRect = new DrawableRectangle(new Rectangle(0, 0, 15, 30), Color.Green));
 			Parent.AddChild(ChampionSimulatedRect = new DrawableRectangle(new Rectangle(0, 0, 15, 30), Color.Red));
+			ChampionServerRect.Visible = ChampionSimulatedRect.Visible = false;
 
 			base.OnLoad(content, gd);
 		}
@@ -59,7 +58,6 @@ namespace GREATClient.GameContent
 
 			ChampionServerRect.Position = GameLibHelper.ToVector2(Champion.ServerPosition);
 			ChampionSimulatedRect.Position = GameLibHelper.ToVector2(Champion.Position);
-			ChampionBeforeCorrectionRect.Position = GameLibHelper.ToVector2(Champion.PositionBeforeCorrection);
 		}
 
 		/// <summary>

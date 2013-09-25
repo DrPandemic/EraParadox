@@ -101,6 +101,7 @@ namespace GREATClient.Screens
 			Debug.Assert(e != null);
 
 			OurChampion.Entity.SetLastAcknowledgedActionID(e.LastAcknowledgedActionID);
+			OurChampion.Entity.Velocity = e.Velocity;
 			LastStateUpdateData = new List<StateUpdateData>(e.EntitiesUpdatedState.ToArray());
 			TimeOfLastStateUpdate = e.Time;
 		}
