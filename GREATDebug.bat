@@ -1,4 +1,3 @@
-start GREATServer\bin\Debug\GREATServer.exe
+call GREATServerD.bat
 timeout 2
-cd GREATClient
-start bin\Debug\GREATClient.Windows.exe
+call GREATWindowsClientD.bat

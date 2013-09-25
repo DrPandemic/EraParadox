@@ -35,7 +35,9 @@ namespace GREATClient.GameContent
 		/// TODO: class for debug info
 		/// </summary>
 		DrawableRectangle ChampionDrawnRect { get; set; }
-		DrawableRectangle ChampionServerRect { get; set; } 
+		DrawableRectangle ChampionServerRect { get; set; }
+		DrawableRectangle ChampionSimulatedRect { get; set; }
+		DrawableRectangle ChampionBeforeCorrectionRect { get; set; }
 
 		public MainDrawableChampion(ChampionSpawnInfo spawnInfo, GameMatch match)
 			: base(new MainClientChampion(spawnInfo, match))
@@ -44,7 +46,9 @@ namespace GREATClient.GameContent
 
 		protected override void OnLoad(Microsoft.Xna.Framework.Content.ContentManager content, Microsoft.Xna.Framework.Graphics.GraphicsDevice gd)
 		{
+			Parent.AddChild(ChampionBeforeCorrectionRect = new DrawableRectangle(new Rectangle(0,0,15,30), Color.Blue));
 			Parent.AddChild(ChampionServerRect = new DrawableRectangle(new Rectangle(0, 0, 15, 30), Color.Green));
+			Parent.AddChild(ChampionSimulatedRect = new DrawableRectangle(new Rectangle(0, 0, 15, 30), Color.Red));
 
 			base.OnLoad(content, gd);
 		}
@@ -54,6 +58,8 @@ namespace GREATClient.GameContent
 			base.OnUpdate(dt);
 
 			ChampionServerRect.Position = GameLibHelper.ToVector2(Champion.ServerPosition);
+			ChampionSimulatedRect.Position = GameLibHelper.ToVector2(Champion.Position);
+			ChampionBeforeCorrectionRect.Position = GameLibHelper.ToVector2(Champion.PositionBeforeCorrection);
 		}
 
 		/// <summary>
@@ -69,14 +75,6 @@ namespace GREATClient.GameContent
 				Champion.Position);
 
 			Champion.PackageAction(toPackage);
-		}
-
-		/// <summary>
-		/// Sets the last acknowledged action by the server.
-		/// </summary>
-		public void SetLastAcknowledgedAction(uint actionID)
-		{
-			Champion.LastAcknowledgedActionID = actionID;
 		}
 
 		public Queue<PlayerAction> GetActionPackage()

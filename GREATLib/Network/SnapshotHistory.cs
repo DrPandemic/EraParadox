@@ -90,6 +90,9 @@ namespace GREATLib.Network
 		public KeyValuePair<double, TState> GetClosestSnapshot(double time)
 		{
 			Debug.Assert(time >= 0.0);
+			if (IsEmpty()) {
+				throw new EmptyHistoryException();
+			}
 
 			KeyValuePair<double, TState> state = States[0];
 
@@ -108,6 +111,9 @@ namespace GREATLib.Network
 		public KeyValuePair<double, TState> GetSnapshotBefore(double time)
 		{
 			Debug.Assert(time >= 0.0);
+			if (IsEmpty()) {
+				throw new EmptyHistoryException();
+			}
 
 			KeyValuePair<double, TState> state = States[0];
 
@@ -121,14 +127,25 @@ namespace GREATLib.Network
 		/// <summary>
 		/// Gets the last snapshot, if it exists, of the history.
 		/// </summary>
-		/// <returns>The last.</returns>
 		public KeyValuePair<double, TState> GetLast()
 		{
-			if (States.Count == 0) {
+			if (IsEmpty()) {
 				throw new EmptyHistoryException();
 			}
 
 			return States[States.Count - 1];
+		}
+
+		/// <summary>
+		/// Gets the first snapshot, if it exists, of the history.
+		/// </summary>
+		public KeyValuePair<double, TState> GetFirst()
+		{
+			if (IsEmpty()) {
+				throw new EmptyHistoryException();
+			}
+
+			return States[0];
 		}
 
 		/// <summary>

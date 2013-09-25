@@ -1,0 +1,1 @@
+start GREATServer\bin\Release\GREATServer.exe

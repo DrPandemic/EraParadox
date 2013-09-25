@@ -58,6 +58,9 @@ namespace GREATClient.Screens
 
 		double TimeSinceLastInputSent { get; set; }
 
+		double TimeOfLastStateUpdate { get; set; }
+		List<StateUpdateData> LastStateUpdateData { get; set; }
+
         public GameplayScreen(ContentManager content, Game game, Client client)
 			: base(content, game)
         {
@@ -73,6 +76,8 @@ namespace GREATClient.Screens
 			TimeSinceLastInputSent = 0.0;
 
 			Match = new GameMatch();
+			LastStateUpdateData = new List<StateUpdateData>();
+			TimeOfLastStateUpdate = 0.0;
         }
 
 		protected override void OnLoadContent()
@@ -95,17 +100,9 @@ namespace GREATClient.Screens
 			StateUpdateEventArgs e = args as StateUpdateEventArgs;
 			Debug.Assert(e != null);
 
-			if (OurChampion != null) {
-				OurChampion.SetLastAcknowledgedAction(e.LastAcknowledgedActionID);
-
-
-				foreach (StateUpdateData state in e.EntitiesUpdatedState) {
-					if (Match.CurrentState.ContainsEntity(state.ID)) {
-						IEntity entity = Match.CurrentState.GetEntity(state.ID);
-						entity.AuthoritativeChangePosition(state.Position, e.Time);
-					}
-				}
-			}
+			OurChampion.Entity.SetLastAcknowledgedActionID(e.LastAcknowledgedActionID);
+			LastStateUpdateData = new List<StateUpdateData>(e.EntitiesUpdatedState.ToArray());
+			TimeOfLastStateUpdate = e.Time;
 		}
 
 		void OnJoinedGame(object sender, CommandEventArgs args)
@@ -176,6 +173,7 @@ namespace GREATClient.Screens
 			//    our local simulation running.
 			base.OnUpdate(dt); // this is done by the player's drawablechampion
 		}
+		static int c = 0;
 		/// <summary>
 		/// Package local input as actions to eventually send to the server.
 		/// At the same time, we simulate the input locally for client-side prediction.
@@ -196,8 +194,14 @@ namespace GREATClient.Screens
 					Actions.Add(PlayerActionType.MoveLeft);
 				}
 
-				if (keyboard.IsKeyDown(RIGHT)) {
+				if (oldKeyboard.IsKeyDown(RIGHT) && keyboard.IsKeyUp(RIGHT) && c == 0) {
+					c = 1;
+				}
+				if (c > 0) {
 					Actions.Add(PlayerActionType.MoveRight);
+					++c;
+					if (c % 10 == 0)
+						c = 0;
 				}
 
 				if (keyboard.IsKeyDown(JUMP) && oldKeyboard.IsKeyUp(JUMP)) {
@@ -217,7 +221,15 @@ namespace GREATClient.Screens
 		/// </summary>
 		void ApplyServerModifications()
 		{
-			//TODO: move it here
+			if (OurChampion != null && LastStateUpdateData.Count > 0) {
+				foreach (StateUpdateData state in LastStateUpdateData) {
+					if (Match.CurrentState.ContainsEntity(state.ID)) {
+						IEntity entity = Match.CurrentState.GetEntity(state.ID);
+						entity.AuthoritativeChangePosition(state.Position, TimeOfLastStateUpdate);
+					}
+				}
+				LastStateUpdateData.Clear();
+			}
 		}
 
 		/// <summary>

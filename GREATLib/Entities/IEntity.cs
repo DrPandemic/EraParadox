@@ -128,6 +128,13 @@ namespace GREATLib.Entities
 		}
 
 		/// <summary>
+		/// Sets the ID of the last acknowledged action by the server.
+		/// </summary>
+		public virtual void SetLastAcknowledgedActionID(uint id)
+		{
+		}
+
+		/// <summary>
 		/// Creates the rectangle that represents the collision rectangle of the entity.
 		/// </summary>
 		public Rect CreateCollisionRectangle()

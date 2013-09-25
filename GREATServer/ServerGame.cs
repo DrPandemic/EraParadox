@@ -37,6 +37,7 @@ namespace GREATServer
 		static readonly TimeSpan STORE_HISTORY_INTERVAL = GameMatch.STATE_UPDATE_INTERVAL;
 		static readonly TimeSpan HISTORY_MAX_TIME_KEPT = TimeSpan.FromSeconds(1.0);
 		const float MAX_TOLERATED_OFF_DISTANCE = 150f;
+		const double MAX_TIME_AHEAD = 0.01f;
 
 		static readonly TimeSpan MIN_TIME_BETWEEN_ACTIONS = TimeSpan.FromMilliseconds(10.0);
 
@@ -127,6 +128,7 @@ namespace GREATServer
 						NetDeliveryMethod.UnreliableSequenced,
 						(msg) => FillStateUpdateMessage(msg, connection));
 				}
+
 				TimeSinceLastCorrection = 0.0;
 			}
 			TimeSinceLastCorrection += dt;
@@ -139,11 +141,11 @@ namespace GREATServer
 		{
 			Debug.Assert(Clients.ContainsKey(playerConnection));
 
+			uint lac = Clients[playerConnection].LastAcknowledgedActionID;
 			double time = Server.Instance.GetTime().TotalSeconds;
-			uint lastAck = Clients[playerConnection].LastAcknowledgedActionID;
 
+			msg.Write(lac);
 			msg.Write(time);
-			msg.Write(lastAck);
 			foreach (NetConnection connection in Clients.Keys) {
 				ServerClient client = Clients[connection];
 
@@ -200,7 +202,7 @@ namespace GREATServer
 					}
 
 					// Make sure we're not using hacked positions
-					player.Position = ValidateActionPosition(player, action);
+					//player.Position = ValidateActionPosition(player, action);
 
 					// Actually execute the action on our currently simulated state
 					DoAction(state.Value, player, action);
@@ -255,7 +257,7 @@ namespace GREATServer
 			}
 
 			// action time seems too recent? might be a hacker/time error. Log it, keep it but clamp it
-			if (action.Time > currentTime) {
+			if (action.Time > currentTime + MAX_TIME_AHEAD) {
 				time = currentTime;
 				ILogger.Log(String.Format("Action {0} seems a bit too new. Accepting it, but might be a hacker/time error. Given time: {1}, server time: {2}",
 				                          action.ID, action.Time, currentTime),
@@ -307,7 +309,6 @@ namespace GREATServer
 				// Use the time elapsed since our last snapshot as a delta time
 				double time = StateHistory.IsEmpty() ? dt : 
 					Server.Instance.GetTime().TotalSeconds - StateHistory.GetLast().Key;
-				Debug.Assert(time >= 0.0);
                 if (time > 0.0) {
                     Match.CurrentState.ApplyPhysicsUpdate(client.Champion.ID, (float)time);
                 }

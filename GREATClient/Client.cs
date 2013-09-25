@@ -289,16 +289,16 @@ namespace GREATClient
 	}
 	public class StateUpdateEventArgs : CommandEventArgs
 	{
-		public double Time { get; private set; }
 		public uint LastAcknowledgedActionID { get; private set; }
+		public double Time { get; private set; }
 		public List<StateUpdateData> EntitiesUpdatedState { get; private set; }
 
 		public StateUpdateEventArgs(NetBuffer msg) : base(msg)
 		{
 			EntitiesUpdatedState = new List<StateUpdateData>();
 
-			Time = msg.ReadDouble();
 			LastAcknowledgedActionID = msg.ReadUInt32();
+			Time = msg.ReadDouble();
 			while (msg.Position < msg.LengthBits) {
 				uint id = msg.ReadUInt32();
 				Vec2 pos = new Vec2(msg.ReadFloat(), msg.ReadFloat());
