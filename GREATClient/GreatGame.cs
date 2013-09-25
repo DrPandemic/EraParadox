@@ -61,7 +61,14 @@ namespace GREATClient
 		Screen gameplay;
 
 		bool ScreenInitialized { get; set; }
-		int Locked { get; set; }
+		bool ScreenResized { get; set; }
+
+		/// <summary>
+		/// Gets or sets the fail count.
+		/// Because i need to count the number of time the window setup fails... (sad)
+		/// </summary>
+		/// <value>The fail count.</value>
+		short FailCount { get; set; }
 
 		public GreatGame()
 		{
@@ -71,10 +78,11 @@ namespace GREATClient
 			Content.RootDirectory = "Content";
 			Window.Title = SCREEN_NAME;
 			IsMouseVisible = false;
-			//Window.AllowUserResizing = false;
+			Window.AllowUserResizing = false;
 			graphics.ApplyChanges();
 			ScreenInitialized = false;
-			Locked = 0;
+			ScreenResized = false;
+			FailCount = 0;
 		}
 
 		/// <summary>
@@ -84,9 +92,9 @@ namespace GREATClient
 		/// <param name="gameTime">Provides a snapshot of timing values.</param>
 		protected override void Update(GameTime gameTime)
 		{
-
 			if (!ScreenInitialized) {
-				SetupScreen();
+				Window.ClientSizeChanged += OnScreenSizeChanged;
+
 				ScreenInitialized = true;
 
 				Console.WriteLine("Starting client...");
@@ -98,8 +106,21 @@ namespace GREATClient
 
 				gameplay.LoadContent(GraphicsDevice);
 
-				Window.ClientSizeChanged += OnScreenSizeChanged;
-			}					
+				SetupScreen();
+			} else if (ScreenResized && IsLinux) {
+				// Safety net, I really hate MonoGame (on Linux).
+				if (!(Window.ClientBounds.Width == graphics.PreferredBackBufferWidth && Window.ClientBounds.Height == graphics.PreferredBackBufferHeight)) {
+					if (FailCount > 1000) {
+						Console.WriteLine("I'm really really sorry, but the screen was not able to be initialized.");
+						Exit();
+					}
+					FailCount++;
+					Console.WriteLine("Error for the window resize, trying to save the world from burning down.");
+					SetupScreen();
+				} else {
+						FailCount--;
+				}
+			}
 
 			client.Update(gameTime.ElapsedGameTime.TotalSeconds);
 
@@ -113,9 +134,12 @@ namespace GREATClient
 
 		void OnScreenSizeChanged(object sender, EventArgs args)
 		{
-			((OpenTKGameWindow)Window).FixBorder();
-			Mouse.SetPosition(400,240);
+			if (IsLinux) {
+				Window.FixBorder();
+			} 
+			Mouse.SetPosition(400, 240);
 			gameplay.WindowIsReady();
+			ScreenResized = true;
 		}
 
 		/// <summary>
@@ -169,12 +193,12 @@ namespace GREATClient
 				graphics.PreferredBackBufferHeight = screenInfo.WindowHeight;
 			}
 
-			#if DEBUG
+			/*#if DEBUG
 			graphics.PreferredBackBufferWidth = screenInfo.WindowWidth;
 			graphics.PreferredBackBufferHeight = screenInfo.WindowHeight;
 
 			graphics.IsFullScreen = false;
-			#endif
+			#endif*/
 
 			graphics.ApplyChanges();
 		}

@@ -93,7 +93,6 @@ namespace GREATClient.Test
 			DrawableCircle circle = new DrawableCircle();
 			circle.SetPositionRelativeToObject(champSprite, new Vector2(-150, -30));
 			AddChild(circle);
-
 		}
 
 		private void Jump(object sender, EventArgs e)
