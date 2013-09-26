@@ -55,7 +55,7 @@ namespace GREATClient.Network
 			StateHistory = new SnapshotHistory<Vec2>(HISTORY_TIME_KEPT);
         }
 
-		public override void AuthoritativeChangePosition(Vec2 position, double time)
+		public override void AuthoritativeChangePosition(Vec2 position, Vec2 v, double time)
 		{
 			ServerPosition = position;
 			StateHistory.AddSnapshot(

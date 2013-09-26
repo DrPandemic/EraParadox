@@ -35,6 +35,20 @@ namespace GREATClient.Network
 	/// </summary>
     public sealed class MainClientChampion : ClientChampion
     {
+		class AcknowledgeInfo
+		{
+			public double Time { get; set; }
+			public Vec2 Position { get; set; }
+			public Vec2 Velocity { get; set; }
+
+			public AcknowledgeInfo(double time, Vec2 pos, Vec2 vel)
+			{
+				Time = time;
+				Position = pos;
+				Velocity = vel;
+			}
+		}
+
 		/// <summary>
 		/// The distance required between the simulated position and the drawn position
 		/// that makes us snap directly to it (instead of interpolating to it, we just 
@@ -55,17 +69,17 @@ namespace GREATClient.Network
 		/// <remarks>This shouldn't be changed within the class, only set when the server
 		/// gives us a new position.</remarks>
 		public Vec2 ServerPosition { get; private set; }
+		Vec2 ServerVelocity { get; set; }
 
 		Vec2 PositionBeforeLerp { get; set; }
 		double TimeSinceLastServerUpdate { get; set; }
 		uint LastAcknowledgedActionID { get; set; }
+		AcknowledgeInfo ServerAcknowledge { get; set; }
 
 		GameMatch Match { get; set; }
 
 		Queue<PlayerAction> PackagedActions { get; set; }
 		List<PlayerAction> UnacknowledgedActions { get; set; }
-
-		bool JustCorrectedPosition { get; set; }
 
 		public MainClientChampion(ChampionSpawnInfo spawnInfo, GameMatch match)
 			: base(spawnInfo)
@@ -79,7 +93,6 @@ namespace GREATClient.Network
 
 			TimeSinceLastServerUpdate = 0.0;
 			PositionBeforeLerp = Position;
-			JustCorrectedPosition = false;
 
 			LastAcknowledgedActionID = IDGenerator.NO_ID;
         }
@@ -90,10 +103,11 @@ namespace GREATClient.Network
 		public override void Update(GameTime deltaTime)
 		{
 			// client-side prediction
-			if (!JustCorrectedPosition) {
+			if (ServerAcknowledge == null) { // we don't need to resimulate too long in the past, just simulate the frame
 				Match.CurrentState.ApplyPhysicsUpdate(ID, deltaTime.ElapsedGameTime.TotalSeconds);
-			} else {
-				JustCorrectedPosition = false;
+			} else { // we must resimulate from the given acknowledged action time
+				ApplyCorrection(ServerAcknowledge);
+				ServerAcknowledge = null;
 			}
 
 			LerpTowardsServerPosition(deltaTime.ElapsedGameTime.TotalSeconds);
@@ -124,21 +138,24 @@ namespace GREATClient.Network
 		/// Take the new position given by the server and resimulate our unacknowledged actions
 		/// from there.
 		/// </summary>
-		public override void AuthoritativeChangePosition(Vec2 position, double time)
+		public override void AuthoritativeChangePosition(Vec2 position, Vec2 velocity, double time)
 		{
 			ServerPosition = position;
-
-			ResimulateAfterCorrection(time);
-			JustCorrectedPosition = true;
+			ServerAcknowledge = new AcknowledgeInfo(time, (Vec2)position.Clone(), (Vec2)velocity.Clone());
 
 			TimeSinceLastServerUpdate = 0.0;
 			PositionBeforeLerp = Position;
 		}
 
-		void ResimulateAfterCorrection(double time)
+		void ApplyCorrection(AcknowledgeInfo ack)
 		{
-			// take the server's position
-			Position = (Vec2)ServerPosition.Clone();
+			Vec2 original = (Vec2)Position.Clone();
+			double time = ack.Time;
+
+			// take the server's state
+			Position = ack.Position;
+			Velocity = ack.Velocity;
+
 
 			// remove the actions that the server has done
 			RemoveAcknowledgedActions();
@@ -160,6 +177,13 @@ namespace GREATClient.Network
 			if (deltaTime > 0.0) {
 				Match.CurrentState.ApplyPhysicsUpdate(ID, deltaTime);
 			}
+
+			Console.WriteLine(String.Format("s-o:{0}   s:{1}  o:{2}  lac:{3}  a:{4}",
+			                                Position - original,
+			                                Position,
+			                                original,
+			                                LastAcknowledgedActionID,
+			                                UnacknowledgedActions.Count != 0 ? UnacknowledgedActions[UnacknowledgedActions.Count - 1].ID.ToString() : "none"));
 		}
 
 		void RemoveAcknowledgedActions()

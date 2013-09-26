@@ -279,18 +279,19 @@ namespace GREATClient
 	{
 		public uint ID { get; private set; }
 		public Vec2 Position { get; private set; }
+		public Vec2 Velocity { get; private set; }
 
-		public StateUpdateData(uint id, Vec2 pos)
+		public StateUpdateData(uint id, Vec2 pos, Vec2 vel)
 			: this()
 		{
 			ID = id;
 			Position = pos;
+			Velocity = vel;
 		}
 	}
 	public class StateUpdateEventArgs : CommandEventArgs
 	{
 		public uint LastAcknowledgedActionID { get; private set; }
-		public Vec2 Velocity { get; private set; }
 		public double Time { get; private set; }
 		public List<StateUpdateData> EntitiesUpdatedState { get; private set; }
 
@@ -300,12 +301,12 @@ namespace GREATClient
 
 			LastAcknowledgedActionID = msg.ReadUInt32();
 			Time = msg.ReadDouble();
-			Velocity = new Vec2(msg.ReadFloat(), msg.ReadFloat());
+			Vec2 velocity = new Vec2(msg.ReadFloat(), msg.ReadFloat());
 			while (msg.Position < msg.LengthBits) {
 				uint id = msg.ReadUInt32();
 				Vec2 pos = new Vec2(msg.ReadFloat(), msg.ReadFloat());
 
-				EntitiesUpdatedState.Add(new StateUpdateData(id, pos));
+				EntitiesUpdatedState.Add(new StateUpdateData(id, pos, velocity));
 			}
 		}
 	}

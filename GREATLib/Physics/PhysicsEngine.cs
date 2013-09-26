@@ -128,9 +128,6 @@ namespace GREATLib.Physics
 			// Apply gravity
 			entity.Velocity += GRAVITY * deltaSeconds;
 
-			// reset the flag indicating if we're on the ground
-			entity.IsOnGround = false;
-
 			// Multiple physics passes to reduce the chance of "going through" obstacles when we're too fast.
 			Vec2 passMovement = (entity.Velocity * deltaSeconds) / PHYSICS_PASSES;
 			for (int pass = 0; pass < PHYSICS_PASSES; ++pass) {
@@ -180,10 +177,8 @@ namespace GREATLib.Physics
 			             && entity.Velocity != null);
 
 			// We may only jump when we're on the ground
-			if (entity.IsOnGround) {
+			if (Collisions.HasCollisionBelow(entity)) {
 				entity.Velocity.Y = -entity.JumpForce;
-				// assume that we'll lift off the ground to avoid multi-jump.
-				entity.IsOnGround = false;
 			}
 		}
 
@@ -194,7 +189,6 @@ namespace GREATLib.Physics
 		{
 			entity.Velocity = Vec2.Zero;
 			entity.Direction = HorizontalDirection.None;
-			entity.IsOnGround = false;
 		}
     }
 }

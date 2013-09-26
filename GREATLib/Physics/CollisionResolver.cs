@@ -54,6 +54,15 @@ namespace GREATLib.Physics
 			HandleCollisionGroup(entity, collisions);
 		}
 
+		public bool HasCollisionBelow(IEntity entity)
+		{
+			Debug.Assert(entity != null);
+
+			Rect r = entity.CreateCollisionRectangle();
+			r.Y += 1; // move it down a bit
+			return true;
+		}
+
 		/// <summary>
 		/// Handles the collision of an object with multiple entities.
 		/// </summary>
@@ -106,11 +115,6 @@ namespace GREATLib.Physics
 				if (abs_dept_y < abs_dept_x) // collision on the y axis
 				{
 					entity.Position.Y += intersection.Y;
-
-					if (intersection.Y < 0f) { // collided from the top side
-						// We are therefore standing on something - we're on the ground
-						entity.IsOnGround = true;
-					}
 					//TODO: only undo collision for platforms if we hit the ground
 
 					// Only stop our movement if we're going straigth into the obstacle.

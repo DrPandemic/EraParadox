@@ -101,7 +101,6 @@ namespace GREATClient.Screens
 			Debug.Assert(e != null);
 
 			OurChampion.Entity.SetLastAcknowledgedActionID(e.LastAcknowledgedActionID);
-			OurChampion.Entity.Velocity = e.Velocity;
 			LastStateUpdateData = new List<StateUpdateData>(e.EntitiesUpdatedState.ToArray());
 			TimeOfLastStateUpdate = e.Time;
 		}
@@ -198,12 +197,14 @@ namespace GREATClient.Screens
 				if (oldKeyboard.IsKeyDown(RIGHT) && keyboard.IsKeyUp(RIGHT) && c == 0) {
 					c = 1;
 				}
-				if (c > 0) {
+				if (c > 0) {//TOREMOVE
 					Actions.Add(PlayerActionType.MoveRight);
 					++c;
-					if (c % 10 == 0)
+					if (c % 1 == 0)
 						c = 0;
 				}
+				if (oldKeyboard.IsKeyDown(Keys.Space) && keyboard.IsKeyUp(Keys.Space))
+					Console.ReadLine();
 
 				if (keyboard.IsKeyDown(JUMP) && oldKeyboard.IsKeyUp(JUMP)) {
 					Actions.Add(PlayerActionType.Jump);
@@ -226,7 +227,7 @@ namespace GREATClient.Screens
 				foreach (StateUpdateData state in LastStateUpdateData) {
 					if (Match.CurrentState.ContainsEntity(state.ID)) {
 						IEntity entity = Match.CurrentState.GetEntity(state.ID);
-						entity.AuthoritativeChangePosition(state.Position, TimeOfLastStateUpdate);
+						entity.AuthoritativeChangePosition(state.Position, state.Velocity, TimeOfLastStateUpdate);
 					}
 				}
 				LastStateUpdateData.Clear();

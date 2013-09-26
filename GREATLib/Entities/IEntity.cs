@@ -43,11 +43,6 @@ namespace GREATLib.Entities
 		/// </summary>
 		/// <value>The move speed.</value>
 		public float MoveSpeed { get; set; }
-		/// <summary>
-		/// Gets or sets a value indicating whether this instance is on ground or not.
-		/// Mainly used to handle jumping and apply certain accelerations.
-		/// </summary>
-		public bool IsOnGround { get; set; }
 
 		/// <summary>
 		/// Gets or sets the jump force of the entity.
@@ -97,7 +92,6 @@ namespace GREATLib.Entities
 
 			Velocity = new Vec2();
 			Direction = HorizontalDirection.None;
-			IsOnGround = true;
         }
 
 		/// <summary>
@@ -110,7 +104,6 @@ namespace GREATLib.Entities
             Direction = e.Direction;
             HorizontalAcceleration = e.HorizontalAcceleration;
             ID = e.ID;
-            IsOnGround = e.IsOnGround;
             JumpForce = e.JumpForce;
             MoveSpeed = e.MoveSpeed;
             Position = e.Position.Clone() as Vec2;
@@ -122,7 +115,7 @@ namespace GREATLib.Entities
 		/// Depending on who the champion is (the local player or a remote client),
 		/// we'll act differently.
 		/// </summary>
-		public virtual void AuthoritativeChangePosition(Vec2 position, double time)
+		public virtual void AuthoritativeChangePosition(Vec2 position, Vec2 velocity, double time)
 		{
 			Position = position;
 		}
@@ -130,9 +123,7 @@ namespace GREATLib.Entities
 		/// <summary>
 		/// Sets the ID of the last acknowledged action by the server.
 		/// </summary>
-		public virtual void SetLastAcknowledgedActionID(uint id)
-		{
-		}
+		public virtual void SetLastAcknowledgedActionID(uint id) { }
 
 		/// <summary>
 		/// Creates the rectangle that represents the collision rectangle of the entity.
