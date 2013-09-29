@@ -90,6 +90,9 @@ namespace GREATClient.GameContent
 		}
 		protected override void OnUpdate(Microsoft.Xna.Framework.GameTime dt)
 		{
+			// Update the champion animation
+
+
 			//Champion.Update(dt);
 
 			ChampionServerRect.Position = GameLibHelper.ToVector2(Champion.ServerPosition);

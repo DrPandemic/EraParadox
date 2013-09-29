@@ -30,6 +30,16 @@ namespace GREATClient.BaseClass.Input
     public class InputManager
     {
 		/// <summary>
+		/// The default mouse x.
+		/// </summary>
+		public static int DefaultMouseX = 400;
+
+		/// <summary>
+		/// The default mouse y.
+		/// </summary>
+		public static int DefaultMouseY = 240;
+
+		/// <summary>
 		/// Gets or sets a value indicating whether the window is ready.
 		/// </summary>
 		/// <value><c>true</c> if this instance is window ready; otherwise, <c>false</c>.</value>
@@ -108,8 +118,14 @@ namespace GREATClient.BaseClass.Input
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets a value indicating whether the screen is active AKA the window is focused.
+		/// <value><c>true</c> if this instance is active; otherwise, <c>false</c>.</value>
+		public bool IsActive { get; set; }
+
         public InputManager()
         {
+			IsActive = false;
 			IsWindowReady = false;
 			Inputs = new Inputs();
 			InputEvents = new Dictionary<InputActions,EventHandler>();
@@ -180,7 +196,7 @@ namespace GREATClient.BaseClass.Input
 			OldKeyboard = keyboardState;
 			OldMouse = mouseState;
 
-			if (IsWindowReady) {
+			if (IsWindowReady && IsActive) {
 				Cursor.Position = MousePosition;
 			}
 		}

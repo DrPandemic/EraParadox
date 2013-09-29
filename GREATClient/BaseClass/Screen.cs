@@ -108,6 +108,16 @@ namespace GREATClient.BaseClass
 		} 
 
 		/// <summary>
+		/// Gets or sets a value indicating whether the screen is active AKA the window is focused.
+		/// <value><c>true</c> if this instance is active; otherwise, <c>false</c>.</value>
+		public bool IsActive 
+		{ 
+			get {
+				return game != null ? game.IsActive : false;
+			}
+		}
+
+		/// <summary>
 		/// Initializes a new instance of the <see cref="GREATClient.Screen"/> class.
 		/// </summary>
 		/// <param name="content">Content.</param>
@@ -161,15 +171,16 @@ namespace GREATClient.BaseClass
 		{
 			((ScreenService)Services.GetService(typeof(ScreenService))).Update();
 			((InputManager)Services.GetService(typeof(InputManager))).Update();
+			((InputManager)Services.GetService(typeof(InputManager))).IsActive = IsActive;
 			base.OnUpdate(dt);
 		}
 
 		/// <summary>
 		/// Called when the window from monogame is ready.
 		/// </summary>
-		public void WindowIsReady()
+		public void WindowIsReady(bool ready)
 		{
-			((InputManager)Services.GetService(typeof(InputManager))).IsWindowReady = true;
+			((InputManager)Services.GetService(typeof(InputManager))).IsWindowReady = ready;
 		}
     }
 }

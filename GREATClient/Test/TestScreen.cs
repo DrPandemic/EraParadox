@@ -46,12 +46,21 @@ namespace GREATClient.Test
 
 		CurrentChampionState CCS;
 
+		Parallax para;
+
+		float ratioX;
+
 		public TestScreen(ContentManager content, Game game) : base(content, game)
         {
 			ChampionsInfo = new ChampionsInfo();
         }
 		protected override void OnLoadContent()
 		{
+			// Test paralax
+			para = new Parallax(new Vector2(1500,700),new DrawableImage("cloud"),new DrawableImage("field"), new DrawableImage("city"));
+			ratioX = 0;
+
+			AddChild(para);
 
 			CCS = new CurrentChampionState(1000,100);
 
@@ -87,6 +96,14 @@ namespace GREATClient.Test
 			//inputManager.RegisterEvent(InputActions.Spell1, new EventHandler(Jump));
 
 			inputManager.RegisterEvent(InputActions.Spell3, new EventHandler(Jump));
+			inputManager.RegisterEvent(InputActions.GoRight, (sender, e)=> {
+				ratioX+=2;
+				para.SetCurrentRatio(ratioX,0f);
+			});
+			inputManager.RegisterEvent(InputActions.GoLeft, (sender, e)=> {
+				ratioX-=2;
+				para.SetCurrentRatio(ratioX,0f);
+			});
 
 			//inputManager.RegisterEvent(InputActions.Jump, new EventHandler(Jump2));
 

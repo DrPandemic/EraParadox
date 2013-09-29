@@ -31,6 +31,7 @@ using GREATClient.BaseClass;
 using GREATClient.Test;
 using GREATClient.BaseClass.Input;
 using GREATClient.BaseClass.ScreenInformation;
+using System.Runtime.InteropServices;
 
 
 namespace GREATClient
@@ -58,7 +59,7 @@ namespace GREATClient
 		Client client;
 
 		GraphicsDeviceManager graphics;
-		Screen gameplay;
+		GREATClient.BaseClass.Screen gameplay;
 
 		bool ScreenInitialized { get; set; }
 		bool ScreenResized { get; set; }
@@ -107,10 +108,12 @@ namespace GREATClient
 				gameplay.LoadContent(GraphicsDevice);
 
 				SetupScreen();
-			} else if (ScreenResized && IsLinux) {
+			}
+#if LINUX
+			else if (ScreenResized) {
 				// Safety net, I really hate MonoGame (on Linux).
 				if (!(Window.ClientBounds.Width == graphics.PreferredBackBufferWidth && Window.ClientBounds.Height == graphics.PreferredBackBufferHeight)) {
-					if (FailCount > 1000) {
+					if (FailCount > 10000) {
 						Console.WriteLine("I'm really really sorry, but the screen was not able to be initialized.");
 						Exit();
 					}
@@ -118,9 +121,11 @@ namespace GREATClient
 					Console.WriteLine("Error for the window resize, trying to save the world from burning down.");
 					SetupScreen();
 				} else {
-						FailCount--;
+						FailCount=0;
 				}
 			}
+#endif
+			
 
 			client.Update(gameTime.ElapsedGameTime.TotalSeconds);
 
@@ -134,11 +139,13 @@ namespace GREATClient
 
 		void OnScreenSizeChanged(object sender, EventArgs args)
 		{
-			if (IsLinux) {
-				Window.FixBorder();
-			} 
-			Mouse.SetPosition(400, 240);
-			gameplay.WindowIsReady();
+#if LINUX
+			Window.FixBorder();
+#elif WINDOWS
+			//SetCapture(Window.Handle);
+#endif
+			Mouse.SetPosition(InputManager.DefaultMouseX, InputManager.DefaultMouseY);
+			gameplay.WindowIsReady(true);
 			ScreenResized = true;
 		}
 
