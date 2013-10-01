@@ -178,6 +178,7 @@ namespace GREATLib.Physics
 
 			// We may only jump when we're on the ground
 			if (Collisions.HasCollisionBelow(entity)) {
+				//entity.Position.Y -= entity.JumpForce / 10f;
 				entity.Velocity.Y = -entity.JumpForce;
 			}
 		}

@@ -102,7 +102,7 @@ namespace GREATClient.Screens
 
 			OurChampion.Entity.SetLastAcknowledgedActionID(e.LastAcknowledgedActionID);
 			LastStateUpdateData = new List<StateUpdateData>(e.EntitiesUpdatedState.ToArray());
-			TimeOfLastStateUpdate = e.Time;
+			TimeOfLastStateUpdate = Client.GetTime().TotalSeconds;
 		}
 
 		void OnJoinedGame(object sender, CommandEventArgs args)
@@ -194,15 +194,18 @@ namespace GREATClient.Screens
 					Actions.Add(PlayerActionType.MoveLeft);
 				}
 
-				if (oldKeyboard.IsKeyDown(RIGHT) && keyboard.IsKeyUp(RIGHT) && c == 0) {
+				if (keyboard.IsKeyDown(RIGHT)) {
+					Actions.Add(PlayerActionType.MoveRight);
+				}
+				/*if (oldKeyboard.IsKeyDown(RIGHT) && keyboard.IsKeyUp(RIGHT) && c == 0) {
 					c = 1;
 				}
 				if (c > 0) {//TOREMOVE
 					Actions.Add(PlayerActionType.MoveRight);
 					++c;
-					if (c % 1 == 0)
+					if (c % 3 == 0)
 						c = 0;
-				}
+				}*/
 				if (oldKeyboard.IsKeyDown(Keys.Space) && keyboard.IsKeyUp(Keys.Space))
 					Console.ReadLine();
 

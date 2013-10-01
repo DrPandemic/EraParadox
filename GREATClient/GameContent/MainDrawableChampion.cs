@@ -31,12 +31,13 @@ namespace GREATClient.GameContent
 {
     public sealed class MainDrawableChampion : DrawableChampion<MainClientChampion>
     {
+		const bool VIEW_DEBUG_RECTS = true;
 		/// <summary>
 		/// TODO: class for debug info
 		/// </summary>
-		DrawableRectangle ChampionDrawnRect { get; set; }
 		DrawableRectangle ChampionServerRect { get; set; }
 		DrawableRectangle ChampionSimulatedRect { get; set; }
+		DrawableRectangle ChampionNoCorrection { get; set; }
 
 		public MainDrawableChampion(ChampionSpawnInfo spawnInfo, GameMatch match)
 			: base(new MainClientChampion(spawnInfo, match))
@@ -47,7 +48,8 @@ namespace GREATClient.GameContent
 		{
 			Parent.AddChild(ChampionServerRect = new DrawableRectangle(new Rectangle(0, 0, 15, 30), Color.Green));
 			Parent.AddChild(ChampionSimulatedRect = new DrawableRectangle(new Rectangle(0, 0, 15, 30), Color.Red));
-			ChampionServerRect.Visible = ChampionSimulatedRect.Visible = false;
+			Parent.AddChild(ChampionNoCorrection = new DrawableRectangle(new Rectangle(0, 0, 15, 30), Color.Yellow));
+			ChampionNoCorrection.Visible = ChampionServerRect.Visible = ChampionSimulatedRect.Visible = VIEW_DEBUG_RECTS;
 
 			base.OnLoad(content, gd);
 		}
@@ -58,6 +60,7 @@ namespace GREATClient.GameContent
 
 			ChampionServerRect.Position = GameLibHelper.ToVector2(Champion.ServerPosition);
 			ChampionSimulatedRect.Position = GameLibHelper.ToVector2(Champion.Position);
+			ChampionNoCorrection.Position = GameLibHelper.ToVector2(Champion.NoCorrPos);
 		}
 
 		/// <summary>

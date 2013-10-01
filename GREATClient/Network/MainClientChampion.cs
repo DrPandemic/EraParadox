@@ -81,6 +81,13 @@ namespace GREATClient.Network
 		Queue<PlayerAction> PackagedActions { get; set; }
 		List<PlayerAction> UnacknowledgedActions { get; set; }
 
+		Dictionary<uint, double> l = new Dictionary<uint, double>();
+		IEntity LastAcknowledgedState { get; set; }
+		double LastAcknowledgedStateTime { get; set; }
+
+		IEntity NoCorrections { get; set; }
+		public Vec2 NoCorrPos { get { return NoCorrections.Position; } }
+
 		public MainClientChampion(ChampionSpawnInfo spawnInfo, GameMatch match)
 			: base(spawnInfo)
         {
@@ -95,6 +102,9 @@ namespace GREATClient.Network
 			PositionBeforeLerp = Position;
 
 			LastAcknowledgedActionID = IDGenerator.NO_ID;
+			LastAcknowledgedState = null;
+
+			NoCorrections = (IEntity)this.Clone();
         }
 
 		/// <summary>
@@ -102,13 +112,19 @@ namespace GREATClient.Network
 		/// </summary>
 		public override void Update(GameTime deltaTime)
 		{
-			// client-side prediction
-			if (ServerAcknowledge == null) { // we don't need to resimulate too long in the past, just simulate the frame
-				Match.CurrentState.ApplyPhysicsUpdate(ID, deltaTime.ElapsedGameTime.TotalSeconds);
-			} else { // we must resimulate from the given acknowledged action time
+			// client correction
+			if (ServerAcknowledge != null) { // we must resimulate from the given acknowledged action time
 				ApplyCorrection(ServerAcknowledge);
 				ServerAcknowledge = null;
 			}
+
+			// client-side prediction
+			IEntity temp = (IEntity)this.Clone();
+			this.Clone(NoCorrections);
+			Match.CurrentState.ApplyPhysicsUpdate(ID, deltaTime.ElapsedGameTime.TotalSeconds);
+			NoCorrections = (IEntity)Match.CurrentState.GetEntity(ID).Clone();
+			this.Clone(temp);
+			Match.CurrentState.ApplyPhysicsUpdate(ID, deltaTime.ElapsedGameTime.TotalSeconds);
 
 			LerpTowardsServerPosition(deltaTime.ElapsedGameTime.TotalSeconds);
 		}
@@ -150,40 +166,36 @@ namespace GREATClient.Network
 		void ApplyCorrection(AcknowledgeInfo ack)
 		{
 			Vec2 original = (Vec2)Position.Clone();
-			double time = ack.Time;
-
-			// take the server's state
-			Position = ack.Position;
-			Velocity = ack.Velocity;
-
 
 			// remove the actions that the server has done
 			RemoveAcknowledgedActions();
 
-			// redo the actions that are not yet acknowledged (only local and not
-			// yet received and accepted by the server)
-			foreach (PlayerAction action in UnacknowledgedActions) {
-				double deltaT = action.Time - time;
-				if (deltaT > 0.0) {
+			// go back to our last acknowledged state (if any)
+			double time = UnacknowledgedActions.Count > 0 ? UnacknowledgedActions[0].Time : 0.0;
+			if (LastAcknowledgedState != null) {
+				this.Clone(LastAcknowledgedState);
+				Console.WriteLine("From last ack: " + Position);
+				time = LastAcknowledgedStateTime;
+			} else {
+				Console.WriteLine("NOPE.");
+			}
+
+			// apply the server's correction
+			Position = ack.Position;
+			Velocity = ack.Velocity;
+
+			// resimulate up until the given state update
+			for (int i = 0; i < UnacknowledgedActions.Count; ++i) {
+				var deltaT = UnacknowledgedActions[i].Time - time;
+
+				if (deltaT > 0) {
 					Match.CurrentState.ApplyPhysicsUpdate(ID, deltaT);
 				}
-				ExecuteAction(action.Type);
-				time = action.Time;
-			}
 
-			// resimulate from our last action to the current time
-			double now = Client.Instance.GetTime().TotalSeconds;
-			double deltaTime = now - time;
-			if (deltaTime > 0.0) {
-				Match.CurrentState.ApplyPhysicsUpdate(ID, deltaTime);
-			}
+				ExecuteAction(UnacknowledgedActions[i].Type);
 
-			Console.WriteLine(String.Format("s-o:{0}   s:{1}  o:{2}  lac:{3}  a:{4}",
-			                                Position - original,
-			                                Position,
-			                                original,
-			                                LastAcknowledgedActionID,
-			                                UnacknowledgedActions.Count != 0 ? UnacknowledgedActions[UnacknowledgedActions.Count - 1].ID.ToString() : "none"));
+				time = UnacknowledgedActions[i].Time;
+			}
 		}
 
 		void RemoveAcknowledgedActions()
@@ -193,8 +205,13 @@ namespace GREATClient.Network
 
 		public override void SetLastAcknowledgedActionID(uint id)
 		{
-			base.SetLastAcknowledgedActionID(id);
-			LastAcknowledgedActionID = id;
+			if (id > LastAcknowledgedActionID) { // a new id
+				base.SetLastAcknowledgedActionID(id);
+				LastAcknowledgedActionID = id;
+
+				LastAcknowledgedState = (IEntity)this.Clone();
+				LastAcknowledgedStateTime = Client.Instance.GetTime().TotalSeconds;
+			}
 		}
 
 		public void PackageAction(PlayerAction action)
@@ -202,7 +219,13 @@ namespace GREATClient.Network
 			PackagedActions.Enqueue(action);
 
 			UnacknowledgedActions.Add(action);
+			l.Add(action.ID, action.Time);
 
+			IEntity temp = (IEntity)this.Clone();
+			this.Clone(NoCorrections);
+			ExecuteAction(action.Type);
+			NoCorrections = (IEntity)Match.CurrentState.GetEntity(ID).Clone();
+			this.Clone(temp);
 			ExecuteAction(action.Type);
 		}
 
