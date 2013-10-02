@@ -39,13 +39,6 @@
     <Reference Include="nunit.core, Version=2.6.0.12051, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
       <Private>False</Private>
     </Reference>
-    <Reference Include="MonoGame.Framework">
-      <HintPath>..\assemblies\Linux\MonoGame.Framework.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="OpenTK">
-      <HintPath>..\assemblies\Linux\OpenTK.dll</HintPath>
-    </Reference>
     <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
@@ -134,6 +127,10 @@
       <Project>{74DBBE2A-15FA-4776-B611-9B06EAFE80C0}</Project>
       <Name>GREATLib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\MonoGame\MonoGame.Framework\MonoGame.Framework.Linux.csproj">
+      <Project>{35253CE1-C864-4CD3-8249-4D1319748E8F}</Project>
+      <Name>MonoGame.Framework.Linux</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\Stickman_run.png">
@@ -170,9 +167,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\UIObjects\boxBackground.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="BaseClass\DrawableImage.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\UIObjects\mana.png">
