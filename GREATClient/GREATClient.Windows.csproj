@@ -97,6 +97,9 @@
     <Compile Include="Network\ClientChampion.cs" />
     <Compile Include="Network\RemoteClientChampion.cs" />
     <Compile Include="GameContent\RemoteDrawableChampion.cs" />
+    <Compile Include="BaseClass\ScreenInformation\ScreenInfo.cs" />
+    <Compile Include="BaseClass\ScreenInformation\ScreenService.cs" />
+    <Compile Include="BaseClass\Position.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />
