@@ -35,14 +35,14 @@ namespace GREATClient.Network
 	/// </summary>
     public sealed class MainClientChampion : ClientChampion
     {
-		class AcknowledgeInfo
+		class CorrectionInfo
 		{
 			public double Time { get; private set; }
 			public Vec2 Position { get; private set; }
 			public Vec2 Velocity { get; private set; }
 			public uint LastAcknowledgedActionId { get; private set; }
 
-			public AcknowledgeInfo(double time, Vec2 pos, Vec2 vel, uint lastAckId)
+			public CorrectionInfo(double time, Vec2 pos, Vec2 vel, uint lastAckId)
 			{
 				Time = time;
 				Position = pos;
@@ -68,7 +68,7 @@ namespace GREATClient.Network
 
 		Queue<PlayerAction> PackagedActions { get; set; }
 		List<PlayerAction> RecentActions { get; set; }
-		List<AcknowledgeInfo> Corrections { get; set; }
+		List<CorrectionInfo> Corrections { get; set; }
 		bool Corrected { get; set; }
 
 		uint PreviousLastAck { get; set; }
@@ -85,7 +85,7 @@ namespace GREATClient.Network
 
 			PackagedActions = new Queue<PlayerAction>();
 			RecentActions = new List<PlayerAction>();
-			Corrections = new List<AcknowledgeInfo>();
+			Corrections = new List<CorrectionInfo>();
 			Corrected = false;
 			PreviousLastAck = IDGenerator.NO_ID;
 
@@ -137,7 +137,7 @@ namespace GREATClient.Network
 		public override void AuthoritativeChangePosition(Vec2 position, Vec2 velocity, double time)
 		{
 			ServerPosition = position;
-			Corrections.Add(new AcknowledgeInfo(time, (Vec2)position.Clone(), (Vec2)velocity.Clone(), PreviousLastAck));
+			Corrections.Add(new CorrectionInfo(time, (Vec2)position.Clone(), (Vec2)velocity.Clone(), PreviousLastAck));
 			Corrected = true;
 
             // Remove corrections that are too old
@@ -165,27 +165,24 @@ namespace GREATClient.Network
 		/// </summary>
 		void ApplyCorrection(double currentTime)
 		{
-			Vec2 original = (Vec2)Position.Clone();
-			Vec2 ov = (Vec2)Velocity.Clone();
-
 			// get a correction from the server to work with
-			AcknowledgeInfo ack = GetCorrectionBeforeUnackAction();
-			if (ack == null) { // no correction to use.
+			CorrectionInfo corr = GetCorrectionBeforeUnackAction();
+			if (corr == null) { // no correction to use.
 				return;
 			}
 
-			ServerPosition = ack.Position;
+			ServerPosition = corr.Position;
 
 			// go back to our last acknowledged state (if any)
-			double time = ack.Time;
+			double time = corr.Time;
 
 			// apply the server's correction
-			Position = ack.Position;
-			Velocity = ack.Velocity;
+			Position = corr.Position;
+			Velocity = corr.Velocity;
 
 			// resimulate up until the given state update
 			for (int i = 0; i < RecentActions.Count; ++i) {
-				if (RecentActions[i].ID > ack.LastAcknowledgedActionId) {
+				if (RecentActions[i].ID > corr.LastAcknowledgedActionId) {
 					var deltaT = RecentActions[i].Time - time;
 
 					if (deltaT > 0) {
@@ -213,7 +210,7 @@ namespace GREATClient.Network
 		/// undoing our actions.
 		/// </summary>
 		/// <returns>null if there are no unacknowledged actions or not enough corrections (must then ignore the correction for the frame).</returns>
-		AcknowledgeInfo GetCorrectionBeforeUnackAction()
+		CorrectionInfo GetCorrectionBeforeUnackAction()
 		{
 			if (Corrections.Count == 0) { // no corrections? no need to apply a server correction then.
 				return null;
@@ -222,22 +219,22 @@ namespace GREATClient.Network
 			if (RecentActions.Count == 0) // no ations to redo? we just take our most recent correction and apply it
 				return Corrections[Corrections.Count - 1];
 
-			AcknowledgeInfo ack = null;
+			CorrectionInfo corr = null;
 
 			int i;
-			for (i = Corrections.Count - 1; i >= 0 && ack == null; --i) {
+			for (i = Corrections.Count - 1; i >= 0 && corr == null; --i) {
 				// first unacknowledged action of that correction
 				int firstAction = RecentActions.FindIndex(a => a.ID > Corrections[i].LastAcknowledgedActionId);
 				if (firstAction < 0 || // if we have a correction with *no* unacknowledged action, we want to use it! (most recent correction)
 				    RecentActions[firstAction].Time > Corrections[i].Time) { // we don't have unacknowledged actions before our correction, so this is our first before our first unack-ed action
-					ack = Corrections[i];
+					corr = Corrections[i];
 				}
 			}
 
-			if (ack == null)
-				ack = Corrections[Corrections.Count - 1];
+			if (corr == null)
+				corr = Corrections[Corrections.Count - 1];
 
-			return ack;
+			return corr;
 		}
 
 		public override void SetLastAcknowledgedActionID(uint id)
