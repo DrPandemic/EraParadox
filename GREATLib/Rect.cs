@@ -49,6 +49,18 @@ namespace GREATLib
 			Height = height;
 		}
 
+		public bool Intersects(Rect b)
+		{
+			return Left <= b.Right &&
+				Right > b.Left &&
+				Top <= b.Bottom &&
+				Bottom > b.Top;
+		}
+		public static bool Intersects(Rect a, Rect b)
+		{
+			return a.Intersects(b);
+		}
+
 		public override bool Equals(object obj)
 		{
 			if (!(obj is Rect))

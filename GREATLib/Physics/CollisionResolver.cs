@@ -54,13 +54,23 @@ namespace GREATLib.Physics
 			HandleCollisionGroup(entity, collisions);
 		}
 
+		const int JUMP_Y_TOLERANCE = 2;
 		public bool HasCollisionBelow(IEntity entity)
 		{
 			Debug.Assert(entity != null);
 
 			Rect r = entity.CreateCollisionRectangle();
-			r.Y += 1; // move it down a bit
-			return true;
+			r.Y += JUMP_Y_TOLERANCE; // move it down a bit
+
+			var tiles = World.Map.GetTouchedTiles(r);
+			foreach (var tile in tiles) {
+				if (tile.Key.Intersects(r) &&
+					tile.Key.Top > r.Top &&
+				    (tile.Value == CollisionType.Block ||
+					 tile.Value == CollisionType.Platform))
+					return true;
+			}
+			return false;
 		}
 
 		/// <summary>
