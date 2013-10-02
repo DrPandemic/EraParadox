@@ -126,7 +126,8 @@ namespace GREATLib.Physics
 			double deltaSeconds = FIXED_TIMESTEP.TotalSeconds;
 
 			// Apply gravity
-			entity.Velocity += GRAVITY * deltaSeconds;
+			entity.Velocity += GRAVITY * deltaSeconds; //TOREMOVE
+			//entity.Position += GRAVITY * deltaSeconds / 10;
 
 			// Multiple physics passes to reduce the chance of "going through" obstacles when we're too fast.
 			Vec2 passMovement = (entity.Velocity * deltaSeconds) / PHYSICS_PASSES;
@@ -178,7 +179,7 @@ namespace GREATLib.Physics
 
 			// We may only jump when we're on the ground
 			if (Collisions.HasCollisionBelow(entity)) {
-				//entity.Position.Y -= entity.JumpForce / 10f;
+				//entity.Position.Y -= entity.JumpForce / 3f; //TOREMOVE
 				entity.Velocity.Y = -entity.JumpForce;
 			}
 		}

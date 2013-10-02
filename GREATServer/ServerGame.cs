@@ -36,7 +36,7 @@ namespace GREATServer
     {
 		static readonly TimeSpan STORE_HISTORY_INTERVAL = GameMatch.STATE_UPDATE_INTERVAL;
 		static readonly TimeSpan HISTORY_MAX_TIME_KEPT = TimeSpan.FromSeconds(1.0);
-		const float MAX_TOLERATED_OFF_DISTANCE = 150f;
+		const float MAX_TOLERATED_OFF_DISTANCE = 10f;
 		const double MAX_TIME_AHEAD = 0.01f;
 
 		static readonly TimeSpan MIN_TIME_BETWEEN_ACTIONS = TimeSpan.FromMilliseconds(10.0);
@@ -277,7 +277,7 @@ namespace GREATServer
 			Vec2 position = action.Position;
 			// If the position provided by the client seems legit, we take it. Otherwise, we ignore it
 			// and log it (might be a hacker).
-			if (Vec2.DistanceSquared(player.Position, action.Position) >= MAX_TOLERATED_OFF_DISTANCE * MAX_TOLERATED_OFF_DISTANCE) {
+			if (Vec2.DistanceSquared(player.Position, position) >= MAX_TOLERATED_OFF_DISTANCE * MAX_TOLERATED_OFF_DISTANCE) {
 				position = player.Position;
 				ILogger.Log("Action " + action.ID + "'s position seems a bit odd. Using the stored server position instead (hacker?). Client will need server correction.", LogPriority.Warning);
 			}

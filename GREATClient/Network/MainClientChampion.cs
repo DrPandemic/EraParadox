@@ -51,18 +51,8 @@ namespace GREATClient.Network
 			}
 		}
 
-		/// <summary>
-		/// The distance required between the simulated position and the drawn position
-		/// that makes us snap directly to it (instead of interpolating to it, we just 
-		/// directly set it).
-		/// </summary>
 		const float POSITION_DISTANCE_TO_SNAP = 100f;
-		/// <summary>
-		/// The distance required between the simulated position and the drawn position
-		/// that makes us lerp towards it. If we're very close to the server position,
-		/// we do not want to move or it feels choppy.
-		/// </summary>
-		const float MIN_POSITION_DISTANCE_TO_LERP = 0f;
+		const float SMOOTH_FACTOR = 0.85f;
         static readonly TimeSpan CORRECTIONS_TIME_KEPT = TimeSpan.FromSeconds(1.0);
 
 		/// <summary>
@@ -74,9 +64,6 @@ namespace GREATClient.Network
 		public Vec2 ServerPosition { get; private set; }
 		Vec2 ServerVelocity { get; set; }
 
-		Vec2 PositionBeforeLerp { get; set; }
-		double TimeSinceLastServerUpdate { get; set; }
-
 		GameMatch Match { get; set; }
 
 		Queue<PlayerAction> PackagedActions { get; set; }
@@ -84,8 +71,6 @@ namespace GREATClient.Network
 		List<AcknowledgeInfo> Corrections { get; set; }
 		bool Corrected { get; set; }
 
-		IEntity LastAcknowledgedState { get; set; }
-		double LastAcknowledgedStateTime { get; set; }
 		uint PreviousLastAck { get; set; }
 
 		IEntity NoCorrections { get; set; }
@@ -104,10 +89,6 @@ namespace GREATClient.Network
 			Corrected = false;
 			PreviousLastAck = IDGenerator.NO_ID;
 
-			TimeSinceLastServerUpdate = 0.0;
-			PositionBeforeLerp = Position;
-
-			LastAcknowledgedState = null;
 
 			NoCorrections = (IEntity)this.Clone();
         }
@@ -119,9 +100,9 @@ namespace GREATClient.Network
 		{
 			// client correction
 			if (Corrected) {
-				ApplyCorrection(Client.Instance.GetTime().TotalSeconds);
+				ApplyCorrection(Client.Instance.GetTime().TotalSeconds - deltaTime.ElapsedGameTime.TotalSeconds);
 				Corrected = false;
-			}
+			} 
 
 			// client-side prediction
 			IEntity temp = (IEntity)this.Clone();
@@ -144,16 +125,8 @@ namespace GREATClient.Network
 			if (distanceSq >= POSITION_DISTANCE_TO_SNAP * POSITION_DISTANCE_TO_SNAP) { // if we must snap directly to the simulated position
 				ILogger.Log(String.Format("Snapping position({0}) to simulated({1}). -> distance squared:{2}", DrawnPosition, Position, distanceSq), LogPriority.High);
 				DrawnPosition = Position;
-				TimeSinceLastServerUpdate = 0.0;
-				PositionBeforeLerp = DrawnPosition;
 			} else { // If we must interpolate our position (we're not too far)
-				Debug.Assert(TimeSinceLastServerUpdate >= 0.0);
-
-				TimeSinceLastServerUpdate += deltaSeconds;
-				double progress = TimeSinceLastServerUpdate / GameMatch.STATE_UPDATE_INTERVAL.TotalSeconds;
-				progress = Math.Min(1.0, progress);
-
-				DrawnPosition = Vec2.Lerp(PositionBeforeLerp, Position, (float)progress);
+				DrawnPosition = Vec2.Lerp(DrawnPosition, Position, SMOOTH_FACTOR);
 			}
 		}
 
@@ -180,9 +153,6 @@ namespace GREATClient.Network
 				     RecentActions[i].ID <= Corrections[0].LastAcknowledgedActionId; ++i) { }
 				RecentActions.RemoveRange(0, i);
 			}
-
-			TimeSinceLastServerUpdate = 0.0;
-			PositionBeforeLerp = Position;
 		}
 
 		/// <summary>
@@ -201,17 +171,13 @@ namespace GREATClient.Network
 			// get a correction from the server to work with
 			AcknowledgeInfo ack = GetCorrectionBeforeUnackAction();
 			if (ack == null) { // no correction to use.
-				Console.Write("COME ON . >:(");
 				return;
 			}
 
+			ServerPosition = ack.Position;
 
 			// go back to our last acknowledged state (if any)
 			double time = ack.Time;
-			/*if (LastAcknowledgedState != null) {
-				this.Clone(LastAcknowledgedState);
-				time = LastAcknowledgedStateTime;
-			}*/
 
 			// apply the server's correction
 			Position = ack.Position;
@@ -220,8 +186,6 @@ namespace GREATClient.Network
 			// resimulate up until the given state update
 			for (int i = 0; i < RecentActions.Count; ++i) {
 				if (RecentActions[i].ID > ack.LastAcknowledgedActionId) {
-					Debug.Assert(RecentActions[i].Time >= ack.Time);
-
 					var deltaT = RecentActions[i].Time - time;
 
 					if (deltaT > 0) {
@@ -238,19 +202,6 @@ namespace GREATClient.Network
 			if (deltaTime > 0) {
 				Match.CurrentState.ApplyPhysicsUpdate(ID, deltaTime);
 			}
-
-            if (Vec2.Distance(Position, original) > 1)
-            {
-				Console.WriteLine(String.Format("s-o: {0}   a: {5}   s: {1}   o: {2}  lac: {3}   c(ua): {4}   s-a: {6}   o-a: {7}",
-                                                Position - original,
-                                                Position,
-                                                original,
-				                                ack.LastAcknowledgedActionId,
-				                                RecentActions.FindAll(a => a.ID > ack.LastAcknowledgedActionId).Count,
-				                                ack.Position,
-				                                Position - ack.Position,
-				                                original - ack.Position));
-            }
 		}
 
 		/// <summary>
@@ -264,15 +215,17 @@ namespace GREATClient.Network
 		/// <returns>null if there are no unacknowledged actions or not enough corrections (must then ignore the correction for the frame).</returns>
 		AcknowledgeInfo GetCorrectionBeforeUnackAction()
 		{
-			if (Corrections.Count == 0) // no corrections? no need to apply a server correction then.
+			if (Corrections.Count == 0) { // no corrections? no need to apply a server correction then.
 				return null;
+			}
 
 			if (RecentActions.Count == 0) // no ations to redo? we just take our most recent correction and apply it
 				return Corrections[Corrections.Count - 1];
 
 			AcknowledgeInfo ack = null;
 
-			for (int i = Corrections.Count - 1; i >= 0 && ack == null; --i) {
+			int i;
+			for (i = Corrections.Count - 1; i >= 0 && ack == null; --i) {
 				// first unacknowledged action of that correction
 				int firstAction = RecentActions.FindIndex(a => a.ID > Corrections[i].LastAcknowledgedActionId);
 				if (firstAction < 0 || // if we have a correction with *no* unacknowledged action, we want to use it! (most recent correction)
@@ -280,6 +233,9 @@ namespace GREATClient.Network
 					ack = Corrections[i];
 				}
 			}
+
+			if (ack == null)
+				ack = Corrections[Corrections.Count - 1];
 
 			return ack;
 		}
@@ -291,9 +247,6 @@ namespace GREATClient.Network
 			if (id > PreviousLastAck) { // a new id
 				base.SetLastAcknowledgedActionID(id);
 				PreviousLastAck = id;
-
-				LastAcknowledgedState = (IEntity)this.Clone();
-				LastAcknowledgedStateTime = Client.Instance.GetTime().TotalSeconds;
 			}
 		}
 

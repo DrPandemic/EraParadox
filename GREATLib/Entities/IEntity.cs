@@ -81,11 +81,11 @@ namespace GREATLib.Entities
         public IEntity(uint id, Vec2 startingPosition)
         {
 			//TODO: depend on who the champion is
-			MoveSpeed = 400f;//100f; //TOREMOVE
+			MoveSpeed = 100f; //TOREMOVE
 			CollisionWidth = 15f;
 			CollisionHeight = 30f;
 			JumpForce = 750;
-			HorizontalAcceleration = 0f; //9e-9f; //TOREMOVE
+			HorizontalAcceleration = 9e-9f; //TOREMOVE
 
 			ID = id;
 			Position = startingPosition;
