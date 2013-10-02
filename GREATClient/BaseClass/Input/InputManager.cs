@@ -30,6 +30,28 @@ namespace GREATClient.BaseClass.Input
     public class InputManager
     {
 		/// <summary>
+		/// The default mouse x.
+		/// </summary>
+		public static int DefaultMouseX = 400;
+
+		/// <summary>
+		/// The default mouse y.
+		/// </summary>
+		public static int DefaultMouseY = 240;
+
+		/// <summary>
+		/// Gets or sets a value indicating whether the window is ready.
+		/// </summary>
+		/// <value><c>true</c> if this instance is window ready; otherwise, <c>false</c>.</value>
+		public bool IsWindowReady { get; set; }
+
+		/// <summary>
+		/// Gets or sets the cursor.
+		/// </summary>
+		/// <value>The cursor.</value>
+		public DrawableImage Cursor { get; set; }
+
+		/// <summary>
 		/// Gets or sets the inputs.
 		/// </summary>
 		/// <value>The inputs.</value>
@@ -96,8 +118,15 @@ namespace GREATClient.BaseClass.Input
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets a value indicating whether the screen is active AKA the window is focused.
+		/// <value><c>true</c> if this instance is active; otherwise, <c>false</c>.</value>
+		public bool IsActive { get; set; }
+
         public InputManager()
         {
+			IsActive = false;
+			IsWindowReady = false;
 			Inputs = new Inputs();
 			InputEvents = new Dictionary<InputActions,EventHandler>();
 			ActionsFired = new List<InputActions>();
@@ -166,6 +195,10 @@ namespace GREATClient.BaseClass.Input
 			}
 			OldKeyboard = keyboardState;
 			OldMouse = mouseState;
+
+			if (IsWindowReady && IsActive) {
+				Cursor.Position = MousePosition;
+			}
 		}
 
 		public void Update()
@@ -339,7 +372,6 @@ namespace GREATClient.BaseClass.Input
 						break;
 						case DeadKeys.None:
 						return true;
-						break;
 				}
 			}
 			return false;

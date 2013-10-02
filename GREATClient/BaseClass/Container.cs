@@ -82,10 +82,12 @@ namespace GREATClient.BaseClass
 					child.Load(this, GetGraphics());
 				}
 				child.Z=z;
-				int index = Children.FindIndex(c => child.Z > c.Z);
-				if(index==-1)				
+				int index = Children.FindLastIndex(c => child.Z > c.Z);
+				if(index == -1)
+				{
 					index = Children.FindLastIndex(c => child.Z == c.Z);
-				
+				}
+
 				++index;
 
 				Children.Insert(Children.Count == 0 ? 0 : index, child);
@@ -188,13 +190,16 @@ namespace GREATClient.BaseClass
 
 		public override bool IsBehind(Vector2 position)
 		{
-			bool test = false;
-			Children.ForEach((IDraw item) => {
-				if (item.IsBehind(position)) {
-					test = true;
-				}
-			});
-			return test;
+			if (Parent != null) {
+				bool test = false;
+				Children.ForEach((IDraw item) => {
+					if (item.IsBehind(position)) {
+						test = true;
+					}
+				});
+				return test;
+			}
+			return false;
 		}
     }
 }

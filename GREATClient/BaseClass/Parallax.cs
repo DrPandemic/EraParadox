@@ -32,6 +32,12 @@ namespace GREATClient.BaseClass
 		/// <value>The size of the world.</value>
 		public Vector2 WorldSize { get; set; }
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="GREATClient.BaseClass.Parallax"/> class.
+		/// Be careful : If you put an image the same size as the world, the image won't move.
+		/// </summary>
+		/// <param name="worldSize">World size.</param>
+		/// <param name="actions">Actions.</param>
 		public Parallax(Vector2 worldSize, params Drawable[] actions)
         {
 			WorldSize = worldSize;
@@ -47,9 +53,11 @@ namespace GREATClient.BaseClass
 		/// <param name="y">The y coordinate.</param>
 		public void SetCurrentRatio(float x, float y)
 		{
+			x = x < 0 ? 0 : (x > 100 ? 100 : x);
+			y = y < 0 ? 0 : (y > 100 ? 100 : y);
 			Children.ForEach((IDraw item) => {
-				item.Position = new Vector2((WorldSize.X - ((Drawable)item).Texture.Width) * x,
-				                            (WorldSize.Y - ((Drawable)item).Texture.Height) * y);
+				item.Position = new Vector2((WorldSize.X - ((Drawable)item).Texture.Width) * x/100,
+				                            (WorldSize.Y - ((Drawable)item).Texture.Height) * y/100);
 			});
 		}
     }

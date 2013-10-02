@@ -31,6 +31,7 @@ using GREATClient.BaseClass;
 using GREATClient.Test;
 using GREATClient.BaseClass.Input;
 using GREATClient.BaseClass.ScreenInformation;
+using System.Runtime.InteropServices;
 
 
 namespace GREATClient
@@ -40,6 +41,15 @@ namespace GREATClient
 	/// </summary>
 	public class GreatGame : Game
 	{
+		public static bool IsLinux
+		{
+			get
+			{
+				int p = (int)Environment.OSVersion.Platform;
+				return (p == 4) || (p == 6) || (p == 128);
+			}
+		}
+
 		/// The screen name
 		const string SCREEN_NAME = "GREAT";
 		/// The screen dimensions
@@ -49,9 +59,17 @@ namespace GREATClient
 		Client client;
 
 		GraphicsDeviceManager graphics;
-		Screen gameplay;
+		GREATClient.BaseClass.Screen gameplay;
 
 		bool ScreenInitialized { get; set; }
+		bool ScreenResized { get; set; }
+
+		/// <summary>
+		/// Gets or sets the fail count.
+		/// Because i need to count the number of time the window setup fails... (sad)
+		/// </summary>
+		/// <value>The fail count.</value>
+		short FailCount { get; set; }
 
 		public GreatGame()
 		{
@@ -59,11 +77,13 @@ namespace GREATClient
 			client = Client.Instance;
 			graphics = new GraphicsDeviceManager(this);
 			Content.RootDirectory = "Content";
-			IsMouseVisible = true;
 			Window.Title = SCREEN_NAME;
+			IsMouseVisible = false;
 			Window.AllowUserResizing = false;
 			graphics.ApplyChanges();
 			ScreenInitialized = false;
+			ScreenResized = false;
+			FailCount = 0;
 		}
 
 		/// <summary>
@@ -74,18 +94,38 @@ namespace GREATClient
 		protected override void Update(GameTime gameTime)
 		{
 			if (!ScreenInitialized) {
-				SetupScreen();
+				Window.ClientSizeChanged += OnScreenSizeChanged;
+
 				ScreenInitialized = true;
 
 				Console.WriteLine("Starting client...");
-				gameplay = new GameplayScreen(Content, this, client); // when testing: new TestScreen(Content);
-				//gameplay = new TestScreen(Content,this);
+				//gameplay = new GameplayScreen(Content, this, client); // when testing: new TestScreen(Content);
+				gameplay = new TestScreen(Content, this);
 				client.Start();
 
 				Console.WriteLine("Loading game content...");
 
 				gameplay.LoadContent(GraphicsDevice);
+
+				SetupScreen();
 			}
+#if LINUX
+			else if (ScreenResized) {
+				// Safety net, I really hate MonoGame (on Linux).
+				if (!(Window.ClientBounds.Width == graphics.PreferredBackBufferWidth && Window.ClientBounds.Height == graphics.PreferredBackBufferHeight)) {
+					if (FailCount > 10000) {
+						Console.WriteLine("I'm really really sorry, but the screen was not able to be initialized.");
+						Exit();
+					}
+					FailCount++;
+					Console.WriteLine("Error for the window resize, trying to save the world from burning down.");
+					SetupScreen();
+				} else {
+					FailCount=0;
+				}
+			}
+#endif
+			
 
 			client.Update(gameTime.ElapsedGameTime.TotalSeconds);
 
@@ -95,6 +135,16 @@ namespace GREATClient
 				Exit();
 
 			base.Update(gameTime);
+		}
+
+		void OnScreenSizeChanged(object sender, EventArgs args)
+		{
+#if LINUX
+			Window.FixBorder();
+#endif
+			Mouse.SetPosition(InputManager.DefaultMouseX, InputManager.DefaultMouseY);
+			gameplay.WindowIsReady(true);
+			ScreenResized = true;
 		}
 
 		/// <summary>
@@ -135,24 +185,27 @@ namespace GREATClient
 
 			screenInfo.SaveInfo();
 
-			if (screenInfo.AutoResolution) {
+			graphics.IsFullScreen = screenInfo.Fullscreen;
+
+			if (screenInfo.AutoResolution || graphics.IsFullScreen) {
 				graphics.PreferredBackBufferWidth = screenInfo.ScreenWidth;
 				graphics.PreferredBackBufferHeight = screenInfo.ScreenHeight;
+				screenInfo.WindowWidth = screenInfo.ScreenWidth;
+				screenInfo.WindowHeight = screenInfo.ScreenHeight;
+				screenInfo.SaveInfo();
 			} else {
 				graphics.PreferredBackBufferWidth = screenInfo.WindowWidth;
 				graphics.PreferredBackBufferHeight = screenInfo.WindowHeight;
 			}
 
-			graphics.IsFullScreen = screenInfo.Fullscreen;
-			Window.AllowUserResizing = false;
-			graphics.ApplyChanges();
+			#if DEBUG
+			graphics.PreferredBackBufferWidth = 900;
+			graphics.PreferredBackBufferHeight = 700;
 
-			Viewport view = graphics.GraphicsDevice.Viewport;
-			view.Bounds = new Rectangle(0,
-			                            0,
-			                            graphics.PreferredBackBufferWidth,
-			                            graphics.PreferredBackBufferHeight);
-			graphics.GraphicsDevice.Viewport = view;
+			graphics.IsFullScreen = false;
+			#endif
+
+			graphics.ApplyChanges();
 		}
 	}
 }

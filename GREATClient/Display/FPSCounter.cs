@@ -59,12 +59,6 @@ namespace GREATClient.Display
 			LastUpdate = new TimeSpan();
         }
 
-		protected override void OnLoad(ContentManager content, GraphicsDevice gd) {
-			if (gd != null)
-				Position = new Vector2(10, gd.Viewport.TitleSafeArea.Height * 19 / 20);
-			base.OnLoad(content, gd);
-		}
-
 		protected override void OnUpdate(GameTime dt)
 		{
 			SinceStart = SinceStart.Add(dt.ElapsedGameTime);

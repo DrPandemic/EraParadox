@@ -193,7 +193,7 @@ namespace GREATClient.BaseClass.BaseAction
 				if (Duration.Ticks >= 0) {
 					OnUpdate(dt);
 				} else {
-					System.Console.WriteLine(dt.ElapsedGameTime.TotalMilliseconds + " : " + Duration.TotalMilliseconds);
+					//System.Console.WriteLine(dt.ElapsedGameTime.TotalMilliseconds + " : " + Duration.TotalMilliseconds);
 					OnUpdate(new GameTime(dt.TotalGameTime, new TimeSpan(dt.ElapsedGameTime.Ticks + Duration.Ticks)));
 				}
 				if (Duration.Ticks <= 0) {

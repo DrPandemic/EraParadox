@@ -82,7 +82,7 @@ namespace GREATClient.BaseClass.Menu
 		/// </summary>
 		public void Select()
 		{			
-			if (CurrentState != StateSelected) {
+			if (CurrentState != StateSelected && Clickable) {
 				SetState(StateSelected);
 			}
 		}
@@ -102,7 +102,7 @@ namespace GREATClient.BaseClass.Menu
 		/// </summary>
 		public void Clicking()
 		{
-			if (CurrentState != StateClicking) {
+			if (CurrentState != StateClicking && Clickable) {
 				SetState(StateClicking);
 			}
 		}
@@ -163,8 +163,11 @@ namespace GREATClient.BaseClass.Menu
 
 		public override bool IsBehind(Vector2 position)
 		{
-			if (Visible) {				
-				return CurrentState.IsBehind(position);
+			if (Parent != null) {
+				if (Visible && CurrentState != null) {				
+					return CurrentState.IsBehind(position);
+				}
+				return false;
 			}
 			return false;
 		}

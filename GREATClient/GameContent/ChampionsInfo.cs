@@ -32,24 +32,26 @@ namespace GREATClient.GameContent
 		StickMan
 	}
 
+	public enum ChampionAnimation
+	{
+		run,
+		idle,
+		die,
+		jump,
+		spell1,
+		spell2,
+		spell3,
+		spell4
+	}
+
 	/// <summary>
 	/// The information of an animation of a champion.
 	/// </summary>
 	[Serializable()]
 	public class AnimationInfo
 	{
-		public const string RUN = "run";
-		public const string IDLE = "idle";
-		public const string JUMP = "jump";
-		public const string DIE = "die";
-		public const string SPELL1 = "spell1";
-		public const string SPELL2 = "spell2";
-		public const string SPELL3 = "spell3";
-		public const string SPELL4 = "spell4";
-
-
 		[System.Xml.Serialization.XmlAttribute("name")]
-		public string Name { get; set; }
+		public ChampionAnimation Name  { get; set; }
 		
 		[System.Xml.Serialization.XmlAttribute("line")]
 		public int Line { get; set; }
@@ -95,10 +97,10 @@ namespace GREATClient.GameContent
 		/// </summary>
 		/// <returns>The animation.</returns>
 		/// <param name="name">Name.</param>
-		public AnimationInfo GetAnimation(string name)
+		public AnimationInfo GetAnimation(ChampionAnimation name)
 		{
 			foreach (AnimationInfo anim in Animations)
-				if (anim.Name.ToLower() == name.ToLower())
+				if (anim.Name == name)
 					return anim;
 
 			Debug.Fail("No animation with the name " + name + " for the champion " + Name + ".");
