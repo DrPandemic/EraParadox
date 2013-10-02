@@ -302,11 +302,13 @@ namespace GREATClient.Display
 				MainBackgroundLayer.Visible = true;
 				MainMenu.Active(true);
 				SetMenuSize(new Vector2(MainBackground.Texture.Width,MainBackground.Texture.Height));
+				screenService.IsMouseVisible = true;
 			} else if (State == MenuState.MainOpened) {
 				State = MenuState.AllClosed;
 				MainBackgroundLayer.Visible = false;
 				MainMenu.UnselectItems();
 				MainMenu.Active(false);
+				screenService.IsMouseVisible = false;
 			} else if (State == MenuState.AudioOpened) {
 				State = MenuState.MainOpened;
 				AudioBackgroundLayer.Visible = false;
