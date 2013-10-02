@@ -31,7 +31,7 @@ namespace GREATClient.GameContent
 {
     public sealed class MainDrawableChampion : DrawableChampion<MainClientChampion>
     {
-		const bool VIEW_DEBUG_RECTS = true;
+		const bool VIEW_DEBUG_RECTS = false;
 		/// <summary>
 		/// TODO: class for debug info
 		/// </summary>
