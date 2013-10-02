@@ -17,7 +17,7 @@
     <DebugType>full</DebugType>
     <Optimize>False</Optimize>
     <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;</DefineConstants>
+    <DefineConstants>DEBUG;WINDOWS;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
@@ -36,12 +36,6 @@
     <Reference Include="System" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
-    <Reference Include="MonoGame.Framework">
-      <HintPath>..\assemblies\WindowsGL\MonoGame.Framework.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Office.Interop.Word, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
-      <Private>False</Private>
-    </Reference>
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Private>False</Private>
     </Reference>
@@ -89,19 +83,23 @@
     <Compile Include="BaseClass\Parallax.cs" />
     <Compile Include="BaseClass\Menu\Menu.cs" />
     <Compile Include="BaseClass\Menu\MenuItem.cs" />
-    <Compile Include="Test\TestMenu.cs" />
     <Compile Include="BaseClass\IUpdatable.cs" />
     <Compile Include="Network\MainClientChampion.cs" />
     <Compile Include="BaseClass\ScreenInformation\ScreenInfo.cs" />
     <Compile Include="BaseClass\ScreenInformation\ScreenService.cs" />
     <Compile Include="BaseClass\Position.cs" />
+    <Compile Include="Display\GameUI.cs" />
+    <Compile Include="GameContent\CurrentChampionState.cs" />
+    <Compile Include="Display\ESCMenu.cs" />
+    <Compile Include="BaseClass\BaseAction\ActionDelay.cs" />
+    <Compile Include="Display\SpellMenu.cs" />
+    <Compile Include="Display\SpellMenuItem.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />
     <None Include="Content\champions.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Content\Stickman.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Content\" />
@@ -116,6 +114,7 @@
     <Folder Include="BaseClass\Menu\" />
     <Folder Include="Network\" />
     <Folder Include="BaseClass\ScreenInformation\" />
+    <Folder Include="Content\UIObjects\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -126,6 +125,10 @@
     <ProjectReference Include="..\GREATLib\GREATLib.csproj">
       <Project>{74DBBE2A-15FA-4776-B611-9B06EAFE80C0}</Project>
       <Name>GREATLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MonoGame\MonoGame.Framework\MonoGame.Framework.WindowsGL.csproj">
+      <Project>{7DE47032-A904-4C29-BD22-2D235E8D91BA}</Project>
+      <Name>MonoGame.Framework.WindowsGL</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -152,6 +155,57 @@
     </Content>
     <Content Include="Content\screen.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\UIObjects\boxBackground.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\UIObjects\life.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\UIObjects\mana.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\UIObjects\map.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\UIObjects\spellBackground.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\UIObjects\spellBox.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\UIObjects\spellBoxDropShadow.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Stickman.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\UIObjects\menu.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\UIObjects\menuGear.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\UIObjects\menuAudio.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\UIObjects\menuVideo.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\UIObjects\menuExit.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\cursor.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\cloud.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\field.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\city.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 </Project>

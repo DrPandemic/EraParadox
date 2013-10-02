@@ -80,10 +80,13 @@ namespace GREATClient.BaseClass
 
 		public override bool IsBehind(Vector2 position)
 		{
-			Vector2 realPos = (GetAbsolutePosition() - RelativeOrigin * new Vector2(Texture.Width, Texture.Height)) 
-				+ (new Vector2(Texture.Width, Texture.Height) * new Vector2(0.5f, 0.5f));
-			return (position.X >= realPos.X - Radius && position.X <= realPos.X + Radius) &&
-				   (position.Y >= realPos.Y - Radius && position.Y <= realPos.Y + Radius);
+			if (Parent != null) {
+				Vector2 realPos = (GetAbsolutePosition() - RelativeOrigin * new Vector2(Texture.Width, Texture.Height)) 
+					+ (new Vector2(Texture.Width, Texture.Height) * new Vector2(0.5f, 0.5f));
+				return (position.X >= realPos.X - Radius && position.X <= realPos.X + Radius) &&
+					(position.Y >= realPos.Y - Radius && position.Y <= realPos.Y + Radius);
+			}
+			return false;
 		}
     }
 }

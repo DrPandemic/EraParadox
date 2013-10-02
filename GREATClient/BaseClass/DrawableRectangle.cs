@@ -77,10 +77,13 @@ namespace GREATClient.BaseClass
 
 		public override bool IsBehind(Vector2 position)
 		{
-			return new Rectangle((int)(GetAbsolutePosition().X - RelativeOrigin.X * Size.X),
-			                     (int)(GetAbsolutePosition().Y - RelativeOrigin.Y * Size.Y),
-			                     (int)Size.X, (int)Size.Y)
+			if (Parent != null) {
+				return new Rectangle((int)(GetAbsolutePosition().X - RelativeOrigin.X * Size.X),
+				                    (int)(GetAbsolutePosition().Y - RelativeOrigin.Y * Size.Y),
+				                    (int)Size.X, (int)Size.Y)
 								 .Contains((int)position.X, (int)position.Y);
+			}
+			return false;
 		}
     }
 }

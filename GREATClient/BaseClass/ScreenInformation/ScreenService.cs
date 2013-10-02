@@ -20,6 +20,7 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 
 namespace GREATClient.BaseClass.ScreenInformation
 {
@@ -104,6 +105,11 @@ namespace GREATClient.BaseClass.ScreenInformation
 		public void SwitchFullscreen()
 		{
 			IsFullScreen = !IsFullScreen;
+		}
+
+		public void Update()
+		{
+
 		}
 	}
 }

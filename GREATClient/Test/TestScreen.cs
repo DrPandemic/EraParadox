@@ -31,6 +31,8 @@ using GREATClient.BaseClass.Input;
 using GREATClient.BaseClass.BaseAction;
 using GREATClient.BaseClass.Menu;
 using GREATClient.BaseClass.ScreenInformation;
+using GameContent;
+using GREATLib.Entities;
 
 namespace GREATClient.Test
 {
@@ -38,21 +40,35 @@ namespace GREATClient.Test
     {
 		ChampionsInfo ChampionsInfo { get; set; }
 
-		KeyboardState oldks;
-		MouseState oldms;
-
 		ActionSequence AS;
 
 		DrawableChampionSprite champSprite;
 
+		CurrentChampionState CCS;
+
+		Parallax para;
+
+		float ratioX;
+
 		public TestScreen(ContentManager content, Game game) : base(content, game)
         {
-			oldms = new MouseState();
 			ChampionsInfo = new ChampionsInfo();
         }
 		protected override void OnLoadContent()
 		{
-			AddChild(new TestMenu() {Position = new Vector2(200,100)});
+			// Test paralax
+			para = new Parallax(new Vector2(1500,700),new DrawableImage("cloud"),new DrawableImage("field"), new DrawableImage("city"));
+			ratioX = 0;
+
+			AddChild(para);
+
+			CCS = new CurrentChampionState(1000,100);
+
+			AddChild(new GameUI(CCS),10);
+
+			ESCMenu menu = new ESCMenu();
+			AddChild(menu, 5);
+			menu.SetPositionInScreenPercent(50, 50);
 
 			champSprite = new DrawableChampionSprite(ChampionTypes.StickMan, ChampionsInfo) 
 			{ Position = new Vector2(200f, 300f) };
@@ -70,12 +86,6 @@ namespace GREATClient.Test
 			tr.Tint = Color.Blue;
 			tr.Scale = new Vector2(1f,2f);
 
-			oldks = Keyboard.GetState();
-			oldms = Mouse.GetState();
-
-			Container cc = new Container();
-			cc.AddChild(new FPSCounter());
-			AddChild(cc);
 
 			//Test particle
 			/*ParticleSystem sys = new ParticleSystem(Content, 1000, null);
@@ -85,20 +95,21 @@ namespace GREATClient.Test
 			//AddChild(new PingCounter(() => Client.Instance.GetPing().TotalMilliseconds));
 			//inputManager.RegisterEvent(InputActions.Spell1, new EventHandler(Jump));
 
-			AddChild(new PingCounter(yo));
-
 			inputManager.RegisterEvent(InputActions.Spell3, new EventHandler(Jump));
+			inputManager.RegisterEvent(InputActions.GoRight, (sender, e)=> {
+				ratioX+=2;
+				para.SetCurrentRatio(ratioX,0f);
+			});
+			inputManager.RegisterEvent(InputActions.GoLeft, (sender, e)=> {
+				ratioX-=2;
+				para.SetCurrentRatio(ratioX,0f);
+			});
 
 			//inputManager.RegisterEvent(InputActions.Jump, new EventHandler(Jump2));
 
 			DrawableCircle circle = new DrawableCircle();
 			circle.SetPositionRelativeToObject(champSprite, new Vector2(-150, -30));
 			AddChild(circle);
-		}
-
-		protected double yo()
-		{
-			return 32d;
 		}
 
 		private void Jump(object sender, EventArgs e)
@@ -111,7 +122,7 @@ namespace GREATClient.Test
 					int xAddition = 200;
 					float x = (xAddition * arg2) + arg1.X; 
 					float y = (float)(a * Math.Pow(xAddition * arg2 ,2d) + b);
-					System.Console.WriteLine(arg2);
+					//System.Console.WriteLine(arg2);
 					return new Vector2(x, y);
 				}));
 				((InputEventArgs)e).Handled = true;
@@ -128,6 +139,9 @@ namespace GREATClient.Test
 
 		protected override void OnUpdate(GameTime dt)
 		{
+			//Console.WriteLine(inputManager.MousePosition);
+
+			CCS.CurrentLife --;
 			//TODO: remove. testing the physics engine
 			KeyboardState ks = Keyboard.GetState();
 			MouseState ms = Mouse.GetState();
@@ -135,11 +149,9 @@ namespace GREATClient.Test
 			if (ks.IsKeyDown(Keys.Escape) && ks.IsKeyDown(Keys.LeftShift))
 				Exit = true;
 
-			if (ks.IsKeyDown(Keys.E)) { champSprite.PlayAnimation(AnimationInfo.JUMP);}
-			if (ks.IsKeyDown(Keys.Q)) { champSprite.PlayAnimation(AnimationInfo.RUN);}
+			/*if (ks.IsKeyDown(Keys.E)) { champSprite.PlayAnimation(AnimationInfo.JUMP);}
+			if (ks.IsKeyDown(Keys.Q)) { champSprite.PlayAnimation(AnimationInfo.RUN);}*/
 
-			oldks = ks;
-			oldms = ms;
 
 			base.OnUpdate(dt);
 		}

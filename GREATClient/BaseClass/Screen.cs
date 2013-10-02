@@ -60,6 +60,12 @@ namespace GREATClient.BaseClass
 		public GraphicsDevice Graphics { get; private set; }
 
 		/// <summary>
+		/// Gets or sets the cursor.
+		/// </summary>
+		/// <value>The cursor.</value>
+		public DrawableImage Cursor { get; set; }
+
+		/// <summary>
 		/// Gets the absolute position.
 		/// Is overriden in screen, because it's the base class
 		/// </summary>
@@ -102,6 +108,16 @@ namespace GREATClient.BaseClass
 		} 
 
 		/// <summary>
+		/// Gets or sets a value indicating whether the screen is active AKA the window is focused.
+		/// <value><c>true</c> if this instance is active; otherwise, <c>false</c>.</value>
+		public bool IsActive 
+		{ 
+			get {
+				return game != null ? game.IsActive : false;
+			}
+		}
+
+		/// <summary>
 		/// Initializes a new instance of the <see cref="GREATClient.Screen"/> class.
 		/// </summary>
 		/// <param name="content">Content.</param>
@@ -126,6 +142,10 @@ namespace GREATClient.BaseClass
 			Graphics = gd;
 			spriteBatch = new SpriteBatch(gd);
 			OnLoadContent();
+
+			Cursor = new DrawableImage("cursor");
+			AddChild(Cursor,100);
+			((InputManager)Services.GetService(typeof(InputManager))).Cursor = Cursor;
 		}
 
 		/// <summary>
@@ -149,8 +169,18 @@ namespace GREATClient.BaseClass
 
 		protected override void OnUpdate(GameTime dt)
 		{
+			((ScreenService)Services.GetService(typeof(ScreenService))).Update();
 			((InputManager)Services.GetService(typeof(InputManager))).Update();
+			((InputManager)Services.GetService(typeof(InputManager))).IsActive = IsActive;
 			base.OnUpdate(dt);
+		}
+
+		/// <summary>
+		/// Called when the window from monogame is ready.
+		/// </summary>
+		public void WindowIsReady(bool ready)
+		{
+			((InputManager)Services.GetService(typeof(InputManager))).IsWindowReady = ready;
 		}
     }
 }

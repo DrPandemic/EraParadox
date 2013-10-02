@@ -39,12 +39,6 @@ namespace GREATClient.Display
 			FunctionUpdate = functionUpdate;
         }
 
-		protected override void OnLoad(ContentManager content, GraphicsDevice gd) {
-			if (gd != null)
-				Position = new Vector2(125, gd.Viewport.TitleSafeArea.Height * 19 / 20);
-			base.OnLoad(content, gd);
-		}
-
 		protected override void OnUpdate(GameTime dt)
 		{
 			Text = FunctionUpdate() + " ms";

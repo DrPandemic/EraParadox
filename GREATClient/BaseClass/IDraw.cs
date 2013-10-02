@@ -443,9 +443,8 @@ namespace GREATClient.BaseClass
 		/// </summary>
 		/// <param name="objectBound">Object bound.</param>
 		/// <param name="offset">Offset.</param>
-		public void SetPositionRelativeToObject(IDraw objectBound, Vector2 offset)
+		public void SetPositionRelativeToObject(IDraw objectBound, Vector2 offset, bool followBound = true)
 		{
-
 			PositionMode = PositionType.ObjectRelative;
 			ObjectBoundOffset = offset;
 
@@ -460,13 +459,19 @@ namespace GREATClient.BaseClass
 			// If there is currently no bound, it can simply add everyting.
 			if (ObjectBound == null) {
 				ObjectBound = objectBound;
-				objectBound.Moved += MoveEvent;
+				if (followBound) {
+					objectBound.Moved += MoveEvent;
+				}
 			} 
 			// If it is a new bound, remove old event handler.
 			else if (ObjectBound != objectBound) {
-				ObjectBound.Moved -= MoveEvent;
+				if (followBound) {
+					ObjectBound.Moved -= MoveEvent;
+				}
 				ObjectBound = objectBound;
-				objectBound.Moved += MoveEvent;
+				if (followBound) {
+					objectBound.Moved += MoveEvent;
+				}
 			}
 
 			MoveEvent(objectBound);
