@@ -396,8 +396,7 @@ namespace GREATServer
 		static IEntity CreateRandomChampion()
 		{
 			return new IEntity(IDGenerator.GenerateID(), 
-			                   new Vec2(300f, 300f)); // TOREMOVE
-			                   //new Vec2(Utilities.RandomFloat(Utilities.Random, 100f, 400f), 0f));
+			                   new Vec2(Utilities.RandomFloat(Utilities.Random, 100f, 400f), 0f));
 		}
 
 		/// <summary>

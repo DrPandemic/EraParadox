@@ -173,7 +173,6 @@ namespace GREATClient.Screens
 			//    our local simulation running.
 			base.OnUpdate(dt); // this is done by the player's drawablechampion
 		}
-		static int c = 0;
 		/// <summary>
 		/// Package local input as actions to eventually send to the server.
 		/// At the same time, we simulate the input locally for client-side prediction.
@@ -197,15 +196,6 @@ namespace GREATClient.Screens
 				if (keyboard.IsKeyDown(RIGHT)) {
 					Actions.Add(PlayerActionType.MoveRight);
 				}
-				/*if (oldKeyboard.IsKeyDown(RIGHT) && keyboard.IsKeyUp(RIGHT) && c == 0) {
-					c = 1;
-				}
-				if (c > 0) {//TOREMOVE
-					Actions.Add(PlayerActionType.MoveRight);
-					++c;
-					if (c % 3 == 0)
-						c = 0;
-				}*/
 				if (oldKeyboard.IsKeyDown(Keys.Space) && keyboard.IsKeyUp(Keys.Space))
 					Console.ReadLine();
 
