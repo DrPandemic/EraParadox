@@ -121,7 +121,7 @@ namespace GREATClient
 					Console.WriteLine("Error for the window resize, trying to save the world from burning down.");
 					SetupScreen();
 				} else {
-						FailCount=0;
+					FailCount=0;
 				}
 			}
 #endif
@@ -141,8 +141,6 @@ namespace GREATClient
 		{
 #if LINUX
 			Window.FixBorder();
-#elif WINDOWS
-			//SetCapture(Window.Handle);
 #endif
 			Mouse.SetPosition(InputManager.DefaultMouseX, InputManager.DefaultMouseY);
 			gameplay.WindowIsReady(true);

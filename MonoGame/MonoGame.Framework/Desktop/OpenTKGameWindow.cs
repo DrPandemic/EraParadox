@@ -319,7 +319,7 @@ namespace Microsoft.Xna.Framework
 #if LINUX
         private void OnMouseEnter(object sender, EventArgs e)
         {
-            //Window.CursorVisible = false;
+
         }
         private void OnMouseLeave(object sender, EventArgs e)
         {
