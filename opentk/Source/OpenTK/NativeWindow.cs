@@ -757,14 +757,12 @@ namespace OpenTK
         /// <param name="e">Not used.</param>
         protected virtual void OnFocusedChanged(EventArgs e)
         {
-			Console.WriteLine("previous" + previous_cursor_visible);
             if (!Focused)
             {
                 // Release cursor when losing focus, to ensure
                 // IDEs continue working as expected.
                 previous_cursor_visible = CursorVisible;
                 CursorVisible = true;
-				Console.WriteLine("a");
             }
 			else if (!previous_cursor_visible)
 			{			
@@ -773,7 +771,6 @@ namespace OpenTK
 	                // if cursor was invisible on previous focus loss.
 	                previous_cursor_visible = true;
 	                CursorVisible = false;
-					Console.WriteLine("b");
 	            }
 			}
             FocusedChanged(this, e);

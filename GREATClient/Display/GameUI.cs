@@ -38,6 +38,8 @@ namespace GREATClient.Display
 		// Bars
 		DrawableImage Life { get; set; }
 		DrawableImage Resource { get; set; }
+		DrawableImage LifeDropshadow { get; set; }
+		DrawableImage ResourceDropShadow { get; set; }
 
 		DrawableImage MoneyBackground { get; set; }
 		//DrawableImage ObjectBackground { get; set; }
@@ -65,12 +67,22 @@ namespace GREATClient.Display
 			AddChild(Map);
 			SpellBackground = new DrawableImage("UIObjects/spellBackground");
 			AddChild(SpellBackground);
+
+			LifeDropshadow = new DrawableImage("UIObjects/lifeDrop");
+			LifeDropshadow.RelativeOrigin = new Vector2(0f,1f);
+			AddChild(LifeDropshadow);
+			ResourceDropShadow = new DrawableImage("UIObjects/manaDrop");
+			ResourceDropShadow.RelativeOrigin = new Vector2(0f,1f);
+			AddChild(ResourceDropShadow);
+
 			Life = new DrawableImage("UIObjects/life");
 			Life.RelativeOrigin = new Vector2(0f,1f);
 			AddChild(Life);
 			Resource = new DrawableImage("UIObjects/mana");
 			Resource.RelativeOrigin = new Vector2(0f,1f);
 			AddChild(Resource);
+
+
 
 			MoneyBackground = new DrawableImage("UIObjects/boxBackground");
 			AddChild(MoneyBackground);
@@ -91,6 +103,10 @@ namespace GREATClient.Display
 			                                                   Map.Texture.Height), false);
 			Life.SetPositionRelativeToObject(Resource, new Vector2(-Life.Texture.Width - 6, 
 			                                                   0), false);
+
+			ResourceDropShadow.SetPositionRelativeToObject(Resource, new Vector2(0,5), false);
+			LifeDropshadow.SetPositionRelativeToObject(Life, new Vector2(0,5), false);
+
 			SpellBackground.SetPositionRelativeToObject(Life, new Vector2(-SpellBackground.Texture.Width - 10, 
 	                                                              			- SpellBackground.Texture.Height), 
 			                                            false);
@@ -119,11 +135,13 @@ namespace GREATClient.Display
 			Vector2 v = Life.Scale; 
 			v.Y = (float)ChampionState.CurrentLife / ChampionState.MaxLife;
 			v.Y = v.Y >= 0 ? v.Y : 0;
-			Life.Scale = v;;
+			Life.Scale = v;
+			LifeDropshadow.Scale = v;
 			v = Resource.Scale;
 			v.Y = (float)ChampionState.CurrentResource / ChampionState.MaxResource;
 			v.Y = v.Y >= 0 ? v.Y : 0;
 			Resource.Scale = v;
+			ResourceDropShadow.Scale = v;
 		}
 
 		protected double GetPing()
