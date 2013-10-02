@@ -30,6 +30,7 @@ using GREATClient.Display;
 using GREATClient.BaseClass.Input;
 using GREATClient.BaseClass.BaseAction;
 using GREATClient.BaseClass.Menu;
+using GREATClient.BaseClass.ScreenInformation;
 
 namespace GREATClient.Test
 {
@@ -81,10 +82,18 @@ namespace GREATClient.Test
 			sys.Position = new Vector2(100, 100);
 			AddChild(sys);*/
 
-			AddChild(new PingCounter(() => Client.Instance.GetPing().TotalMilliseconds));
+			//AddChild(new PingCounter(() => Client.Instance.GetPing().TotalMilliseconds));
 			//inputManager.RegisterEvent(InputActions.Spell1, new EventHandler(Jump));
+
+			AddChild(new PingCounter(yo));
+
+			inputManager.RegisterEvent(InputActions.Spell3, new EventHandler(Jump));
+
 			//inputManager.RegisterEvent(InputActions.Jump, new EventHandler(Jump2));
 
+			DrawableCircle circle = new DrawableCircle();
+			circle.SetPositionRelativeToObject(champSprite, new Vector2(-150, -30));
+			AddChild(circle);
 		}
 
 		protected double yo()
@@ -123,7 +132,7 @@ namespace GREATClient.Test
 			KeyboardState ks = Keyboard.GetState();
 			MouseState ms = Mouse.GetState();
 
-			if (ks.IsKeyDown(Keys.Escape) && ks.IsKeyDown(Keys.LeftControl))
+			if (ks.IsKeyDown(Keys.Escape) && ks.IsKeyDown(Keys.LeftShift))
 				Exit = true;
 
 			if (ks.IsKeyDown(Keys.E)) { champSprite.PlayAnimation(AnimationInfo.JUMP);}

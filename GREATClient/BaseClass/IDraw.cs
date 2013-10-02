@@ -25,6 +25,7 @@ using Microsoft.Xna.Framework.Graphics;
 using GREATClient.BaseClass.BaseAction;
 using GREATClient.BaseClass.Input;
 using System.Collections.Generic;
+using GREATClient.BaseClass.ScreenInformation;
 
 namespace GREATClient.BaseClass
 {
@@ -40,9 +41,29 @@ namespace GREATClient.BaseClass
 				if (m_InputManager != null) {
 					return m_InputManager;
 				} else {
-					if (Parent != null || Game != null) {
+					if (GetServices() != null) {
 						m_InputManager = (InputManager)this.GetServices().GetService(typeof(InputManager));
 						return m_InputManager;
+					} else {
+						return null;
+					}
+				}
+			}
+		}
+
+		/// <summary>
+		/// Gets the screen service.
+		/// </summary>
+		/// <returns>The screen service.</returns>
+		ScreenService m_ScreenService;
+		public ScreenService screenService {
+			get {
+				if (m_ScreenService != null) {
+					return m_ScreenService;
+				} else {
+					if (Parent != null) {
+						m_ScreenService = (ScreenService)this.GetServices().GetService(typeof(ScreenService));
+						return m_ScreenService;
 					} else {
 						return null;
 					}
@@ -89,11 +110,60 @@ namespace GREATClient.BaseClass
 		/// <value>The z.</value>
 		public int Z { get; set; }
 
+
+		// Position.
+		// Movement event.
+		delegate void MovementEventHandler(IDraw bound);
+		event MovementEventHandler Moved;
+
 		/// <summary>
 		/// Gets or sets the position.
+		/// It is the absolute position.
+		/// If the position mode is not at Normal, this value can't be changed from the outside.
 		/// </summary>
 		/// <value>The position.</value>
-		public Vector2 Position { get; set; }
+		Vector2 m_Position;
+		public Vector2 Position 
+		{ 
+			get {
+				return m_Position;
+			}
+			set {
+				m_Position = value;
+				if (Moved != null) {
+					Moved(this);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Gets the absolute position.
+		/// </summary>
+		/// <returns>The absolute position.</returns>
+		public virtual Vector2 GetAbsolutePosition()
+		{
+			return Position+Parent.GetAbsolutePosition();
+		}
+
+		/// <summary>
+		/// Gets or sets the position mode.
+		/// </summary>
+		/// <value>The position mode.</value>
+		public PositionType PositionMode { get; set; }
+
+		// % of the screen.
+		int XPercentOfTheScreen { get; set; }
+		int YPercentOfTheScreen { get; set; }
+
+		// Bound to screen.
+		ScreenBound Bound { get; set; }
+		Vector2 ScreenBoundOffset { get; set; }
+
+		//Bound to object
+		IDraw ObjectBound { get; set; }
+		Vector2 ObjectBoundOffset { get; set; }
+		MovementEventHandler MoveEvent { get; set; }
+
 
 		/// <summary>
 		/// Gets or sets a value indicating whether this <see cref="GREATClient.IDraw"/> is visible.
@@ -132,15 +202,6 @@ namespace GREATClient.BaseClass
 		public bool Loaded { get; set; }
 
 		/// <summary>
-		/// Gets the absolute position.
-		/// </summary>
-		/// <returns>The absolute position.</returns>
-		public virtual Vector2 GetAbsolutePosition()
-		{
-			return Position+Parent.GetAbsolutePosition();
-		}
-
-		/// <summary>
 		/// Gets or sets the game.
 		/// </summary>
 		/// <value>The game.</value>
@@ -154,6 +215,13 @@ namespace GREATClient.BaseClass
 
 		public IDraw() 
 		{
+			PositionMode = PositionType.Normal;
+			Bound = ScreenBound.TopLeft;
+			ScreenBoundOffset = Vector2.Zero;
+			XPercentOfTheScreen = 0;
+			YPercentOfTheScreen = 0;
+			MoveEvent = null;
+
 			Parent = null;
 			Loaded = false;
 			Z = 0;
@@ -173,6 +241,13 @@ namespace GREATClient.BaseClass
 		{
 			Parent = container;
 			OnLoad(Parent.Content, gd);
+
+			if (PositionMode == PositionType.ScreenRelativeInPercent) {
+				SetPositionInScreenPercent(XPercentOfTheScreen,YPercentOfTheScreen);
+			} else if (PositionMode == PositionType.ScreenRelative) {
+				SetPositionRelativeToScreen(Bound,ScreenBoundOffset);
+			}
+
 			Loaded = true;
 		}
 
@@ -181,9 +256,7 @@ namespace GREATClient.BaseClass
 		/// Will be call after it is had to a container
 		/// </summary>
 		/// <param name="content">Content.</param>
-		protected virtual void OnLoad(ContentManager content, GraphicsDevice gd) {
-
-		}
+		protected virtual void OnLoad(ContentManager content, GraphicsDevice gd) {}
 
 		/// <summary>
 		/// After load was call.
@@ -243,8 +316,7 @@ namespace GREATClient.BaseClass
 		/// Called after Update if Updatable
 		/// </summary>
 		/// <param name="dt">Dt.</param>
-		protected virtual void OnUpdate(GameTime dt)
-		{ }
+		protected virtual void OnUpdate(GameTime dt) { }
 
 		/// <summary>
 		/// Performs the action.
@@ -317,6 +389,88 @@ namespace GREATClient.BaseClass
 		/// <returns><c>true</c> if this instance is beyond the specified position; otherwise, <c>false</c>.</returns>
 		/// <param name="position">Position.</param>
 		public abstract bool IsBehind(Vector2 position);
+
+		/// <summary>
+		/// Sets the position in screen percent.
+		/// </summary>
+		/// <param name="x">The x coordinate.</param>
+		/// <param name="y">The y coordinate.</param>
+		public void SetPositionInScreenPercent(int x, int y)
+		{
+			PositionMode = PositionType.ScreenRelativeInPercent;
+			// Limit x and y since they are %.
+			XPercentOfTheScreen = x;
+			YPercentOfTheScreen = y;
+
+			if (screenService != null) {
+				m_Position = new Vector2(XPercentOfTheScreen * screenService.GameWindowSize.X / 100, 
+				                         YPercentOfTheScreen * screenService.GameWindowSize.Y / 100);
+			}
+		}
+
+		/// <summary>
+		/// Sets the position relative to screen bound.
+		/// </summary>
+		/// <param name="bound">Bound.</param>
+		/// <param name="offset">Offset.</param>
+		public void SetPositionRelativeToScreen(ScreenBound bound, Vector2 offset) 
+		{
+			PositionMode = PositionType.ScreenRelative;
+
+			Bound = bound;
+			ScreenBoundOffset = offset;
+
+			if (screenService != null) {
+				switch(bound) {
+					case ScreenBound.TopLeft:
+						m_Position = offset;
+						break;
+					case ScreenBound.TopRight:
+						m_Position = Vector2.Add(offset,new Vector2(screenService.GameWindowSize.X,0));
+						break;
+					case ScreenBound.BottomRight:
+						m_Position = Vector2.Add(offset,screenService.GameWindowSize);
+						break;
+					case ScreenBound.BottomLeft:
+						m_Position = Vector2.Add(offset,new Vector2(0,screenService.GameWindowSize.Y));
+						break;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Sets the position relative to object.
+		/// </summary>
+		/// <param name="objectBound">Object bound.</param>
+		/// <param name="offset">Offset.</param>
+		public void SetPositionRelativeToObject(IDraw objectBound, Vector2 offset)
+		{
+
+			PositionMode = PositionType.ObjectRelative;
+			ObjectBoundOffset = offset;
+
+			// I put it here to have to the movement code at the same place.
+			if (MoveEvent == null) {
+				MoveEvent = (Bound) => {
+					// Replace the current IDraw.
+					Position = Vector2.Add(offset,Bound.Position);
+				};
+			}
+
+			// If there is currently no bound, it can simply add everyting.
+			if (ObjectBound == null) {
+				ObjectBound = objectBound;
+				objectBound.Moved += MoveEvent;
+			} 
+			// If it is a new bound, remove old event handler.
+			else if (ObjectBound != objectBound) {
+				ObjectBound.Moved -= MoveEvent;
+				ObjectBound = objectBound;
+				objectBound.Moved += MoveEvent;
+			}
+
+			MoveEvent(objectBound);
+		}		
 	}
 }
 

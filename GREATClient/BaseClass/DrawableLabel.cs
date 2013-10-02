@@ -91,7 +91,6 @@ namespace GREATClient.BaseClass
 			}
 		}
 
-		// TODO : Relative
 		public override bool IsBehind(Vector2 position)
 		{
 			Vector2 labelPos = GetAbsolutePosition() - RelativeOrigin * Font.MeasureString(Text);
