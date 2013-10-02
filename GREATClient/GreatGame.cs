@@ -198,12 +198,12 @@ namespace GREATClient
 				graphics.PreferredBackBufferHeight = screenInfo.WindowHeight;
 			}
 
-			/*#if DEBUG
-			graphics.PreferredBackBufferWidth = screenInfo.WindowWidth;
-			graphics.PreferredBackBufferHeight = screenInfo.WindowHeight;
+			#if DEBUG
+			graphics.PreferredBackBufferWidth = 900;
+			graphics.PreferredBackBufferHeight = 700;
 
 			graphics.IsFullScreen = false;
-			#endif*/
+			#endif
 
 			graphics.ApplyChanges();
 		}
