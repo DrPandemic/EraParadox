@@ -39,8 +39,8 @@ namespace GREATClient.GameContent
 		DrawableRectangle ChampionSimulatedRect { get; set; }
 		DrawableRectangle ChampionNoCorrection { get; set; }
 
-		public MainDrawableChampion(ChampionSpawnInfo spawnInfo, GameMatch match)
-			: base(new MainClientChampion(spawnInfo, match))
+		public MainDrawableChampion(ChampionSpawnInfo spawnInfo, GameMatch match, ChampionsInfo champInfo)
+			: base(new MainClientChampion(spawnInfo, match), champInfo)
         {
         }
 

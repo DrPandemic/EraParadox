@@ -134,11 +134,11 @@ namespace GREATClient.Screens
 			IEntity ientity;
 
 			if (ourChampion) {
-				OurChampion = new MainDrawableChampion(spawn, Match);
+				OurChampion = new MainDrawableChampion(spawn, Match, ChampionsInfo);
 				idraw = OurChampion;
 				ientity = OurChampion.Entity;
 			} else {
-				var remote = new RemoteDrawableChampion(spawn);
+				var remote = new RemoteDrawableChampion(spawn, ChampionsInfo);
 				idraw = remote;
 				ientity = remote.Entity;
 			}
@@ -220,7 +220,7 @@ namespace GREATClient.Screens
 				foreach (StateUpdateData state in LastStateUpdateData) {
 					if (Match.CurrentState.ContainsEntity(state.ID)) {
 						IEntity entity = Match.CurrentState.GetEntity(state.ID);
-						entity.AuthoritativeChangePosition(state.Position, state.Velocity, TimeOfLastStateUpdate);
+						entity.AuthoritativeChangePosition(state.Position, state.Velocity, state.Animation, TimeOfLastStateUpdate);
 					}
 				}
 				LastStateUpdateData.Clear();

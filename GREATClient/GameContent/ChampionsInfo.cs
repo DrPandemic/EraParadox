@@ -23,27 +23,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Xml.Serialization;
 using System.IO;
+using GREATLib.Entities.Champions;
 
 namespace GREATClient.GameContent
 {
-	//TODO: TEMP REPLACE ME
-	public enum ChampionTypes
-	{
-		StickMan
-	}
-
-	public enum ChampionAnimation
-	{
-		run,
-		idle,
-		die,
-		jump,
-		spell1,
-		spell2,
-		spell3,
-		spell4
-	}
-
 	/// <summary>
 	/// The information of an animation of a champion.
 	/// </summary>

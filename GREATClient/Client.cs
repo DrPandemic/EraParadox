@@ -26,6 +26,9 @@ using System.IO;
 using System.Collections.Generic;
 using System.Diagnostics;
 using GREATLib.Network;
+using GREATLib.Entities.Champions;
+
+
 namespace GREATClient
 {
 	public sealed class Client
@@ -280,13 +283,15 @@ namespace GREATClient
 		public uint ID { get; private set; }
 		public Vec2 Position { get; private set; }
 		public Vec2 Velocity { get; private set; }
+		public ChampionAnimation Animation { get; private set; }
 
-		public StateUpdateData(uint id, Vec2 pos, Vec2 vel)
+		public StateUpdateData(uint id, Vec2 pos, Vec2 vel, ChampionAnimation anim)
 			: this()
 		{
 			ID = id;
 			Position = pos;
 			Velocity = vel;
+			Animation = anim;
 		}
 	}
 	public class StateUpdateEventArgs : CommandEventArgs
@@ -305,8 +310,9 @@ namespace GREATClient
 			while (msg.Position < msg.LengthBits) {
 				uint id = msg.ReadUInt32();
 				Vec2 pos = new Vec2(msg.ReadFloat(), msg.ReadFloat());
+				ChampionAnimation anim = (ChampionAnimation)msg.ReadByte();
 
-				EntitiesUpdatedState.Add(new StateUpdateData(id, pos, velocity));
+				EntitiesUpdatedState.Add(new StateUpdateData(id, pos, velocity, anim));
 			}
 		}
 	}

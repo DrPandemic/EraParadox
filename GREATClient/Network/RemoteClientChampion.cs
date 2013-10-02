@@ -24,6 +24,7 @@ using GREATLib.Network;
 using GREATLib;
 using System.Collections.Generic;
 using System.Diagnostics;
+using GREATLib.Entities.Champions;
 
 namespace GREATClient.Network
 {
@@ -45,21 +46,22 @@ namespace GREATClient.Network
 		/// </summary>
 		const float POSITION_DISTANCE_TO_SNAP = 50f;
 
-		SnapshotHistory<Vec2> StateHistory { get; set; }
+		SnapshotHistory<StateUpdateData> StateHistory { get; set; }
 
 		public Vec2 ServerPosition { get; set; }
 
         public RemoteClientChampion(ChampionSpawnInfo spawnInfo)
 			: base(spawnInfo)
         {
-			StateHistory = new SnapshotHistory<Vec2>(HISTORY_TIME_KEPT);
+			StateHistory = new SnapshotHistory<StateUpdateData>(HISTORY_TIME_KEPT);
         }
 
-		public override void AuthoritativeChangePosition(Vec2 position, Vec2 v, double time)
+		public override void AuthoritativeChangePosition(Vec2 position, Vec2 velocity, ChampionAnimation animation, double time)
 		{
-			ServerPosition = position;
+			StateUpdateData state = new StateUpdateData(ID, position, velocity, animation);
+			ServerPosition = state.Position;
 			StateHistory.AddSnapshot(
-				position,
+				state,
 				GetCurrentTimeSeconds());
 		}
 
@@ -87,8 +89,8 @@ namespace GREATClient.Network
 			double targetTime = GetCurrentTimeSeconds() - LERP_TIME_IN_THE_PAST.TotalSeconds;
 
 			if (!StateHistory.IsEmpty()) {
-				KeyValuePair<double, Vec2> before = StateHistory.GetSnapshotBefore(targetTime);
-				KeyValuePair<double, Vec2>? after = StateHistory.GetNext(before);
+				KeyValuePair<double, StateUpdateData> before = StateHistory.GetSnapshotBefore(targetTime);
+				KeyValuePair<double, StateUpdateData>? after = StateHistory.GetNext(before);
 
 				if (after.HasValue) {
 					Debug.Assert(targetTime <= after.Value.Key);
@@ -103,9 +105,11 @@ namespace GREATClient.Network
 					double progress = (targetTime - before.Key) / (after.Value.Key - before.Key);
 					Debug.Assert(0.0 - double.Epsilon <= progress && progress <= 1.0 + double.Epsilon);
 
-					Position = Vec2.Lerp(before.Value, after.Value.Value, (float)progress);
+					Position = Vec2.Lerp(before.Value.Position, after.Value.Value.Position, (float)progress);
+					// Take animation of closest state
+					Animation = Math.Abs(targetTime - before.Key) < Math.Abs(targetTime - after.Value.Key) ? before.Value.Animation : after.Value.Value.Animation;
 				} else {
-					Position = before.Value;
+					Position = before.Value.Position;
 					//TODO: extrapolation here
 				}
 			}

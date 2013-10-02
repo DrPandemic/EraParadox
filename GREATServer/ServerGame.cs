@@ -26,6 +26,7 @@ using System.Diagnostics;
 using GREATLib;
 using GREATLib.Network;
 using GREATLib.Entities;
+using GREATLib.Entities.Champions;
 
 namespace GREATServer
 {
@@ -157,10 +158,12 @@ namespace GREATServer
 				uint id = client.Champion.ID;
 				float x = client.Champion.Position.X;
 				float y = client.Champion.Position.Y;
+				byte anim = (byte)client.Champion.Animation;
 
 				msg.Write(id);
 				msg.Write(x);
 				msg.Write(y);
+				msg.Write(anim);
 			}
 		}
 
@@ -170,6 +173,7 @@ namespace GREATServer
 		void HandleActions()
 		{
 			foreach (ServerClient client in Clients.Values) {
+				client.Champion.Animation = ChampionAnimation.idle;
 				if (client.ActionsPackage.Count > 0) {
 
 					foreach (PlayerAction action in client.ActionsPackage) {
@@ -179,6 +183,8 @@ namespace GREATServer
 
 					client.ActionsPackage.Clear();
 				}
+
+				Console.WriteLine(client.Champion.Animation);
 			}
 		}
 
@@ -289,12 +295,15 @@ namespace GREATServer
 		{
 			switch (action.Type) {
 				case PlayerActionType.MoveLeft:
+					champion.Animation = ChampionAnimation.run;
 					match.Move(champion.ID, HorizontalDirection.Left);
 					break;
 					case PlayerActionType.MoveRight:
+					champion.Animation = ChampionAnimation.run;
 					match.Move(champion.ID, HorizontalDirection.Right);
 					break;
 					case PlayerActionType.Jump:
+					champion.Animation = ChampionAnimation.jump;
 					match.Jump(champion.ID);
 					break;
 					default:

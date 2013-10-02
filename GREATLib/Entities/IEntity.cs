@@ -20,6 +20,7 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using GREATLib;
+using GREATLib.Entities.Champions;
 
 namespace GREATLib.Entities
 {
@@ -69,6 +70,8 @@ namespace GREATLib.Entities
 		/// </summary>
 		public HorizontalDirection Direction { get; set; }
 
+		public ChampionAnimation Animation { get; set; }
+
 		/// <summary>
 		/// Gets or sets the simulated position of the entity.
 		/// On the server, this is the real position of our entities.
@@ -92,6 +95,8 @@ namespace GREATLib.Entities
 
 			Velocity = new Vec2();
 			Direction = HorizontalDirection.None;
+
+			Animation = ChampionAnimation.idle;
         }
 
 		/// <summary>
@@ -108,6 +113,7 @@ namespace GREATLib.Entities
             MoveSpeed = e.MoveSpeed;
             Position = e.Position.Clone() as Vec2;
             Velocity = e.Velocity.Clone() as Vec2;
+			Animation = e.Animation;
 		}
 
 		/// <summary>
@@ -115,7 +121,7 @@ namespace GREATLib.Entities
 		/// Depending on who the champion is (the local player or a remote client),
 		/// we'll act differently.
 		/// </summary>
-		public virtual void AuthoritativeChangePosition(Vec2 position, Vec2 velocity, double time)
+		public virtual void AuthoritativeChangePosition(Vec2 position, Vec2 velocity, ChampionAnimation animation, double time)
 		{
 			Position = position;
 		}

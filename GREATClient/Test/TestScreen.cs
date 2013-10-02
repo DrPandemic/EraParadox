@@ -33,6 +33,7 @@ using GREATClient.BaseClass.Menu;
 using GREATClient.BaseClass.ScreenInformation;
 using GameContent;
 using GREATLib.Entities;
+using GREATLib.Entities.Champions;
 
 namespace GREATClient.Test
 {
@@ -70,7 +71,7 @@ namespace GREATClient.Test
 			AddChild(menu, 5);
 			menu.SetPositionInScreenPercent(50, 50);
 
-			champSprite = new DrawableChampionSprite(ChampionTypes.StickMan, ChampionsInfo) 
+			champSprite = new DrawableChampionSprite(ChampionAnimation.idle, ChampionTypes.StickMan, ChampionsInfo) 
 			{ Position = new Vector2(200f, 300f) };
 
 			AddChild(champSprite);

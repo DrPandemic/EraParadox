@@ -55,6 +55,7 @@
     <Compile Include="Network\ServerCommand.cs" />
     <Compile Include="Network\MatchState.cs" />
     <Compile Include="Network\SnapshotHistory.cs" />
+    <Compile Include="Entities\Champions\ChampionTypes.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -63,5 +64,6 @@
     <Folder Include="Entities\" />
     <Folder Include="Physics\" />
     <Folder Include="Network\" />
+    <Folder Include="Entities\Champions\" />
   </ItemGroup>
 </Project>

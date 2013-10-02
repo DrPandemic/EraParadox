@@ -1,5 +1,5 @@
 //
-//  RemoteDrawableChampion.cs
+//  ChampionTypes.cs
 //
 //  Author:
 //       Jesse <jesse.emond@hotmail.com>
@@ -19,17 +19,24 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using GREATClient.Network;
-using GREATLib.Entities;
 
-namespace GREATClient.GameContent
+namespace GREATLib.Entities.Champions
 {
-    public class RemoteDrawableChampion : DrawableChampion<RemoteClientChampion>
-    {
-		public RemoteDrawableChampion(ChampionSpawnInfo spawnInfo, ChampionsInfo champInfo)
-			: base(new RemoteClientChampion(spawnInfo), champInfo)
-        {
-        }
-    }
+	public enum ChampionAnimation
+	{
+		run,
+		idle,
+		die,
+		jump,
+		spell1,
+		spell2,
+		spell3,
+		spell4
+	}
+
+	public enum ChampionTypes
+	{
+		StickMan
+	}
 }
 

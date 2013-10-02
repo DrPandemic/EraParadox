@@ -26,6 +26,7 @@ using GREATLib.Network;
 using System.Diagnostics;
 using System;
 using GREATClient.BaseClass;
+using GREATLib.Entities.Champions;
 
 namespace GREATClient.Network
 {
@@ -134,8 +135,10 @@ namespace GREATClient.Network
 		/// Take the new state update from the server (i.e. its correction) and store it, so
 		/// that we can apply it on our next frame.
 		/// </summary>
-		public override void AuthoritativeChangePosition(Vec2 position, Vec2 velocity, double time)
+		public override void AuthoritativeChangePosition(Vec2 position, Vec2 velocity, ChampionAnimation animation, double time)
 		{
+			Animation = animation;
+
 			ServerPosition = position;
 			Corrections.Add(new CorrectionInfo(time, (Vec2)position.Clone(), (Vec2)velocity.Clone(), PreviousLastAck));
 			Corrected = true;

@@ -26,6 +26,8 @@ using GREATLib.Entities;
 using GREATLib.Network;
 using GREATClient.BaseClass;
 using GREATClient.Network;
+using Microsoft.Xna.Framework.Graphics;
+using GREATLib.Entities.Champions;
 
 namespace GREATClient.GameContent
 {
@@ -37,8 +39,6 @@ namespace GREATClient.GameContent
     {
 		public IEntity Entity { get { return Champion; } }
 		protected ChampionT Champion { get; set; }
-
-		DrawableRectangle ChampionDrawnRect { get; set; }
 
 		/// <summary>
 		/// Gets or sets the current animation.
@@ -63,34 +63,29 @@ namespace GREATClient.GameContent
 		/// <value>The champion sprite.</value>
 		DrawableChampionSprite ChampionSprite { get; set; }
 
-        public DrawableChampion(ChampionSpawnInfo spawnInfo, ChampionsInfo championsInfo, GameMatch match) //TODO: new MainClientDrawableChampion
+        public DrawableChampion(ChampionT champion, ChampionsInfo championsInfo)
         {
 			Champion = champion;
-			ChampionSprite = new DrawableChampionSprite(ChampionTypes.StickMan, new ChampionsInfo());
+			ChampionSprite = new DrawableChampionSprite(ChampionAnimation.idle, ChampionTypes.StickMan, championsInfo);
 			ChampionSprite.PlayAnimation(ChampionAnimation.run);
-			ChampionSprite.RelativeOrigin = new Vector2(0.5f,0.5f);
+			ChampionSprite.RelativeOrigin = new Vector2(0.5f, 1f);
         }
 		protected override void OnLoad(Microsoft.Xna.Framework.Content.ContentManager content, Microsoft.Xna.Framework.Graphics.GraphicsDevice gd)
 		{
 			base.OnLoad(content, gd);
-
-			AddChild(ChampionServerRect = new DrawableRectangle(new Rectangle(0, 0, 15, 30), Color.Green));
-
-			ChampionDrawnRect = new DrawableRectangle(new Rectangle(0, 0, 15, 30), Color.White);
-			AddChild(ChampionDrawnRect);
 
 			AddChild(ChampionSprite);
 		}
 		protected override void OnUpdate(Microsoft.Xna.Framework.GameTime dt)
 		{
 			// Update the champion animation
+			CurrentAnimation = Champion.Animation;
 
+			Champion.Update(dt);
 
-			//Champion.Update(dt);
-
-			ChampionServerRect.Position = GameLibHelper.ToVector2(Champion.ServerPosition);
-			ChampionDrawnRect.Position = GameLibHelper.ToVector2(Champion.DrawnPosition);
-			ChampionSprite.Position = GameLibHelper.ToVector2(Champion.DrawnPosition);
+			var rect = Champion.CreateCollisionRectangle();
+			ChampionSprite.Position = GameLibHelper.ToVector2(
+				Champion.DrawnPosition + new Vec2(rect.Width / 2f, rect.Height));
 		}
 
 		public override bool IsBehind(Vector2 position)
