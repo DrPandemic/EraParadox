@@ -27,8 +27,11 @@ namespace GREATLib.Network
 	/// </summary>
     public enum PlayerActionType
     {
+		// No actions
+		   Idle = 0
+
 		// Movement
-		   MoveRight = 0
+		,  MoveRight
 		,  MoveLeft
 		,  Jump
 

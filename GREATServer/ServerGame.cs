@@ -176,29 +176,38 @@ namespace GREATServer
 		void HandleActions()
 		{
 			foreach (ServerClient client in Clients.Values) {
-				client.Champion.ResetAnimInfo();
 				if (client.ActionsPackage.Count > 0) {
 					foreach (PlayerAction action in client.ActionsPackage) {
+						client.AnimData.Reset();
+
 						HandleAction(client.Champion.ID, action);
 						client.LastAcknowledgedActionID = Math.Max(client.LastAcknowledgedActionID, action.ID);
+
+						UpdateAnimationDataFromAction(client.AnimData, action.Type);
 					}
 
 					client.ActionsPackage.Clear();
 				}
-
-				client.Champion.Animation = client.Champion.GetAnim(1f, //TODO: replace with actual HP
-				                                                    Match.CurrentState.IsOnGround(client.Champion.ID));
-
-				UpdateFacingDirection(client.Champion);
 			}
 		}
 
-		static void UpdateFacingDirection(ServerChampion champ)
+		static void UpdateAnimationDataFromAction(ChampionAnimData anim, PlayerActionType action)
 		{
-			/*champ.FacingLeft =
-				champ.Movement < 0 ? true : // now moving left
-					(champ.Movement > 0 ? false : // now moving right
-					 champ.FacingLeft);*/ // did not change
+			switch (action) {
+				case PlayerActionType.Idle:
+					anim.Idle = true;
+					break;
+
+				case PlayerActionType.MoveLeft:
+					--anim.Movement;
+					break;
+
+				case PlayerActionType.MoveRight:
+					++anim.Movement;
+					break;
+
+				default: break;
+			}
 		}
 
 		void HandleAction(uint id, PlayerAction action)
@@ -219,7 +228,7 @@ namespace GREATServer
 
 				// Simulate from our previous snapshot to our current action to be up-to-date
 				if (state.Value.ContainsEntity(id)) {
-					ServerChampion player = (ServerChampion)state.Value.GetEntity(id);
+					var player = state.Value.GetEntity(id);
 					float deltaT = (float)(time - state.Key);
 					if (deltaT > 0f) { // if we have something to simulate...
 						state.Value.ApplyPhysicsUpdate(id, deltaT);
@@ -304,21 +313,21 @@ namespace GREATServer
 			return position;
 		}
 
-		static void DoAction(MatchState match, ServerChampion champion, PlayerAction action)
+		static void DoAction(MatchState match, IEntity champion, PlayerAction action)
 		{
 			switch (action.Type) {
 				case PlayerActionType.MoveLeft:
-					--champion.Movement;
-					champion.FacingLeft = true;
 					match.Move(champion.ID, HorizontalDirection.Left);
+					champion.FacingLeft = true;
 					break;
 				case PlayerActionType.MoveRight:
-					++champion.Movement;
-					champion.FacingLeft = false;
 					match.Move(champion.ID, HorizontalDirection.Right);
+					champion.FacingLeft = false;
 					break;
 				case PlayerActionType.Jump:
 					match.Jump(champion.ID);
+					break;
+				case PlayerActionType.Idle:
 					break;
 				default:
 					Debug.Fail("Invalid player action.");
@@ -340,6 +349,16 @@ namespace GREATServer
                 if (time > 0.0) {
                     Match.CurrentState.ApplyPhysicsUpdate(client.Champion.ID, (float)time);
                 }
+
+				client.Champion.Animation = client.Champion.GetAnim(1f, //TODO: replace with actual HP
+				                                                    Match.CurrentState.IsOnGround(client.Champion.ID),
+				                                                    false,
+				                                                    false,
+				                                                    false,
+				                                                    false,
+				                                                    client.AnimData.Movement,
+				                                                    client.AnimData.Idle,
+				                                                    client.Champion.Animation);
 			}
 		}
 

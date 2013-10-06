@@ -35,6 +35,7 @@ namespace GREATServer
     {
 		public NetConnection Connection { get; private set; }
 		public ServerChampion Champion { get; private set; }
+		public ChampionAnimData AnimData { get; private set; }
 		public List<PlayerAction> ActionsPackage { get; private set; }
 		public uint LastAcknowledgedActionID { get; set; }
 
@@ -44,6 +45,7 @@ namespace GREATServer
 			Champion = champion;
 			ActionsPackage = new List<PlayerAction>();
 			LastAcknowledgedActionID = IDGenerator.NO_ID;
+			AnimData = new ChampionAnimData();
         }
     }
 }

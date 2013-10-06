@@ -29,6 +29,8 @@ namespace GREATLib.Entities
 	/// </summary>
     public class IEntity : ICloneable
     {
+		public const float MAX_SPEED = 1500f;
+
 		/// <summary>
 		/// The unique ID of the entity.
 		/// </summary>
@@ -85,7 +87,7 @@ namespace GREATLib.Entities
         public IEntity(uint id, Vec2 startingPosition)
         {
 			//TODO: depend on who the champion is
-			MoveSpeed = 100f;
+			MoveSpeed = 90f;
 			CollisionWidth = 15f;
 			CollisionHeight = 30f;
 			JumpForce = 750;

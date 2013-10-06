@@ -128,6 +128,9 @@ namespace GREATLib.Physics
 			// Apply gravity
 			entity.Velocity += GRAVITY * deltaSeconds;
 
+			if (entity.Velocity.GetLengthSquared() > IEntity.MAX_SPEED * IEntity.MAX_SPEED)
+				entity.Velocity = Vec2.Normalize(entity.Velocity) * IEntity.MAX_SPEED;
+
 			// Multiple physics passes to reduce the chance of "going through" obstacles when we're too fast.
 			Vec2 passMovement = (entity.Velocity * deltaSeconds) / PHYSICS_PASSES;
 			for (int pass = 0; pass < PHYSICS_PASSES; ++pass) {

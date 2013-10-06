@@ -247,13 +247,18 @@ namespace GREATClient.Screens
 				if (TimeSinceLastInputSent >= SEND_INPUTS_TO_SERVER_INTERVAL.TotalSeconds) {
 					var package = OurChampion.GetActionPackage();
 
-					if (package.Count > 0) {
-						// Send packaged input
-						Client.SendPlayerActionPackage(package);
-						package.Clear();
-
-						TimeSinceLastInputSent = 0f;
+					if (package.Count == 0) { // no actions? send a heartbeat to say that we're connected
+						package.Enqueue(new PlayerAction(IDGenerator.GenerateID(),
+						                                 PlayerActionType.Idle,
+						                                 (float)Client.Instance.GetTime().TotalSeconds,
+						                                 OurChampion.Champion.Position));
 					}
+
+					// Send packaged input
+					Client.SendPlayerActionPackage(package);
+					package.Clear();
+
+					TimeSinceLastInputSent = 0f;
 				}
 			}
 		}

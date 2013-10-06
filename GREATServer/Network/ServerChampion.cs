@@ -25,45 +25,59 @@ using GREATLib.Entities.Champions;
 
 namespace GREATServer.Network
 {
+	public class ChampionAnimData
+	{
+		public int Movement { get; set; }
+		public bool Idle { get; set; }
+
+		public ChampionAnimData()
+		{
+			Reset();
+		}
+
+		public void Reset()
+		{
+			Movement = 0;
+			Idle = true;
+		}
+	}
+
     public class ServerChampion : IEntity
     {
-		public bool CastSpell1 { get; set; }
-		public bool CastSpell2 { get; set; }
-		public bool CastSpell3 { get; set; }
-		public bool CastSpell4 { get; set; }
-		public int Movement { get; set; }
-
 		public ServerChampion(uint id, Vec2 pos)
 			: base(id, pos)
         {
-			ResetAnimInfo();
         }
 
-		public void ResetAnimInfo()
-		{
-			CastSpell1 = CastSpell2 = CastSpell3 = CastSpell4 = false;
-			Movement = 0;
-		}
-
-		public ChampionAnimation GetAnim(float health, bool onGround)
+		public ChampionAnimation GetAnim(float health, bool onGround,
+		                                 bool castingSpell1,
+		                                 bool castingSpell2,
+		                                 bool castingSpell3,
+		                                 bool castingSpell4,
+		                                 int movement,
+		                                 bool isIdle,
+		                                 ChampionAnimation oldAnim)
 		{
 			// Dead champion
 			if (health <= 0f) return ChampionAnimation.die;
 
 			// Casting spell
-			if (CastSpell1) return ChampionAnimation.spell1;
-			if (CastSpell2) return ChampionAnimation.spell2;
-			if (CastSpell3) return ChampionAnimation.spell3;
-			if (CastSpell4) return ChampionAnimation.spell4;
+			if (castingSpell1) return ChampionAnimation.spell1;
+			if (castingSpell2) return ChampionAnimation.spell2;
+			if (castingSpell3) return ChampionAnimation.spell3;
+			if (castingSpell4) return ChampionAnimation.spell4;
 
 			// Falling/jumping
 			if (!onGround) return ChampionAnimation.jump;
 
 			// Moving left/right
-			if (Movement != 0) return ChampionAnimation.run;
+			if (movement != 0) return ChampionAnimation.run;
 
-			// Default to idle
-			return ChampionAnimation.idle;
+			// No recent actions
+			if (isIdle) return ChampionAnimation.idle;
+
+			// No updates since, keep our previous animation
+			return oldAnim;
 		}
 
 		public override object Clone()
@@ -75,13 +89,7 @@ namespace GREATServer.Network
 		public override void Clone(IEntity champ)
 		{
 			ServerChampion c = (ServerChampion)champ;
-
 			base.Clone(c);
-			CastSpell1 = c.CastSpell1;
-			CastSpell2 = c.CastSpell2;
-			CastSpell3 = c.CastSpell3;
-			CastSpell4 = c.CastSpell4;
-			Movement = c.Movement;
 		}
     }
 }
