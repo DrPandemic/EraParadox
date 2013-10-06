@@ -56,12 +56,11 @@ namespace GREATClient.Network
 			StateHistory = new SnapshotHistory<StateUpdateData>(HISTORY_TIME_KEPT);
         }
 
-		public override void AuthoritativeChangePosition(Vec2 position, Vec2 velocity, ChampionAnimation animation, double time)
+		public override void AuthoritativeChangePosition(StateUpdateData data, double time)
 		{
-			StateUpdateData state = new StateUpdateData(ID, position, velocity, animation);
-			ServerPosition = state.Position;
+			ServerPosition = data.Position;
 			StateHistory.AddSnapshot(
-				state,
+				data,
 				GetCurrentTimeSeconds());
 		}
 
@@ -107,7 +106,9 @@ namespace GREATClient.Network
 
 					Position = Vec2.Lerp(before.Value.Position, after.Value.Value.Position, (float)progress);
 					// Take animation of closest state
-					Animation = Math.Abs(targetTime - before.Key) < Math.Abs(targetTime - after.Value.Key) ? before.Value.Animation : after.Value.Value.Animation;
+					var closestState = Math.Abs(targetTime - before.Key) > Math.Abs(targetTime - after.Value.Key) ? before.Value : after.Value.Value;
+					Animation = closestState.Animation;
+					FacingLeft = closestState.FacingLeft;
 				} else {
 					Position = before.Value.Position;
 					//TODO: extrapolation here

@@ -137,12 +137,14 @@ namespace GREATClient.Network
 		/// Take the new state update from the server (i.e. its correction) and store it, so
 		/// that we can apply it on our next frame.
 		/// </summary>
-		public override void AuthoritativeChangePosition(Vec2 position, Vec2 velocity, ChampionAnimation animation, double time)
+		public override void AuthoritativeChangePosition(StateUpdateData data, double time)
 		{
-			Animation = animation;
+			base.AuthoritativeChangePosition(data, time);
+			Animation = data.Animation;
+			FacingLeft = data.FacingLeft;
 
-			ServerPosition = position;
-			Corrections.Add(new CorrectionInfo(time, (Vec2)position.Clone(), (Vec2)velocity.Clone(), PreviousLastAck));
+			ServerPosition = data.Position;
+			Corrections.Add(new CorrectionInfo(time, data.Position, data.Velocity, PreviousLastAck));
 			Corrected = true;
 
             // Remove corrections that are too old

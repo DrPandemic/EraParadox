@@ -160,11 +160,13 @@ namespace GREATServer
 				float x = client.Champion.Position.X;
 				float y = client.Champion.Position.Y;
 				byte anim = (byte)client.Champion.Animation;
+				bool facingLeft = client.Champion.FacingLeft;
 
 				msg.Write(id);
 				msg.Write(x);
 				msg.Write(y);
 				msg.Write(anim);
+				msg.Write(facingLeft);
 			}
 		}
 
@@ -186,7 +188,17 @@ namespace GREATServer
 
 				client.Champion.Animation = client.Champion.GetAnim(1f, //TODO: replace with actual HP
 				                                                    Match.CurrentState.IsOnGround(client.Champion.ID));
+
+				UpdateFacingDirection(client.Champion);
 			}
+		}
+
+		static void UpdateFacingDirection(ServerChampion champ)
+		{
+			/*champ.FacingLeft =
+				champ.Movement < 0 ? true : // now moving left
+					(champ.Movement > 0 ? false : // now moving right
+					 champ.FacingLeft);*/ // did not change
 		}
 
 		void HandleAction(uint id, PlayerAction action)
@@ -297,16 +309,18 @@ namespace GREATServer
 			switch (action.Type) {
 				case PlayerActionType.MoveLeft:
 					--champion.Movement;
+					champion.FacingLeft = true;
 					match.Move(champion.ID, HorizontalDirection.Left);
 					break;
-					case PlayerActionType.MoveRight:
+				case PlayerActionType.MoveRight:
 					++champion.Movement;
+					champion.FacingLeft = false;
 					match.Move(champion.ID, HorizontalDirection.Right);
 					break;
-					case PlayerActionType.Jump:
+				case PlayerActionType.Jump:
 					match.Jump(champion.ID);
 					break;
-					default:
+				default:
 					Debug.Fail("Invalid player action.");
 					ILogger.Log("Invalid player action passed in a package: " + action.Type.ToString(), LogPriority.Warning);
 					break;

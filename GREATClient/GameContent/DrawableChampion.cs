@@ -37,8 +37,7 @@ namespace GREATClient.GameContent
 	public abstract class DrawableChampion<ChampionT> : Container 
 		where ChampionT : ClientChampion
     {
-		public IEntity Entity { get { return Champion; } }
-		protected ChampionT Champion { get; set; }
+		public ChampionT Champion { get; set; }
 
 		/// <summary>
 		/// Gets or sets the current animation.
@@ -90,6 +89,8 @@ namespace GREATClient.GameContent
 			ChampionSprite.Position = GameLibHelper.ToVector2(
 				Champion.DrawnPosition + new Vec2(rect.Width / 2f, rect.Height));
 			ChampionRect.Position = GameLibHelper.ToVector2(Champion.DrawnPosition);
+
+			ChampionSprite.Effects = Champion.FacingLeft ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 		}
 
 		public override bool IsBehind(Vector2 position)

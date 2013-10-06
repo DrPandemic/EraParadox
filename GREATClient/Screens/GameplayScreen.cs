@@ -104,7 +104,7 @@ namespace GREATClient.Screens
 			StateUpdateEventArgs e = args as StateUpdateEventArgs;
 			Debug.Assert(e != null);
 
-			OurChampion.Entity.SetLastAcknowledgedActionID(e.LastAcknowledgedActionID);
+			OurChampion.Champion.SetLastAcknowledgedActionID(e.LastAcknowledgedActionID);
 			LastStateUpdateData = new List<StateUpdateData>(e.EntitiesUpdatedState.ToArray());
 			TimeOfLastStateUpdate = Client.GetTime().TotalSeconds;
 		}
@@ -140,11 +140,11 @@ namespace GREATClient.Screens
 			if (ourChampion) {
 				OurChampion = new MainDrawableChampion(spawn, Match, ChampionsInfo);
 				idraw = OurChampion;
-				ientity = OurChampion.Entity;
+				ientity = OurChampion.Champion;
 			} else {
 				var remote = new RemoteDrawableChampion(spawn, ChampionsInfo);
 				idraw = remote;
-				ientity = remote.Entity;
+				ientity = remote.Champion;
 			}
 
 			AddChild(idraw);
@@ -227,7 +227,8 @@ namespace GREATClient.Screens
 				foreach (StateUpdateData state in LastStateUpdateData) {
 					if (Match.CurrentState.ContainsEntity(state.ID)) {
 						IEntity entity = Match.CurrentState.GetEntity(state.ID);
-						entity.AuthoritativeChangePosition(state.Position, state.Velocity, state.Animation, TimeOfLastStateUpdate);
+						ClientChampion champ = (ClientChampion)entity;
+						champ.AuthoritativeChangePosition(state, TimeOfLastStateUpdate);
 					}
 				}
 				LastStateUpdateData.Clear();

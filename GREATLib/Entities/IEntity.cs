@@ -71,6 +71,7 @@ namespace GREATLib.Entities
 		public HorizontalDirection Direction { get; set; }
 
 		public ChampionAnimation Animation { get; set; }
+		public bool FacingLeft { get; set; }
 
 		/// <summary>
 		/// Gets or sets the simulated position of the entity.
@@ -97,6 +98,7 @@ namespace GREATLib.Entities
 			Direction = HorizontalDirection.None;
 
 			Animation = ChampionAnimation.idle;
+			FacingLeft = false;
         }
 
 		/// <summary>
@@ -114,22 +116,8 @@ namespace GREATLib.Entities
             Position = e.Position.Clone() as Vec2;
             Velocity = e.Velocity.Clone() as Vec2;
 			Animation = e.Animation;
+			FacingLeft = e.FacingLeft;
 		}
-
-		/// <summary>
-		/// Called when an authority (i.e. the server) indicates a new position.
-		/// Depending on who the champion is (the local player or a remote client),
-		/// we'll act differently.
-		/// </summary>
-		public virtual void AuthoritativeChangePosition(Vec2 position, Vec2 velocity, ChampionAnimation animation, double time)
-		{
-			Position = position;
-		}
-
-		/// <summary>
-		/// Sets the ID of the last acknowledged action by the server.
-		/// </summary>
-		public virtual void SetLastAcknowledgedActionID(uint id) { }
 
 		/// <summary>
 		/// Creates the rectangle that represents the collision rectangle of the entity.

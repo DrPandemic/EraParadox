@@ -23,6 +23,7 @@ using GREATLib;
 using GREATLib.Entities;
 using GREATClient.BaseClass;
 using Microsoft.Xna.Framework;
+using GREATLib.Entities.Champions;
 
 namespace GREATClient.Network
 {
@@ -44,6 +45,21 @@ namespace GREATClient.Network
 		public virtual void Update(GameTime dt)
 		{
 		}
+
+		/// <summary>
+		/// Called when an authority (i.e. the server) indicates a new position.
+		/// Depending on who the champion is (the local player or a remote client),
+		/// we'll act differently.
+		/// </summary>
+		public virtual void AuthoritativeChangePosition(StateUpdateData data, double time)
+		{
+			Position = data.Position;
+		}
+
+		/// <summary>
+		/// Sets the ID of the last acknowledged action by the server.
+		/// </summary>
+		public virtual void SetLastAcknowledgedActionID(uint id) { }
     }
 }
 

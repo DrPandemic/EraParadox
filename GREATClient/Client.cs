@@ -284,14 +284,16 @@ namespace GREATClient
 		public Vec2 Position { get; private set; }
 		public Vec2 Velocity { get; private set; }
 		public ChampionAnimation Animation { get; private set; }
+		public bool FacingLeft { get; private set; }
 
-		public StateUpdateData(uint id, Vec2 pos, Vec2 vel, ChampionAnimation anim)
+		public StateUpdateData(uint id, Vec2 pos, Vec2 vel, ChampionAnimation anim, bool facingLeft)
 			: this()
 		{
 			ID = id;
 			Position = pos;
 			Velocity = vel;
 			Animation = anim;
+			FacingLeft = facingLeft;
 		}
 	}
 	public class StateUpdateEventArgs : CommandEventArgs
@@ -311,8 +313,9 @@ namespace GREATClient
 				uint id = msg.ReadUInt32();
 				Vec2 pos = new Vec2(msg.ReadFloat(), msg.ReadFloat());
 				ChampionAnimation anim = (ChampionAnimation)msg.ReadByte();
+				bool facingLeft = msg.ReadBoolean();
 
-				EntitiesUpdatedState.Add(new StateUpdateData(id, pos, velocity, anim));
+				EntitiesUpdatedState.Add(new StateUpdateData(id, pos, velocity, anim, facingLeft));
 			}
 		}
 	}
