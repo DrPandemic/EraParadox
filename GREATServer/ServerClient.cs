@@ -24,6 +24,7 @@ using GREATLib;
 using GREATLib.Entities;
 using GREATLib.Network;
 using System.Collections.Generic;
+using GREATServer.Network;
 
 namespace GREATServer
 {
@@ -33,11 +34,11 @@ namespace GREATServer
     public class ServerClient
     {
 		public NetConnection Connection { get; private set; }
-		public IEntity Champion { get; private set; }
+		public ServerChampion Champion { get; private set; }
 		public List<PlayerAction> ActionsPackage { get; private set; }
 		public uint LastAcknowledgedActionID { get; set; }
 
-        public ServerClient(NetConnection conn, IEntity champion)
+		public ServerClient(NetConnection conn, ServerChampion champion)
         {
 			Connection = conn;
 			Champion = champion;

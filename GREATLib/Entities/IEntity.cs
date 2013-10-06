@@ -102,7 +102,7 @@ namespace GREATLib.Entities
 		/// <summary>
 		/// Clone the specified entity to copy its values.
 		/// </summary>
-		public void Clone(IEntity e)
+		public virtual void Clone(IEntity e)
 		{
 			CollisionWidth = e.CollisionWidth;
             CollisionHeight = e.CollisionHeight;

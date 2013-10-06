@@ -111,6 +111,13 @@ namespace GREATLib.Network
 			}
 		}
 
+		public bool IsOnGround(uint id)
+		{
+			Debug.Assert(Entities.ContainsKey(id));
+
+			return Entities.ContainsKey(id) ? Physics.IsOnGround(Entities[id]) : false;
+		}
+
 		/// <summary>
 		/// Clones the match state.
 		/// </summary>

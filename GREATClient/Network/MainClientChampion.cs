@@ -76,6 +76,7 @@ namespace GREATClient.Network
 
 		IEntity NoCorrections { get; set; }
 		public Vec2 NoCorrPos { get { return NoCorrections.Position; } }
+		public Vec2 ServerCorrectionUsed { get; private set; }
 
 		public MainClientChampion(ChampionSpawnInfo spawnInfo, GameMatch match)
 			: base(spawnInfo)
@@ -83,6 +84,7 @@ namespace GREATClient.Network
 			Match = match;
 
 			ServerPosition = Position;
+			ServerCorrectionUsed = Position;
 
 			PackagedActions = new Queue<PlayerAction>();
 			RecentActions = new List<PlayerAction>();
@@ -174,7 +176,7 @@ namespace GREATClient.Network
 				return;
 			}
 
-			ServerPosition = corr.Position;
+			ServerCorrectionUsed = corr.Position;
 
 			// go back to our last acknowledged state (if any)
 			double time = corr.Time;

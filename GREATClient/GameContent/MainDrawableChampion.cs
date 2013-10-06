@@ -31,13 +31,14 @@ namespace GREATClient.GameContent
 {
     public sealed class MainDrawableChampion : DrawableChampion<MainClientChampion>
     {
-		const bool VIEW_DEBUG_RECTS = false;
+		public const bool VIEW_DEBUG_RECTS = false;
 		/// <summary>
 		/// TODO: class for debug info
 		/// </summary>
 		DrawableRectangle ChampionServerRect { get; set; }
 		DrawableRectangle ChampionSimulatedRect { get; set; }
 		DrawableRectangle ChampionNoCorrection { get; set; }
+		DrawableRectangle ChampionCorrectionUsed { get; set; }
 
 		public MainDrawableChampion(ChampionSpawnInfo spawnInfo, GameMatch match, ChampionsInfo champInfo)
 			: base(new MainClientChampion(spawnInfo, match), champInfo)
@@ -46,10 +47,13 @@ namespace GREATClient.GameContent
 
 		protected override void OnLoad(Microsoft.Xna.Framework.Content.ContentManager content, Microsoft.Xna.Framework.Graphics.GraphicsDevice gd)
 		{
-			Parent.AddChild(ChampionServerRect = new DrawableRectangle(new Rectangle(0, 0, 15, 30), Color.Green));
-			Parent.AddChild(ChampionSimulatedRect = new DrawableRectangle(new Rectangle(0, 0, 15, 30), Color.Red));
-			Parent.AddChild(ChampionNoCorrection = new DrawableRectangle(new Rectangle(0, 0, 15, 30), Color.Yellow));
-			ChampionNoCorrection.Visible = ChampionServerRect.Visible = ChampionSimulatedRect.Visible = VIEW_DEBUG_RECTS;
+			Rect rect = Champion.CreateCollisionRectangle();
+			Parent.AddChild(ChampionServerRect = new DrawableRectangle(rect, Color.Green));
+			Parent.AddChild(ChampionSimulatedRect = new DrawableRectangle(rect, Color.Red));
+			Parent.AddChild(ChampionNoCorrection = new DrawableRectangle(rect, Color.Yellow * 0.5f));
+			Parent.AddChild(ChampionCorrectionUsed = new DrawableRectangle(rect, Color.Blue * 0.8f));
+			ChampionNoCorrection.Visible = ChampionServerRect.Visible = 
+				ChampionSimulatedRect.Visible = ChampionCorrectionUsed.Visible = VIEW_DEBUG_RECTS;
 
 			base.OnLoad(content, gd);
 		}
@@ -61,6 +65,7 @@ namespace GREATClient.GameContent
 			ChampionServerRect.Position = GameLibHelper.ToVector2(Champion.ServerPosition);
 			ChampionSimulatedRect.Position = GameLibHelper.ToVector2(Champion.Position);
 			ChampionNoCorrection.Position = GameLibHelper.ToVector2(Champion.NoCorrPos);
+			ChampionCorrectionUsed.Position = GameLibHelper.ToVector2(Champion.ServerCorrectionUsed);
 		}
 
 		/// <summary>

@@ -54,12 +54,15 @@ namespace GREATLib.Physics
 			HandleCollisionGroup(entity, collisions);
 		}
 
+		const int JUMP_X_TOLERANCE = 4;
 		const int JUMP_Y_TOLERANCE = 2;
 		public bool HasCollisionBelow(IEntity entity)
 		{
 			Debug.Assert(entity != null);
 
 			Rect r = entity.CreateCollisionRectangle();
+			r.X -= JUMP_X_TOLERANCE / 2f;
+			r.Width += JUMP_X_TOLERANCE;
 			r.Y += JUMP_Y_TOLERANCE; // move it down a bit
 
 			var tiles = World.Map.GetTouchedTiles(r);

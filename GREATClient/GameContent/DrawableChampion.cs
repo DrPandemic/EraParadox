@@ -62,6 +62,7 @@ namespace GREATClient.GameContent
 		/// </summary>
 		/// <value>The champion sprite.</value>
 		DrawableChampionSprite ChampionSprite { get; set; }
+		DrawableRectangle ChampionRect { get ; set; }
 
         public DrawableChampion(ChampionT champion, ChampionsInfo championsInfo)
         {
@@ -75,6 +76,8 @@ namespace GREATClient.GameContent
 			base.OnLoad(content, gd);
 
 			AddChild(ChampionSprite);
+			AddChild(ChampionRect = new DrawableRectangle(Champion.CreateCollisionRectangle(), Color.White * 0.7f));
+			ChampionRect.Visible = MainDrawableChampion.VIEW_DEBUG_RECTS;
 		}
 		protected override void OnUpdate(Microsoft.Xna.Framework.GameTime dt)
 		{
@@ -86,6 +89,7 @@ namespace GREATClient.GameContent
 			var rect = Champion.CreateCollisionRectangle();
 			ChampionSprite.Position = GameLibHelper.ToVector2(
 				Champion.DrawnPosition + new Vec2(rect.Width / 2f, rect.Height));
+			ChampionRect.Position = GameLibHelper.ToVector2(Champion.DrawnPosition);
 		}
 
 		public override bool IsBehind(Vector2 position)

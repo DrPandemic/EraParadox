@@ -27,6 +27,7 @@ using GREATLib;
 using GREATLib.Network;
 using GREATLib.Entities;
 using GREATLib.Entities.Champions;
+using GREATServer.Network;
 
 namespace GREATServer
 {
@@ -173,9 +174,8 @@ namespace GREATServer
 		void HandleActions()
 		{
 			foreach (ServerClient client in Clients.Values) {
-				client.Champion.Animation = ChampionAnimation.idle;
+				client.Champion.ResetAnimInfo();
 				if (client.ActionsPackage.Count > 0) {
-
 					foreach (PlayerAction action in client.ActionsPackage) {
 						HandleAction(client.Champion.ID, action);
 						client.LastAcknowledgedActionID = Math.Max(client.LastAcknowledgedActionID, action.ID);
@@ -184,7 +184,8 @@ namespace GREATServer
 					client.ActionsPackage.Clear();
 				}
 
-				Console.WriteLine(client.Champion.Animation);
+				client.Champion.Animation = client.Champion.GetAnim(1f, //TODO: replace with actual HP
+				                                                    Match.CurrentState.IsOnGround(client.Champion.ID));
 			}
 		}
 
@@ -206,7 +207,7 @@ namespace GREATServer
 
 				// Simulate from our previous snapshot to our current action to be up-to-date
 				if (state.Value.ContainsEntity(id)) {
-					IEntity player = state.Value.GetEntity(id);
+					ServerChampion player = (ServerChampion)state.Value.GetEntity(id);
 					float deltaT = (float)(time - state.Key);
 					if (deltaT > 0f) { // if we have something to simulate...
 						state.Value.ApplyPhysicsUpdate(id, deltaT);
@@ -291,19 +292,18 @@ namespace GREATServer
 			return position;
 		}
 
-		static void DoAction(MatchState match, IEntity champion, PlayerAction action)
+		static void DoAction(MatchState match, ServerChampion champion, PlayerAction action)
 		{
 			switch (action.Type) {
 				case PlayerActionType.MoveLeft:
-					champion.Animation = ChampionAnimation.run;
+					--champion.Movement;
 					match.Move(champion.ID, HorizontalDirection.Left);
 					break;
 					case PlayerActionType.MoveRight:
-					champion.Animation = ChampionAnimation.run;
+					++champion.Movement;
 					match.Move(champion.ID, HorizontalDirection.Right);
 					break;
 					case PlayerActionType.Jump:
-					champion.Animation = ChampionAnimation.jump;
 					match.Jump(champion.ID);
 					break;
 					default:
@@ -336,7 +336,7 @@ namespace GREATServer
 		{
 			ILogger.Log("New player added to the game.", LogPriority.High);
 
-			IEntity champion = CreateRandomChampion();
+			ServerChampion champion = CreateRandomChampion();
 
 			// Send to the client that asked to join, along with the info of the current players
 			List<IEntity> remoteChampions = new List<IEntity>();
@@ -402,10 +402,10 @@ namespace GREATServer
 		/// Creates a random champion at a random starting position (mainly used
 		/// for testing purposes).
 		/// </summary>
-		static IEntity CreateRandomChampion()
+		static ServerChampion CreateRandomChampion()
 		{
-			return new IEntity(IDGenerator.GenerateID(), 
-			                   new Vec2(Utilities.RandomFloat(Utilities.Random, 100f, 400f), 0f));
+			return new ServerChampion(IDGenerator.GenerateID(), 
+			                   new Vec2(Utilities.RandomFloat(Utilities.Random, 100f, 400f), 150f));
 		}
 
 		/// <summary>

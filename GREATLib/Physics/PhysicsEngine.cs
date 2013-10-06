@@ -177,7 +177,7 @@ namespace GREATLib.Physics
 			             && entity.Velocity != null);
 
 			// We may only jump when we're on the ground
-			if (Collisions.HasCollisionBelow(entity)) {
+			if (IsOnGround(entity)) {
 				entity.Velocity.Y = -entity.JumpForce;
 			}
 		}
@@ -189,6 +189,11 @@ namespace GREATLib.Physics
 		{
 			entity.Velocity = Vec2.Zero;
 			entity.Direction = HorizontalDirection.None;
+		}
+
+		public bool IsOnGround(IEntity entity)
+		{
+			return Collisions.HasCollisionBelow(entity);
 		}
     }
 }
