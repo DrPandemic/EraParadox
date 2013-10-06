@@ -32,6 +32,7 @@ using GREATClient.BaseClass;
 using GREATClient.GameContent;
 using GREATClient.Display;
 using GREATClient.Network;
+using GREATClient.BaseClass.Input;
 
 namespace GREATClient.Screens
 {
@@ -42,11 +43,6 @@ namespace GREATClient.Screens
 		static readonly TimeSpan SEND_INPUTS_TO_SERVER_INTERVAL = TimeSpan.FromMilliseconds(30.0);
 
 		Client Client { get; set; }
-
-		//TODO: place these in a class to manage input
-		KeyboardState oldKeyboard;
-		MouseState oldMouse;
-		//ENDTODO
 
 		GameMatch Match { get; set; }
 		DrawableTileMap Map { get; set; }
@@ -66,11 +62,6 @@ namespace GREATClient.Screens
         {
 			Client = client;
 			ChampionsInfo = new ChampionsInfo();
-
-			//TODO: input manager
-			oldKeyboard = Keyboard.GetState();
-			oldMouse = Mouse.GetState();
-			//ENDTODO
 
 			GameTime = null;
 			TimeSinceLastInputSent = 0.0;
@@ -193,28 +184,18 @@ namespace GREATClient.Screens
 
 			if (OurChampion != null) {
 				// This will be replaced by the inputmanager
-				const Keys LEFT = Keys.A;
-				const Keys RIGHT = Keys.D;
-				const Keys JUMP = Keys.W;
-				if (keyboard.IsKeyDown(LEFT)) {
+				if (inputManager.IsActionFired(InputActions.GoLeft)) {
 					Actions.Add(PlayerActionType.MoveLeft);
 				}
-
-				if (keyboard.IsKeyDown(RIGHT)) {
+				if (inputManager.IsActionFired(InputActions.GoRight)) {
 					Actions.Add(PlayerActionType.MoveRight);
 				}
-				if (oldKeyboard.IsKeyDown(Keys.Space) && keyboard.IsKeyUp(Keys.Space))
-					Console.ReadLine();
-
-				if (keyboard.IsKeyDown(JUMP) && oldKeyboard.IsKeyUp(JUMP)) {
+				if (inputManager.IsActionFired(InputActions.Jump)) {
 					Actions.Add(PlayerActionType.Jump);
 				}
 
 				Actions.ForEach(OurChampion.PackageAction);
 			}
-
-			oldKeyboard = keyboard;
-			oldMouse = mouse;
 		}
 
 		/// <summary>
