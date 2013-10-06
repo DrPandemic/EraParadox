@@ -84,6 +84,10 @@ namespace GREATClient.Screens
 		{
 			base.OnLoadContent();
 
+			ESCMenu menu = new ESCMenu();
+			AddChild(menu, 5);
+			menu.SetPositionInScreenPercent(50, 50);
+
 			Map = new DrawableTileMap(Match.World.Map);
 			AddChild(Map);
 
@@ -172,6 +176,9 @@ namespace GREATClient.Screens
 			// 4. Update local physics. We run the physics loop that is ran on the server to keep
 			//    our local simulation running.
 			base.OnUpdate(dt); // this is done by the player's drawablechampion
+
+			if (Keyboard.GetState().IsKeyDown(Keys.Escape) && Keyboard.GetState().IsKeyDown(Keys.LeftShift))
+				Exit = true;
 		}
 		/// <summary>
 		/// Package local input as actions to eventually send to the server.

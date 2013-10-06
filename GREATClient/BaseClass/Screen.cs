@@ -169,9 +169,14 @@ namespace GREATClient.BaseClass
 
 		protected override void OnUpdate(GameTime dt)
 		{
-			((ScreenService)Services.GetService(typeof(ScreenService))).Update();
-			((InputManager)Services.GetService(typeof(InputManager))).Update();
-			((InputManager)Services.GetService(typeof(InputManager))).IsActive = IsActive;
+			ScreenService s = ((ScreenService)Services.GetService(typeof(ScreenService)));
+			s.Update();
+			if (game.IsMouseVisible != s.IsMouseVisible) {
+				game.IsMouseVisible = s.IsMouseVisible;
+			}
+			InputManager i = ((InputManager)Services.GetService(typeof(InputManager)));
+			i.Update();
+			i.IsActive = IsActive;
 			base.OnUpdate(dt);
 		}
 

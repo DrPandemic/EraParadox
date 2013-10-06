@@ -27,6 +27,12 @@ namespace GREATClient.BaseClass.ScreenInformation
     public class ScreenService
     {
 		/// <summary>
+		/// Gets or sets a value indicating whether the cursor is visible.
+		/// </summary>
+		/// <value><c>true</c> if cursor visible; otherwise, <c>false</c>.</value>
+		public bool IsMouseVisible { get; set; }
+
+		/// <summary>
 		/// Gets or sets the graphics device manager.
 		/// Is use to change the screen resolution / fullscreen.
 		/// </summary>
@@ -97,6 +103,7 @@ namespace GREATClient.BaseClass.ScreenInformation
         {
 			m_GraphicsDeviceManager = gdm;
 			screenInfo = ScreenInfo.GetInfo();
+			IsMouseVisible = false;
         }
 
 		/// <summary>
@@ -109,7 +116,7 @@ namespace GREATClient.BaseClass.ScreenInformation
 
 		public void Update()
 		{
-
+			 
 		}
 	}
 }
