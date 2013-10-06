@@ -61,17 +61,26 @@ namespace GREATLib.Physics
 			Debug.Assert(entity != null);
 
 			Rect r = entity.CreateCollisionRectangle();
+			float initialMid = r.Top + r.Height / 2f;
 			r.X -= JUMP_X_TOLERANCE / 2f;
 			r.Width += JUMP_X_TOLERANCE;
 			r.Y += JUMP_Y_TOLERANCE; // move it down a bit
 
 			var tiles = World.Map.GetTouchedTiles(r);
 			foreach (var tile in tiles) {
-				if (tile.Key.Intersects(r) &&
-					tile.Key.Top > r.Top &&
-				    (tile.Value == CollisionType.Block ||
-					 tile.Value == CollisionType.Platform))
-					return true;
+				if (tile.Key.Intersects(r) && // we have a collision
+					(tile.Value == CollisionType.Block ||
+					tile.Value == CollisionType.Platform) && // it is a blocking collision
+				    tile.Key.Top >= initialMid) { // the block is below us (below our feet)
+
+					int x = World.Map.GetTileXIndex(tile.Key);
+					int y = World.Map.GetTileYIndex(tile.Key);
+
+					// If the tile above the current tile is passable, we may jump !
+					if (World.Map.IsValidXIndex(x) && World.Map.IsValidYIndex(y) &&
+					    World.Map.GetCollision(x, y - 1) == CollisionType.Passable)
+						return true;
+				}
 			}
 			return false;
 		}
