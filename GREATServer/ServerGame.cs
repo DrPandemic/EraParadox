@@ -228,7 +228,7 @@ namespace GREATServer
 
 				// Simulate from our previous snapshot to our current action to be up-to-date
 				if (state.Value.ContainsEntity(id)) {
-					var player = state.Value.GetEntity(id);
+					var player = (ICharacter)state.Value.GetEntity(id);
 					float deltaT = (float)(time - state.Key);
 					if (deltaT > 0f) { // if we have something to simulate...
 						state.Value.ApplyPhysicsUpdate(id, deltaT);
@@ -313,7 +313,7 @@ namespace GREATServer
 			return position;
 		}
 
-		static void DoAction(MatchState match, IEntity champion, PlayerAction action)
+		static void DoAction(MatchState match, ICharacter champion, PlayerAction action)
 		{
 			switch (action.Type) {
 				case PlayerActionType.MoveLeft:
@@ -324,11 +324,29 @@ namespace GREATServer
 					match.Move(champion.ID, HorizontalDirection.Right);
 					champion.FacingLeft = false;
 					break;
+
 				case PlayerActionType.Jump:
 					match.Jump(champion.ID);
 					break;
-				case PlayerActionType.Idle:
+
+				case PlayerActionType.Idle: break;
+
+				case PlayerActionType.Spell1:
+					Console.WriteLine("SPELL 1");
 					break;
+
+				case PlayerActionType.Spell2:
+					Console.WriteLine("SPELL 2");
+					break;
+
+				case PlayerActionType.Spell3:
+					Console.WriteLine("SPELL 3");
+					break;
+
+				case PlayerActionType.Spell4:
+					Console.WriteLine("SPELL 4");
+					break;
+
 				default:
 					Debug.Fail("Invalid player action.");
 					ILogger.Log("Invalid player action passed in a package: " + action.Type.ToString(), LogPriority.Warning);

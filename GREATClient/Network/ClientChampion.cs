@@ -27,7 +27,7 @@ using GREATLib.Entities.Champions;
 
 namespace GREATClient.Network
 {
-	public abstract class ClientChampion : IEntity, IUpdatable
+	public abstract class ClientChampion : ICharacter, IUpdatable
     {
 		/// <summary>
 		/// Gets the drawn position of the champion.

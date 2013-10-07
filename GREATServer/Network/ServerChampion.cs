@@ -42,7 +42,7 @@ namespace GREATServer.Network
 		}
 	}
 
-    public class ServerChampion : IEntity
+    public class ServerChampion : ICharacter
     {
 		public ServerChampion(uint id, Vec2 pos)
 			: base(id, pos)

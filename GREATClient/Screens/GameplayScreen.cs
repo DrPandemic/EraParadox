@@ -38,6 +38,16 @@ namespace GREATClient.Screens
 {
     public sealed class GameplayScreen : Screen
     {
+		static readonly List<KeyValuePair<InputActions, PlayerActionType>> InputTypeForAction = Utilities.MakeList(
+			Utilities.MakePair(InputActions.GoLeft, PlayerActionType.MoveLeft),
+			Utilities.MakePair(InputActions.GoRight, PlayerActionType.MoveRight),
+			Utilities.MakePair(InputActions.Jump, PlayerActionType.Jump),
+			Utilities.MakePair(InputActions.Spell1, PlayerActionType.Spell1),
+			Utilities.MakePair(InputActions.Spell2, PlayerActionType.Spell2),
+			Utilities.MakePair(InputActions.Spell3, PlayerActionType.Spell3),
+			Utilities.MakePair(InputActions.Spell4, PlayerActionType.Spell4));
+
+
 		const bool CORRECTIONS_ENABLED = false;
 
 		static readonly TimeSpan SEND_INPUTS_TO_SERVER_INTERVAL = TimeSpan.FromMilliseconds(30.0);
@@ -177,24 +187,13 @@ namespace GREATClient.Screens
 		/// </summary>
 		void HandleInput()
 		{
-			KeyboardState keyboard = Keyboard.GetState();
-			MouseState mouse = Mouse.GetState();
-
-			List<PlayerActionType> Actions = new List<PlayerActionType>();
-
 			if (OurChampion != null) {
-				// This will be replaced by the inputmanager
-				if (inputManager.IsActionFired(InputActions.GoLeft)) {
-					Actions.Add(PlayerActionType.MoveLeft);
-				}
-				if (inputManager.IsActionFired(InputActions.GoRight)) {
-					Actions.Add(PlayerActionType.MoveRight);
-				}
-				if (inputManager.IsActionFired(InputActions.Jump)) {
-					Actions.Add(PlayerActionType.Jump);
-				}
-
-				Actions.ForEach(OurChampion.PackageAction);
+				InputTypeForAction.ForEach(pair =>
+				{
+					if (inputManager.IsActionFired(pair.Key)) {
+						OurChampion.PackageAction(pair.Value);
+					}
+				});
 			}
 		}
 

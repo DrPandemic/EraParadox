@@ -48,17 +48,6 @@ namespace GREATLib.Entities
 		public float MoveSpeed { get; set; }
 
 		/// <summary>
-		/// Gets or sets the jump force of the entity.
-		/// </summary>
-		public short JumpForce { get; set; }
-		/// <summary>
-		/// Gets or sets the horizontal acceleration of the entity, which is how much of our horizontal velocity
-		/// we maintain per second.
-		/// </summary>
-		/// <example>0.9 would keep 90% of the entity's X velocity every frame.</example>
-		public float HorizontalAcceleration { get; set; }
-
-		/// <summary>
 		/// Gets or sets the width of the collision rectangle of the entity.
 		/// </summary>
 		public float CollisionWidth { get; set; }
@@ -66,14 +55,6 @@ namespace GREATLib.Entities
 		/// Gets or sets the height of the collision rectangle of the entity.
 		/// </summary>
 		public float CollisionHeight { get; set; }
-
-		/// <summary>
-		/// Gets the direction of the entity during the current frame.
-		/// </summary>
-		public HorizontalDirection Direction { get; set; }
-
-		public ChampionAnimation Animation { get; set; }
-		public bool FacingLeft { get; set; }
 
 		/// <summary>
 		/// Gets or sets the simulated position of the entity.
@@ -84,23 +65,16 @@ namespace GREATLib.Entities
 		/// </summary>
 		public Vec2 Position { get; set; }
 
-        public IEntity(uint id, Vec2 startingPosition)
+        public IEntity(uint id, Vec2 startingPosition,
+		               float move, float width, float height)
         {
-			//TODO: depend on who the champion is
-			MoveSpeed = 90f;
-			CollisionWidth = 15f;
-			CollisionHeight = 30f;
-			JumpForce = 750;
-			HorizontalAcceleration = 9e-9f;
-
 			ID = id;
 			Position = startingPosition;
+			MoveSpeed = move;
+			CollisionWidth = width;
+			CollisionHeight = height;
 
 			Velocity = new Vec2();
-			Direction = HorizontalDirection.None;
-
-			Animation = ChampionAnimation.idle;
-			FacingLeft = false;
         }
 
 		/// <summary>
@@ -110,15 +84,10 @@ namespace GREATLib.Entities
 		{
 			CollisionWidth = e.CollisionWidth;
             CollisionHeight = e.CollisionHeight;
-            Direction = e.Direction;
-            HorizontalAcceleration = e.HorizontalAcceleration;
             ID = e.ID;
-            JumpForce = e.JumpForce;
             MoveSpeed = e.MoveSpeed;
             Position = e.Position.Clone() as Vec2;
             Velocity = e.Velocity.Clone() as Vec2;
-			Animation = e.Animation;
-			FacingLeft = e.FacingLeft;
 		}
 
 		/// <summary>
@@ -131,7 +100,7 @@ namespace GREATLib.Entities
 
 		public virtual object Clone()
 		{
-			IEntity clone = new IEntity(ID, Position);
+			IEntity clone = new IEntity(ID, Position, MoveSpeed, CollisionWidth, CollisionHeight);
 			clone.Clone(this);
 			return clone;
 		}

@@ -275,15 +275,22 @@ namespace GREATClient.Network
 					Match.CurrentState.Move(ID, HorizontalDirection.Left);
 					break;
 
-					case PlayerActionType.MoveRight:
+				case PlayerActionType.MoveRight:
 					Match.CurrentState.Move(ID, HorizontalDirection.Right);
 					break;
 
-					case PlayerActionType.Jump:
+				case PlayerActionType.Jump:
 					Match.CurrentState.Jump(ID);
 					break;
 
-					default:
+				case PlayerActionType.Spell1:
+				case PlayerActionType.Spell2:
+				case PlayerActionType.Spell3:
+				case PlayerActionType.Spell4:
+					// no client-side prediction for spells
+					break;
+
+				default:
 					Debug.Fail(String.Format("Invalid action type \"{0}\"", type));
 					break;
 			}

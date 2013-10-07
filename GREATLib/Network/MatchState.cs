@@ -104,10 +104,10 @@ namespace GREATLib.Network
 		/// </summary>
 		public void Jump(uint id)
 		{
-			Debug.Assert(Entities.ContainsKey(id));
+			Debug.Assert(Entities.ContainsKey(id) && Entities[id] is ICharacter);
 
-			if (Entities.ContainsKey(id)) {
-				Physics.Jump(Entities[id]);
+			if (Entities.ContainsKey(id) && Entities[id] is ICharacter) {
+				Physics.Jump((ICharacter)Entities[id]);
 			}
 		}
 

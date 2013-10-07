@@ -1,5 +1,5 @@
 //
-//  IEntityTest.cs
+//  LinearSpell.cs
 //
 //  Author:
 //       Jesse <jesse.emond@hotmail.com>
@@ -18,28 +18,16 @@
 //
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-using NUnit.Framework;
 using System;
-using GREATLib.Entities;
-using GREATLib;
 
-namespace GREATTests
+namespace GREATLib.Entities.Spells
 {
-    [TestFixture()]
-    public class IEntityTest
+    public class LinearSpell : IEntity
     {
-        [Test()]
-        public void TestClone()
+        public LinearSpell(uint id, Vec2 position)
+			: base(id, position,
+			       100f, 5f, 5f) //TODO: depend on spell type
         {
-			IEntity e = new IEntity(0, new Vec2(100f, 0f));
-			IEntity clone = (IEntity)e.Clone();
-
-			Assert.AreEqual(100f, e.Position.X, "original unchanged");
-			Assert.AreEqual(100f, clone.Position.X, "clone has same values");
-
-			e.Position.X = 2f;
-
-			Assert.AreEqual(100f, clone.Position.X, "clone unchanged after modification or original");
         }
     }
 }
