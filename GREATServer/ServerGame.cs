@@ -244,7 +244,7 @@ namespace GREATServer
 			}
 		}
 
-		void HandleAction(ICharacter champion, PlayerAction action)
+		void HandleAction(ServerChampion champion, PlayerAction action)
 		{
 			if (ActionTypeHelper.IsSpell(action.Type)) {
 				CastSpell(champion, action);
@@ -253,9 +253,11 @@ namespace GREATServer
 			}
 		}
 
-		void CastSpell(ICharacter champ, PlayerAction action)
+		void CastSpell(ServerChampion champ, PlayerAction action)
 		{
 			Debug.Assert(action.Target != null);
+
+			champ.FacingLeft = action.Target.X < champ.Position.X + champ.CollisionWidth / 2f;
 
 			LinearSpell spell = new LinearSpell(
 				IDGenerator.GenerateID(),
@@ -266,7 +268,6 @@ namespace GREATServer
 			Match.CurrentState.AddEntity(spell);
 			ActiveSpells.Add(spell);
 
-			Console.WriteLine(spell.Position);
 			float castTime = (float)Server.Instance.GetTime().TotalSeconds;
 			LinearSpell copy = (LinearSpell)spell.Clone();
 
@@ -280,7 +281,6 @@ namespace GREATServer
 				float vx = copy.Velocity.X;
 				float vy = copy.Velocity.Y;
 				float cd = (float)copy.Cooldown.TotalSeconds;
-				Console.WriteLine(copy.Position);
 
 				msg.Write(type);
 				msg.Write(time);
