@@ -220,7 +220,7 @@ namespace GREATClient
 			msg.Write((byte)ClientCommand.ActionPackage);
 
 			foreach (PlayerAction action in actions) {
-				uint id = action.ID;
+				ulong id = action.ID;
 				float time = action.Time;
 				byte type = (byte)action.Type;
 				float x = action.Position.X;
@@ -269,24 +269,24 @@ namespace GREATClient
 	}
 	public struct PlayerData
 	{
-		public uint ID { get; private set; }
+		public ulong ID { get; private set; }
 		public Vec2 Position { get; private set; }
 
 		public PlayerData(NetBuffer msg) : this()
 		{
-			ID = msg.ReadUInt32();
+			ID = msg.ReadUInt64();
 			Position = new Vec2(msg.ReadFloat(), msg.ReadFloat());
 		}
 	}
 	public struct StateUpdateData
 	{
-		public uint ID { get; private set; }
+		public ulong ID { get; private set; }
 		public Vec2 Position { get; private set; }
 		public Vec2 Velocity { get; private set; }
 		public ChampionAnimation Animation { get; private set; }
 		public bool FacingLeft { get; private set; }
 
-		public StateUpdateData(uint id, Vec2 pos, Vec2 vel, ChampionAnimation anim, bool facingLeft)
+		public StateUpdateData(ulong id, Vec2 pos, Vec2 vel, ChampionAnimation anim, bool facingLeft)
 			: this()
 		{
 			ID = id;
@@ -298,7 +298,7 @@ namespace GREATClient
 	}
 	public class StateUpdateEventArgs : CommandEventArgs
 	{
-		public uint LastAcknowledgedActionID { get; private set; }
+		public ulong LastAcknowledgedActionID { get; private set; }
 		public double Time { get; private set; }
 		public List<StateUpdateData> EntitiesUpdatedState { get; private set; }
 
@@ -306,11 +306,11 @@ namespace GREATClient
 		{
 			EntitiesUpdatedState = new List<StateUpdateData>();
 
-			LastAcknowledgedActionID = msg.ReadUInt32();
+			LastAcknowledgedActionID = msg.ReadUInt64();
 			Time = msg.ReadDouble();
 			Vec2 velocity = new Vec2(msg.ReadFloat(), msg.ReadFloat());
 			while (msg.Position < msg.LengthBits) {
-				uint id = msg.ReadUInt32();
+				ulong id = msg.ReadUInt64();
 				Vec2 pos = new Vec2(msg.ReadFloat(), msg.ReadFloat());
 				ChampionAnimation anim = (ChampionAnimation)msg.ReadByte();
 				bool facingLeft = msg.ReadBoolean();

@@ -28,6 +28,7 @@ using GREATLib.Network;
 using GREATLib.Entities;
 using GREATLib.Entities.Champions;
 using GREATServer.Network;
+using GREATLib.Entities.Spells;
 
 namespace GREATServer
 {
@@ -47,6 +48,7 @@ namespace GREATServer
 
 		NetServer NetServer { get; set; }
 		Dictionary<NetConnection, ServerClient> Clients { get; set; }
+		List<LinearSpell> ActiveSpells { get; set; }
 
 		GameMatch Match { get; set; }
 		/// <summary>
@@ -66,6 +68,7 @@ namespace GREATServer
         {
 			NetServer = server;
 			Clients = new Dictionary<NetConnection, ServerClient>();
+			ActiveSpells = new List<LinearSpell>();
 
 			StateHistory = new SnapshotHistory<MatchState>(HISTORY_MAX_TIME_KEPT);
 			Match = new GameMatch();
@@ -143,7 +146,7 @@ namespace GREATServer
 		{
 			Debug.Assert(Clients.ContainsKey(playerConnection));
 
-			uint lac = Clients[playerConnection].LastAcknowledgedActionID;
+			ulong lac = Clients[playerConnection].LastAcknowledgedActionID;
 			double time = Server.Instance.GetTime().TotalSeconds;
 
 			float vx = Clients[playerConnection].Champion.Velocity.X;
@@ -156,7 +159,7 @@ namespace GREATServer
 			foreach (NetConnection connection in Clients.Keys) {
 				ServerClient client = Clients[connection];
 
-				uint id = client.Champion.ID;
+				ulong id = client.Champion.ID;
 				float x = client.Champion.Position.X;
 				float y = client.Champion.Position.Y;
 				byte anim = (byte)client.Champion.Animation;
@@ -180,7 +183,11 @@ namespace GREATServer
 					foreach (PlayerAction action in client.ActionsPackage) {
 						client.AnimData.Reset();
 
-						HandleAction(client.Champion.ID, action);
+						if (IsMovementAction(action.Type)) {
+							HandleMovementAction(client.Champion.ID, action);
+						} else {
+							HandleAction(client.Champion, action);
+						}
 						client.LastAcknowledgedActionID = Math.Max(client.LastAcknowledgedActionID, action.ID);
 
 						UpdateAnimationDataFromAction(client.AnimData, action.Type);
@@ -188,6 +195,19 @@ namespace GREATServer
 
 					client.ActionsPackage.Clear();
 				}
+			}
+		}
+
+		static bool IsMovementAction(PlayerActionType action)
+		{
+			switch (action) {
+				case PlayerActionType.MoveLeft:
+				case PlayerActionType.MoveRight:
+				case PlayerActionType.Jump:
+					return true;
+
+				default:
+					return false;
 			}
 		}
 
@@ -210,7 +230,33 @@ namespace GREATServer
 			}
 		}
 
-		void HandleAction(uint id, PlayerAction action)
+		void HandleAction(ICharacter champion, PlayerAction action)
+		{
+			if (IsSpell(action.Type)) {
+				CastSpell(champion, action);
+			} else if (action.Type != PlayerActionType.Idle) {
+				ILogger.Log("Unkown player action type: " + action.Type);
+			}
+		}
+
+		void CastSpell(ICharacter champ, PlayerAction action)
+		{
+			LinearSpell spell = new LinearSpell(
+				IDGenerator.GenerateID(),
+				champ.GetHandsPosition(),
+				Vec2.Zero, //TODO: use given position
+				SpellTypes.StickManSpell1); //TODO: depend on spell used
+
+			Match.CurrentState.AddEntity(spell);
+			ActiveSpells.Add(spell);
+		}
+
+		static bool IsSpell(PlayerActionType action)
+		{
+			return PlayerActionType.Spell1 <= action && action <= PlayerActionType.Spell4;
+		}
+
+		void HandleMovementAction(ulong id, PlayerAction action)
 		{
 			double now = Server.Instance.GetTime().TotalSeconds;
 			double time = action.Time;
@@ -307,7 +353,7 @@ namespace GREATServer
 			// and log it (might be a hacker).
 			if (Vec2.DistanceSquared(player.Position, position) >= MAX_TOLERATED_OFF_DISTANCE * MAX_TOLERATED_OFF_DISTANCE) {
 				position = player.Position;
-				ILogger.Log("Action " + action.ID + "'s position seems a bit odd. Using the stored server position instead (hacker?). Client will need server correction.", LogPriority.Warning);
+				//ILogger.Log("Action " + action.ID + "'s position seems a bit odd. Using the stored server position instead (hacker?). Client will need server correction.", LogPriority.Warning);
 			}
 
 			return position;
@@ -329,22 +375,12 @@ namespace GREATServer
 					match.Jump(champion.ID);
 					break;
 
-				case PlayerActionType.Idle: break;
-
+					// Ignore the actions that are not related to movement
+				case PlayerActionType.Idle:
 				case PlayerActionType.Spell1:
-					Console.WriteLine("SPELL 1");
-					break;
-
 				case PlayerActionType.Spell2:
-					Console.WriteLine("SPELL 2");
-					break;
-
 				case PlayerActionType.Spell3:
-					Console.WriteLine("SPELL 3");
-					break;
-
 				case PlayerActionType.Spell4:
-					Console.WriteLine("SPELL 4");
 					break;
 
 				default:
@@ -360,15 +396,21 @@ namespace GREATServer
 		/// </summary>
 		void UpdateLogic(double dt)
 		{
-			foreach (ServerClient client in Clients.Values) {
-				// Use the time elapsed since our last snapshot as a delta time
-				double time = StateHistory.IsEmpty() ? dt : 
-					Server.Instance.GetTime().TotalSeconds - StateHistory.GetLast().Key;
-                if (time > 0.0) {
-                    Match.CurrentState.ApplyPhysicsUpdate(client.Champion.ID, (float)time);
-                }
+			UpdateSpells(dt);
+			UpdateChampions(dt);
+		}
+		void UpdateChampions(double dt)
+		{
+			// Use the time elapsed since our last snapshot as a delta time
+			double time = StateHistory.IsEmpty() ? dt : 
+				Server.Instance.GetTime().TotalSeconds - StateHistory.GetLast().Key;
 
-				client.Champion.Animation = client.Champion.GetAnim(1f, //TODO: replace with actual HP
+			foreach (ServerClient client in Clients.Values) {
+				if (time > 0.0) {
+					Match.CurrentState.ApplyPhysicsUpdate(client.Champion.ID, (float)time);
+				}
+
+				client.Champion.Animation = client.Champion.GetAnim(false, //TODO: replace with actual HP
 				                                                    Match.CurrentState.IsOnGround(client.Champion.ID),
 				                                                    false,
 				                                                    false,
@@ -378,6 +420,15 @@ namespace GREATServer
 				                                                    client.AnimData.Idle,
 				                                                    client.Champion.Animation);
 			}
+		}
+		void UpdateSpells(double dt)
+		{
+			ActiveSpells.ForEach(s =>
+			{
+				Match.CurrentState.ApplyPhysicsUpdate(s.ID, (float)dt);
+
+				Console.WriteLine(s.ID);
+			});
 		}
 
 		/// <summary>
@@ -440,7 +491,7 @@ namespace GREATServer
 
 		static void FillChampionInfo(NetBuffer msg, IEntity champion)
 		{
-			uint id = champion.ID;
+			ulong id = champion.ID;
 			float x = champion.Position.X;
 			float y = champion.Position.Y;
 
@@ -484,7 +535,7 @@ namespace GREATServer
 
 			try {
 				while (message.Position < message.LengthBits) {
-					uint id = message.ReadUInt32();
+					ulong id = message.ReadUInt64();
 					float time = message.ReadFloat();
 					PlayerActionType type = (PlayerActionType)message.ReadByte();
 					Vec2 position = new Vec2(message.ReadFloat(), message.ReadFloat());

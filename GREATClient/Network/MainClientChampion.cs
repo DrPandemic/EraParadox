@@ -41,9 +41,9 @@ namespace GREATClient.Network
 			public double Time { get; private set; }
 			public Vec2 Position { get; private set; }
 			public Vec2 Velocity { get; private set; }
-			public uint LastAcknowledgedActionId { get; private set; }
+			public ulong LastAcknowledgedActionId { get; private set; }
 
-			public CorrectionInfo(double time, Vec2 pos, Vec2 vel, uint lastAckId)
+			public CorrectionInfo(double time, Vec2 pos, Vec2 vel, ulong lastAckId)
 			{
 				Time = time;
 				Position = pos;
@@ -72,7 +72,7 @@ namespace GREATClient.Network
 		List<CorrectionInfo> Corrections { get; set; }
 		bool Corrected { get; set; }
 
-		uint PreviousLastAck { get; set; }
+		ulong PreviousLastAck { get; set; }
 
 		IEntity NoCorrections { get; set; }
 		public Vec2 NoCorrPos { get { return NoCorrections.Position; } }
@@ -244,7 +244,7 @@ namespace GREATClient.Network
 			return corr;
 		}
 
-		public override void SetLastAcknowledgedActionID(uint id)
+		public override void SetLastAcknowledgedActionID(ulong id)
 		{
 			Debug.Assert(id >= PreviousLastAck);
 

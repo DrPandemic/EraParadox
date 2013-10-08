@@ -31,7 +31,7 @@ namespace GREATLib.Network
 		/// <summary>
 		/// Gets or sets the unique ID of the action.
 		/// </summary>
-		public uint ID { get; private set; }
+		public ulong ID { get; private set; }
 
 		/// <summary>
 		/// The action that we're making (e.g. go right, jump, shoot, etc.) 
@@ -48,7 +48,7 @@ namespace GREATLib.Network
 		/// </summary>
 		public Vec2 Position { get; private set; }
 
-		public PlayerAction(uint id, PlayerActionType type, float time, Vec2 position)
+		public PlayerAction(ulong id, PlayerActionType type, float time, Vec2 position)
 			: this()
 		{
 			ID = id;

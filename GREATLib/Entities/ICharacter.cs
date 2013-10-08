@@ -39,7 +39,7 @@ namespace GREATLib.Entities
 		public ChampionAnimation Animation { get; set; }
 		public bool FacingLeft { get; set; }
 
-        public ICharacter(uint id, Vec2 position)
+        public ICharacter(ulong id, Vec2 position)
 			: base(id, position, 
 			       90f, 15f, 30f)//TODO: stats by champion
         {
@@ -65,6 +65,13 @@ namespace GREATLib.Entities
 			c.Clone(this);
 			return c;
 		}
+
+        public Vec2 GetHandsPosition()
+        {
+            return new Vec2 (Position.X + CollisionWidth / 2f,
+                            Position.Y + CollisionHeight / 2f) +
+                (FacingLeft ? -1 : 1) * new Vec2 (CollisionWidth / 2f, 0f);
+        }
     }
 }
 

@@ -58,6 +58,7 @@
     <Compile Include="Entities\Spells\LinearSpell.cs" />
     <Compile Include="Entities\ICharacter.cs" />
     <Compile Include="Entities\HorizontalDirection.cs" />
+    <Compile Include="Entities\Spells\SpellTypes.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

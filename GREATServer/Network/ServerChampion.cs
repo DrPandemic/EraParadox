@@ -44,12 +44,12 @@ namespace GREATServer.Network
 
     public class ServerChampion : ICharacter
     {
-		public ServerChampion(uint id, Vec2 pos)
+		public ServerChampion(ulong id, Vec2 pos)
 			: base(id, pos)
         {
         }
 
-		public ChampionAnimation GetAnim(float health, bool onGround,
+		public ChampionAnimation GetAnim(bool dead, bool onGround,
 		                                 bool castingSpell1,
 		                                 bool castingSpell2,
 		                                 bool castingSpell3,
@@ -59,7 +59,7 @@ namespace GREATServer.Network
 		                                 ChampionAnimation oldAnim)
 		{
 			// Dead champion
-			if (health <= 0f) return ChampionAnimation.die;
+			if (dead) return ChampionAnimation.die;
 
 			// Casting spell
 			if (castingSpell1) return ChampionAnimation.spell1;

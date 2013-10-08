@@ -1,5 +1,5 @@
 //
-//  ChampionSpawnInfo.cs
+//  SpellTypes.cs
 //
 //  Author:
 //       Jesse <jesse.emond@hotmail.com>
@@ -20,19 +20,11 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 
-namespace GREATLib.Entities
+namespace GREATLib.Entities.Spells
 {
-    public struct ChampionSpawnInfo
+    public enum SpellTypes
     {
-		public ulong ID { get; private set; }
-		public Vec2 SpawningPosition { get; private set; }
-
-		public ChampionSpawnInfo(ulong id, Vec2 spawn) 
-			: this() // to be able to have automatic properties (http://stackoverflow.com/a/420441/395386)
-		{
-			ID = id;
-			SpawningPosition = spawn;
-		}
+		StickManSpell1
     }
 }
 

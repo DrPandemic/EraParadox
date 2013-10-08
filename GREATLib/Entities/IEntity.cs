@@ -35,7 +35,7 @@ namespace GREATLib.Entities
 		/// The unique ID of the entity.
 		/// </summary>
 		/// <value>The I.</value>
-		public uint ID { get; private set; }
+		public ulong ID { get; private set; }
 
 		/// <summary>
 		/// Gets or sets the velocity of the entity.
@@ -65,7 +65,7 @@ namespace GREATLib.Entities
 		/// </summary>
 		public Vec2 Position { get; set; }
 
-        public IEntity(uint id, Vec2 startingPosition,
+        public IEntity(ulong id, Vec2 startingPosition,
 		               float move, float width, float height)
         {
 			ID = id;

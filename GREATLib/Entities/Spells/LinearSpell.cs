@@ -24,11 +24,42 @@ namespace GREATLib.Entities.Spells
 {
     public class LinearSpell : IEntity
     {
-        public LinearSpell(uint id, Vec2 position)
+		public SpellTypes Type { get; set; }
+		public float Range { get; set; }
+		public TimeSpan Cooldown { get; set; }
+		public TimeSpan CastingTime { get; set; }
+		public float Damage { get; set; }
+
+        public LinearSpell(ulong id, Vec2 position, Vec2 target, SpellTypes type)
 			: base(id, position,
 			       100f, 5f, 5f) //TODO: depend on spell type
         {
+			//TODO: depend on spell type
+			Range = 100f;
+			Cooldown = TimeSpan.FromSeconds(5.0);
+			CastingTime = TimeSpan.FromSeconds(0.25);
+			Damage = 10f;
+
+			Type = type;
+			Velocity = Vec2.Normalize(target - position) * MoveSpeed;
         }
+
+		public override void Clone(IEntity e)
+		{
+			LinearSpell s = (LinearSpell)e;
+			base.Clone(s);
+			Type = s.Type;
+			Range = s.Range;
+			Cooldown = s.Cooldown;
+			CastingTime = s.CastingTime;
+			Damage = s.Damage;
+		}
+		public override object Clone()
+		{
+			LinearSpell s = new LinearSpell(ID, Position, Position + Velocity, Type);
+			s.Clone(this);
+			return s;
+		}
     }
 }
 

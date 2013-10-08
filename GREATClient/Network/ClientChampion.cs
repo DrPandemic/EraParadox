@@ -59,7 +59,7 @@ namespace GREATClient.Network
 		/// <summary>
 		/// Sets the ID of the last acknowledged action by the server.
 		/// </summary>
-		public virtual void SetLastAcknowledgedActionID(uint id) { }
+		public virtual void SetLastAcknowledgedActionID(ulong id) { }
     }
 }
 

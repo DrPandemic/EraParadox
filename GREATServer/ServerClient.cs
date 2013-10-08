@@ -37,7 +37,7 @@ namespace GREATServer
 		public ServerChampion Champion { get; private set; }
 		public ChampionAnimData AnimData { get; private set; }
 		public List<PlayerAction> ActionsPackage { get; private set; }
-		public uint LastAcknowledgedActionID { get; set; }
+		public ulong LastAcknowledgedActionID { get; set; }
 
 		public ServerClient(NetConnection conn, ServerChampion champion)
         {
