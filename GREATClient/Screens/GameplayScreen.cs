@@ -195,10 +195,16 @@ namespace GREATClient.Screens
 				InputTypeForAction.ForEach(pair =>
 				{
 					if (inputManager.IsActionFired(pair.Key)) {
-						OurChampion.PackageAction(pair.Value);
+						OurChampion.PackageAction(pair.Value, ActionTypeHelper.IsSpell(pair.Value) ? GetTargetWorldPosition() : null);
 					}
 				});
 			}
+		}
+
+		Vec2 GetTargetWorldPosition()
+		{
+			//TODO: use camera here !
+			return new Vec2(inputManager.MouseX, inputManager.MouseY);
 		}
 
 		/// <summary>

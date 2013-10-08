@@ -106,7 +106,7 @@ namespace GREATClient.Network
 
 					Position = Vec2.Lerp(before.Value.Position, after.Value.Value.Position, (float)progress);
 					// Take animation of closest state
-					var closestState = Math.Abs(targetTime - before.Key) > Math.Abs(targetTime - after.Value.Key) ? before.Value : after.Value.Value;
+					var closestState = after.Value.Value;
 					Animation = closestState.Animation;
 					FacingLeft = closestState.FacingLeft;
 				} else {

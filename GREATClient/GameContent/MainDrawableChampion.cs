@@ -72,13 +72,14 @@ namespace GREATClient.GameContent
 		/// Packages a client-side action to be sent to the server. This also simulates the action locally
 		/// for client-side prediction.
 		/// </summary>
-		public void PackageAction(PlayerActionType action)
+		public void PackageAction(PlayerActionType action, Vec2 target)
 		{
 			PlayerAction toPackage = new PlayerAction(
 				IDGenerator.GenerateID(),
 				action,
 				(float)Client.Instance.GetTime().TotalSeconds,
-				Champion.Position);
+				Champion.Position,
+				target);
 
 			Champion.PackageAction(toPackage);
 		}

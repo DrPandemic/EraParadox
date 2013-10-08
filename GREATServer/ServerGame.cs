@@ -139,7 +139,7 @@ namespace GREATServer
 						RemarkableEvents.Count == 0 ? NetDeliveryMethod.UnreliableSequenced : NetDeliveryMethod.ReliableUnordered,
 						(msg) => FillStateUpdateMessage(msg, connection));
 				}
-
+				RemarkableEvents.Clear();
 				TimeSinceLastCorrection = 0.0;
 			}
 			TimeSinceLastCorrection += dt;
@@ -185,7 +185,6 @@ namespace GREATServer
 				msg.Write(command);
 				pair.Value(msg);
 			}
-			RemarkableEvents.Clear();
 		}
 
 		/// <summary>
@@ -247,7 +246,7 @@ namespace GREATServer
 
 		void HandleAction(ICharacter champion, PlayerAction action)
 		{
-			if (IsSpell(action.Type)) {
+			if (ActionTypeHelper.IsSpell(action.Type)) {
 				CastSpell(champion, action);
 			} else if (action.Type != PlayerActionType.Idle) {
 				ILogger.Log("Unkown player action type: " + action.Type);
@@ -256,10 +255,12 @@ namespace GREATServer
 
 		void CastSpell(ICharacter champ, PlayerAction action)
 		{
+			Debug.Assert(action.Target != null);
+
 			LinearSpell spell = new LinearSpell(
 				IDGenerator.GenerateID(),
 				champ.GetHandsPosition(),
-				Vec2.Zero, //TODO: use given position
+				action.Target ?? Vec2.Zero,
 				SpellTypes.StickManSpell1); //TODO: depend on spell used
 
 			Match.CurrentState.AddEntity(spell);
@@ -289,11 +290,6 @@ namespace GREATServer
 				msg.Write(vy);
 				msg.Write(cd);
 			}));
-		}
-
-		static bool IsSpell(PlayerActionType action)
-		{
-			return PlayerActionType.Spell1 <= action && action <= PlayerActionType.Spell4;
 		}
 
 		void HandleMovementAction(ulong id, PlayerAction action)
@@ -577,8 +573,9 @@ namespace GREATServer
 					float time = message.ReadFloat();
 					PlayerActionType type = (PlayerActionType)message.ReadByte();
 					Vec2 position = new Vec2(message.ReadFloat(), message.ReadFloat());
+					Vec2 target = ActionTypeHelper.IsSpell(type) ? new Vec2(message.ReadFloat(), message.ReadFloat()) : null;
 
-					PlayerAction action = new PlayerAction(id, type, time, position);
+					PlayerAction action = new PlayerAction(id, type, time, position, target);
 
 					Clients[message.SenderConnection].ActionsPackage.Add(action);
 				}

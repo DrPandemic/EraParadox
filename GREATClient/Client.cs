@@ -232,6 +232,14 @@ namespace GREATClient
 				msg.Write(type);
 				msg.Write(x);
 				msg.Write(y);
+
+				if (ActionTypeHelper.IsSpell(action.Type)) {
+					Debug.Assert(action.Target != null, "Trying to us target on non-spell action.");
+					float tx = action.Target.X;
+					float ty = action.Target.Y;
+					msg.Write(tx);
+					msg.Write(ty);
+				}
 			}
 
 			client.SendMessage(msg, NetDeliveryMethod.ReliableOrdered);
