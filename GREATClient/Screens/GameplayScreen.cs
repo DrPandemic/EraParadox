@@ -33,6 +33,7 @@ using GREATClient.GameContent;
 using GREATClient.Display;
 using GREATClient.Network;
 using GREATClient.BaseClass.Input;
+using GREATLib.Entities.Spells;
 
 namespace GREATClient.Screens
 {
@@ -66,6 +67,7 @@ namespace GREATClient.Screens
 
 		double TimeOfLastStateUpdate { get; set; }
 		List<StateUpdateData> LastStateUpdateData { get; set; }
+		List<RemarkableEventData> RemarkableEvents { get; set; }
 
         public GameplayScreen(ContentManager content, Game game, Client client)
 			: base(content, game)
@@ -78,6 +80,7 @@ namespace GREATClient.Screens
 
 			Match = new GameMatch();
 			LastStateUpdateData = new List<StateUpdateData>();
+			RemarkableEvents = new List<RemarkableEventData>();
 			TimeOfLastStateUpdate = 0.0;
         }
 
@@ -107,6 +110,7 @@ namespace GREATClient.Screens
 
 			OurChampion.Champion.SetLastAcknowledgedActionID(e.LastAcknowledgedActionID);
 			LastStateUpdateData = new List<StateUpdateData>(e.EntitiesUpdatedState.ToArray());
+			RemarkableEvents.AddRange(e.RemarkableEvents);
 			TimeOfLastStateUpdate = Client.GetTime().TotalSeconds;
 		}
 
@@ -212,7 +216,31 @@ namespace GREATClient.Screens
 					}
 				}
 				LastStateUpdateData.Clear();
+
+				ApplyRemarkableEvents();
 			}
+		}
+
+		void ApplyRemarkableEvents()
+		{
+			RemarkableEvents.ForEach(r =>
+			{
+				switch (r.Command) {
+					case ServerCommand.SpellCast:
+						CastSpell((SpellCastEventData)r);
+						break;
+
+					default:
+						Debug.Fail("Unknown server command (unknown remarkable event).");
+						break;
+				}
+			});
+
+			RemarkableEvents.Clear();
+		}
+		void CastSpell(SpellCastEventData e)
+		{
+			AddChild(new DrawableSpell(new ClientLinearSpell(e.Position, e.Time, e.Velocity)));
 		}
 
 		/// <summary>

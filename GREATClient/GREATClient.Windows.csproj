@@ -99,6 +99,8 @@
     <Compile Include="BaseClass\BaseAction\ActionDelay.cs" />
     <Compile Include="Display\SpellMenu.cs" />
     <Compile Include="Display\SpellMenuItem.cs" />
+    <Compile Include="GameContent\DrawableSpell.cs" />
+    <Compile Include="Network\ClientLinearSpell.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />

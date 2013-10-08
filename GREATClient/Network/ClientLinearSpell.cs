@@ -1,5 +1,5 @@
 //
-//  ServerCommand.cs
+//  ClientLinearSpell.cs
 //
 //  Author:
 //       Jesse <jesse.emond@hotmail.com>
@@ -19,33 +19,30 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using GREATLib;
 
-namespace GREATLib.Network
+namespace GREATClient.Network
 {
-	/// <summary>
-	/// A command from the server.
-	/// </summary>
-	/// <remarks>The comments are written as if the server directly asked something to a client.</remarks>
-    public enum ServerCommand
+    public class ClientLinearSpell
     {
-		/// <summary>
-		/// You just joined the game. Here is the data about your freshly created champion along with
-		/// the data of all the players already in the game.
-		/// </summary>
-		JoinedGame = 10
+		float Time { get; set; }
+		Vec2 Velocity { get; set; }
+		public Vec2 Position { get; private set; }
+		Vec2 StartingPosition { get; set; }
 
-		/// <summary>
-		/// Here is an update of the state of all the entities that changed. Force your data to
-		/// fit this.
-		/// </summary>
-		, StateUpdate
+        public ClientLinearSpell(Vec2 pos, float time, Vec2 velocity)
+        {
+			StartingPosition = pos;
+			Position = StartingPosition;
+			Velocity = velocity;
+			Time = Math.Max(0f, (float)Client.Instance.GetTime().TotalSeconds - time);
+        }
 
-		/// <summary>
-		/// A new player joined your game. Here is the data about his freshly created champion.
-		/// </summary>
-		, NewRemotePlayer
-
-		, SpellCast
+		public void Update(double dt)
+		{
+			Time += (float)dt;
+			Position = StartingPosition + Velocity * Time;
+		}
     }
 }
 

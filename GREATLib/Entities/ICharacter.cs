@@ -66,12 +66,20 @@ namespace GREATLib.Entities
 			return c;
 		}
 
+		const float HANDS_MARGIN = 0.2f;
         public Vec2 GetHandsPosition()
         {
             return new Vec2 (Position.X + CollisionWidth / 2f,
                             Position.Y + CollisionHeight / 2f) +
-                (FacingLeft ? -1 : 1) * new Vec2 (CollisionWidth / 2f, 0f);
+                (FacingLeft ? -1 : 1) * new Vec2 (CollisionWidth / 2f, 0f) +
+					(FacingLeft ? -1 : 1) * new Vec2(CollisionWidth, 0f) * HANDS_MARGIN;
         }
+
+		public Vec2 GetFeetPosition()
+		{
+			return new Vec2(Position.X + CollisionWidth / 2f,
+			                Position.Y + CollisionHeight);
+		}
     }
 }
 

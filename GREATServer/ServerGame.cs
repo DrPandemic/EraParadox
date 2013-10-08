@@ -63,6 +63,11 @@ namespace GREATServer
 		double TimeSinceLastCorrection { get; set; }
 		double TimeSinceLastGameHistory { get; set; }
 
+		/// <summary>
+		/// A list of events that must be notified to the clients (e.g. a player died, shot a spell, etc.)
+		/// </summary>
+		List<KeyValuePair<ServerCommand, Action<NetBuffer>>> RemarkableEvents { get; set; }
+
 
         public ServerGame(NetServer server)
         {
@@ -72,6 +77,7 @@ namespace GREATServer
 
 			StateHistory = new SnapshotHistory<MatchState>(HISTORY_MAX_TIME_KEPT);
 			Match = new GameMatch();
+			RemarkableEvents = new List<KeyValuePair<ServerCommand, Action<NetBuffer>>>();
 
 			TimeSinceLastCorrection = 0.0;
 			TimeSinceLastGameHistory = 0.0;
@@ -130,7 +136,7 @@ namespace GREATServer
 					SendCommand(
 						connection,
 						ServerCommand.StateUpdate,
-						NetDeliveryMethod.UnreliableSequenced,
+						RemarkableEvents.Count == 0 ? NetDeliveryMethod.UnreliableSequenced : NetDeliveryMethod.ReliableUnordered,
 						(msg) => FillStateUpdateMessage(msg, connection));
 				}
 
@@ -152,10 +158,13 @@ namespace GREATServer
 			float vx = Clients[playerConnection].Champion.Velocity.X;
 			float vy = Clients[playerConnection].Champion.Velocity.Y;
 
+			byte nbClients = (byte)Clients.Count;
+
 			msg.Write(lac);
 			msg.Write(time);
 			msg.Write(vx);
 			msg.Write(vy);
+			msg.Write(nbClients);
 			foreach (NetConnection connection in Clients.Keys) {
 				ServerClient client = Clients[connection];
 
@@ -171,6 +180,12 @@ namespace GREATServer
 				msg.Write(anim);
 				msg.Write(facingLeft);
 			}
+			foreach (var pair in RemarkableEvents) {
+				byte command = (byte)pair.Key;
+				msg.Write(command);
+				pair.Value(msg);
+			}
+			RemarkableEvents.Clear();
 		}
 
 		/// <summary>
@@ -249,6 +264,31 @@ namespace GREATServer
 
 			Match.CurrentState.AddEntity(spell);
 			ActiveSpells.Add(spell);
+
+			Console.WriteLine(spell.Position);
+			float castTime = (float)Server.Instance.GetTime().TotalSeconds;
+			LinearSpell copy = (LinearSpell)spell.Clone();
+
+			RemarkableEvents.Add(Utilities.MakePair<ServerCommand, Action<NetBuffer>>(
+													ServerCommand.SpellCast,
+			                                        (NetBuffer msg) => {
+				byte type = (byte)copy.Type;
+				float time = castTime;
+				float px = copy.Position.X;
+				float py = copy.Position.Y;
+				float vx = copy.Velocity.X;
+				float vy = copy.Velocity.Y;
+				float cd = (float)copy.Cooldown.TotalSeconds;
+				Console.WriteLine(copy.Position);
+
+				msg.Write(type);
+				msg.Write(time);
+				msg.Write(px);
+				msg.Write(py);
+				msg.Write(vx);
+				msg.Write(vy);
+				msg.Write(cd);
+			}));
 		}
 
 		static bool IsSpell(PlayerActionType action)
@@ -426,8 +466,6 @@ namespace GREATServer
 			ActiveSpells.ForEach(s =>
 			{
 				Match.CurrentState.ApplyPhysicsUpdate(s.ID, (float)dt);
-
-				Console.WriteLine(s.ID);
 			});
 		}
 

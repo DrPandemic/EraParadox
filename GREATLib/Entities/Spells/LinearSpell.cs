@@ -32,7 +32,7 @@ namespace GREATLib.Entities.Spells
 
         public LinearSpell(ulong id, Vec2 position, Vec2 target, SpellTypes type)
 			: base(id, position,
-			       100f, 5f, 5f) //TODO: depend on spell type
+			       500f, 5f, 5f) //TODO: depend on spell type
         {
 			//TODO: depend on spell type
 			Range = 100f;

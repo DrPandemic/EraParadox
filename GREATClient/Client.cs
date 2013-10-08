@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using GREATLib.Network;
 using GREATLib.Entities.Champions;
+using GREATLib.Entities.Spells;
 
 
 namespace GREATClient
@@ -301,15 +302,18 @@ namespace GREATClient
 		public ulong LastAcknowledgedActionID { get; private set; }
 		public double Time { get; private set; }
 		public List<StateUpdateData> EntitiesUpdatedState { get; private set; }
+		public List<RemarkableEventData> RemarkableEvents { get; private set; }
 
 		public StateUpdateEventArgs(NetBuffer msg) : base(msg)
 		{
 			EntitiesUpdatedState = new List<StateUpdateData>();
+			RemarkableEvents = new List<RemarkableEventData>();
 
 			LastAcknowledgedActionID = msg.ReadUInt64();
 			Time = msg.ReadDouble();
 			Vec2 velocity = new Vec2(msg.ReadFloat(), msg.ReadFloat());
-			while (msg.Position < msg.LengthBits) {
+			byte nbClients = msg.ReadByte();
+			for (byte i = 0; i < nbClients; ++i) {
 				ulong id = msg.ReadUInt64();
 				Vec2 pos = new Vec2(msg.ReadFloat(), msg.ReadFloat());
 				ChampionAnimation anim = (ChampionAnimation)msg.ReadByte();
@@ -317,6 +321,53 @@ namespace GREATClient
 
 				EntitiesUpdatedState.Add(new StateUpdateData(id, pos, velocity, anim, facingLeft));
 			}
+			while (msg.Position != msg.LengthBits) {
+				ServerCommand cmd = (ServerCommand)msg.ReadByte();
+				RemarkableEventData data = null;
+				switch (cmd) {
+					case ServerCommand.SpellCast:
+						data = new SpellCastEventData(
+							(SpellTypes)msg.ReadByte(),
+							msg.ReadFloat(),
+							new Vec2(msg.ReadFloat(), msg.ReadFloat()),
+							new Vec2(msg.ReadFloat(), msg.ReadFloat()),
+							TimeSpan.FromSeconds(msg.ReadFloat()));
+						break;
+
+					default:
+						Debug.Fail("Unknown server command when updating (unknown remarkable event)");
+						break;
+				}
+				if (data != null) {
+					RemarkableEvents.Add(data);
+				}
+			}
+		}
+	}
+	public class RemarkableEventData
+	{
+		public ServerCommand Command { get; private set; }
+		public RemarkableEventData(ServerCommand cmd)
+		{
+			Command = cmd;
+		}
+	}
+	public class SpellCastEventData : RemarkableEventData
+	{
+		public SpellTypes Type { get; private set; }
+		public float Time { get; private set; }
+		public Vec2 Position { get; private set; }
+		public Vec2 Velocity { get; private set; }
+		public TimeSpan Cooldown { get; private set; }
+
+		public SpellCastEventData(SpellTypes type, float time, Vec2 pos, Vec2 vel, TimeSpan cooldown)
+			: base(ServerCommand.SpellCast)
+		{
+			Type = type;
+			Time = time;
+			Position = pos;
+			Velocity = vel;
+			Cooldown = cooldown;
 		}
 	}
 }
