@@ -22,12 +22,17 @@
 using System;
 using Lidgren.Network;
 using GREATLib;
+using System.IO;
 using System.Collections.Generic;
 using System.Diagnostics;
 using GREATLib.Network;
+using GREATLib.Entities.Champions;
+using GREATLib.Entities.Spells;
+
+
 namespace GREATClient
 {
-	public class Client
+	public sealed class Client
 	{
 		static volatile Client instance;
 		static object syncInstance = new object();
@@ -46,8 +51,8 @@ namespace GREATClient
 		NetClient client;
 		double SharedTime { get; set; }
 
-		public EventHandler<NewPlayerEventArgs> OnNewPlayer;
-		public EventHandler<StateUpdateEventArgs> OnStateUpdate;
+		LinkedList<KeyValuePair<ServerCommand, NetBuffer>> CommandsToDo { get; set; }
+		Dictionary<ServerCommand, ServerCommandEvent> EventsForCommand { get; set; }
 
 		public Client()
 		{
@@ -57,14 +62,17 @@ namespace GREATClient
 
 			#if DEBUG
 			// LAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGGGGGGGG (MonoDevelop is saying bullshit, it works)
-			config.SimulatedLoss = 0.01f;
-			config.SimulatedMinimumLatency = 0.05f;
-			config.SimulatedRandomLatency = 0.05f;
+			config.SimulatedLoss = 0f;
+			config.SimulatedMinimumLatency = 0.015f;
+			config.SimulatedRandomLatency = 0f;
 			#endif
 
 			this.client = new NetClient(config);
 
 			SharedTime = NetTime.Now;
+
+			CommandsToDo = new LinkedList<KeyValuePair<ServerCommand, NetBuffer>>();
+			EventsForCommand = GetEventsForCommand();
 		}
 
 		public void Start()
@@ -117,9 +125,13 @@ namespace GREATClient
 
 		public TimeSpan GetPing()
 		{
-			return client.ServerConnection != null ?
+            TimeSpan ping = client.ServerConnection != null && client.ServerConnection.AverageRoundtripTime >= 0f ?
 				TimeSpan.FromSeconds((double)client.ServerConnection.AverageRoundtripTime) : 
 				TimeSpan.Zero;
+
+            Debug.Assert(0.0 <= ping.TotalSeconds);
+
+            return ping;
 		}
 
 		public TimeSpan GetTime()
@@ -127,36 +139,76 @@ namespace GREATClient
 			return TimeSpan.FromSeconds(SharedTime);
 		}
 
-		void OnDataReceived(NetIncomingMessage msg)
+		void OnDataReceived(NetBuffer msg)
 		{
 			byte code = msg.ReadByte();
 			ServerCommand command = (ServerCommand)code;
 
-			switch (command) {
-				case ServerCommand.NewPlayer:
-					if (OnNewPlayer != null) {
-						NewPlayerEventArgs e = new NewPlayerEventArgs(msg);
-						OnNewPlayer(this, e);
-						SetSharedTime(e.Time);
-					}
-					break;
+			CommandsToDo.AddLast(Utilities.MakePair<ServerCommand, NetBuffer>(command, msg));
 
-				case ServerCommand.StateUpdate:
-					if (OnStateUpdate != null) {
-						StateUpdateEventArgs e = new StateUpdateEventArgs(msg);
-						OnStateUpdate(this, e);
-						SetSharedTime(e.Time);
-					}
-					break;
+			ExecuteCommands();
+		}
 
-				default:
+		void ExecuteCommands()
+		{
+			List<KeyValuePair<ServerCommand, NetBuffer>> toRemove = new List<KeyValuePair<ServerCommand, NetBuffer>>();
+			foreach (var command in CommandsToDo) {
+				if (EventsForCommand.ContainsKey(command.Key)) { // if we have implemented the action to do when we receive this command type
+					if (EventsForCommand[command.Key].Execute(command.Value)) {
+						toRemove.Add(command); // if we have executed the command properly, we can remove it
+					}
+				} else {
 					throw new NotImplementedException();
+				}
 			}
+
+			toRemove.ForEach(com => CommandsToDo.Remove(com));
+		}
+
+		Dictionary<ServerCommand, ServerCommandEvent> GetEventsForCommand()
+		{
+			Dictionary<ServerCommand, ServerCommandEvent> e = new Dictionary<ServerCommand, ServerCommandEvent>();
+
+			// we reveive our information after joining a game
+			e.Add(ServerCommand.JoinedGame,
+			      new ServerCommandEvent(
+					(msg) => new JoinedGameEventArgs(msg),
+                    (data) => SetSharedTime(((JoinedGameEventArgs)data).Time)));
+
+			// a new player has joined our game
+			e.Add(ServerCommand.NewRemotePlayer,
+			      new ServerCommandEvent(
+					(msg) => new NewRemotePlayerEventArgs(msg)));
+
+			// a state update from the server
+			e.Add(ServerCommand.StateUpdate,
+			      new ServerCommandEvent(
+					(msg) => new StateUpdateEventArgs(msg),
+                    (data) => SetSharedTime(((StateUpdateEventArgs)data).Time)));
+
+			return e;
 		}
 
 		void SetSharedTime(double time)
 		{
+			Debug.Assert(time >= 0.0);
+
+			// Take the given server time + our approximation of how long it took to get the message.
 			SharedTime = time + GetPing().TotalSeconds / 2.0;
+
+			Debug.Assert(0.0 <= SharedTime && time <= SharedTime);
+		}
+
+		/// <summary>
+		/// Registers the command handler to react to certain server commands.
+		/// </summary>
+		public void RegisterCommandHandler(ServerCommand command, EventHandler<CommandEventArgs> handler)
+		{
+			if (EventsForCommand.ContainsKey(command)) {
+				EventsForCommand[command].Handler += handler;
+			} else {
+				throw new NotImplementedException();
+			}
 		}
 
 		/// <summary>
@@ -169,7 +221,7 @@ namespace GREATClient
 			msg.Write((byte)ClientCommand.ActionPackage);
 
 			foreach (PlayerAction action in actions) {
-				uint id = action.ID;
+				ulong id = action.ID;
 				float time = action.Time;
 				byte type = (byte)action.Type;
 				float x = action.Position.X;
@@ -180,6 +232,14 @@ namespace GREATClient
 				msg.Write(type);
 				msg.Write(x);
 				msg.Write(y);
+
+				if (ActionTypeHelper.IsSpell(action.Type)) {
+					Debug.Assert(action.Target != null, "Trying to us target on non-spell action.");
+					float tx = action.Target.X;
+					float ty = action.Target.Y;
+					msg.Write(tx);
+					msg.Write(ty);
+				}
 			}
 
 			client.SendMessage(msg, NetDeliveryMethod.ReliableOrdered);
@@ -187,50 +247,135 @@ namespace GREATClient
 	}
 
 
-	public class NewPlayerEventArgs : EventArgs
+	public class CommandEventArgs : EventArgs 
+	{
+		public CommandEventArgs(NetBuffer msg)
+		{
+		}
+	}
+	public class JoinedGameEventArgs : CommandEventArgs
 	{
 		public double Time { get; private set; }
-		public uint ID { get; private set; }
-		public bool IsOurID { get; private set; }
-		public Vec2 Position { get; private set; }
-		public NewPlayerEventArgs(NetIncomingMessage msg)
+		public PlayerData OurData { get; private set; }
+		public List<PlayerData> RemotePlayers { get; private set; }
+
+		public JoinedGameEventArgs(NetBuffer msg) : base(msg)
 		{
-			Time = msg.ReadDouble();
-			ID = msg.ReadUInt32();
+            RemotePlayers = new List<PlayerData>();
+			OurData = new PlayerData(msg); // the first is our data
+			while (msg.Position < msg.LengthBits) {
+				RemotePlayers.Add(new PlayerData(msg));
+			}
+		}
+	}
+	public class NewRemotePlayerEventArgs : CommandEventArgs
+	{
+		public PlayerData Data { get; private set; }
+		public NewRemotePlayerEventArgs(NetBuffer msg) : base(msg)
+		{
+			Data = new PlayerData(msg);
+		}
+	}
+	public struct PlayerData
+	{
+		public ulong ID { get; private set; }
+		public Vec2 Position { get; private set; }
+
+		public PlayerData(NetBuffer msg) : this()
+		{
+			ID = msg.ReadUInt64();
 			Position = new Vec2(msg.ReadFloat(), msg.ReadFloat());
-			IsOurID = msg.ReadBoolean();
 		}
 	}
 	public struct StateUpdateData
 	{
-		public uint ID { get; private set; }
+		public ulong ID { get; private set; }
 		public Vec2 Position { get; private set; }
+		public Vec2 Velocity { get; private set; }
+		public ChampionAnimation Animation { get; private set; }
+		public bool FacingLeft { get; private set; }
 
-		public StateUpdateData(uint id, Vec2 pos)
+		public StateUpdateData(ulong id, Vec2 pos, Vec2 vel, ChampionAnimation anim, bool facingLeft)
 			: this()
 		{
 			ID = id;
 			Position = pos;
+			Velocity = vel;
+			Animation = anim;
+			FacingLeft = facingLeft;
 		}
 	}
-	public class StateUpdateEventArgs : EventArgs
+	public class StateUpdateEventArgs : CommandEventArgs
 	{
+		public ulong LastAcknowledgedActionID { get; private set; }
 		public double Time { get; private set; }
-		public uint LastAcknowledgedActionID { get; private set; }
 		public List<StateUpdateData> EntitiesUpdatedState { get; private set; }
+		public List<RemarkableEventData> RemarkableEvents { get; private set; }
 
-		public StateUpdateEventArgs(NetIncomingMessage msg)
+		public StateUpdateEventArgs(NetBuffer msg) : base(msg)
 		{
 			EntitiesUpdatedState = new List<StateUpdateData>();
+			RemarkableEvents = new List<RemarkableEventData>();
 
+			LastAcknowledgedActionID = msg.ReadUInt64();
 			Time = msg.ReadDouble();
-			LastAcknowledgedActionID = msg.ReadUInt32();
-			while (msg.Position < msg.LengthBits) {
-				uint id = msg.ReadUInt32();
+			Vec2 velocity = new Vec2(msg.ReadFloat(), msg.ReadFloat());
+			byte nbClients = msg.ReadByte();
+			for (byte i = 0; i < nbClients; ++i) {
+				ulong id = msg.ReadUInt64();
 				Vec2 pos = new Vec2(msg.ReadFloat(), msg.ReadFloat());
+				ChampionAnimation anim = (ChampionAnimation)msg.ReadByte();
+				bool facingLeft = msg.ReadBoolean();
 
-				EntitiesUpdatedState.Add(new StateUpdateData(id, pos));
+				EntitiesUpdatedState.Add(new StateUpdateData(id, pos, velocity, anim, facingLeft));
 			}
+			while (msg.Position != msg.LengthBits) {
+				ServerCommand cmd = (ServerCommand)msg.ReadByte();
+				RemarkableEventData data = null;
+				switch (cmd) {
+					case ServerCommand.SpellCast:
+						data = new SpellCastEventData(
+							(SpellTypes)msg.ReadByte(),
+							msg.ReadFloat(),
+							new Vec2(msg.ReadFloat(), msg.ReadFloat()),
+							new Vec2(msg.ReadFloat(), msg.ReadFloat()),
+							TimeSpan.FromSeconds(msg.ReadFloat()));
+						break;
+
+					default:
+						Debug.Fail("Unknown server command when updating (unknown remarkable event)");
+						break;
+				}
+				if (data != null) {
+					RemarkableEvents.Add(data);
+				}
+			}
+		}
+	}
+	public class RemarkableEventData
+	{
+		public ServerCommand Command { get; private set; }
+		public RemarkableEventData(ServerCommand cmd)
+		{
+			Command = cmd;
+		}
+	}
+	public class SpellCastEventData : RemarkableEventData
+	{
+		public SpellTypes Type { get; private set; }
+		public float Time { get; private set; }
+		public Vec2 Position { get; private set; }
+		public Vec2 Velocity { get; private set; }
+		public TimeSpan Cooldown { get; private set; }
+
+		public SpellCastEventData(SpellTypes type, float time, Vec2 pos, Vec2 vel, TimeSpan cooldown)
+			: base(ServerCommand.SpellCast)
+		{
+			Type = type;
+			Time = time;
+			Position = pos;
+			Velocity = vel;
+			Cooldown = cooldown;
 		}
 	}
 }

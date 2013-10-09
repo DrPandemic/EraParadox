@@ -86,6 +86,11 @@
     <Compile Include="BaseClass\Menu\MenuItem.cs" />
     <Compile Include="BaseClass\IUpdatable.cs" />
     <Compile Include="Network\MainClientChampion.cs" />
+    <Compile Include="ServerCommandEvent.cs" />
+    <Compile Include="GameContent\MainDrawableChampion.cs" />
+    <Compile Include="Network\ClientChampion.cs" />
+    <Compile Include="Network\RemoteClientChampion.cs" />
+    <Compile Include="GameContent\RemoteDrawableChampion.cs" />
     <Compile Include="BaseClass\ScreenInformation\ScreenInfo.cs" />
     <Compile Include="BaseClass\ScreenInformation\ScreenService.cs" />
     <Compile Include="BaseClass\Position.cs" />
@@ -95,6 +100,7 @@
     <Compile Include="Display\ESCMenu.cs" />
     <Compile Include="BaseClass\BaseAction\ActionDelay.cs" />
     <Compile Include="Display\GameUI.cs" />
+    <Compile Include="GameContent\DrawableSpell.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />
@@ -131,6 +137,10 @@
     <ProjectReference Include="..\MonoGame\MonoGame.Framework\MonoGame.Framework.Linux.csproj">
       <Project>{35253CE1-C864-4CD3-8249-4D1319748E8F}</Project>
       <Name>MonoGame.Framework.Linux</Name>
+    </ProjectReference>
+    <ProjectReference Include="GREATClient.Windows.csproj">
+      <Project>{0F19250F-56ED-4ADB-80E1-306C9FFA97C7}</Project>
+      <Name>GREATClient.Windows</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

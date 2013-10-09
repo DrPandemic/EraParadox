@@ -26,19 +26,21 @@ using System.Diagnostics;
 using GREATLib;
 using GREATLib.Network;
 using GREATLib.Entities;
+using GREATLib.Entities.Champions;
+using GREATServer.Network;
+using GREATLib.Entities.Spells;
 
 namespace GREATServer
 {
 	/// <summary>
 	/// Represents a game on the server.
 	/// </summary>
-    public class ServerGame
+    public sealed class ServerGame
     {
-		static readonly TimeSpan CORRECTION_INTERVAL = TimeSpan.FromMilliseconds(50.0);
-
-		static readonly TimeSpan STORE_HISTORY_INTERVAL = TimeSpan.FromMilliseconds(50.0);
+		static readonly TimeSpan STORE_HISTORY_INTERVAL = GameMatch.STATE_UPDATE_INTERVAL;
 		static readonly TimeSpan HISTORY_MAX_TIME_KEPT = TimeSpan.FromSeconds(1.0);
-		const float MAX_TOLERATED_OFF_DISTANCE = 150f;
+		const float MAX_TOLERATED_OFF_DISTANCE = 10f;
+		const double MAX_TIME_AHEAD = 0.01f;
 
 		static readonly TimeSpan MIN_TIME_BETWEEN_ACTIONS = TimeSpan.FromMilliseconds(10.0);
 
@@ -46,6 +48,7 @@ namespace GREATServer
 
 		NetServer NetServer { get; set; }
 		Dictionary<NetConnection, ServerClient> Clients { get; set; }
+		List<LinearSpell> ActiveSpells { get; set; }
 
 		GameMatch Match { get; set; }
 		/// <summary>
@@ -60,14 +63,21 @@ namespace GREATServer
 		double TimeSinceLastCorrection { get; set; }
 		double TimeSinceLastGameHistory { get; set; }
 
+		/// <summary>
+		/// A list of events that must be notified to the clients (e.g. a player died, shot a spell, etc.)
+		/// </summary>
+		List<KeyValuePair<ServerCommand, Action<NetBuffer>>> RemarkableEvents { get; set; }
+
 
         public ServerGame(NetServer server)
         {
 			NetServer = server;
 			Clients = new Dictionary<NetConnection, ServerClient>();
+			ActiveSpells = new List<LinearSpell>();
 
 			StateHistory = new SnapshotHistory<MatchState>(HISTORY_MAX_TIME_KEPT);
 			Match = new GameMatch();
+			RemarkableEvents = new List<KeyValuePair<ServerCommand, Action<NetBuffer>>>();
 
 			TimeSinceLastCorrection = 0.0;
 			TimeSinceLastGameHistory = 0.0;
@@ -92,9 +102,6 @@ namespace GREATServer
 		{
 			// The server-side loop of the game
 
-			// Store the current game state in our history to redo certain player actions.
-			StoreGameState(deltaTime);
-
 			// Handle actions. We check for recently received player actions
 			// and apply them server-side.
 			HandleActions();
@@ -105,6 +112,9 @@ namespace GREATServer
 			// Send corrections. We regularly send the state changes of the entities to
 			// other clients.
 			SendStateChanges(deltaTime);
+
+			// Store the current game state in our history to redo certain player actions.
+			StoreGameState(deltaTime);
 		}
 
 		void StoreGameState(double dt)
@@ -121,14 +131,15 @@ namespace GREATServer
 		/// </summary>
 		void SendStateChanges(double dt)
 		{
-			if (TimeSinceLastCorrection >= CORRECTION_INTERVAL.TotalSeconds) {
+			if (TimeSinceLastCorrection >= GameMatch.STATE_UPDATE_INTERVAL.TotalSeconds) {
 				foreach (NetConnection connection in Clients.Keys) {
 					SendCommand(
 						connection,
 						ServerCommand.StateUpdate,
-						NetDeliveryMethod.UnreliableSequenced,
+						RemarkableEvents.Count == 0 ? NetDeliveryMethod.UnreliableSequenced : NetDeliveryMethod.ReliableUnordered,
 						(msg) => FillStateUpdateMessage(msg, connection));
 				}
+				RemarkableEvents.Clear();
 				TimeSinceLastCorrection = 0.0;
 			}
 			TimeSinceLastCorrection += dt;
@@ -141,21 +152,38 @@ namespace GREATServer
 		{
 			Debug.Assert(Clients.ContainsKey(playerConnection));
 
+			ulong lac = Clients[playerConnection].LastAcknowledgedActionID;
 			double time = Server.Instance.GetTime().TotalSeconds;
-			uint lastAck = Clients[playerConnection].LastAcknowledgedActionID;
 
+			float vx = Clients[playerConnection].Champion.Velocity.X;
+			float vy = Clients[playerConnection].Champion.Velocity.Y;
+
+			byte nbClients = (byte)Clients.Count;
+
+			msg.Write(lac);
 			msg.Write(time);
-			msg.Write(lastAck);
+			msg.Write(vx);
+			msg.Write(vy);
+			msg.Write(nbClients);
 			foreach (NetConnection connection in Clients.Keys) {
 				ServerClient client = Clients[connection];
 
-				uint id = client.Champion.ID;
+				ulong id = client.Champion.ID;
 				float x = client.Champion.Position.X;
 				float y = client.Champion.Position.Y;
+				byte anim = (byte)client.Champion.Animation;
+				bool facingLeft = client.Champion.FacingLeft;
 
 				msg.Write(id);
 				msg.Write(x);
 				msg.Write(y);
+				msg.Write(anim);
+				msg.Write(facingLeft);
+			}
+			foreach (var pair in RemarkableEvents) {
+				byte command = (byte)pair.Key;
+				msg.Write(command);
+				pair.Value(msg);
 			}
 		}
 
@@ -166,10 +194,17 @@ namespace GREATServer
 		{
 			foreach (ServerClient client in Clients.Values) {
 				if (client.ActionsPackage.Count > 0) {
-
 					foreach (PlayerAction action in client.ActionsPackage) {
-						HandleAction(client.Champion.ID, action);
+						client.AnimData.Reset();
+
+						if (IsMovementAction(action.Type)) {
+							HandleMovementAction(client.Champion.ID, action);
+						} else {
+							HandleAction(client.Champion, action);
+						}
 						client.LastAcknowledgedActionID = Math.Max(client.LastAcknowledgedActionID, action.ID);
+
+						UpdateAnimationDataFromAction(client.AnimData, action.Type);
 					}
 
 					client.ActionsPackage.Clear();
@@ -177,10 +212,90 @@ namespace GREATServer
 			}
 		}
 
-		void HandleAction(uint id, PlayerAction action)
+		static bool IsMovementAction(PlayerActionType action)
 		{
-			float now = (float)Server.Instance.GetTime().TotalSeconds;
-			float time = action.Time;
+			switch (action) {
+				case PlayerActionType.MoveLeft:
+				case PlayerActionType.MoveRight:
+				case PlayerActionType.Jump:
+					return true;
+
+				default:
+					return false;
+			}
+		}
+
+		static void UpdateAnimationDataFromAction(ChampionAnimData anim, PlayerActionType action)
+		{
+			switch (action) {
+				case PlayerActionType.Idle:
+					anim.Idle = true;
+					break;
+
+				case PlayerActionType.MoveLeft:
+					--anim.Movement;
+					break;
+
+				case PlayerActionType.MoveRight:
+					++anim.Movement;
+					break;
+
+				default: break;
+			}
+		}
+
+		void HandleAction(ServerChampion champion, PlayerAction action)
+		{
+			if (ActionTypeHelper.IsSpell(action.Type)) {
+				CastSpell(champion, action);
+			} else if (action.Type != PlayerActionType.Idle) {
+				ILogger.Log("Unkown player action type: " + action.Type);
+			}
+		}
+
+		void CastSpell(ServerChampion champ, PlayerAction action)
+		{
+			Debug.Assert(action.Target != null);
+
+			champ.FacingLeft = action.Target.X < champ.Position.X + champ.CollisionWidth / 2f;
+
+			LinearSpell spell = new LinearSpell(
+				IDGenerator.GenerateID(),
+				champ.GetHandsPosition(),
+				action.Target ?? Vec2.Zero,
+				SpellTypes.StickManSpell1); //TODO: depend on spell used
+
+			Match.CurrentState.AddEntity(spell);
+			ActiveSpells.Add(spell);
+
+			float castTime = (float)Server.Instance.GetTime().TotalSeconds;
+			LinearSpell copy = (LinearSpell)spell.Clone();
+
+			RemarkableEvents.Add(Utilities.MakePair<ServerCommand, Action<NetBuffer>>(
+													ServerCommand.SpellCast,
+			                                        (NetBuffer msg) => {
+				byte type = (byte)copy.Type;
+				float time = castTime;
+				float px = copy.Position.X;
+				float py = copy.Position.Y;
+				float vx = copy.Velocity.X;
+				float vy = copy.Velocity.Y;
+				float cd = (float)copy.Cooldown.TotalSeconds;
+
+				msg.Write(type);
+				msg.Write(time);
+				msg.Write(px);
+				msg.Write(py);
+				msg.Write(vx);
+				msg.Write(vy);
+				msg.Write(cd);
+			}));
+		}
+
+		void HandleMovementAction(ulong id, PlayerAction action)
+		{
+			double now = Server.Instance.GetTime().TotalSeconds;
+			double time = action.Time;
 
 			// Make sure we're not using weird times
 			time = ValidateActionTime(action, now);
@@ -194,20 +309,22 @@ namespace GREATServer
 					stateBefore.Value.Clone() as MatchState);
 
 				// Simulate from our previous snapshot to our current action to be up-to-date
-				IEntity player = state.Value.GetEntity(id);
-				float deltaT = (float)(time - state.Key);
-				if (deltaT > 0f) { // if we have something to simulate...
-					state.Value.ApplyPhysicsUpdate(id, deltaT);
+				if (state.Value.ContainsEntity(id)) {
+					var player = (ICharacter)state.Value.GetEntity(id);
+					float deltaT = (float)(time - state.Key);
+					if (deltaT > 0f) { // if we have something to simulate...
+						state.Value.ApplyPhysicsUpdate(id, deltaT);
+					}
+
+					// Make sure we're not using hacked positions
+					player.Position = ValidateActionPosition(player, action);
+
+					// Actually execute the action on our currently simulated state
+					DoAction(state.Value, player, action);
+
+					// Store our intermediate state at the action time.
+					state = StateHistory.AddSnapshot(state.Value, time);
 				}
-
-				// Make sure we're not using hacked positions
-				player.Position = ValidateActionPosition(player, action);
-
-				// Actually execute the action on our currently simulated state
-				DoAction(state.Value, player, action);
-
-				// Store our intermediate state at the action time.
-				state = StateHistory.AddSnapshot(state.Value, time);
 
 
 
@@ -216,31 +333,37 @@ namespace GREATServer
 				var nextState = StateHistory.GetNext(state);
 				while (nextState.HasValue) {
 					// get how much time we have to simulate for next state
-					float timeUntilNextState = (float)nextState.Value.Key - time;
+					float timeUntilNextState = (float)(nextState.Value.Key - time);
 					Debug.Assert(timeUntilNextState >= 0f);
 
 					// simulate the next state
-					nextState.Value.Value.GetEntity(id).Clone(state.Value.GetEntity(id));
-					if (timeUntilNextState > 0f) {
-						nextState.Value.Value.ApplyPhysicsUpdate(id, timeUntilNextState);
+					if (nextState.Value.Value.ContainsEntity(id)) {
+						nextState.Value.Value.GetEntity(id).Clone(state.Value.GetEntity(id));
+						if (timeUntilNextState > 0f) {
+							nextState.Value.Value.ApplyPhysicsUpdate(id, timeUntilNextState);
+						}
 					}
 
 					// switch to the next state
 					state = nextState.Value;
+                    time = state.Key;
                     nextState = StateHistory.GetNext(state);
 				}
 
 				// Modify our current game state to apply our simulation modifications.
-	            Match.CurrentState.GetEntity(id).Clone(StateHistory.GetLast().Value.GetEntity(id));
+				var last = StateHistory.GetLast();
+				if (Match.CurrentState.ContainsEntity(id) && last.Value.ContainsEntity(id)) {
+					Match.CurrentState.GetEntity(id).Clone(last.Value.GetEntity(id));
+				}
 			}
 		}
 
-		static float ValidateActionTime(PlayerAction action, float currentTime)
+		static double ValidateActionTime(PlayerAction action, double currentTime)
 		{
-			float time = action.Time;
+			double time = action.Time;
 
 			// action time is too old? might be a hacker/extreme lag. Log it, keep it but clamp it
-			float oldestAcceptedTime = (float)(currentTime - HISTORY_MAX_TIME_KEPT.TotalSeconds);
+			double oldestAcceptedTime = currentTime - HISTORY_MAX_TIME_KEPT.TotalSeconds;
 			if (action.Time < oldestAcceptedTime) {
 				time = oldestAcceptedTime;
 				ILogger.Log(String.Format("Action {0} seems a bit late. Accepting it, but might be a hacker/extreme lag. Given time: {1}, server time: {2}",
@@ -249,7 +372,7 @@ namespace GREATServer
 			}
 
 			// action time seems too recent? might be a hacker/time error. Log it, keep it but clamp it
-			if (action.Time > currentTime) {
+			if (action.Time > currentTime + MAX_TIME_AHEAD) {
 				time = currentTime;
 				ILogger.Log(String.Format("Action {0} seems a bit too new. Accepting it, but might be a hacker/time error. Given time: {1}, server time: {2}",
 				                          action.ID, action.Time, currentTime),
@@ -264,27 +387,39 @@ namespace GREATServer
 			Vec2 position = action.Position;
 			// If the position provided by the client seems legit, we take it. Otherwise, we ignore it
 			// and log it (might be a hacker).
-			if (Vec2.DistanceSquared(player.Position, action.Position) >= MAX_TOLERATED_OFF_DISTANCE * MAX_TOLERATED_OFF_DISTANCE) {
+			if (Vec2.DistanceSquared(player.Position, position) >= MAX_TOLERATED_OFF_DISTANCE * MAX_TOLERATED_OFF_DISTANCE) {
 				position = player.Position;
-				ILogger.Log("Action " + action.ID + "'s position seems a bit odd. Using the stored server position instead (hacker?). Client will need server correction.", LogPriority.Warning);
+				//ILogger.Log("Action " + action.ID + "'s position seems a bit odd. Using the stored server position instead (hacker?). Client will need server correction.", LogPriority.Warning);
 			}
 
 			return position;
 		}
 
-		static void DoAction(MatchState match, IEntity champion, PlayerAction action)
+		static void DoAction(MatchState match, ICharacter champion, PlayerAction action)
 		{
 			switch (action.Type) {
 				case PlayerActionType.MoveLeft:
 					match.Move(champion.ID, HorizontalDirection.Left);
+					champion.FacingLeft = true;
 					break;
-					case PlayerActionType.MoveRight:
+				case PlayerActionType.MoveRight:
 					match.Move(champion.ID, HorizontalDirection.Right);
+					champion.FacingLeft = false;
 					break;
-					case PlayerActionType.Jump:
+
+				case PlayerActionType.Jump:
 					match.Jump(champion.ID);
 					break;
-					default:
+
+					// Ignore the actions that are not related to movement
+				case PlayerActionType.Idle:
+				case PlayerActionType.Spell1:
+				case PlayerActionType.Spell2:
+				case PlayerActionType.Spell3:
+				case PlayerActionType.Spell4:
+					break;
+
+				default:
 					Debug.Fail("Invalid player action.");
 					ILogger.Log("Invalid player action passed in a package: " + action.Type.ToString(), LogPriority.Warning);
 					break;
@@ -297,12 +432,37 @@ namespace GREATServer
 		/// </summary>
 		void UpdateLogic(double dt)
 		{
-			foreach (ServerClient client in Clients.Values) {
-				Match.CurrentState.ApplyPhysicsUpdate(client.Champion.ID, dt);
+			UpdateSpells(dt);
+			UpdateChampions(dt);
+		}
+		void UpdateChampions(double dt)
+		{
+			// Use the time elapsed since our last snapshot as a delta time
+			double time = StateHistory.IsEmpty() ? dt : 
+				Server.Instance.GetTime().TotalSeconds - StateHistory.GetLast().Key;
 
-				//TODO: remove, used for testing purposes
-				ILogger.Log(client.Champion.Position.ToString());
+			foreach (ServerClient client in Clients.Values) {
+				if (time > 0.0) {
+					Match.CurrentState.ApplyPhysicsUpdate(client.Champion.ID, (float)time);
+				}
+
+				client.Champion.Animation = client.Champion.GetAnim(false, //TODO: replace with actual HP
+				                                                    Match.CurrentState.IsOnGround(client.Champion.ID),
+				                                                    false,
+				                                                    false,
+				                                                    false,
+				                                                    false,
+				                                                    client.AnimData.Movement,
+				                                                    client.AnimData.Idle,
+				                                                    client.Champion.Animation);
 			}
+		}
+		void UpdateSpells(double dt)
+		{
+			ActiveSpells.ForEach(s =>
+			{
+				Match.CurrentState.ApplyPhysicsUpdate(s.ID, (float)dt);
+			});
 		}
 
 		/// <summary>
@@ -312,50 +472,76 @@ namespace GREATServer
 		{
 			ILogger.Log("New player added to the game.", LogPriority.High);
 
-			IEntity champion = CreateRandomChampion();
+			ServerChampion champion = CreateRandomChampion();
 
-			ServerClient client = new ServerClient(connection, champion);
-			Clients.Add(connection, client);
-
-			Match.CurrentState.AddEntity(champion);
-
-			// Send to the client that asked to join
+			// Send to the client that asked to join, along with the info of the current players
+			List<IEntity> remoteChampions = new List<IEntity>();
+			foreach (ServerClient remote in Clients.Values) {
+				remoteChampions.Add(remote.Champion);
+			}
 			SendCommand(connection,
-			       ServerCommand.NewPlayer,
-			       NetDeliveryMethod.ReliableOrdered,
-			       (msg) => FillNewPlayerMessage(msg, champion, true));
-			//TODO: send currently existing players to new player
+			            ServerCommand.JoinedGame,
+			            NetDeliveryMethod.ReliableUnordered,
+			       		(msg) => FillJoinedGameMessage(msg, champion, remoteChampions));
 
-			//TODO: send to the other players as well here
+			// Send the new player event to other players
+			foreach (NetConnection clientConn in Clients.Keys) {
+				if (clientConn != connection) {
+					SendCommand(clientConn,
+					           ServerCommand.NewRemotePlayer,
+					           NetDeliveryMethod.ReliableUnordered,
+					           (msg) => FillNewRemotePlayerMessage(msg, champion));
+				}
+			}
+
+			// Apply the changes to our game state
+	        ServerClient client = new ServerClient(connection, champion);
+	        Clients.Add(connection, client);
+	        Match.CurrentState.AddEntity(champion);
 		}
 
 		/// <summary>
-		/// Creates a message indicating that a player has joined the game and that
+		/// Fills a message for the players already in a game to indicate that a new player joined the game.
+		/// </summary>
+		static void FillNewRemotePlayerMessage(NetBuffer msg, IEntity champion)
+		{
+			FillChampionInfo(msg, champion);
+		}
+
+		/// <summary>
+		/// Creates a message indicating that he has joined the game and that
 		/// the client should create a new drawable champion associated to it.
 		/// </summary>
-		/// <param name="isOwner">Whether this is the new player or not.</param>
-		static void FillNewPlayerMessage(NetBuffer msg, IEntity champion, bool isOwner)
+		static void FillJoinedGameMessage(NetBuffer msg, IEntity champion, List<IEntity> remoteChampions)
 		{
 			double time = Server.Instance.GetTime().TotalSeconds;
-			uint id = champion.ID;
+			remoteChampions.Insert(0, champion); // add our champion to the beginning
+
+			// and send all the champions together
+			foreach (IEntity champ in remoteChampions) {
+				FillChampionInfo(msg, champ);
+			}
+		}
+
+		static void FillChampionInfo(NetBuffer msg, IEntity champion)
+		{
+			ulong id = champion.ID;
 			float x = champion.Position.X;
 			float y = champion.Position.Y;
-			bool owner = isOwner;
-			msg.Write(time);
+
 			msg.Write(id);
 			msg.Write(x);
 			msg.Write(y);
-			msg.Write(owner);
 		}
 
 		/// <summary>
 		/// Creates a random champion at a random starting position (mainly used
 		/// for testing purposes).
 		/// </summary>
-		static IEntity CreateRandomChampion()
+		static ServerChampion CreateRandomChampion()
 		{
-			return new IEntity(IDGenerator.GenerateID(), 
-			                   new Vec2(Utilities.RandomFloat(Utilities.Random, 100f, 400f), 0f));
+			return new ServerChampion(IDGenerator.GenerateID(), 
+			                   new Vec2(Utilities.RandomFloat(Utilities.Random, 100f, 400f), 150f));
 		}
 
 		/// <summary>
@@ -383,13 +569,13 @@ namespace GREATServer
 
 			try {
 				while (message.Position < message.LengthBits) {
-					uint id = message.ReadUInt32();
+					ulong id = message.ReadUInt64();
 					float time = message.ReadFloat();
 					PlayerActionType type = (PlayerActionType)message.ReadByte();
 					Vec2 position = new Vec2(message.ReadFloat(), message.ReadFloat());
+					Vec2 target = ActionTypeHelper.IsSpell(type) ? new Vec2(message.ReadFloat(), message.ReadFloat()) : null;
 
-					ILogger.Log(String.Format("Action package: id={0}, time={1}, type={2}, pos={3}", id,time,type,position), LogPriority.Low);
-					PlayerAction action = new PlayerAction(id, type, time, position);
+					PlayerAction action = new PlayerAction(id, type, time, position, target);
 
 					Clients[message.SenderConnection].ActionsPackage.Add(action);
 				}

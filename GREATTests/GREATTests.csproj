@@ -35,8 +35,6 @@
   <ItemGroup>
     <Compile Include="Vec2Test.cs" />
     <Compile Include="RectTest.cs" />
-    <Compile Include="PhysicsTest.cs" />
-    <Compile Include="IEntityTest.cs" />
     <Compile Include="MatchTest.cs" />
     <Compile Include="SnapshotHistoryTest.cs" />
   </ItemGroup>

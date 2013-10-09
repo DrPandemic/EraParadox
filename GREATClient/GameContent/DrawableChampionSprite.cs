@@ -21,6 +21,7 @@
 using System;
 using System.Diagnostics;
 using GREATClient.BaseClass;
+using GREATLib.Entities.Champions;
 
 namespace GREATClient.GameContent
 {
@@ -38,16 +39,16 @@ namespace GREATClient.GameContent
 		/// <value>The current animation.</value>
 		public ChampionAnimation CurrentAnimation { get; set; }
 
-		public DrawableChampionSprite(ChampionTypes type, ChampionsInfo championsInfo)
+		public DrawableChampionSprite(ChampionAnimation startAnim, ChampionTypes type, ChampionsInfo championsInfo)
 			: base (championsInfo.GetInfo(type).AssetName,
 			        championsInfo.GetInfo(type).FrameWidth,
 			        championsInfo.GetInfo(type).FrameHeight,
-			        championsInfo.GetInfo(type).GetAnimation(ChampionAnimation.idle).Line,
-			        championsInfo.GetInfo(type).GetAnimation(ChampionAnimation.idle).FrameRate,
-			        championsInfo.GetInfo(type).GetAnimation(ChampionAnimation.idle).FrameCount)
+			        championsInfo.GetInfo(type).GetAnimation(startAnim).Line,
+			        championsInfo.GetInfo(type).GetAnimation(startAnim).FrameRate,
+			        championsInfo.GetInfo(type).GetAnimation(startAnim).FrameCount)
         {
 			Information = championsInfo.GetInfo(type);
-			CurrentAnimation = ChampionAnimation.idle;
+			CurrentAnimation = startAnim;
         }
 
 		/// <summary>

@@ -36,6 +36,7 @@ namespace GREATLib.Physics
 		/// the same timestep (and do accomodations to fit the given delta).
 		/// </summary>
 		static readonly TimeSpan FIXED_TIMESTEP = TimeSpan.FromMilliseconds(15.0);
+		static readonly double DELTA_S = FIXED_TIMESTEP.TotalSeconds;
 		/// <summary>
 		/// The gravity force per second applied.
 		/// </summary>
@@ -87,7 +88,7 @@ namespace GREATLib.Physics
 			if (deltaSeconds > 0.0) { // we have leftover time to simulate
 				float progress = (float)(deltaSeconds / FIXED_TIMESTEP.TotalSeconds);
 
-				InterpolateUpdate(ref entity, progress);
+				InterpolateUpdate(entity, progress);
 			}
 		}
 
@@ -95,7 +96,7 @@ namespace GREATLib.Physics
 		/// Interpolates between the current entity state and its future state (with one
 		/// more physics update).
 		/// </summary>
-		void InterpolateUpdate(ref IEntity entity, float progress)
+		void InterpolateUpdate(IEntity entity, float progress)
 		{
 			Debug.Assert(entity != null
 						 && entity.Position != null
@@ -114,35 +115,58 @@ namespace GREATLib.Physics
 			entity.Velocity = Vec2.Lerp(initialVel, entity.Velocity, progress);
 		}
 
+		void ApplyUpdate(IEntity e)
+		{
+			if (e is ICharacter)
+				UpdateCharacter((ICharacter)e);
+			else
+				UpdateEntity(e);
+		}
+
+		void UpdateEntity(IEntity entity)
+		{
+			Debug.Assert(entity != null
+			             && entity.Position != null
+			             && entity.Velocity != null);
+
+			ApplyMovement(entity, null);
+		}
+
 		/// <summary>
 		/// Actually applies a physics update to an entity with a fixed timestep.
 		/// </summary>
-		void ApplyUpdate(IEntity entity)
+		void UpdateCharacter(ICharacter character)
 		{
-			Debug.Assert(entity != null
-				&& entity.Position != null
-				&& entity.Velocity != null);
-
-			double deltaSeconds = FIXED_TIMESTEP.TotalSeconds;
+			Debug.Assert(character != null
+			             && character.Position != null
+			             && character.Velocity != null);
 
 			// Apply gravity
-			entity.Velocity += GRAVITY * deltaSeconds;
+			character.Velocity += GRAVITY * DELTA_S;
+			 
+			RestrictSpeed(character);
 
-			// reset the flag indicating if we're on the ground
-			entity.IsOnGround = false;
-
-			// Multiple physics passes to reduce the chance of "going through" obstacles when we're too fast.
-			Vec2 passMovement = (entity.Velocity * deltaSeconds) / PHYSICS_PASSES;
-			for (int pass = 0; pass < PHYSICS_PASSES; ++pass) {
-				entity.Position += passMovement;
-				Collisions.UndoCollisions(entity);
-			}
+			ApplyMovement(character, () => Collisions.UndoCollisions(character));
 
 			// Make the movement fade out over time
-			entity.Velocity.X *= (float)Math.Pow(entity.HorizontalAcceleration, deltaSeconds);
+			character.Velocity.X *= (float)Math.Pow(character.HorizontalAcceleration, DELTA_S);
+		}
 
-			// reset the movement
-			entity.Direction = HorizontalDirection.None;
+		void ApplyMovement(IEntity e, Action onPhysicsPass)
+		{
+			// Multiple physics passes to reduce the chance of "going through" obstacles when we're too fast.
+			Vec2 passMovement = (e.Velocity * DELTA_S) / PHYSICS_PASSES;
+			for (int pass = 0; pass < PHYSICS_PASSES; ++pass) {
+				e.Position += passMovement;
+				if (onPhysicsPass != null) onPhysicsPass();
+			}
+		}
+
+		void RestrictSpeed(IEntity entity)
+		{
+			// Restrict movement speed
+			if (entity.Velocity.GetLengthSquared() > IEntity.MAX_SPEED * IEntity.MAX_SPEED)
+				entity.Velocity = Vec2.Normalize(entity.Velocity) * IEntity.MAX_SPEED;
 		}
 
 		/// <summary>
@@ -161,29 +185,19 @@ namespace GREATLib.Physics
 				// Find in what direction we should apply the force
 				float moveForce = (int)direction * entity.MoveSpeed;
 
-				//TODO: air drag
-
 				// Apply the movement
 				entity.Velocity.X += moveForce;
-
-				// Find our current direction
-				entity.Direction = (HorizontalDirection)Utilities.Clamp(
-									   (int)entity.Direction + (int)direction,
-	                                   (int)HorizontalDirection.Left,
-	                                   (int)HorizontalDirection.Right);
 			}
 		}
 
-		public void Jump(IEntity entity)
+		public void Jump(ICharacter character)
 		{
-			Debug.Assert(entity != null
-			             && entity.Velocity != null);
+			Debug.Assert(character != null
+			             && character.Velocity != null);
 
 			// We may only jump when we're on the ground
-			if (entity.IsOnGround) {
-				entity.Velocity.Y -= entity.JumpForce;
-				// assume that we'll lift off the ground to avoid multi-jump.
-				entity.IsOnGround = false;
+			if (IsOnGround(character)) {
+				character.Velocity.Y = -character.JumpForce;
 			}
 		}
 
@@ -193,8 +207,11 @@ namespace GREATLib.Physics
 		public void ResetMovement(IEntity entity)
 		{
 			entity.Velocity = Vec2.Zero;
-			entity.Direction = HorizontalDirection.None;
-			entity.IsOnGround = false;
+		}
+
+		public bool IsOnGround(IEntity entity)
+		{
+			return Collisions.HasCollisionBelow(entity);
 		}
     }
 }

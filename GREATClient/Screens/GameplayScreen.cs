@@ -31,31 +31,43 @@ using GREATLib.Network;
 using GREATClient.BaseClass;
 using GREATClient.GameContent;
 using GREATClient.Display;
+using GREATClient.Network;
+using GREATClient.BaseClass.Input;
+using GREATLib.Entities.Spells;
 
 namespace GREATClient.Screens
 {
-    public class GameplayScreen : Screen
+    public sealed class GameplayScreen : Screen
     {
+		static readonly List<KeyValuePair<InputActions, PlayerActionType>> InputTypeForAction = Utilities.MakeList(
+			Utilities.MakePair(InputActions.GoLeft, PlayerActionType.MoveLeft),
+			Utilities.MakePair(InputActions.GoRight, PlayerActionType.MoveRight),
+			Utilities.MakePair(InputActions.Jump, PlayerActionType.Jump),
+			Utilities.MakePair(InputActions.Spell1, PlayerActionType.Spell1),
+			Utilities.MakePair(InputActions.Spell2, PlayerActionType.Spell2),
+			Utilities.MakePair(InputActions.Spell3, PlayerActionType.Spell3),
+			Utilities.MakePair(InputActions.Spell4, PlayerActionType.Spell4));
+
+
 		const bool CORRECTIONS_ENABLED = false;
 
 		static readonly TimeSpan SEND_INPUTS_TO_SERVER_INTERVAL = TimeSpan.FromMilliseconds(30.0);
 
 		Client Client { get; set; }
 
-		//TODO: place these in a class to manage input
-		KeyboardState oldKeyboard;
-		MouseState oldMouse;
-		//ENDTODO
-
 		GameMatch Match { get; set; }
 		DrawableTileMap Map { get; set; }
 
 		ChampionsInfo ChampionsInfo { get; set; }
-		DrawableChampion OurChampion { get; set; }
+		MainDrawableChampion OurChampion { get; set; }
 
 		GameTime GameTime { get; set; }
 
 		double TimeSinceLastInputSent { get; set; }
+
+		double TimeOfLastStateUpdate { get; set; }
+		List<StateUpdateData> LastStateUpdateData { get; set; }
+		List<RemarkableEventData> RemarkableEvents { get; set; }
 
         public GameplayScreen(ContentManager content, Game game, Client client)
 			: base(content, game)
@@ -63,15 +75,13 @@ namespace GREATClient.Screens
 			Client = client;
 			ChampionsInfo = new ChampionsInfo();
 
-			//TODO: input manager
-			oldKeyboard = Keyboard.GetState();
-			oldMouse = Mouse.GetState();
-			//ENDTODO
-
 			GameTime = null;
 			TimeSinceLastInputSent = 0.0;
 
 			Match = new GameMatch();
+			LastStateUpdateData = new List<StateUpdateData>();
+			RemarkableEvents = new List<RemarkableEventData>();
+			TimeOfLastStateUpdate = 0.0;
         }
 
 		protected override void OnLoadContent()
@@ -85,8 +95,9 @@ namespace GREATClient.Screens
 			Map = new DrawableTileMap(Match.World.Map);
 			AddChild(Map);
 
-			Client.OnNewPlayer += OnNewPlayer;
-			Client.OnStateUpdate += OnStateUpdate;
+			Client.RegisterCommandHandler(ServerCommand.JoinedGame, OnJoinedGame);
+			Client.RegisterCommandHandler(ServerCommand.NewRemotePlayer, OnNewRemotePlayer);
+			Client.RegisterCommandHandler(ServerCommand.StateUpdate, OnStateUpdate);
 
 			FPSCounter fps = new FPSCounter();
 			PingCounter ping = new PingCounter(() => {
@@ -99,44 +110,61 @@ namespace GREATClient.Screens
 			ping.SetPositionRelativeToObject(fps, new Vector2(100,0), false);
 		}
 
-		void OnStateUpdate(object sender, StateUpdateEventArgs e)
+		void OnStateUpdate(object sender, CommandEventArgs args)
 		{
-			Debug.Assert(sender != null && e != null);
+			StateUpdateEventArgs e = args as StateUpdateEventArgs;
+			Debug.Assert(e != null);
 
-			if (OurChampion != null) {
-				OurChampion.SetLastAcknowledgedAction(e.LastAcknowledgedActionID);
+			OurChampion.Champion.SetLastAcknowledgedActionID(e.LastAcknowledgedActionID);
+			LastStateUpdateData = new List<StateUpdateData>(e.EntitiesUpdatedState.ToArray());
+			RemarkableEvents.AddRange(e.RemarkableEvents);
+			TimeOfLastStateUpdate = Client.GetTime().TotalSeconds;
+		}
 
+		void OnJoinedGame(object sender, CommandEventArgs args)
+		{
+			JoinedGameEventArgs e = args as JoinedGameEventArgs;
+			Debug.Assert(e != null);
+			Debug.Assert(ChampionsInfo != null && Match != null);
 
-				foreach (StateUpdateData state in e.EntitiesUpdatedState) {
-					if (Match.CurrentState.ContainsEntity(state.ID)) {
-						ILogger.Log(String.Format("State update: lastack={3} time={2} id={0}, pos={1}", state.ID, state.Position, Client.GetTime().TotalSeconds, e.LastAcknowledgedActionID));
-						IEntity entity = Match.CurrentState.GetEntity(state.ID);
-						entity.AuthoritativeChangePosition(state.Position);
-					}
-				}
+			AddChampionToGame(e.OurData, true);
+
+			foreach (PlayerData remote in e.RemotePlayers) {
+				AddChampionToGame(remote, false);
 			}
 		}
 
-		void OnNewPlayer(object sender, NewPlayerEventArgs e)
+		void OnNewRemotePlayer(object sender, CommandEventArgs args)
 		{
-			Debug.Assert(sender != null && e != null);
+			NewRemotePlayerEventArgs e = args as NewRemotePlayerEventArgs;
+			Debug.Assert(e != null);
 			Debug.Assert(ChampionsInfo != null && Match != null);
 
-			DrawableChampion champion = new DrawableChampion(
-				new ChampionSpawnInfo(e.ID, e.Position),
-				ChampionsInfo,
-				Match);
+			AddChampionToGame(e.Data, false);
+		}
+		void AddChampionToGame(PlayerData data, bool ourChampion)
+		{
+			ChampionSpawnInfo spawn = new ChampionSpawnInfo(data.ID, data.Position);
 
-			AddChild(champion);
+			IDraw idraw;
+			IEntity ientity;
 
-			Match.CurrentState.AddEntity(champion.Entity);
-
-			if (e.IsOurID) {
-				OurChampion = champion;
+			if (ourChampion) {
+				OurChampion = new MainDrawableChampion(spawn, Match, ChampionsInfo);
+				idraw = OurChampion;
+				ientity = OurChampion.Champion;
+			} else {
+				var remote = new RemoteDrawableChampion(spawn, ChampionsInfo);
+				idraw = remote;
+				ientity = remote.Champion;
 			}
 
+			AddChild(idraw);
+
+			Match.CurrentState.AddEntity(ientity);
+
 			ILogger.Log(
-				String.Format("New champion: id={0}, pos={1}, isOurChamp={2}", e.ID, e.Position, e.IsOurID),
+				String.Format("New champion: id={0}, pos={1}, isOurChamp={2}", spawn.ID, spawn.SpawningPosition, ourChampion),
 				LogPriority.High);
 		}
 
@@ -164,40 +192,26 @@ namespace GREATClient.Screens
 			if (Keyboard.GetState().IsKeyDown(Keys.Escape) && Keyboard.GetState().IsKeyDown(Keys.LeftShift))
 				Exit = true;
 		}
-
 		/// <summary>
 		/// Package local input as actions to eventually send to the server.
 		/// At the same time, we simulate the input locally for client-side prediction.
 		/// </summary>
 		void HandleInput()
 		{
-			KeyboardState keyboard = Keyboard.GetState();
-			MouseState mouse = Mouse.GetState();
-
-			List<PlayerActionType> Actions = new List<PlayerActionType>();
-
 			if (OurChampion != null) {
-				// This will be replaced by the inputmanager
-				const Keys LEFT = Keys.A;
-				const Keys RIGHT = Keys.D;
-				const Keys JUMP = Keys.W;
-				if (keyboard.IsKeyDown(LEFT)) {
-					Actions.Add(PlayerActionType.MoveLeft);
-				} 
-
-				if (keyboard.IsKeyDown(RIGHT)) {
-					Actions.Add(PlayerActionType.MoveRight);
-				} 
-
-				if (keyboard.IsKeyDown(JUMP) && oldKeyboard.IsKeyUp(JUMP)) {
-					Actions.Add(PlayerActionType.Jump);
-				}
-
-				Actions.ForEach(OurChampion.PackageAction);
+				InputTypeForAction.ForEach(pair =>
+				{
+					if (inputManager.IsActionFired(pair.Key)) {
+						OurChampion.PackageAction(pair.Value, ActionTypeHelper.IsSpell(pair.Value) ? GetTargetWorldPosition() : null);
+					}
+				});
 			}
+		}
 
-			oldKeyboard = keyboard;
-			oldMouse = mouse;
+		Vec2 GetTargetWorldPosition()
+		{
+			//TODO: use camera here !
+			return new Vec2(inputManager.MouseX, inputManager.MouseY);
 		}
 
 		/// <summary>
@@ -206,7 +220,40 @@ namespace GREATClient.Screens
 		/// </summary>
 		void ApplyServerModifications()
 		{
-			//TODO: move it here
+			if (OurChampion != null && LastStateUpdateData.Count > 0) {
+				foreach (StateUpdateData state in LastStateUpdateData) {
+					if (Match.CurrentState.ContainsEntity(state.ID)) {
+						IEntity entity = Match.CurrentState.GetEntity(state.ID);
+						ClientChampion champ = (ClientChampion)entity;
+						champ.AuthoritativeChangePosition(state, TimeOfLastStateUpdate);
+					}
+				}
+				LastStateUpdateData.Clear();
+
+				ApplyRemarkableEvents();
+			}
+		}
+
+		void ApplyRemarkableEvents()
+		{
+			RemarkableEvents.ForEach(r =>
+			{
+				switch (r.Command) {
+					case ServerCommand.SpellCast:
+						CastSpell((SpellCastEventData)r);
+						break;
+
+					default:
+						Debug.Fail("Unknown server command (unknown remarkable event).");
+						break;
+				}
+			});
+
+			RemarkableEvents.Clear();
+		}
+		void CastSpell(SpellCastEventData e)
+		{
+			AddChild(new DrawableSpell(new ClientLinearSpell(e.Position, e.Time, e.Velocity)));
 		}
 
 		/// <summary>
@@ -221,13 +268,18 @@ namespace GREATClient.Screens
 				if (TimeSinceLastInputSent >= SEND_INPUTS_TO_SERVER_INTERVAL.TotalSeconds) {
 					var package = OurChampion.GetActionPackage();
 
-					if (package.Count > 0) {
-						// Send packaged input
-						Client.SendPlayerActionPackage(package);
-						package.Clear();
-
-						TimeSinceLastInputSent = 0f;
+					if (package.Count == 0) { // no actions? send a heartbeat to say that we're connected
+						package.Enqueue(new PlayerAction(IDGenerator.GenerateID(),
+						                                 PlayerActionType.Idle,
+						                                 (float)Client.Instance.GetTime().TotalSeconds,
+						                                 OurChampion.Champion.Position));
 					}
+
+					// Send packaged input
+					Client.SendPlayerActionPackage(package);
+					package.Clear();
+
+					TimeSinceLastInputSent = 0f;
 				}
 			}
 		}

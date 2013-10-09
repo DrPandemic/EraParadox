@@ -1,10 +1,10 @@
 //
-//  Main.cs
+//  ChampionTypes.cs
 //
 //  Author:
-//       William Turner <willtur.will@gmail.com>
+//       Jesse <jesse.emond@hotmail.com>
 //
-//  Copyright (c) 2013 
+//  Copyright (c) 2013 Jesse
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -18,29 +18,25 @@
 //
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 using System;
-using System.Threading;
 
-namespace GREATServer
+namespace GREATLib.Entities.Champions
 {
-	class MainClass
+	public enum ChampionAnimation
 	{
-		static readonly TimeSpan SLEEP_TIME = TimeSpan.FromMilliseconds(50.0);
+		run,
+		idle,
+		die,
+		jump,
+		spell1,
+		spell2,
+		spell3,
+		spell4
+	}
 
-		static Server server;
-
-		public static void Main(string[] args)
-		{
-			server = Server.Instance;
-			server.Start();
-
-			while (!Console.KeyAvailable || Console.ReadKey().Key != ConsoleKey.Q) {
-				server.Update(SLEEP_TIME.TotalSeconds);
-				Thread.Sleep(SLEEP_TIME);
-			}
-
-			server.Stop();
-		}
+	public enum ChampionTypes
+	{
+		StickMan
 	}
 }
+

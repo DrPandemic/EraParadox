@@ -26,26 +26,18 @@ using GREATLib.Entities;
 using GREATLib.Network;
 using GREATClient.BaseClass;
 using GREATClient.Network;
+using Microsoft.Xna.Framework.Graphics;
+using GREATLib.Entities.Champions;
 
 namespace GREATClient.GameContent
 {
 	/// <summary>
 	/// Represents a champion in the game.
 	/// </summary>
-    public class DrawableChampion : Container
+	public abstract class DrawableChampion<ChampionT> : Container 
+		where ChampionT : ClientChampion
     {
-		/// <summary>
-		/// Client-side version of the main champion, managing the network interaction and local
-		/// simulation of the client's champion.
-		/// </summary>
-		MainClientChampion Champion { get; set; }
-		public IEntity Entity { get { return Champion; } }
-
-		/// <summary>
-		/// TODO: class for debug info
-		/// </summary>
-		DrawableRectangle ChampionDrawnRect { get; set; }
-		DrawableRectangle ChampionServerRect { get; set; } 
+		public ChampionT Champion { get; set; }
 
 		/// <summary>
 		/// Gets or sets the current animation.
@@ -69,63 +61,36 @@ namespace GREATClient.GameContent
 		/// </summary>
 		/// <value>The champion sprite.</value>
 		DrawableChampionSprite ChampionSprite { get; set; }
+		DrawableRectangle ChampionRect { get ; set; }
 
-        public DrawableChampion(ChampionSpawnInfo spawnInfo, ChampionsInfo championsInfo, GameMatch match) //TODO: new MainClientDrawableChampion
+        public DrawableChampion(ChampionT champion, ChampionsInfo championsInfo)
         {
-			Champion = new MainClientChampion(spawnInfo, match);
-			ChampionSprite = new DrawableChampionSprite(ChampionTypes.StickMan, new ChampionsInfo());
+			Champion = champion;
+			ChampionSprite = new DrawableChampionSprite(ChampionAnimation.idle, ChampionTypes.StickMan, championsInfo);
 			ChampionSprite.PlayAnimation(ChampionAnimation.run);
-			ChampionSprite.RelativeOrigin = new Vector2(0.5f,0.5f);
+			ChampionSprite.RelativeOrigin = new Vector2(0.5f, 1f);
         }
 		protected override void OnLoad(Microsoft.Xna.Framework.Content.ContentManager content, Microsoft.Xna.Framework.Graphics.GraphicsDevice gd)
 		{
 			base.OnLoad(content, gd);
 
-			AddChild(ChampionServerRect = new DrawableRectangle(new Rectangle(0, 0, 15, 30), Color.Green));
-
-			ChampionDrawnRect = new DrawableRectangle(new Rectangle(0, 0, 15, 30), Color.White);
-			AddChild(ChampionDrawnRect);
-
 			AddChild(ChampionSprite);
+			AddChild(ChampionRect = new DrawableRectangle(Champion.CreateCollisionRectangle(), Color.White * 0.7f));
+			ChampionRect.Visible = MainDrawableChampion.VIEW_DEBUG_RECTS;
 		}
 		protected override void OnUpdate(Microsoft.Xna.Framework.GameTime dt)
 		{
 			// Update the champion animation
+			CurrentAnimation = Champion.Animation;
 
+			Champion.Update(dt);
 
-			//Champion.Update(dt);
+			var rect = Champion.CreateCollisionRectangle();
+			ChampionSprite.Position = GameLibHelper.ToVector2(
+				Champion.DrawnPosition + new Vec2(rect.Width / 2f, rect.Height));
+			ChampionRect.Position = GameLibHelper.ToVector2(Champion.DrawnPosition);
 
-			ChampionServerRect.Position = GameLibHelper.ToVector2(Champion.ServerPosition);
-			ChampionDrawnRect.Position = GameLibHelper.ToVector2(Champion.DrawnPosition);
-			ChampionSprite.Position = GameLibHelper.ToVector2(Champion.DrawnPosition);
-		}
-
-		/// <summary>
-		/// Packages a client-side action to be sent to the server. This also simulates the action locally
-		/// for client-side prediction.
-		/// </summary>
-		public void PackageAction(PlayerActionType action)
-		{
-			PlayerAction toPackage = new PlayerAction(
-            	IDGenerator.GenerateID(),
-				action,
-            	(float)Client.Instance.GetTime().TotalSeconds,
-				Champion.Position);
-
-			Champion.PackageAction(toPackage);
-		}
-
-		/// <summary>
-		/// Sets the last acknowledged action by the server.
-		/// </summary>
-		public void SetLastAcknowledgedAction(uint actionID)
-		{
-			Champion.LastAcknowledgedActionID = actionID;
-		}
-
-		public Queue<PlayerAction> GetActionPackage()
-		{
-			return Champion.GetActionPackage();
+			ChampionSprite.Effects = Champion.FacingLeft ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 		}
 
 		public override bool IsBehind(Vector2 position)

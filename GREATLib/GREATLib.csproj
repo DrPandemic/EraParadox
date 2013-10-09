@@ -43,7 +43,6 @@
     <Compile Include="ILogger.cs" />
     <Compile Include="Utilities.cs" />
     <Compile Include="Entities\IEntity.cs" />
-    <Compile Include="Entities\HorizontalDirection.cs" />
     <Compile Include="Entities\ChampionSpawnInfo.cs" />
     <Compile Include="Physics\PhysicsEngine.cs" />
     <Compile Include="Physics\CollisionResolver.cs" />
@@ -55,6 +54,11 @@
     <Compile Include="Network\ServerCommand.cs" />
     <Compile Include="Network\MatchState.cs" />
     <Compile Include="Network\SnapshotHistory.cs" />
+    <Compile Include="Entities\Champions\ChampionTypes.cs" />
+    <Compile Include="Entities\Spells\LinearSpell.cs" />
+    <Compile Include="Entities\ICharacter.cs" />
+    <Compile Include="Entities\HorizontalDirection.cs" />
+    <Compile Include="Entities\Spells\SpellTypes.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -63,5 +67,7 @@
     <Folder Include="Entities\" />
     <Folder Include="Physics\" />
     <Folder Include="Network\" />
+    <Folder Include="Entities\Champions\" />
+    <Folder Include="Entities\Spells\" />
   </ItemGroup>
 </Project>

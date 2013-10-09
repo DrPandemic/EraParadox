@@ -24,10 +24,10 @@ namespace GREATLib.Entities
 {
     public struct ChampionSpawnInfo
     {
-		public uint ID { get; private set; }
+		public ulong ID { get; private set; }
 		public Vec2 SpawningPosition { get; private set; }
 
-		public ChampionSpawnInfo(uint id, Vec2 spawn) 
+		public ChampionSpawnInfo(ulong id, Vec2 spawn) 
 			: this() // to be able to have automatic properties (http://stackoverflow.com/a/420441/395386)
 		{
 			ID = id;

@@ -34,12 +34,17 @@ namespace GREATLib.Network
 		PhysicsEngine Physics { get; set; }
 
 
-		Dictionary<uint, IEntity> Entities { get; set; }
+		Dictionary<ulong, IEntity> Entities { get; set; }
 
 		public MatchState(PhysicsEngine physics)
 		{
-			Entities = new Dictionary<uint, IEntity>();
+			Entities = new Dictionary<ulong, IEntity>();
 			Physics = physics;
+		}
+
+		public IEnumerable<IEntity> GetEntities()
+		{
+			return Entities.Values;
 		}
 
 		/// <summary>
@@ -58,7 +63,7 @@ namespace GREATLib.Network
 		/// <summary>
 		/// Returns whether the game contains an entity with the given ID or not.
 		/// </summary>
-		public bool ContainsEntity(uint id)
+		public bool ContainsEntity(ulong id)
 		{
 			return Entities.ContainsKey(id);
 		}
@@ -66,7 +71,7 @@ namespace GREATLib.Network
 		/// <summary>
 		/// Gets the entity with the specified ID.
 		/// </summary>
-		public IEntity GetEntity(uint id)
+		public IEntity GetEntity(ulong id)
 		{
 			Debug.Assert(ContainsEntity(id));
 
@@ -77,7 +82,7 @@ namespace GREATLib.Network
 		/// Applies one physics update to an entity (with the given ID) if it should (the physics
 		/// engine only updates at a certain rate).
 		/// </summary>
-		public void ApplyPhysicsUpdate(uint id, double deltaSeconds)
+		public void ApplyPhysicsUpdate(ulong id, double deltaSeconds)
 		{
 			Debug.Assert(deltaSeconds > 0.0);
 			Debug.Assert(Entities.ContainsKey(id));
@@ -90,7 +95,7 @@ namespace GREATLib.Network
 		/// <summary>
 		/// Moves the specified entity (given its ID) in the specified direction.
 		/// </summary>
-		public void Move(uint id, HorizontalDirection direction)
+		public void Move(ulong id, HorizontalDirection direction)
 		{
 			Debug.Assert(Entities.ContainsKey(id));
 
@@ -102,13 +107,20 @@ namespace GREATLib.Network
 		/// <summary>
 		/// Makes the specified entity (given its ID) jump.
 		/// </summary>
-		public void Jump(uint id)
+		public void Jump(ulong id)
+		{
+			Debug.Assert(Entities.ContainsKey(id) && Entities[id] is ICharacter);
+
+			if (Entities.ContainsKey(id) && Entities[id] is ICharacter) {
+				Physics.Jump((ICharacter)Entities[id]);
+			}
+		}
+
+		public bool IsOnGround(ulong id)
 		{
 			Debug.Assert(Entities.ContainsKey(id));
 
-			if (Entities.ContainsKey(id)) {
-				Physics.Jump(Entities[id]);
-			}
+			return Entities.ContainsKey(id) ? Physics.IsOnGround(Entities[id]) : false;
 		}
 
 		/// <summary>
@@ -118,7 +130,7 @@ namespace GREATLib.Network
 		{
 			MatchState state = new MatchState(Physics);
 			foreach (IEntity entity in Entities.Values) {
-				state.Entities.Add(entity.ID, (entity.Clone() as IEntity));
+				state.Entities.Add(entity.ID, (IEntity)entity.Clone());
 			}
 			return state;
 		}

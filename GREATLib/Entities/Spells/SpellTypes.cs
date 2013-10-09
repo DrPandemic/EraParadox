@@ -1,5 +1,5 @@
 //
-//  ServerCommand.cs
+//  SpellTypes.cs
 //
 //  Author:
 //       Jesse <jesse.emond@hotmail.com>
@@ -20,32 +20,11 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 
-namespace GREATLib.Network
+namespace GREATLib.Entities.Spells
 {
-	/// <summary>
-	/// A command from the server.
-	/// </summary>
-	/// <remarks>The comments are written as if the server directly asked something to a client.</remarks>
-    public enum ServerCommand
+    public enum SpellTypes
     {
-		/// <summary>
-		/// You just joined the game. Here is the data about your freshly created champion along with
-		/// the data of all the players already in the game.
-		/// </summary>
-		JoinedGame = 10
-
-		/// <summary>
-		/// Here is an update of the state of all the entities that changed. Force your data to
-		/// fit this.
-		/// </summary>
-		, StateUpdate
-
-		/// <summary>
-		/// A new player joined your game. Here is the data about his freshly created champion.
-		/// </summary>
-		, NewRemotePlayer
-
-		, SpellCast
+		StickManSpell1
     }
 }
 

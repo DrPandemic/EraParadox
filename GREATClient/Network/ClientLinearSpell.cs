@@ -1,5 +1,5 @@
 //
-//  HorizontalDirection.cs
+//  ClientLinearSpell.cs
 //
 //  Author:
 //       Jesse <jesse.emond@hotmail.com>
@@ -19,14 +19,30 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using GREATLib;
 
-namespace GREATLib.Entities
+namespace GREATClient.Network
 {
-    public enum HorizontalDirection
+    public class ClientLinearSpell
     {
-		Left = -1,
-		Right = 1,
-		None = 0
+		float Time { get; set; }
+		Vec2 Velocity { get; set; }
+		public Vec2 Position { get; private set; }
+		Vec2 StartingPosition { get; set; }
+
+        public ClientLinearSpell(Vec2 pos, float time, Vec2 velocity)
+        {
+			StartingPosition = pos;
+			Position = StartingPosition;
+			Velocity = velocity;
+			Time = Math.Max(0f, (float)Client.Instance.GetTime().TotalSeconds - time);
+        }
+
+		public void Update(double dt)
+		{
+			Time += (float)dt;
+			Position = StartingPosition + Velocity * Time;
+		}
     }
 }
 

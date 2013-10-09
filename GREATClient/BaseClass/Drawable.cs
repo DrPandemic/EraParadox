@@ -117,7 +117,7 @@ namespace GREATClient.BaseClass
 		/// <param name="batch">The spritebatch used to draw the object.</param>
 		public override void Draw(SpriteBatch batch)
 		{
-			//If the texture wasn't load, beacause of the order of layer add
+			//If the texture wasn't loaded, because of the order that the layer was added
 			if (Texture == null && !IsLoaded) {
 				Load(Parent, Parent.GetGraphics());
 			}

@@ -85,6 +85,11 @@
     <Compile Include="BaseClass\Menu\MenuItem.cs" />
     <Compile Include="BaseClass\IUpdatable.cs" />
     <Compile Include="Network\MainClientChampion.cs" />
+    <Compile Include="ServerCommandEvent.cs" />
+    <Compile Include="GameContent\MainDrawableChampion.cs" />
+    <Compile Include="Network\ClientChampion.cs" />
+    <Compile Include="Network\RemoteClientChampion.cs" />
+    <Compile Include="GameContent\RemoteDrawableChampion.cs" />
     <Compile Include="BaseClass\ScreenInformation\ScreenInfo.cs" />
     <Compile Include="BaseClass\ScreenInformation\ScreenService.cs" />
     <Compile Include="BaseClass\Position.cs" />
@@ -94,6 +99,8 @@
     <Compile Include="BaseClass\BaseAction\ActionDelay.cs" />
     <Compile Include="Display\SpellMenu.cs" />
     <Compile Include="Display\SpellMenuItem.cs" />
+    <Compile Include="GameContent\DrawableSpell.cs" />
+    <Compile Include="Network\ClientLinearSpell.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />

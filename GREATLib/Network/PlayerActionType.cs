@@ -27,8 +27,11 @@ namespace GREATLib.Network
 	/// </summary>
     public enum PlayerActionType
     {
+		// No actions
+		   Idle = 0
+
 		// Movement
-		   MoveRight = 0
+		,  MoveRight
 		,  MoveLeft
 		,  Jump
 
@@ -37,6 +40,14 @@ namespace GREATLib.Network
 		,  Spell2
 		,  Spell3
 		,  Spell4
+	}
+
+	public static class ActionTypeHelper
+	{
+		public static bool IsSpell(PlayerActionType a)
+		{
+			return PlayerActionType.Spell1 <= a && a <= PlayerActionType.Spell4;
+		}
 	}
 }
 

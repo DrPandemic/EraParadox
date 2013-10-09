@@ -50,6 +50,23 @@ namespace GREATTests
 		}
 
 		[Test()]
+		public void TestDuplicates()
+		{
+			SnapshotHistory<double> h = new SnapshotHistory<double>(TimeSpan.FromSeconds(1000.0));
+			h.AddSnapshot(0.0, 0.0);
+			h.AddSnapshot(1.0, 1.0);
+			h.AddSnapshot(2.0, 2.0);
+
+			Assert.AreEqual(1.0, h.GetNext(h.GetSnapshotBefore(0.0)).Value.Value, "next to first is second with 1.0");
+
+			h.AddSnapshot(5.0, 1.0);
+
+			Assert.AreEqual(5.0, h.GetNext(h.GetSnapshotBefore(0.0)).Value.Value, "next to first is second with 5.0 (after we added a duplicate)");
+
+			Assert.AreEqual(2.0, h.GetNext(h.GetNext(h.GetSnapshotBefore(0.0)).Value).Value.Value, "last is still 2.0 (didn't keep the 1.0,1.0)");
+		}
+
+		[Test()]
 		public void TestBefore()
 		{
 			SnapshotHistory<int> h = new SnapshotHistory<int>(TimeSpan.FromSeconds(1000.0));

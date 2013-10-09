@@ -48,14 +48,9 @@ namespace GREATTests
 			assert(original.Velocity.Y, clone.Velocity.Y, intro + "velocity " + message);
 			assert(original.CollisionHeight, clone.CollisionHeight, intro + "collision height " + message);
 			assert(original.CollisionWidth, clone.CollisionWidth, intro + "collision width " + message);
-			assert(original.Direction, clone.Direction, intro + "direction " + message);
-			assert(original.HorizontalAcceleration, clone.HorizontalAcceleration, intro + "horizontal acceleration " + message);
-			assert(original.IsOnGround, clone.IsOnGround, intro + "is on ground " + message);
-			assert(original.JumpForce, clone.JumpForce, intro + "jump force " + message);
 			assert(original.MoveSpeed, clone.MoveSpeed, intro + "move speed " + message);
 		}
-		void ChangeClonedEntity(IEntity e, Vec2 pos, Vec2 vel, float colW, float colH, HorizontalDirection dir,
-		                  float horiAccel, bool onGround, short jumpF, float moveSpeed)
+		void ChangeClonedEntity(IEntity e, Vec2 pos, Vec2 vel, float colW, float colH, float moveSpeed)
 		{
 			e.Position.X = pos.X;
 			e.Position.Y = pos.Y;
@@ -63,10 +58,6 @@ namespace GREATTests
 			e.Velocity.Y = vel.Y;
 			e.CollisionWidth = colW;
 			e.CollisionHeight = colH;
-			e.Direction = dir;
-			e.HorizontalAcceleration = horiAccel;
-			e.IsOnGround = onGround;
-			e.JumpForce = jumpF;
 			e.MoveSpeed = moveSpeed;
 		}
 
@@ -75,12 +66,12 @@ namespace GREATTests
         {
 			MatchState state = new MatchState(new PhysicsEngine(new GameWorld()));
 
-			IEntity e = new IEntity(IDGenerator.GenerateID(), new Vec2(100f, -99f));
+			IEntity e = new IEntity(IDGenerator.GenerateID(), new Vec2(100f, -99f), 1f, 1f, 1f);
 			state.AddEntity(e);
 
 			Assert.True(state.ContainsEntity(e.ID), "entity1 added to match");
 
-			IEntity e2 = new IEntity(IDGenerator.GenerateID(), new Vec2(42f, 24f));
+			IEntity e2 = new IEntity(IDGenerator.GenerateID(), new Vec2(42f, 24f), 1f, 1f, 1f);
 			state.AddEntity(e2);
 
 			Assert.True(state.ContainsEntity(e2.ID), "entity2 added to match");
@@ -94,15 +85,13 @@ namespace GREATTests
 			IEntity clonedE = clone.GetEntity(e.ID);
 			TestClonedEntityValues(e, clonedE, true, "after clone (e1)");
 
-			ChangeClonedEntity(clonedE, new Vec2(11f, 111f), new Vec2(22f, 222f), 1000f, 2000f, HorizontalDirection.Right,
-			                   512f, false, 255, 333f);
+			ChangeClonedEntity(clonedE, new Vec2(11f, 111f), new Vec2(22f, 222f), 1000f, 2000f, 333f);
 			TestClonedEntityValues(e, clonedE, false, "after clone modif (e1)");
 
 			IEntity clonedE2 = clone.GetEntity(e2.ID);
 			TestClonedEntityValues(e2, clonedE2, true, "after clone (e2)");
 
-			ChangeClonedEntity(clonedE2, new Vec2(87f, 78f), new Vec2(52f, 25f), 76f, 88f, HorizontalDirection.Left,
-			                   3636f, false, 1212, 2121f);
+			ChangeClonedEntity(clonedE2, new Vec2(87f, 78f), new Vec2(52f, 25f), 76f, 88f, 2121f);
 			TestClonedEntityValues(e2, clonedE2, false, "after clone modif (e2)");
         }
     }

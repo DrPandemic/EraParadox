@@ -1,5 +1,5 @@
 //
-//  IEntityTest.cs
+//  RemoteDrawableChampion.cs
 //
 //  Author:
 //       Jesse <jesse.emond@hotmail.com>
@@ -18,28 +18,17 @@
 //
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-using NUnit.Framework;
 using System;
+using GREATClient.Network;
 using GREATLib.Entities;
-using GREATLib;
 
-namespace GREATTests
+namespace GREATClient.GameContent
 {
-    [TestFixture()]
-    public class IEntityTest
+    public class RemoteDrawableChampion : DrawableChampion<RemoteClientChampion>
     {
-        [Test()]
-        public void TestClone()
+		public RemoteDrawableChampion(ChampionSpawnInfo spawnInfo, ChampionsInfo champInfo)
+			: base(new RemoteClientChampion(spawnInfo), champInfo)
         {
-			IEntity e = new IEntity(0, new Vec2(100f, 0f));
-			IEntity clone = (IEntity)e.Clone();
-
-			Assert.AreEqual(100f, e.Position.X, "original unchanged");
-			Assert.AreEqual(100f, clone.Position.X, "clone has same values");
-
-			e.Position.X = 2f;
-
-			Assert.AreEqual(100f, clone.Position.X, "clone unchanged after modification or original");
         }
     }
 }

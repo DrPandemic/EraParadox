@@ -1,8 +1,8 @@
 <inputCollection>
     <keyboardInputs>
-        <input action="Jump" key="W" state="Released" deadKey="Control" />
-        <input action="GoRight" key="D" state="Released" />
-        <input action="GoLeft" key="A" state="Released" />
+        <input action="Jump" key="W" state="Pressed" />
+        <input action="GoRight" key="D" state="Down" />
+        <input action="GoLeft" key="A" state="Down" />
         <input action="ArrowUp" key="Up" state="Released" />
         <input action="ArrowDown" key="Down" state="Released" />
         <input action="ArrowLeft" key="Left" state="Released" />

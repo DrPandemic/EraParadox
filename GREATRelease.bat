@@ -1,4 +1,3 @@
-start GREATServer\bin\Release\GREATServer.exe
+call GREATServer.bat
 timeout 2
-cd GREATClient
-start bin\Release\GREATClient.Windows.exe
+call GREATWindowsClient.bat
