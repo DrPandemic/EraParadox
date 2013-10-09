@@ -23,6 +23,7 @@ using GREATLib.Entities;
 using System.Collections.Generic;
 using System.Diagnostics;
 using GREATLib.Physics;
+using GREATLib.Entities.Spells;
 
 namespace GREATLib.Network
 {
@@ -121,6 +122,11 @@ namespace GREATLib.Network
 			Debug.Assert(Entities.ContainsKey(id));
 
 			return Entities.ContainsKey(id) ? Physics.IsOnGround(Entities[id]) : false;
+		}
+
+		public bool SpellShouldDisappear(LinearSpell spell)
+		{
+			return Physics.CollidesWithWorld(spell); //TODO: check max range
 		}
 
 		/// <summary>

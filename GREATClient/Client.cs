@@ -335,11 +335,16 @@ namespace GREATClient
 				switch (cmd) {
 					case ServerCommand.SpellCast:
 						data = new SpellCastEventData(
+							msg.ReadUInt64(),
 							(SpellTypes)msg.ReadByte(),
 							msg.ReadFloat(),
 							new Vec2(msg.ReadFloat(), msg.ReadFloat()),
 							new Vec2(msg.ReadFloat(), msg.ReadFloat()),
 							TimeSpan.FromSeconds(msg.ReadFloat()));
+						break;
+
+					case ServerCommand.SpellDisappear:
+						data = new SpellDisappearEventData(msg.ReadUInt64());
 						break;
 
 					default:
@@ -362,20 +367,31 @@ namespace GREATClient
 	}
 	public class SpellCastEventData : RemarkableEventData
 	{
+		public ulong ID { get; private set; }
 		public SpellTypes Type { get; private set; }
 		public float Time { get; private set; }
 		public Vec2 Position { get; private set; }
 		public Vec2 Velocity { get; private set; }
 		public TimeSpan Cooldown { get; private set; }
 
-		public SpellCastEventData(SpellTypes type, float time, Vec2 pos, Vec2 vel, TimeSpan cooldown)
+		public SpellCastEventData(ulong id, SpellTypes type, float time, Vec2 pos, Vec2 vel, TimeSpan cooldown)
 			: base(ServerCommand.SpellCast)
 		{
+			ID = id;
 			Type = type;
 			Time = time;
 			Position = pos;
 			Velocity = vel;
 			Cooldown = cooldown;
+		}
+	}
+	public class SpellDisappearEventData : RemarkableEventData
+	{
+		public ulong ID { get; private set; }
+		public SpellDisappearEventData(ulong id)
+			: base(ServerCommand.SpellDisappear)
+		{
+			ID = id;
 		}
 	}
 }

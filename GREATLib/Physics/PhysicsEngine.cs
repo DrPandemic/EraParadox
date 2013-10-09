@@ -213,6 +213,11 @@ namespace GREATLib.Physics
 		{
 			return Collisions.HasCollisionBelow(entity);
 		}
+
+		public bool CollidesWithWorld(IEntity e)
+		{
+			return Collisions.HasCollisions(e);
+		}
     }
 }
 

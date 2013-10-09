@@ -244,7 +244,7 @@ namespace GREATServer
 			}
 		}
 
-		void HandleAction(ServerChampion champion, PlayerAction action)
+		void HandleAction(ICharacter champion, PlayerAction action)
 		{
 			if (ActionTypeHelper.IsSpell(action.Type)) {
 				CastSpell(champion, action);
@@ -253,7 +253,7 @@ namespace GREATServer
 			}
 		}
 
-		void CastSpell(ServerChampion champ, PlayerAction action)
+		void CastSpell(ICharacter champ, PlayerAction action)
 		{
 			Debug.Assert(action.Target != null);
 
@@ -274,6 +274,7 @@ namespace GREATServer
 			RemarkableEvents.Add(Utilities.MakePair<ServerCommand, Action<NetBuffer>>(
 													ServerCommand.SpellCast,
 			                                        (NetBuffer msg) => {
+				ulong id = copy.ID;
 				byte type = (byte)copy.Type;
 				float time = castTime;
 				float px = copy.Position.X;
@@ -282,6 +283,7 @@ namespace GREATServer
 				float vy = copy.Velocity.Y;
 				float cd = (float)copy.Cooldown.TotalSeconds;
 
+				msg.Write(id);
 				msg.Write(type);
 				msg.Write(time);
 				msg.Write(px);
@@ -459,9 +461,25 @@ namespace GREATServer
 		}
 		void UpdateSpells(double dt)
 		{
+			var toRemove = new List<LinearSpell>();
 			ActiveSpells.ForEach(s =>
 			{
 				Match.CurrentState.ApplyPhysicsUpdate(s.ID, (float)dt);
+				if (Match.CurrentState.SpellShouldDisappear(s)) {
+					toRemove.Add(s);
+				}
+			});
+
+			toRemove.ForEach(s =>
+			{
+				ActiveSpells.Remove(s);
+				RemarkableEvents.Add(Utilities.MakePair<ServerCommand, Action<NetBuffer>>(
+										ServerCommand.SpellDisappear,
+										(msg) => 
+				{
+					ulong id = s.ID;
+					msg.Write(id);
+				}));
 			});
 		}
 

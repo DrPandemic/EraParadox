@@ -68,6 +68,7 @@ namespace GREATClient.Screens
 		double TimeOfLastStateUpdate { get; set; }
 		List<StateUpdateData> LastStateUpdateData { get; set; }
 		List<RemarkableEventData> RemarkableEvents { get; set; }
+		Dictionary<ulong, DrawableSpell> Spells { get; set; }
 
         public GameplayScreen(ContentManager content, Game game, Client client)
 			: base(content, game)
@@ -81,6 +82,7 @@ namespace GREATClient.Screens
 			Match = new GameMatch();
 			LastStateUpdateData = new List<StateUpdateData>();
 			RemarkableEvents = new List<RemarkableEventData>();
+			Spells = new Dictionary<ulong, DrawableSpell>();
 			TimeOfLastStateUpdate = 0.0;
         }
 
@@ -236,6 +238,10 @@ namespace GREATClient.Screens
 						CastSpell((SpellCastEventData)r);
 						break;
 
+					case ServerCommand.SpellDisappear:
+						RemoveSpell((SpellDisappearEventData)r);
+						break;
+
 					default:
 						Debug.Fail("Unknown server command (unknown remarkable event).");
 						break;
@@ -246,7 +252,16 @@ namespace GREATClient.Screens
 		}
 		void CastSpell(SpellCastEventData e)
 		{
-			AddChild(new DrawableSpell(new ClientLinearSpell(e.Position, e.Time, e.Velocity)));
+			var s = new DrawableSpell(new ClientLinearSpell(e.ID, e.Position, e.Time, e.Velocity));
+			Spells.Add(e.ID, s);
+			AddChild(s);
+		}
+		void RemoveSpell(SpellDisappearEventData e)
+		{
+			if (Spells.ContainsKey(e.ID)) {
+				RemoveChild(Spells[e.ID]);
+				Spells.Remove(e.ID);
+			}
 		}
 
 		/// <summary>

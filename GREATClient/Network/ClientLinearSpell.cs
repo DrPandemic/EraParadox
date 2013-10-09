@@ -25,13 +25,15 @@ namespace GREATClient.Network
 {
     public class ClientLinearSpell
     {
+		public ulong ID { get; private set; }
 		float Time { get; set; }
 		Vec2 Velocity { get; set; }
 		public Vec2 Position { get; private set; }
 		Vec2 StartingPosition { get; set; }
 
-        public ClientLinearSpell(Vec2 pos, float time, Vec2 velocity)
+		public ClientLinearSpell(ulong id, Vec2 pos, float time, Vec2 velocity)
         {
+			ID = id;
 			StartingPosition = pos;
 			Position = StartingPosition;
 			Velocity = velocity;

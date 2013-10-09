@@ -54,6 +54,22 @@ namespace GREATLib.Physics
 			HandleCollisionGroup(entity, collisions);
 		}
 
+		public bool HasCollisions(IEntity entity)
+		{
+			Debug.Assert(entity != null);
+
+			var collisions = World.GetTouchedObjects(entity.CreateCollisionRectangle());
+
+			foreach (var collision in collisions) {
+				if (collision.Value != CollisionType.Passable &&
+				    entity.CreateCollisionRectangle().Intersects(collision.Key)) {
+					return true;
+				}
+			}
+
+			return false;
+		}
+
 		const int JUMP_X_TOLERANCE = 4;
 		const int JUMP_Y_TOLERANCE = 2;
 		public bool HasCollisionBelow(IEntity entity)

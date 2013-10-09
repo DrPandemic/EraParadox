@@ -45,7 +45,15 @@ namespace GREATLib.Network
 		/// </summary>
 		, NewRemotePlayer
 
+		/// <summary>
+		/// A player has cast a spell.
+		/// </summary>
 		, SpellCast
+
+		/// <summary>
+		/// This spell should disappear.
+		/// </summary>
+		, SpellDisappear
     }
 }
 
