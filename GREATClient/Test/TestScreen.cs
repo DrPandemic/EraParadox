@@ -57,7 +57,7 @@ namespace GREATClient.Test
 		protected override void OnLoadContent()
 		{
 			// Test paralax
-			para = new Parallax(new Vector2(1500,700),new DrawableImage("cloud"),new DrawableImage("field"), new DrawableImage("city"));
+			para = new Parallax();
 			ratioX = 0;
 
 			AddChild(para);

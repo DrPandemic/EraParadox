@@ -269,6 +269,11 @@ namespace Microsoft.Xna.Framework
             window.WindowBorder = WindowBorder.Fixed;
         }
 
+		public override bool IsResizable()
+		{
+			return window.WindowBorder == WindowBorder.Resizable; 
+		}
+
         private void OnUpdateFrame(object sender, FrameEventArgs e)
         {
             UpdateWindowState();

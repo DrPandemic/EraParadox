@@ -88,8 +88,15 @@ namespace GREATClient.Screens
 			Client.OnNewPlayer += OnNewPlayer;
 			Client.OnStateUpdate += OnStateUpdate;
 
-			AddChild(new FPSCounter());
-			AddChild(new PingCounter(() => {return Client.Instance.GetPing().TotalMilliseconds;}));
+			FPSCounter fps = new FPSCounter();
+			PingCounter ping = new PingCounter(() => {
+				return Client.Instance.GetPing().TotalMilliseconds;});
+
+			AddChild(fps);
+			AddChild(ping);
+
+			fps.SetPositionRelativeToScreen(ScreenBound.BottomLeft, new Vector2(10,-30));
+			ping.SetPositionRelativeToObject(fps, new Vector2(100,0), false);
 		}
 
 		void OnStateUpdate(object sender, StateUpdateEventArgs e)

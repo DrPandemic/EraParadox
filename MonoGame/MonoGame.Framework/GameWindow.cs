@@ -105,6 +105,7 @@ namespace Microsoft.Xna.Framework {
 		}
 
         public virtual void FixBorder() { }
+        public virtual bool IsResizable() { return false; }
 
         /// <summary>
         /// Determines whether the border of the window is visible. Currently only supported on the WinDX and WinGL/Linux platforms.

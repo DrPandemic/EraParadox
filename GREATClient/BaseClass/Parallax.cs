@@ -21,16 +21,20 @@
 using System;
 using Microsoft.Xna.Framework;
 using System.Linq;
+using GREATClient.BaseClass.ScreenInformation;
 
 namespace GREATClient.BaseClass
 {
     public class Parallax : Container
     {
-		/// <summary>
-		/// Gets or sets the size of the world.
-		/// </summary>
-		/// <value>The size of the world.</value>
-		public Vector2 WorldSize { get; set; }
+		Container Land;
+		int LandLength;
+		Container Fog;
+		int FogLength;
+		Container Cloud;
+		int CloudLength;
+
+		Vector2 WindowSize;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="GREATClient.BaseClass.Parallax"/> class.
@@ -38,11 +42,53 @@ namespace GREATClient.BaseClass
 		/// </summary>
 		/// <param name="worldSize">World size.</param>
 		/// <param name="actions">Actions.</param>
-		public Parallax(Vector2 worldSize, params Drawable[] actions)
+		public Parallax()
         {
-			WorldSize = worldSize;
-			actions.OfType<Drawable>().ToList().ForEach((Drawable item) => AddChild(item));
+			Land = new Container();
+			LandLength = 0;
+			Fog = new Container();
+			FogLength = 0;
+			Cloud = new Container();
+			CloudLength = 0;
+			AddChild(Land,2);
+			AddChild(Cloud,1);
+			AddChild(Fog,3);
+			//actions.OfType<Drawable>().ToList().ForEach((Drawable item) => AddChild(item));
         }
+
+		protected override void OnLoad(Microsoft.Xna.Framework.Content.ContentManager content, Microsoft.Xna.Framework.Graphics.GraphicsDevice gd)
+		{
+			float landOffset = 100;
+			Land.AddChild(new DrawableImage("background/land1") {Position = new Vector2(0,landOffset)});
+			Land.AddChild(new DrawableImage("background/land2") {Position = new Vector2(1024,landOffset)});
+			Land.AddChild(new DrawableImage("background/land3") {Position = new Vector2(1024*2,landOffset)});
+			Land.AddChild(new DrawableImage("background/land4") {Position = new Vector2(1024*3,landOffset)});
+			Land.AddChild(new DrawableImage("background/land5") {Position = new Vector2(1024*4,landOffset)});
+			Land.AddChild(new DrawableImage("background/land6") {Position = new Vector2(1024*5,landOffset)});
+			LandLength = 1024 * 5 + 372;
+
+			float fogOffset = 250;
+			float xFogOffset = -40;
+			Fog.AddChild(new DrawableImage("background/fog1") {Position = new Vector2(0 + xFogOffset,fogOffset)});
+			Fog.AddChild(new DrawableImage("background/fog2") {Position = new Vector2(1024 + xFogOffset,fogOffset)});
+			Fog.AddChild(new DrawableImage("background/fog3") {Position = new Vector2(1024*2 + xFogOffset,fogOffset)});
+			Fog.AddChild(new DrawableImage("background/fog4") {Position = new Vector2(1024*3 + xFogOffset,fogOffset)});
+			Fog.AddChild(new DrawableImage("background/fog5") {Position = new Vector2(1024*4 + xFogOffset,fogOffset)});
+			Fog.AddChild(new DrawableImage("background/fog6") {Position = new Vector2(1024*5 + xFogOffset,fogOffset)});
+			Fog.AddChild(new DrawableImage("background/fog7") {Position = new Vector2(1024*6 + xFogOffset,fogOffset)});
+			FogLength = 1024 * 7 + (int)xFogOffset - 250;
+
+			float cloudOffset = -200;
+			float xCloudOffset = -40;
+			Cloud.AddChild(new DrawableImage("background/cloud1") {Position = new Vector2(xCloudOffset,cloudOffset)});
+			Cloud.AddChild(new DrawableImage("background/cloud2") {Position = new Vector2(1024 + xCloudOffset,cloudOffset)});
+			Cloud.AddChild(new DrawableImage("background/cloud3") {Position = new Vector2(1024*2 + xCloudOffset,cloudOffset)});
+			Cloud.AddChild(new DrawableImage("background/cloud4") {Position = new Vector2(1024*3 + xCloudOffset,cloudOffset)});
+			Cloud.AddChild(new DrawableImage("background/cloud5") {Position = new Vector2(1024*4 + xCloudOffset,cloudOffset)});
+			CloudLength = 1024 * 4 + 408 + (int)xCloudOffset;
+
+			WindowSize = screenService.GameWindowSize;
+		}
 
 		/// <summary>
 		/// Sets the position ratio of the camera in the world.
@@ -55,10 +101,14 @@ namespace GREATClient.BaseClass
 		{
 			x = x < 0 ? 0 : (x > 100 ? 100 : x);
 			y = y < 0 ? 0 : (y > 100 ? 100 : y);
-			Children.ForEach((IDraw item) => {
-				item.Position = new Vector2((WorldSize.X - ((Drawable)item).Texture.Width) * x/100,
-				                            (WorldSize.Y - ((Drawable)item).Texture.Height) * y/100);
-			});
+			float land = -LandLength * x / 100;
+			float fog = -FogLength * x / 100;
+			float cloud = -CloudLength * x / 100;
+			if (!(land < -LandLength+WindowSize.X || fog < -FogLength+WindowSize.X || cloud < -CloudLength+WindowSize.X)) {
+				Land.Position = new Vector2(Math.Max(-LandLength * x/100,-LandLength+WindowSize.X), 0);
+				Fog.Position = new Vector2(Math.Max(-FogLength * x/100,-FogLength+WindowSize.X), 0);
+				Cloud.Position = new Vector2(Math.Max(-CloudLength * x/100,-CloudLength+WindowSize.X), 0);
+			}
 		}
     }
 }
