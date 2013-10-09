@@ -99,22 +99,22 @@ namespace GREATClient.Display
 		{
 			Map.SetPositionRelativeToScreen(ScreenBound.BottomRight, 
 			                                new Vector2(- Map.Texture.Width - 10, - Map.Texture.Height - 10));
-			Resource.SetPositionRelativeToObject(Map, new Vector2(-Resource.Texture.Width - 6, 
-			                                                   Map.Texture.Height), false);
-			Life.SetPositionRelativeToObject(Resource, new Vector2(-Life.Texture.Width - 6, 
+			Resource.SetPositionRelativeToObject(Map, new Vector2(-Resource.Texture.Width - 8, 
+			                                                   Map.Texture.Height - 8), false);
+			Life.SetPositionRelativeToObject(Resource, new Vector2(-Life.Texture.Width - 8, 
 			                                                   0), false);
 
 			ResourceDropShadow.SetPositionRelativeToObject(Resource, new Vector2(0,5), false);
 			LifeDropshadow.SetPositionRelativeToObject(Life, new Vector2(0,5), false);
 
 			SpellBackground.SetPositionRelativeToObject(Life, new Vector2(-SpellBackground.Texture.Width - 10, 
-	                                                              			- SpellBackground.Texture.Height), 
+	                                                              			- SpellBackground.Texture.Height + 2), 
 			                                            false);
 			UISpellMenu.SetPositionRelativeToObject(SpellBackground, new Vector2(18,15));
 
 
 			MoneyBackground.SetPositionRelativeToScreen(ScreenBound.BottomLeft, 
-			                                            new Vector2(10, - MoneyBackground.Texture.Height - 10));
+			                                            new Vector2(10, - MoneyBackground.Texture.Height - 18));
 			UIFPSCounter.SetPositionRelativeToObject(MoneyBackground, new Vector2(20, 10));
 			UIPingCounter.SetPositionRelativeToObject(UIFPSCounter, new Vector2(200, 0));
 
