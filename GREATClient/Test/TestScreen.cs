@@ -97,7 +97,7 @@ namespace GREATClient.Test
 			//inputManager.RegisterEvent(InputActions.Spell1, new EventHandler(Jump));
 
 			inputManager.RegisterEvent(InputActions.Spell3, new EventHandler(Jump));
-			inputManager.RegisterEvent(InputActions.GoRight, (sender, e)=> {
+			inputManager.RegisterEvent(InputActions.Spell1, (sender, e)=> {
 				ratioX+=2;
 				para.SetCurrentRatio(ratioX,0f);
 			});
