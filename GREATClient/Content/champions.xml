@@ -2,16 +2,21 @@
 <champions>
 
   <!-- The Stick-Man -->
-  <champion type="StickMan" name="Stick-Man" assetname="Stickman" framewidth="32" frameheight="64" >
+  <champion type="StickMan" name="Stick-Man" assetname="megaman" framewidth="53" frameheight="54" >
     <description>The drawn man that escaped his blank sheet and wants to take revenge upon his creators. 
       Long has he awaited for a mere taste of liberty to finally try and defeat his oppressors. 
       He will use any tools at hand, pencils or erasers, to defeat his enemies. 
       Do not underestimate the powers of a drawing. 
       Fear the Stick Man.</description>
     <animations>
-      <animation name="idle" line="1" framecount="1" framerate="4"/>
-      <animation name="run" line="0" framecount="6" framerate="10"/>
-      <animation name="jump" line="2" framecount="3" framerate="4"/>
+      <animation name="idle" line="0" framecount="8" framerate="4"/>
+      <animation name="run" line="1" framecount="10" framerate="10"/>
+      <animation name="jump" line="4" framecount="1" framerate="1"/>
+      <animation name="die" line="3" framecount="6" framerate="4"/>
+      <animation name="spell1" line="2" framecount="1" framerate="1"/>
+      <animation name="spell2" line="2" framecount="1" framerate="1"/>
+      <animation name="spell3" line="2" framecount="1" framerate="1"/>
+      <animation name="spell4" line="2" framecount="1" framerate="1"/>
     </animations>
   </champion>
 
