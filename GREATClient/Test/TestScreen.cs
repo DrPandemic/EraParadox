@@ -115,6 +115,8 @@ namespace GREATClient.Test
 			DrawableCircle circle = new DrawableCircle();
 			circle.SetPositionRelativeToObject(champSprite, new Vector2(-150, -30));
 			AddChild(circle);
+
+			AddChild(new DeathScreen(10),11);
 		}
 
 		private void Jump(object sender, EventArgs e)
