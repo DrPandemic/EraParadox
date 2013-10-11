@@ -34,6 +34,7 @@ using GREATClient.BaseClass.ScreenInformation;
 using GameContent;
 using GREATLib.Entities;
 using GREATLib.Entities.Champions;
+using GREATClient.BaseClass.Particle;
 
 namespace GREATClient.Test
 {
@@ -57,9 +58,12 @@ namespace GREATClient.Test
         }
 		protected override void OnLoadContent()
 		{
+
 			// Test paralax
 			para = new Parallax();
 			ratioX = 0;
+
+			AddChild(new DrawableSpell(new GREATClient.Network.ClientLinearSpell(0,new Vec2(100,100),5,new Vec2(30,50))) {Tint = Color.Gold},15);
 
 			AddChild(para);
 
@@ -97,7 +101,7 @@ namespace GREATClient.Test
 			//inputManager.RegisterEvent(InputActions.Spell1, new EventHandler(Jump));
 
 			inputManager.RegisterEvent(InputActions.Spell3, new EventHandler(Jump));
-			inputManager.RegisterEvent(InputActions.Spell1, (sender, e)=> {
+			inputManager.RegisterEvent(InputActions.GoRight, (sender, e)=> {
 				ratioX+=2;
 				para.SetCurrentRatio(ratioX,0f);
 			});

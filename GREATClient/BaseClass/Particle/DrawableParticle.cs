@@ -53,7 +53,6 @@ namespace GREATClient.BaseClass.Particle
 		/// <value>The life time.</value>
 		protected TimeSpan LifeTime { get; set; }
 
-
 		/// <summary>
 		/// Gets or sets the max velocity.
 		/// </summary>

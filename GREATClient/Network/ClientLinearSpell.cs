@@ -27,7 +27,7 @@ namespace GREATClient.Network
     {
 		public ulong ID { get; private set; }
 		float Time { get; set; }
-		Vec2 Velocity { get; set; }
+		public Vec2 Velocity { get; private set; }
 		public Vec2 Position { get; private set; }
 		Vec2 StartingPosition { get; set; }
 

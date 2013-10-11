@@ -100,8 +100,8 @@ namespace GREATClient
 
 				Console.WriteLine("Starting client...");
 
-				//gameplay = new TestScreen(Content, this);
-				gameplay = new GameplayScreen(Content, this, client); // when testing: new TestScreen(Content);
+				gameplay = new TestScreen(Content, this);
+				//gameplay = new GameplayScreen(Content, this, client); // when testing: new TestScreen(Content);
 
 				client.Start();
 
@@ -115,7 +115,7 @@ namespace GREATClient
 			else if (ScreenResized) {
 				// Safety net, I really hate MonoGame (on Linux).
 				if ((!(Window.ClientBounds.Width == graphics.PreferredBackBufferWidth && Window.ClientBounds.Height == graphics.PreferredBackBufferHeight)) || Window.IsResizable()) {
-					if (FailCount > 10000) {
+					if (FailCount > 2000) {
 						Console.WriteLine("I'm really really sorry, but the screen was not able to be initialized.");
 						Exit();
 					}
