@@ -35,6 +35,7 @@ using GameContent;
 using GREATLib.Entities;
 using GREATLib.Entities.Champions;
 using GREATClient.BaseClass.Particle;
+using GREATLib.Network;
 
 namespace GREATClient.Test
 {
@@ -52,13 +53,13 @@ namespace GREATClient.Test
 
 		float ratioX;
 
+
 		public TestScreen(ContentManager content, Game game) : base(content, game)
         {
 			ChampionsInfo = new ChampionsInfo();
         }
 		protected override void OnLoadContent()
 		{
-
 			// Test paralax
 			para = new Parallax();
 			ratioX = 0;
@@ -116,7 +117,7 @@ namespace GREATClient.Test
 			circle.SetPositionRelativeToObject(champSprite, new Vector2(-150, -30));
 			AddChild(circle);
 
-			AddChild(new DeathScreen(10),11);
+			//AddChild(new DeathScreen(10),11);
 		}
 
 		private void Jump(object sender, EventArgs e)
@@ -158,7 +159,6 @@ namespace GREATClient.Test
 
 			/*if (ks.IsKeyDown(Keys.E)) { champSprite.PlayAnimation(AnimationInfo.JUMP);}
 			if (ks.IsKeyDown(Keys.Q)) { champSprite.PlayAnimation(AnimationInfo.RUN);}*/
-
 
 			base.OnUpdate(dt);
 		}

@@ -103,6 +103,7 @@
     <Compile Include="GameContent\DrawableSpell.cs" />
     <Compile Include="Network\ClientLinearSpell.cs" />
     <Compile Include="GameContent\DeathScreen.cs" />
+    <Compile Include="GameContent\DrawableChampionLifeBar.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />
