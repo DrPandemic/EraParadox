@@ -44,9 +44,9 @@ namespace GREATClient.GameContent
 		public override void Load(Container container, Microsoft.Xna.Framework.Graphics.GraphicsDevice gd)
 		{
 			base.Load(container, gd);
-			//AddChild(Display = new DrawableRectangle(new Rect(Spell.Position.X, Spell.Position.Y, 5f, 5f), Color.Cyan) { RelativeOrigin = new Vector2(.5f)});
+			AddChild(Display = new DrawableRectangle(new Rect(Spell.Position.X, Spell.Position.Y, 5f, 5f), Color.Cyan) { RelativeOrigin = new Vector2(.5f)});
 
-			Particles = new ParticleSystem(400, null, new TimeSpan(0, 0, 1));
+			Particles = new ParticleSystem(100, null, new TimeSpan(0, 0, 1));
 			Particles.ParticleInitialVelocity = new Vector2(Spell.Velocity.X * -1, Spell.Velocity.Y * -1);
 
 			Particles.Tint = Tint;
@@ -54,12 +54,12 @@ namespace GREATClient.GameContent
 			AddChild(Particles);
 		}
 
-		public override void Update(Microsoft.Xna.Framework.GameTime dt)
+		protected override void OnUpdate(GameTime dt)
 		{
-			base.Update(dt);
 			Spell.Update(dt.ElapsedGameTime.TotalSeconds);
-			//Display.Position = GameLibHelper.ToVector2(Spell.Position);
+			Display.Position = GameLibHelper.ToVector2(Spell.Position);
 			Particles.Position = GameLibHelper.ToVector2(Spell.Position);
+			base.OnUpdate(dt);
 		}
     }
 }

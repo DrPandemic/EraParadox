@@ -58,11 +58,12 @@ namespace GREATLib.Physics
 		{
 			Debug.Assert(entity != null);
 
-			var collisions = World.GetTouchedObjects(entity.CreateCollisionRectangle());
+			var rect = entity.CreateCollisionRectangle();
+			var collisions = World.GetTouchedObjects(rect);
 
 			foreach (var collision in collisions) {
 				if (collision.Value != CollisionType.Passable &&
-				    entity.CreateCollisionRectangle().Intersects(collision.Key)) {
+				    rect.Intersects(collision.Key)) {
 					return true;
 				}
 			}

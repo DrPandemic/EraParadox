@@ -46,7 +46,7 @@ namespace GREATLib.Physics
 		/// Basically this represents in how many portions we split our movement on one frame
 		/// to prevent too big movements from skipping potential collisions.
 		/// </summary>
-		const int PHYSICS_PASSES = 3;
+		public const int PHYSICS_PASSES = 3;
 
 		double TimeSinceLastUpdate { get; set; }
 

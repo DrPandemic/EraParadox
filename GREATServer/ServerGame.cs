@@ -29,6 +29,7 @@ using GREATLib.Entities;
 using GREATLib.Entities.Champions;
 using GREATServer.Network;
 using GREATLib.Entities.Spells;
+using GREATLib.Physics;
 
 namespace GREATServer
 {
@@ -464,9 +465,17 @@ namespace GREATServer
 			var toRemove = new List<LinearSpell>();
 			ActiveSpells.ForEach(s =>
 			{
+				Vec2 before = (Vec2)s.Position.Clone();
 				Match.CurrentState.ApplyPhysicsUpdate(s.ID, (float)dt);
-				if (Match.CurrentState.SpellShouldDisappear(s)) {
-					toRemove.Add(s);
+				Vec2 pass = (s.Position - before) / PhysicsEngine.PHYSICS_PASSES;
+
+				s.Position = before;
+				for (int i = 0; i < PhysicsEngine.PHYSICS_PASSES; ++i) {
+					if (Match.CurrentState.SpellShouldDisappear(s)) {
+						toRemove.Add(s);
+						break;
+					}
+					s.Position += pass;
 				}
 			});
 

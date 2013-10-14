@@ -51,10 +51,10 @@ namespace GREATLib
 
 		public bool Intersects(Rect b)
 		{
-			return Left <= b.Right &&
-				Right > b.Left &&
-				Top <= b.Bottom &&
-				Bottom > b.Top;
+			return !(b.Left > Right ||
+				b.Right < Left ||
+				b.Top > Bottom ||
+				b.Bottom < Top);
 		}
 		public static bool Intersects(Rect a, Rect b)
 		{
