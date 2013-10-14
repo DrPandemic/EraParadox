@@ -28,6 +28,7 @@ using System.Diagnostics;
 using GREATLib.Network;
 using GREATLib.Entities.Champions;
 using GREATLib.Entities.Spells;
+using GREATLib.Entities;
 
 
 namespace GREATClient
@@ -280,11 +281,17 @@ namespace GREATClient
 	{
 		public ulong ID { get; private set; }
 		public Vec2 Position { get; private set; }
+		public Teams Team { get; private set; }
+		public float MaxHealth { get; private set; }
+		public float Health { get; private set; }
 
 		public PlayerData(NetBuffer msg) : this()
 		{
 			ID = msg.ReadUInt64();
 			Position = new Vec2(msg.ReadFloat(), msg.ReadFloat());
+			Team = msg.ReadBoolean() ? Teams.Left : Teams.Right;
+			MaxHealth = msg.ReadFloat();
+			Health = msg.ReadFloat();
 		}
 	}
 	public struct StateUpdateData

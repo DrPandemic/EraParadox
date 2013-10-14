@@ -44,8 +44,8 @@ namespace GREATServer.Network
 
     public class ServerChampion : ICharacter
     {
-		public ServerChampion(ulong id, Vec2 pos)
-			: base(id, pos)
+		public ServerChampion(ulong id, Vec2 pos, Teams team, float maxhp, float hp)
+			: base(id, pos, team, maxhp, hp)
         {
         }
 
@@ -82,7 +82,7 @@ namespace GREATServer.Network
 
 		public override object Clone()
 		{
-			ServerChampion s = new ServerChampion(ID, Position);
+			ServerChampion s = new ServerChampion(ID, Position, Team, MaxHealth, Health);
 			s.Clone(this);
 			return s;
 		}

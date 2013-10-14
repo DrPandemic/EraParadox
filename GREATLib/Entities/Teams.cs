@@ -1,5 +1,5 @@
 //
-//  ChampionSpawnInfo.cs
+//  Teams.cs
 //
 //  Author:
 //       Jesse <jesse.emond@hotmail.com>
@@ -22,23 +22,10 @@ using System;
 
 namespace GREATLib.Entities
 {
-    public struct ChampionSpawnInfo
+    public enum Teams
     {
-		public ulong ID { get; private set; }
-		public Vec2 SpawningPosition { get; private set; }
-		public Teams Team { get; private set; }
-		public float MaxHealth { get; private set; }
-		public float Health { get; private set; }
-
-		public ChampionSpawnInfo(ulong id, Vec2 spawn, Teams team, float maxhp, float hp) 
-			: this() // to be able to have automatic properties (http://stackoverflow.com/a/420441/395386)
-		{
-			ID = id;
-			SpawningPosition = spawn;
-			Team = team;
-			MaxHealth = maxhp;
-			Health = hp;
-		}
+		Left = 0,
+		Right
     }
 }
 

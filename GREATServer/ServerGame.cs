@@ -502,7 +502,7 @@ namespace GREATServer
 			ServerChampion champion = CreateRandomChampion();
 
 			// Send to the client that asked to join, along with the info of the current players
-			List<IEntity> remoteChampions = new List<IEntity>();
+			List<ICharacter> remoteChampions = new List<ICharacter>();
 			foreach (ServerClient remote in Clients.Values) {
 				remoteChampions.Add(remote.Champion);
 			}
@@ -530,7 +530,7 @@ namespace GREATServer
 		/// <summary>
 		/// Fills a message for the players already in a game to indicate that a new player joined the game.
 		/// </summary>
-		static void FillNewRemotePlayerMessage(NetBuffer msg, IEntity champion)
+		static void FillNewRemotePlayerMessage(NetBuffer msg, ICharacter champion)
 		{
 			FillChampionInfo(msg, champion);
 		}
@@ -539,36 +539,67 @@ namespace GREATServer
 		/// Creates a message indicating that he has joined the game and that
 		/// the client should create a new drawable champion associated to it.
 		/// </summary>
-		static void FillJoinedGameMessage(NetBuffer msg, IEntity champion, List<IEntity> remoteChampions)
+		static void FillJoinedGameMessage(NetBuffer msg, ICharacter champion, List<ICharacter> remoteChampions)
 		{
 			double time = Server.Instance.GetTime().TotalSeconds;
 			remoteChampions.Insert(0, champion); // add our champion to the beginning
 
 			// and send all the champions together
-			foreach (IEntity champ in remoteChampions) {
+			foreach (ICharacter champ in remoteChampions) {
 				FillChampionInfo(msg, champ);
 			}
 		}
 
-		static void FillChampionInfo(NetBuffer msg, IEntity champion)
+		static void FillChampionInfo(NetBuffer msg, ICharacter champion)
 		{
 			ulong id = champion.ID;
 			float x = champion.Position.X;
 			float y = champion.Position.Y;
+			bool team = champion.Team == Teams.Left;
+			float maxhp = champion.MaxHealth;
+			float hp = champion.Health;
 
 			msg.Write(id);
 			msg.Write(x);
 			msg.Write(y);
+			msg.Write(team);
+			msg.Write(maxhp);
+			msg.Write(hp);
 		}
 
 		/// <summary>
 		/// Creates a random champion at a random starting position (mainly used
 		/// for testing purposes).
 		/// </summary>
-		static ServerChampion CreateRandomChampion()
+		ServerChampion CreateRandomChampion()
 		{
-			return new ServerChampion(IDGenerator.GenerateID(), 
-			                   new Vec2(Utilities.RandomFloat(Utilities.Random, 100f, 400f), 150f));
+			return new ServerChampion(IDGenerator.GenerateID(),
+			                   new Vec2(Utilities.RandomFloat(Utilities.Random, 100f, 400f), 150f),
+			                          GetSmallestTeam(), 100f, 100f); // TODO: depend on champion
+		}
+
+		Teams GetSmallestTeam()
+		{
+			Dictionary<Teams, int> teams = new Dictionary<Teams, int>();
+			teams.Add(Teams.Left, 0);
+			teams.Add(Teams.Right, 0);
+			foreach (ServerClient client in Clients.Values) {
+				teams[client.Champion.Team]++;
+			}
+
+			KeyValuePair<Teams, int> min = Utilities.MakePair(RandomTeam(), int.MaxValue);
+			foreach (var pair in teams) {
+				if (pair.Value < min.Value) {
+					min = new KeyValuePair<Teams, int>(pair.Key, pair.Value);
+				}
+			}
+
+			return min.Key;
+		}
+
+		Teams RandomTeam()
+		{
+			return random.Next(2) == 0 ? Teams.Left : Teams.Right;
 		}
 
 		/// <summary>

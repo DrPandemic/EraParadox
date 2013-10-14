@@ -37,9 +37,10 @@ namespace GREATClient.Network
 		public Vec2 DrawnPosition { get; protected set; }
 
         public ClientChampion(ChampionSpawnInfo spawnInfo)
-			: base(spawnInfo.ID, spawnInfo.SpawningPosition)
+			: base(spawnInfo.ID, spawnInfo.SpawningPosition, spawnInfo.Team, spawnInfo.MaxHealth, spawnInfo.Health)
         {
 			DrawnPosition = Position;
+			Console.WriteLine(Team);
         }
 
 		public virtual void Update(GameTime dt)

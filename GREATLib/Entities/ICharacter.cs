@@ -36,19 +36,35 @@ namespace GREATLib.Entities
 		/// <example>0.9 would keep 90% of the entity's X velocity every frame.</example>
 		public float HorizontalAcceleration { get; set; }
 
+		public float Health { get; private set; }
+		public float MaxHealth { get; private set; }
+		public bool Alive { get { return Health > 0f; } }
 		public ChampionAnimation Animation { get; set; }
 		public bool FacingLeft { get; set; }
+		public Teams Team { get; private set; }
 
-        public ICharacter(ulong id, Vec2 position)
+        public ICharacter(ulong id, Vec2 position, Teams team, float maxhp, float hp)
 			: base(id, position, 
 			       90f, 15f, 30f)//TODO: stats by champion
         {
 			JumpForce = 750;
 			HorizontalAcceleration = 9e-9f;
 
+			MaxHealth = maxhp;
+			Health = hp;
 			Animation = ChampionAnimation.idle;
 			FacingLeft = false;
+			Team = team;
         }
+
+		public void Heal(float amount)
+		{
+			Health = Math.Min(MaxHealth, Health + amount);
+		}
+		public void Hurt(float amount)
+		{
+			Health = Math.Max(0f, Health - amount);
+		}
 
 		public override void Clone(IEntity e)
 		{
@@ -58,10 +74,12 @@ namespace GREATLib.Entities
 			HorizontalAcceleration = c.HorizontalAcceleration;
 			Animation = c.Animation;
 			FacingLeft = c.FacingLeft;
+			MaxHealth = c.MaxHealth;
+			Health = c.Health;
 		}
 		public override object Clone()
 		{
-			ICharacter c = new ICharacter(ID, Position);
+			ICharacter c = new ICharacter(ID, Position, Team, MaxHealth, Health);
 			c.Clone(this);
 			return c;
 		}
@@ -70,9 +88,9 @@ namespace GREATLib.Entities
         public Vec2 GetHandsPosition()
         {
             return new Vec2 (Position.X + CollisionWidth / 2f,
-                            Position.Y + CollisionHeight / 2f) +
-                (FacingLeft ? -1 : 1) * new Vec2 (CollisionWidth / 2f, 0f) +
-					(FacingLeft ? -1 : 1) * new Vec2(CollisionWidth, 0f) * HANDS_MARGIN;
+                            Position.Y + CollisionHeight / 2f) + // center
+                (FacingLeft ? -1 : 1) * new Vec2 (CollisionWidth / 2f, 0f) + // on the side that we're looking
+				(FacingLeft ? -1 : 1) * new Vec2(CollisionWidth, 0f) * HANDS_MARGIN; // plus a bit of over (for our hands)
         }
 
 		public Vec2 GetFeetPosition()
