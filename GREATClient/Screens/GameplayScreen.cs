@@ -266,7 +266,7 @@ namespace GREATClient.Screens
 		void RemoveSpell(SpellDisappearEventData e)
 		{
 			if (Spells.ContainsKey(e.ID)) {
-				RemoveChild(Spells[e.ID]);
+				Spells[e.ID].Active = false;
 				Spells.Remove(e.ID);
 			}
 		}
