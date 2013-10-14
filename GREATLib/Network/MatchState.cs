@@ -126,7 +126,8 @@ namespace GREATLib.Network
 
 		public bool SpellShouldDisappear(LinearSpell spell)
 		{
-			return Physics.CollidesWithWorld(spell); //TODO: check max range
+			return spell.ReachedMaxRange() ||
+				(spell.IsSolid && Physics.CollidesWithWorld(spell));
 		}
 
 		/// <summary>

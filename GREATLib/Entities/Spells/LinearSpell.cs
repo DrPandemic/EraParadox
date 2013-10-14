@@ -30,18 +30,23 @@ namespace GREATLib.Entities.Spells
 		public TimeSpan CastingTime { get; set; }
 		public float Damage { get; set; }
 
+		Vec2 StartPosition { get; set; }
+		public bool IsSolid { get; private set; }
+
         public LinearSpell(ulong id, Vec2 position, Vec2 target, SpellTypes type)
 			: base(id, position,
 			       750f, 5f, 5f) //TODO: depend on spell type
         {
 			//TODO: depend on spell type
-			Range = 100f;
+			Range = 350f;
 			Cooldown = TimeSpan.FromSeconds(5.0);
 			CastingTime = TimeSpan.FromSeconds(0.25);
 			Damage = 10f;
+			IsSolid = true;
 
 			Type = type;
 			Velocity = Vec2.Normalize(target - position) * MoveSpeed;
+			StartPosition = (Vec2)position.Clone();
         }
 
 		public override void Clone(IEntity e)
@@ -59,6 +64,11 @@ namespace GREATLib.Entities.Spells
 			LinearSpell s = new LinearSpell(ID, Position, Position + Velocity, Type);
 			s.Clone(this);
 			return s;
+		}
+
+		public bool ReachedMaxRange()
+		{
+			return Vec2.DistanceSquared(Position, StartPosition) >= Range * Range;
 		}
     }
 }
