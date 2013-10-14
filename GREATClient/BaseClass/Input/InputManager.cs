@@ -350,8 +350,11 @@ namespace GREATClient.BaseClass.Input
 			bool controlDown = keyboardState.IsKeyDown(Keys.LeftControl) || keyboardState.IsKeyDown(Keys.LeftControl);
 
 			if (deadKey == DeadKeys.None) {
-				return true;
-			}
+				if (!altDown && !shiftDown && !controlDown) {				
+					return true;
+				}
+				return false;
+			} 
 			// Makes sure there is only one dead key pressed.
 			if (altDown ? (!shiftDown && !controlDown) : (shiftDown ^ controlDown)) {
 				switch (deadKey) {

@@ -38,7 +38,7 @@ namespace GREATClient.BaseClass.Particle
 		/// The number of particules.
 		/// </summary>
 		int numberOfPaticules;
-		int NumberOfParticules 
+		int NumberOfParticles 
 		{ 
 			get { return numberOfPaticules; }
 			set {
@@ -87,6 +87,17 @@ namespace GREATClient.BaseClass.Particle
 		/// <value>The max time until next spawn.</value>
 		TimeSpan MaxTimeUntilNextSpawn { get; set; }
 
+
+		public Vector2 ParticleInitialVelocity { get; set; } 
+		public Vector2 ParticleForce { get; set; }
+		public float ParticleLifeTimeRandomizer { get; set; }
+		public float ParticleVelocityRandomizer { get; set; }
+		public float ParticleForceRandomizer { get; set; }
+		public float ParticleAlphaPercent { get; set; }
+		public string ParticleFile { get; set; }
+		TimeSpan LifeTime;
+		public Color Tint;
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="GREATClient.ParticleSystem"/> class.
 		/// While the animation length is equal to null, the animation is endless
@@ -95,21 +106,27 @@ namespace GREATClient.BaseClass.Particle
 		/// <param name="numberOfParticle">Number of particle.</param>
 		/// <param name="animationLength">Animation length.</param>
 		/// <param name="particleLifeTime">Particle life time.</param>
-        public ParticleSystem(ContentManager content,
-		                      int numberOfParticle, 
+        public ParticleSystem(int numberOfParticle, 
 		                      TimeSpan? animationLength = null,
 		                      TimeSpan? particleLifeTime = null) 
 							  : base()
         {
-			Console.WriteLine(NumberOfParticules);
-			NumberOfParticules = numberOfParticle;
+			// Particles settings
+			ParticleFile = "particle";
+			ParticleInitialVelocity = new Vector2(30, -100);
+			ParticleForce = new Vector2(2, 10);
+			ParticleLifeTimeRandomizer = 0.3f;
+			ParticleVelocityRandomizer = 0.2f;
+			ParticleForceRandomizer = 1.8f;
+			ParticleAlphaPercent = 1f;
+			Tint = Color.White;
+
+			NumberOfParticles = numberOfParticle;
 			MaxAnimationLength = animationLength;
 
 			Particules = new List<DrawableParticle>();
 
-			TimeSpan lifeTime = (particleLifeTime == null ? new TimeSpan(0, 0, 5) : particleLifeTime.Value);
-
-			CreateParticles(numberOfParticle,lifeTime);
+			LifeTime = (particleLifeTime == null ? new TimeSpan(0, 0, 5) : particleLifeTime.Value);
         }
 
 		/// <summary>
@@ -121,10 +138,18 @@ namespace GREATClient.BaseClass.Particle
 		protected virtual void CreateParticles(int number, TimeSpan lifeTime)
 		{
 			for (int i = 0; i < number; ++i) {
-				DrawableParticle particle = new DrawableParticle(lifeTime, new Vector2(30, -100), new Vector2(10, 100), 0.3f, 0f, 1.8f);
+				DrawableParticle particle = new DrawableParticle(lifeTime, ParticleInitialVelocity, ParticleForce, 
+				                                                 ParticleLifeTimeRandomizer, ParticleVelocityRandomizer, ParticleForceRandomizer, ParticleAlphaPercent, ParticleFile);
+				particle.Tint = Tint;
+
 				Particules.Add(particle);
 				AddChild(particle);
 			}
+		}
+
+		protected override void OnLoad(ContentManager content, GraphicsDevice gd)
+		{
+			CreateParticles(NumberOfParticles,LifeTime);
 		}
 
 		/// <summary>
@@ -133,13 +158,13 @@ namespace GREATClient.BaseClass.Particle
 		private void CalculateTimeUntilNextSpawn()
 		{
 		
-			if (AnimationLength != null && NumberOfParticules != 0) {
-				MaxTimeUntilNextSpawn = TimeSpan.FromTicks(MaxAnimationLength.Value.Ticks / NumberOfParticules);
+			if (AnimationLength != null && NumberOfParticles != 0) {
+				MaxTimeUntilNextSpawn = TimeSpan.FromTicks(MaxAnimationLength.Value.Ticks / NumberOfParticles);
 				TimeUntilNextSpawn = MaxTimeUntilNextSpawn;
 			} 
 			//TODO repenser ici
-			else if (AnimationLength == null && NumberOfParticules != 0) {
-				MaxTimeUntilNextSpawn = TimeSpan.FromTicks(new TimeSpan(0, 0, 1).Ticks / NumberOfParticules);
+			else if (AnimationLength == null && NumberOfParticles != 0) {
+				MaxTimeUntilNextSpawn = TimeSpan.FromTicks(new TimeSpan(0, 0, 1).Ticks / NumberOfParticles);
 				TimeUntilNextSpawn = MaxTimeUntilNextSpawn;
 			}
 		

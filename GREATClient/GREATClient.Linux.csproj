@@ -101,6 +101,9 @@
     <Compile Include="BaseClass\BaseAction\ActionDelay.cs" />
     <Compile Include="Display\GameUI.cs" />
     <Compile Include="GameContent\DrawableSpell.cs" />
+    <Compile Include="Network\ClientLinearSpell.cs" />
+    <Compile Include="GameContent\DeathScreen.cs" />
+    <Compile Include="GameContent\DrawableChampionLifeBar.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />
@@ -137,10 +140,6 @@
     <ProjectReference Include="..\MonoGame\MonoGame.Framework\MonoGame.Framework.Linux.csproj">
       <Project>{35253CE1-C864-4CD3-8249-4D1319748E8F}</Project>
       <Name>MonoGame.Framework.Linux</Name>
-    </ProjectReference>
-    <ProjectReference Include="GREATClient.Windows.csproj">
-      <Project>{0F19250F-56ED-4ADB-80E1-306C9FFA97C7}</Project>
-      <Name>GREATClient.Windows</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
