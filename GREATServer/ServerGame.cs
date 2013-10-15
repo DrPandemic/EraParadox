@@ -477,16 +477,20 @@ namespace GREATServer
 				s.Position = before;
 				bool remove = false;
 				for (int i = 0; i < PhysicsEngine.PHYSICS_PASSES; ++i) {
+
+					// Check for entities collisions
 					var rect = s.CreateCollisionRectangle();
 					var enemyTeam = TeamsHelper.Opposite(s.Owner.Team);
 					foreach (ServerClient client in Clients.Values) {
 						if (client.Champion.Team == enemyTeam &&
 						    client.Champion.CreateCollisionRectangle().Intersects(rect)) {
+							client.Champion.Hurt(s.Damage);
+							Console.WriteLine("COLLISION. HP: " + client.Champion.Health + " / " + client.Champion.MaxHealth + " (" + (client.Champion.Health / client.Champion.MaxHealth) + "%)");
 							remove = true;
-							Console.WriteLine("POW!!");
 						}
 					}
 
+					// Check to remove spells
 					if (!remove && // don't check if we know it has to be removed
 					   Match.CurrentState.SpellShouldDisappear(s)) {
 						remove = true;
