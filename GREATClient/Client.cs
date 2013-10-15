@@ -356,6 +356,10 @@ namespace GREATClient
 						data = new SpellDisappearEventData(msg.ReadUInt64());
 						break;
 
+					case ServerCommand.StatsChanged:
+						data = new StatsChangedEventData(msg.ReadUInt64(), msg.ReadFloat());
+						break;
+
 					default:
 						Debug.Fail("Unknown server command when updating (unknown remarkable event)");
 						break;
@@ -405,6 +409,17 @@ namespace GREATClient
 			: base(ServerCommand.SpellDisappear)
 		{
 			ID = id;
+		}
+	}
+	public class StatsChangedEventData : RemarkableEventData
+	{
+		public ulong ChampID { get; private set; }
+		public float Health { get; private set; }
+		public StatsChangedEventData(ulong id, float hp)
+			: base(ServerCommand.StatsChanged)
+		{
+			ChampID = id;
+			Health = hp;
 		}
 	}
 }

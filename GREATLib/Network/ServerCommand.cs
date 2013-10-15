@@ -54,6 +54,11 @@ namespace GREATLib.Network
 		/// This spell should disappear.
 		/// </summary>
 		, SpellDisappear
+
+		/// <summary>
+		/// The stats of a player changed.
+		/// </summary>
+		, StatsChanged
     }
 }
 

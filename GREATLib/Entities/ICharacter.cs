@@ -42,12 +42,13 @@ namespace GREATLib.Entities
 		public ChampionAnimation Animation { get; set; }
 		public bool FacingLeft { get; set; }
 		public Teams Team { get; private set; }
+		public bool HealthChanged { get; private set; }
 
         public ICharacter(ulong id, Vec2 position, Teams team, float maxhp, float hp)
-			: base(id, position, 
-			       90f, 26f, 40f)//TODO: stats by champion
+			: base(id, position,
+			       100f, 26f, 40f)//TODO: stats by champion
         {
-			JumpForce = 750;
+			JumpForce = 800;
 			HorizontalAcceleration = 9e-9f;
 
 			MaxHealth = maxhp;
@@ -55,15 +56,25 @@ namespace GREATLib.Entities
 			Animation = ChampionAnimation.idle;
 			FacingLeft = false;
 			Team = team;
+			HealthChanged = false;
         }
 
 		public void Heal(float amount)
 		{
-			Health = Math.Min(MaxHealth, Health + amount);
+			SetHealth(Health + amount);
 		}
 		public void Hurt(float amount)
 		{
-			Health = Math.Max(0f, Health - amount);
+			SetHealth(Health - amount);
+		}
+		public void SetHealth(float hp)
+		{
+			Health = Math.Max(0f, Math.Min(MaxHealth, hp));
+			HealthChanged = true;
+		}
+		public void ResetHealthChangedFlag()
+		{
+			HealthChanged = false;
 		}
 
 		public override void Clone(IEntity e)

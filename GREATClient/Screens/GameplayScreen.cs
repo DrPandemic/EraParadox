@@ -156,7 +156,7 @@ namespace GREATClient.Screens
 				idraw = OurChampion;
 				ientity = OurChampion.Champion;
 			} else {
-				var remote = new RemoteDrawableChampion(spawn, ChampionsInfo);
+				var remote = new RemoteDrawableChampion(spawn, spawn.Team == OurChampion.Champion.Team, ChampionsInfo);
 				idraw = remote;
 				ientity = remote.Champion;
 			}
@@ -249,6 +249,10 @@ namespace GREATClient.Screens
 						RemoveSpell((SpellDisappearEventData)r);
 						break;
 
+					case ServerCommand.StatsChanged:
+						ChangeStats((StatsChangedEventData)r);
+						break;
+
 					default:
 						Debug.Fail("Unknown server command (unknown remarkable event).");
 						break;
@@ -268,6 +272,12 @@ namespace GREATClient.Screens
 			if (Spells.ContainsKey(e.ID)) {
 				Spells[e.ID].Spell.Active = false;
 				Spells.Remove(e.ID);
+			}
+		}
+		void ChangeStats(StatsChangedEventData e)
+		{
+			if (Match.CurrentState.ContainsEntity(e.ChampID)) {
+				((ICharacter)Match.CurrentState.GetEntity(e.ChampID)).SetHealth(e.Health);
 			}
 		}
 

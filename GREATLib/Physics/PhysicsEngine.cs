@@ -40,7 +40,7 @@ namespace GREATLib.Physics
 		/// <summary>
 		/// The gravity force per second applied.
 		/// </summary>
-		static readonly Vec2 GRAVITY = new Vec2(0f, 1866.67f);
+		static readonly Vec2 GRAVITY = new Vec2(0f, 2000f);//1866.67f);
 		/// <summary>
 		/// Amount of passes to make a movement.
 		/// Basically this represents in how many portions we split our movement on one frame

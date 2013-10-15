@@ -28,6 +28,7 @@ using GREATClient.BaseClass;
 using GREATClient.Network;
 using Microsoft.Xna.Framework.Graphics;
 using GREATLib.Entities.Champions;
+using System;
 
 namespace GREATClient.GameContent
 {
@@ -62,13 +63,21 @@ namespace GREATClient.GameContent
 		/// <value>The champion sprite.</value>
 		DrawableChampionSprite ChampionSprite { get; set; }
 		DrawableRectangle ChampionRect { get ; set; }
+		DrawableChampionLifeBar LifeBar { get; set; }
 
-        public DrawableChampion(ChampionT champion, ChampionsInfo championsInfo)
+        public DrawableChampion(ChampionT champion, bool ally, ChampionsInfo championsInfo)
         {
 			Champion = champion;
 			ChampionSprite = new DrawableChampionSprite(ChampionAnimation.idle, ChampionTypes.StickMan, championsInfo);
 			ChampionSprite.PlayAnimation(ChampionAnimation.run);
 			ChampionSprite.RelativeOrigin = new Vector2(0.5f, 1f);
+			ChampionSprite.Position = new Vector2(Champion.CollisionWidth / 2f, Champion.CollisionHeight);
+
+			LifeBar = new DrawableChampionLifeBar(ally) { 
+				MaxHealth = Champion.MaxHealth, 
+				Health = Champion.Health,
+				Position = new Vector2(0f, -Champion.CollisionHeight/2f)
+			};
         }
 		protected override void OnLoad(Microsoft.Xna.Framework.Content.ContentManager content, Microsoft.Xna.Framework.Graphics.GraphicsDevice gd)
 		{
@@ -77,20 +86,23 @@ namespace GREATClient.GameContent
 			AddChild(ChampionSprite);
 			AddChild(ChampionRect = new DrawableRectangle(Champion.CreateCollisionRectangle(), Color.White * 0.7f));
 			ChampionRect.Visible = MainDrawableChampion.VIEW_DEBUG_RECTS;
+
+			AddChild(LifeBar);
 		}
 		protected override void OnUpdate(Microsoft.Xna.Framework.GameTime dt)
 		{
 			// Update the champion animation
 			CurrentAnimation = Champion.Animation;
 
+			Position = GameLibHelper.ToVector2(Champion.DrawnPosition);
+
 			Champion.Update(dt);
 
-			var rect = Champion.CreateCollisionRectangle();
-			ChampionSprite.Position = GameLibHelper.ToVector2(
-				Champion.DrawnPosition + new Vec2(rect.Width / 2f, rect.Height));
-			ChampionRect.Position = GameLibHelper.ToVector2(Champion.DrawnPosition);
-
 			ChampionSprite.Effects = Champion.FacingLeft ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+
+			Console.WriteLine(Champion.MaxHealth);
+			LifeBar.MaxHealth = Champion.MaxHealth;
+			LifeBar.Health = Champion.Health;
 		}
 
 		public override bool IsBehind(Vector2 position)

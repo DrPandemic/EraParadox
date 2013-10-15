@@ -26,8 +26,8 @@ namespace GREATClient.GameContent
 {
     public class RemoteDrawableChampion : DrawableChampion<RemoteClientChampion>
     {
-		public RemoteDrawableChampion(ChampionSpawnInfo spawnInfo, ChampionsInfo champInfo)
-			: base(new RemoteClientChampion(spawnInfo), champInfo)
+		public RemoteDrawableChampion(ChampionSpawnInfo spawnInfo, bool ally, ChampionsInfo champInfo)
+			: base(new RemoteClientChampion(spawnInfo), ally, champInfo)
         {
         }
     }

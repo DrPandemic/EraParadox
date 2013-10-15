@@ -26,47 +26,57 @@ namespace GREATClient.GameContent
 {
     public class DrawableChampionLifeBar : Container
     {
-		const float MaxWidth = 60.0f;
-		const float NormalHeight = 6.0f;
+		const float LERP_FACTOR = 0.1f;
+
+		const float CONTOUR_WIDTH = 1f;
+		const float MAX_WIDTH = 50.0f;
+		const float NORMAL_HEIGHT = 3.0f;
 
 		bool IsAlly { get; set; }
 
-		float m_Life;
-		/// <summary>
-		/// Gets or sets the life.
-		/// The life is on 100.
-		/// </summary>
-		/// <value>The life.</value>
-		public float Life 
-		{ 
-			get {
-				return m_Life;
-			}
+		float health;
+		public float Health { 
+			get { return health; }
 			set {
-				m_Life = (value <= 100.0f ? (value >= 0.0f ? value : 0.0f) : 100.0f);
+ 				health = Math.Min(MaxHealth, Math.Max(0f, value));
 			}
 		}
+		float maxHealth;
+		public float MaxHealth { 
+			get { return maxHealth; }
+			set {
+ 				maxHealth = Math.Max(0f, value);
+				Health = Health; // auto assignement to fix health if needed
+			}
+		}
+
+		float Ratio { get { return Health / MaxHealth; } }
+		float currentRatio;
 
 		DrawableRectangle LifeBar { get; set; }
 
         public DrawableChampionLifeBar(bool isAlly)
         {
+			MaxHealth = 0f;
+			Health = 0f;
+			currentRatio = 1f;
 			IsAlly = isAlly;
-			Life = 100;
-
         }
 
 		protected override void OnLoad(Microsoft.Xna.Framework.Content.ContentManager content, Microsoft.Xna.Framework.Graphics.GraphicsDevice gd)
 		{
-			LifeBar = new DrawableRectangle(new Vector2(MaxWidth,NormalHeight),new Vector2(-30, -3), IsAlly ? Color.Green: Color.DarkRed);
-			AddChild(new DrawableRectangle(new Vector2(70,16),new Vector2(-35, -8), IsAlly ? Color.Green: Color.DarkRed));
-			AddChild(new DrawableRectangle(new Vector2(64,10),new Vector2(-32, -5), Color.White));
+			LifeBar = new DrawableRectangle(new Vector2(MAX_WIDTH,NORMAL_HEIGHT),new Vector2(-MAX_WIDTH / 2f, -NORMAL_HEIGHT / 2f), IsAlly ? Color.Green: Color.DarkRed);
+			//AddChild(new DrawableRectangle(new Vector2(7,16),new Vector2(-35, -8), IsAlly ? Color.Green: Color.DarkRed));
+			AddChild(new DrawableRectangle(new Vector2(MAX_WIDTH + CONTOUR_WIDTH * 2f, NORMAL_HEIGHT + CONTOUR_WIDTH * 2f), 
+			                               new Vector2(-(MAX_WIDTH + CONTOUR_WIDTH * 2f)/2f, -(NORMAL_HEIGHT + CONTOUR_WIDTH * 2f)/2f), Color.White));
 			AddChild(LifeBar);
 		}
 
 		protected override void OnUpdate(GameTime dt)
 		{
-			LifeBar.Size = new Vector2(1.0f * MaxWidth * Life / 100, NormalHeight);
+			Console.WriteLine(Ratio);
+			currentRatio = MathHelper.Lerp(currentRatio, Ratio, LERP_FACTOR);
+			LifeBar.Size = new Vector2(MAX_WIDTH * currentRatio, NORMAL_HEIGHT);
 		}
     }
 }

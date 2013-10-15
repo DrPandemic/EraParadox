@@ -273,31 +273,35 @@ namespace GREATServer
 			float castTime = (float)Server.Instance.GetTime().TotalSeconds;
 			LinearSpell copy = (LinearSpell)spell.Clone();
 
-			RemarkableEvents.Add(Utilities.MakePair<ServerCommand, Action<NetBuffer>>(
-													ServerCommand.SpellCast,
-			                                        (NetBuffer msg) => {
-				ulong id = copy.ID;
-				byte type = (byte)copy.Type;
-				float time = castTime;
-				float px = copy.Position.X;
-				float py = copy.Position.Y;
-				float vx = copy.Velocity.X;
-				float vy = copy.Velocity.Y;
-				float cd = (float)copy.Cooldown.TotalSeconds;
-				float range = copy.Range;
-				float width = copy.CollisionWidth;
+			AddRemarkableEvent(ServerCommand.SpellCast,
+				(NetBuffer msg) => {
+					ulong id = copy.ID;
+					byte type = (byte)copy.Type;
+					float time = castTime;
+					float px = copy.Position.X;
+					float py = copy.Position.Y;
+					float vx = copy.Velocity.X;
+					float vy = copy.Velocity.Y;
+					float cd = (float)copy.Cooldown.TotalSeconds;
+					float range = copy.Range;
+					float width = copy.CollisionWidth;
 
-				msg.Write(id);
-				msg.Write(type);
-				msg.Write(time);
-				msg.Write(px);
-				msg.Write(py);
-				msg.Write(vx);
-				msg.Write(vy);
-				msg.Write(cd);
-				msg.Write(range);
-				msg.Write(width);
-			}));
+					msg.Write(id);
+					msg.Write(type);
+					msg.Write(time);
+					msg.Write(px);
+					msg.Write(py);
+					msg.Write(vx);
+					msg.Write(vy);
+					msg.Write(cd);
+					msg.Write(range);
+					msg.Write(width);
+			});
+		}
+
+		void AddRemarkableEvent(ServerCommand command, Action<NetBuffer> action)
+		{
+			RemarkableEvents.Add(Utilities.MakePair(command, action));
 		}
 
 		void HandleMovementAction(ulong id, PlayerAction action)
@@ -405,6 +409,9 @@ namespace GREATServer
 
 		static void DoAction(MatchState match, ICharacter champion, PlayerAction action)
 		{
+			if (!champion.Alive)
+				return;
+
 			switch (action.Type) {
 				case PlayerActionType.MoveLeft:
 					match.Move(champion.ID, HorizontalDirection.Left);
@@ -463,6 +470,15 @@ namespace GREATServer
 				                                                    client.AnimData.Movement,
 				                                                    client.AnimData.Idle,
 				                                                    client.Champion.Animation);
+
+				if (client.Champion.HealthChanged) {
+					AddRemarkableEvent(ServerCommand.StatsChanged,
+					                   (msg) => {
+						msg.Write(client.Champion.ID);
+						msg.Write(client.Champion.Health);
+					});
+					client.Champion.ResetHealthChangedFlag();
+				}
 			}
 		}
 		void UpdateSpells(double dt)
