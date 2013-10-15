@@ -30,9 +30,9 @@ namespace GREATClient.BaseClass.Particle
     {
 
 		/// <summary>
-		/// The particules.
+		/// The particles.
 		/// </summary>
-		protected List<DrawableParticle> Particules { get; set; }
+		protected List<DrawableParticle> Particles { get; set; }
 
 		/// <summary>
 		/// The number of particules.
@@ -98,6 +98,8 @@ namespace GREATClient.BaseClass.Particle
 		TimeSpan LifeTime;
 		public Color Tint;
 
+		Texture2D ParticleTexture { get; set; }
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="GREATClient.ParticleSystem"/> class.
 		/// While the animation length is equal to null, the animation is endless
@@ -124,7 +126,7 @@ namespace GREATClient.BaseClass.Particle
 			NumberOfParticles = numberOfParticle;
 			MaxAnimationLength = animationLength;
 
-			Particules = new List<DrawableParticle>();
+			Particles = new List<DrawableParticle>();
 
 			LifeTime = (particleLifeTime == null ? new TimeSpan(0, 0, 5) : particleLifeTime.Value);
         }
@@ -139,16 +141,17 @@ namespace GREATClient.BaseClass.Particle
 		{
 			for (int i = 0; i < number; ++i) {
 				DrawableParticle particle = new DrawableParticle(lifeTime, ParticleInitialVelocity, ParticleForce, 
-				                                                 ParticleLifeTimeRandomizer, ParticleVelocityRandomizer, ParticleForceRandomizer, ParticleAlphaPercent, ParticleFile);
+				                                                 ParticleLifeTimeRandomizer, ParticleVelocityRandomizer, ParticleForceRandomizer, 
+				                                                 ParticleAlphaPercent) { Origin = new Vector2(0.5f * ParticleTexture.Width, 0.5f * ParticleTexture.Height) };
 				particle.Tint = Tint;
 
-				Particules.Add(particle);
-				AddChild(particle);
+				Particles.Add(particle);
 			}
 		}
 
 		protected override void OnLoad(ContentManager content, GraphicsDevice gd)
 		{
+			ParticleTexture = content.Load<Texture2D>(ParticleFile);
 			CreateParticles(NumberOfParticles,LifeTime);
 		}
 
@@ -187,16 +190,31 @@ namespace GREATClient.BaseClass.Particle
 				}
 
 
-				//Revive the good amount of particules
-				for (int i = Particules.Count - 1; i >= 0 && numberToRevive > 0; --i) {
-					if (!Particules[i].Alive) {
-						Particules[i].Reset();
+				//Revive the good amount of particles
+				for (int i = Particles.Count - 1; i >= 0 && numberToRevive > 0; --i) {
+					if (!Particles[i].Alive) {
+						Particles[i].Reset();
 						--numberToRevive;
 					}
 				}
 			}
-			base.OnUpdate(dt);
+			foreach(DrawableParticle particle in Particles) {
+				if (particle.Alive) {
+					particle.OnUpdate(dt);
+				}
+			}
+		}
 
+		protected override void OnDraw(SpriteBatch batch)
+		{
+			batch.Begin();
+			foreach(DrawableParticle particle in Particles) {
+				if (particle.Alive) {
+					batch.Draw(ParticleTexture,GetAbsolutePosition() + particle.Position,null, particle.Tint * particle.Alpha, particle.Orientation,
+					           particle.Origin,particle.Scale,SpriteEffects.None,0);
+				}
+			}
+			batch.End();
 		}
     }
 }

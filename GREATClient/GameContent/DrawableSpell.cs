@@ -48,14 +48,14 @@ namespace GREATClient.GameContent
 			base.Load(container, gd);
 			//AddChild(Display = new DrawableRectangle(new Rect(Spell.Position.X, Spell.Position.Y, 5f, 5f), Color.Cyan) { RelativeOrigin = new Vector2(.5f)});
 
-			Particles = new ParticleSystem(100, null, new TimeSpan(0, 0, 1));
+			Particles = new ParticleSystem(5000, null, new TimeSpan(0, 0, 1));
 			Particles.ParticleInitialVelocity = new Vector2(Spell.Velocity.X * -1, Spell.Velocity.Y * -1);
 
 			Particles.Tint = Tint;
 
 			AddChild(Particles);
 
-			AddChild(Bullet = new DrawableImage("bullet"));
+			AddChild(Bullet = new DrawableImage("bullet") {RelativeOrigin = new Vector2(0.5f,0.5f)});
 			Bullet.Orientation = (float)Math.Atan2((double)Spell.Velocity.Y,(double)Spell.Velocity.X);
 		}
 

@@ -82,7 +82,7 @@ namespace GREATClient
 			client.UPnP.ForwardPort(client.Port, "GREAT Client");
 			client.DiscoverLocalPeers(14242);
 			// If the discover cluster-fucks on localhost, use that line instead
-			//client.Connect("127.0.0.1", 14242);
+			//client.Connect("172.17.104.127", 14242);
 		}
 
 		public void Stop()
