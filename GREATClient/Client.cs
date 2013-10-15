@@ -347,7 +347,9 @@ namespace GREATClient
 							msg.ReadFloat(),
 							new Vec2(msg.ReadFloat(), msg.ReadFloat()),
 							new Vec2(msg.ReadFloat(), msg.ReadFloat()),
-							TimeSpan.FromSeconds(msg.ReadFloat()));
+							TimeSpan.FromSeconds(msg.ReadFloat()),
+							msg.ReadFloat(),
+							msg.ReadFloat());
 						break;
 
 					case ServerCommand.SpellDisappear:
@@ -380,8 +382,10 @@ namespace GREATClient
 		public Vec2 Position { get; private set; }
 		public Vec2 Velocity { get; private set; }
 		public TimeSpan Cooldown { get; private set; }
+		public float Range { get; private set; }
+		public float Width { get; private set; }
 
-		public SpellCastEventData(ulong id, SpellTypes type, float time, Vec2 pos, Vec2 vel, TimeSpan cooldown)
+		public SpellCastEventData(ulong id, SpellTypes type, float time, Vec2 pos, Vec2 vel, TimeSpan cooldown, float range, float width)
 			: base(ServerCommand.SpellCast)
 		{
 			ID = id;
@@ -390,6 +394,8 @@ namespace GREATClient
 			Position = pos;
 			Velocity = vel;
 			Cooldown = cooldown;
+			Range = range;
+			Width = width;
 		}
 	}
 	public class SpellDisappearEventData : RemarkableEventData

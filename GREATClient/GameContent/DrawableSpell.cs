@@ -29,16 +29,14 @@ namespace GREATClient.GameContent
 {
     public class DrawableSpell : Container
     {
-		public bool Active { get; set; }
 		IDraw Display { get; set; } //TODO: change for image/animation class
 		ParticleSystem Particles;
 		public Color Tint;
 
-		ClientLinearSpell Spell { get; set; }
+		public ClientLinearSpell Spell { get; private set; }
 
         public DrawableSpell(ClientLinearSpell spell)
         {
-			Active = true;
 			Spell = spell;
 			Tint = Color.White;
         }
@@ -64,7 +62,7 @@ namespace GREATClient.GameContent
 			base.OnUpdate(dt);
 
 			//TODO: fade out on particles (but put spell icon invisible) here ?
-			if (!Active) {
+			if (!Spell.Active) {
 				Parent.RemoveChild(this);
 			}
 		}

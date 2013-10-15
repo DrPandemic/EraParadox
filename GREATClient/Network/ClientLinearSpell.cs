@@ -25,25 +25,34 @@ namespace GREATClient.Network
 {
     public class ClientLinearSpell
     {
+		public bool Active { get; set; }
 		public ulong ID { get; private set; }
 		float Time { get; set; }
 		public Vec2 Velocity { get; private set; }
 		public Vec2 Position { get; private set; }
+		float Range { get; set; }
+		float Width { get; set; }
 		Vec2 StartingPosition { get; set; }
 
-		public ClientLinearSpell(ulong id, Vec2 pos, float time, Vec2 velocity)
+		public ClientLinearSpell(ulong id, Vec2 pos, float time, Vec2 velocity, float range, float width)
         {
 			ID = id;
 			StartingPosition = pos;
 			Position = StartingPosition;
 			Velocity = velocity;
 			Time = Math.Max(0f, (float)Client.Instance.GetTime().TotalSeconds - time);
+			Active = true;
+			Range = range;
+			Width = width;
         }
 
 		public void Update(double dt)
 		{
 			Time += (float)dt;
 			Position = StartingPosition + Velocity * Time;
+			if (Vec2.DistanceSquared(Position, StartingPosition) > Range * Range) {
+				Active = false;
+			}
 		}
     }
 }

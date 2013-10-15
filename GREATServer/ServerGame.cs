@@ -284,6 +284,8 @@ namespace GREATServer
 				float vx = copy.Velocity.X;
 				float vy = copy.Velocity.Y;
 				float cd = (float)copy.Cooldown.TotalSeconds;
+				float range = copy.Range;
+				float width = copy.CollisionWidth;
 
 				msg.Write(id);
 				msg.Write(type);
@@ -293,6 +295,8 @@ namespace GREATServer
 				msg.Write(vx);
 				msg.Write(vy);
 				msg.Write(cd);
+				msg.Write(range);
+				msg.Write(width);
 			}));
 		}
 

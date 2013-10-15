@@ -64,7 +64,7 @@ namespace GREATClient.Test
 			para = new Parallax();
 			ratioX = 0;
 
-			AddChild(new DrawableSpell(new GREATClient.Network.ClientLinearSpell(0,new Vec2(100,100),5,new Vec2(30,50))) {Tint = Color.Gold},15);
+			AddChild(new DrawableSpell(new GREATClient.Network.ClientLinearSpell(0,new Vec2(100,100),5,new Vec2(30,50), 500f, 5f)) {Tint = Color.Gold},15);
 
 			AddChild(para);
 

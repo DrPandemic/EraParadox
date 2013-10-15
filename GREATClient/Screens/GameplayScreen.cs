@@ -259,14 +259,14 @@ namespace GREATClient.Screens
 		}
 		void CastSpell(SpellCastEventData e)
 		{
-			var s = new DrawableSpell(new ClientLinearSpell(e.ID, e.Position, e.Time, e.Velocity));
+			var s = new DrawableSpell(new ClientLinearSpell(e.ID, e.Position, e.Time, e.Velocity, e.Range, e.Width));
 			Spells.Add(e.ID, s);
 			AddChild(s);
 		}
 		void RemoveSpell(SpellDisappearEventData e)
 		{
 			if (Spells.ContainsKey(e.ID)) {
-				Spells[e.ID].Active = false;
+				Spells[e.ID].Spell.Active = false;
 				Spells.Remove(e.ID);
 			}
 		}
