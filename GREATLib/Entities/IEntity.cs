@@ -66,11 +66,11 @@ namespace GREATLib.Entities
 		public Vec2 Position { get; set; }
 
         public IEntity(ulong id, Vec2 startingPosition,
-		               float move, float width, float height)
+		               float moveSpeed, float width, float height)
         {
 			ID = id;
 			Position = startingPosition;
-			MoveSpeed = move;
+			MoveSpeed = moveSpeed;
 			CollisionWidth = width;
 			CollisionHeight = height;
 

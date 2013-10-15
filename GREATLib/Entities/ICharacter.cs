@@ -45,7 +45,7 @@ namespace GREATLib.Entities
 
         public ICharacter(ulong id, Vec2 position, Teams team, float maxhp, float hp)
 			: base(id, position, 
-			       90f, 15f, 30f)//TODO: stats by champion
+			       90f, 26f, 40f)//TODO: stats by champion
         {
 			JumpForce = 750;
 			HorizontalAcceleration = 9e-9f;

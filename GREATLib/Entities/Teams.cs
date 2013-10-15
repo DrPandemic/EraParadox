@@ -27,5 +27,13 @@ namespace GREATLib.Entities
 		Left = 0,
 		Right
     }
+
+	public static class TeamsHelper
+	{
+		public static Teams Opposite(Teams team)
+		{
+			return team == Teams.Left ? Teams.Right : Teams.Left;
+		}
+	}
 }
 

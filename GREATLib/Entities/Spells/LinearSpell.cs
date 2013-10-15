@@ -24,6 +24,7 @@ namespace GREATLib.Entities.Spells
 {
     public class LinearSpell : IEntity
     {
+		public ICharacter Owner { get; private set; }
 		public SpellTypes Type { get; set; }
 		public float Range { get; set; }
 		public TimeSpan Cooldown { get; set; }
@@ -33,7 +34,7 @@ namespace GREATLib.Entities.Spells
 		Vec2 StartPosition { get; set; }
 		public bool IsSolid { get; private set; }
 
-        public LinearSpell(ulong id, Vec2 position, Vec2 target, SpellTypes type)
+		public LinearSpell(ulong id, ICharacter owner, Vec2 position, Vec2 target, SpellTypes type)
 			: base(id, position,
 			       750f, 5f, 5f) //TODO: depend on spell type
         {
@@ -47,6 +48,7 @@ namespace GREATLib.Entities.Spells
 			Type = type;
 			Velocity = Vec2.Normalize(target - position) * MoveSpeed;
 			StartPosition = (Vec2)position.Clone();
+			Owner = owner;
         }
 
 		public override void Clone(IEntity e)
@@ -61,7 +63,7 @@ namespace GREATLib.Entities.Spells
 		}
 		public override object Clone()
 		{
-			LinearSpell s = new LinearSpell(ID, Position, Position + Velocity, Type);
+			LinearSpell s = new LinearSpell(ID, Owner, Position, Position + Velocity, Type);
 			s.Clone(this);
 			return s;
 		}

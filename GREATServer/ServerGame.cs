@@ -262,6 +262,7 @@ namespace GREATServer
 
 			LinearSpell spell = new LinearSpell(
 				IDGenerator.GenerateID(),
+				champ,
 				champ.GetHandsPosition(),
 				action.Target ?? Vec2.Zero,
 				SpellTypes.StickManSpell1); //TODO: depend on spell used
@@ -470,8 +471,25 @@ namespace GREATServer
 				Vec2 pass = (s.Position - before) / PhysicsEngine.PHYSICS_PASSES;
 
 				s.Position = before;
+				bool remove = false;
 				for (int i = 0; i < PhysicsEngine.PHYSICS_PASSES; ++i) {
-					if (Match.CurrentState.SpellShouldDisappear(s)) {
+					var rect = s.CreateCollisionRectangle();
+					var enemyTeam = TeamsHelper.Opposite(s.Owner.Team);
+					foreach (ServerClient client in Clients.Values) {
+						if (client.Champion.Team == enemyTeam &&
+						    client.Champion.CreateCollisionRectangle().Intersects(rect)) {
+							remove = true;
+							Console.WriteLine("POW!!");
+						}
+					}
+
+					if (!remove && // don't check if we know it has to be removed
+					   Match.CurrentState.SpellShouldDisappear(s)) {
+						remove = true;
+					}
+
+					// The spell has to be removed
+					if (remove) {
 						toRemove.Add(s);
 						break;
 					}
