@@ -34,6 +34,7 @@ using GREATClient.Display;
 using GREATClient.Network;
 using GREATClient.BaseClass.Input;
 using GREATLib.Entities.Spells;
+using GameContent;
 
 namespace GREATClient.Screens
 {
@@ -60,6 +61,7 @@ namespace GREATClient.Screens
 
 		ChampionsInfo ChampionsInfo { get; set; }
 		MainDrawableChampion OurChampion { get; set; }
+		CurrentChampionState ChampionState;
 
 		GameTime GameTime { get; set; }
 
@@ -69,6 +71,8 @@ namespace GREATClient.Screens
 		List<StateUpdateData> LastStateUpdateData { get; set; }
 		List<RemarkableEventData> RemarkableEvents { get; set; }
 		Dictionary<ulong, DrawableSpell> Spells { get; set; }
+
+		DeathScreen DeathScreen { get; set; }
 
         public GameplayScreen(ContentManager content, Game game, Client client)
 			: base(content, game)
@@ -94,22 +98,19 @@ namespace GREATClient.Screens
 			AddChild(menu, 5);
 			menu.SetPositionInScreenPercent(50, 50);
 
+			ChampionState = new CurrentChampionState(1000,100);
+			AddChild(new GameUI(ChampionState, new PingCounter(() => {
+				return Client.Instance.GetPing().TotalMilliseconds;})),
+			         3);
+
+			AddChild(DeathScreen = new DeathScreen(),4);
+
 			Map = new DrawableTileMap(Match.World.Map);
 			AddChild(Map);
 
 			Client.RegisterCommandHandler(ServerCommand.JoinedGame, OnJoinedGame);
 			Client.RegisterCommandHandler(ServerCommand.NewRemotePlayer, OnNewRemotePlayer);
 			Client.RegisterCommandHandler(ServerCommand.StateUpdate, OnStateUpdate);
-
-			FPSCounter fps = new FPSCounter();
-			PingCounter ping = new PingCounter(() => {
-				return Client.Instance.GetPing().TotalMilliseconds;});
-
-			AddChild(fps);
-			AddChild(ping);
-
-			fps.SetPositionRelativeToScreen(ScreenBound.BottomLeft, new Vector2(10,-30));
-			ping.SetPositionRelativeToObject(fps, new Vector2(100,0), false);
 		}
 
 		void OnStateUpdate(object sender, CommandEventArgs args)

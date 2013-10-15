@@ -46,10 +46,11 @@ namespace GREATClient.GameContent
 		/// <value>The death timer.</value>
 		DrawableLabel DeathTimer { get; set; }
 
-        public DeathScreen(int deathDuration)
+        public DeathScreen()
         {
 			ColorIncreasing = true;
-			DeathDuration = TimeSpan.FromSeconds(deathDuration);
+			DeathDuration = TimeSpan.FromSeconds(0);
+			Visible = false;
         }
 
 		protected override void OnLoad(Microsoft.Xna.Framework.Content.ContentManager content, Microsoft.Xna.Framework.Graphics.GraphicsDevice gd)
@@ -90,6 +91,11 @@ namespace GREATClient.GameContent
 			DeathDuration -= dt.ElapsedGameTime;
 			DeathDuration = DeathDuration.Ticks >= 0 ? DeathDuration: TimeSpan.FromSeconds(0);
 			DeathTimer.Text = DeathDuration.Seconds.ToString();
+		}
+
+		public void DisplayScreen(TimeSpan time) {
+			DeathDuration = time;
+			Visible = true;
 		}
     }
 }
