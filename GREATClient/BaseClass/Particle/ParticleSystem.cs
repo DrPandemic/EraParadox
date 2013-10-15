@@ -119,7 +119,7 @@ namespace GREATClient.BaseClass.Particle
 			ParticleVelocityRandomizer = 0.2f;
 			ParticleForceRandomizer = 1.8f;
 			ParticleAlphaPercent = 1f;
-			Tint = Color.White;
+			Tint = Color.OrangeRed;
 
 			NumberOfParticles = numberOfParticle;
 			MaxAnimationLength = animationLength;

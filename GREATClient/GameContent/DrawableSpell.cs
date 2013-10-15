@@ -33,18 +33,20 @@ namespace GREATClient.GameContent
 		ParticleSystem Particles;
 		public Color Tint;
 
+		DrawableImage Bullet { get; set; }
+
 		public ClientLinearSpell Spell { get; private set; }
 
         public DrawableSpell(ClientLinearSpell spell)
         {
 			Spell = spell;
-			Tint = Color.White;
+			Tint = Color.Red;
         }
 
 		public override void Load(Container container, Microsoft.Xna.Framework.Graphics.GraphicsDevice gd)
 		{
 			base.Load(container, gd);
-			AddChild(Display = new DrawableRectangle(new Rect(Spell.Position.X, Spell.Position.Y, 5f, 5f), Color.Cyan) { RelativeOrigin = new Vector2(.5f)});
+			//AddChild(Display = new DrawableRectangle(new Rect(Spell.Position.X, Spell.Position.Y, 5f, 5f), Color.Cyan) { RelativeOrigin = new Vector2(.5f)});
 
 			Particles = new ParticleSystem(100, null, new TimeSpan(0, 0, 1));
 			Particles.ParticleInitialVelocity = new Vector2(Spell.Velocity.X * -1, Spell.Velocity.Y * -1);
@@ -52,12 +54,16 @@ namespace GREATClient.GameContent
 			Particles.Tint = Tint;
 
 			AddChild(Particles);
+
+			AddChild(Bullet = new DrawableImage("bullet"));
+			Bullet.Orientation = (float)Math.Atan2((double)Spell.Velocity.Y,(double)Spell.Velocity.X);
 		}
 
 		protected override void OnUpdate(GameTime dt)
 		{
 			Spell.Update(dt.ElapsedGameTime.TotalSeconds);
-			Display.Position = GameLibHelper.ToVector2(Spell.Position);
+			//Display.Position = GameLibHelper.ToVector2(Spell.Position);
+			Bullet.Position = GameLibHelper.ToVector2(Spell.Position);
 			Particles.Position = GameLibHelper.ToVector2(Spell.Position);
 			base.OnUpdate(dt);
 
