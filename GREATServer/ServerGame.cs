@@ -409,9 +409,6 @@ namespace GREATServer
 
 		static void DoAction(MatchState match, ICharacter champion, PlayerAction action)
 		{
-			if (!champion.Alive)
-				return;
-
 			switch (action.Type) {
 				case PlayerActionType.MoveLeft:
 					match.Move(champion.ID, HorizontalDirection.Left);
@@ -471,13 +468,13 @@ namespace GREATServer
 				                                                    client.AnimData.Idle,
 				                                                    client.Champion.Animation);
 
-				if (client.Champion.HealthChanged) {
+				if (client.ChampStats.HealthChanged) {
 					AddRemarkableEvent(ServerCommand.StatsChanged,
 					                   (msg) => {
 						msg.Write(client.Champion.ID);
-						msg.Write(client.Champion.Health);
+						msg.Write(client.ChampStats.Health);
 					});
-					client.Champion.ResetHealthChangedFlag();
+					client.ChampStats.ClearHealthChangedFlag();
 				}
 			}
 		}
@@ -500,8 +497,8 @@ namespace GREATServer
 					foreach (ServerClient client in Clients.Values) {
 						if (client.Champion.Team == enemyTeam &&
 						    client.Champion.CreateCollisionRectangle().Intersects(rect)) {
-							client.Champion.Hurt(s.Damage);
-							Console.WriteLine("COLLISION. HP: " + client.Champion.Health + " / " + client.Champion.MaxHealth + " (" + (client.Champion.Health / client.Champion.MaxHealth) + "%)");
+							client.ChampStats.Hurt(s.Damage);
+							Console.WriteLine("COLLISION. HP: " + client.ChampStats.Health + " / " + client.ChampStats.MaxHealth + " (" + (client.ChampStats.Health / client.ChampStats.MaxHealth * 100f) + "%)");
 							remove = true;
 						}
 					}
@@ -542,16 +539,17 @@ namespace GREATServer
 			ILogger.Log("New player added to the game.", LogPriority.High);
 
 			ServerChampion champion = CreateRandomChampion();
+			ServerClient client = new ServerClient(connection, champion);
 
 			// Send to the client that asked to join, along with the info of the current players
-			List<ICharacter> remoteChampions = new List<ICharacter>();
+			List<ServerClient> remoteClients = new List<ServerClient>();
 			foreach (ServerClient remote in Clients.Values) {
-				remoteChampions.Add(remote.Champion);
+				remoteClients.Add(remote);
 			}
 			SendCommand(connection,
 			            ServerCommand.JoinedGame,
 			            NetDeliveryMethod.ReliableUnordered,
-			       		(msg) => FillJoinedGameMessage(msg, champion, remoteChampions));
+			            (msg) => FillJoinedGameMessage(msg, client, remoteClients));
 
 			// Send the new player event to other players
 			foreach (NetConnection clientConn in Clients.Keys) {
@@ -559,12 +557,11 @@ namespace GREATServer
 					SendCommand(clientConn,
 					           ServerCommand.NewRemotePlayer,
 					           NetDeliveryMethod.ReliableUnordered,
-					           (msg) => FillNewRemotePlayerMessage(msg, champion));
+					           (msg) => FillNewRemotePlayerMessage(msg, client));
 				}
 			}
 
 			// Apply the changes to our game state
-	        ServerClient client = new ServerClient(connection, champion);
 	        Clients.Add(connection, client);
 	        Match.CurrentState.AddEntity(champion);
 		}
@@ -572,34 +569,34 @@ namespace GREATServer
 		/// <summary>
 		/// Fills a message for the players already in a game to indicate that a new player joined the game.
 		/// </summary>
-		static void FillNewRemotePlayerMessage(NetBuffer msg, ICharacter champion)
+		static void FillNewRemotePlayerMessage(NetBuffer msg, ServerClient client)
 		{
-			FillChampionInfo(msg, champion);
+			FillChampionInfo(msg, client.Champion, client.ChampStats);
 		}
 
 		/// <summary>
 		/// Creates a message indicating that he has joined the game and that
 		/// the client should create a new drawable champion associated to it.
 		/// </summary>
-		static void FillJoinedGameMessage(NetBuffer msg, ICharacter champion, List<ICharacter> remoteChampions)
+		static void FillJoinedGameMessage(NetBuffer msg, ServerClient champion, List<ServerClient> remoteChampions)
 		{
 			double time = Server.Instance.GetTime().TotalSeconds;
 			remoteChampions.Insert(0, champion); // add our champion to the beginning
 
 			// and send all the champions together
-			foreach (ICharacter champ in remoteChampions) {
-				FillChampionInfo(msg, champ);
+			foreach (ServerClient champ in remoteChampions) {
+				FillChampionInfo(msg, champ.Champion, champ.ChampStats);
 			}
 		}
 
-		static void FillChampionInfo(NetBuffer msg, ICharacter champion)
+		static void FillChampionInfo(NetBuffer msg, ICharacter champion, ChampionStats stats)
 		{
 			ulong id = champion.ID;
 			float x = champion.Position.X;
 			float y = champion.Position.Y;
 			bool team = champion.Team == Teams.Left;
-			float maxhp = champion.MaxHealth;
-			float hp = champion.Health;
+			float maxhp = stats.MaxHealth;
+			float hp = stats.Health;
 
 			msg.Write(id);
 			msg.Write(x);
@@ -617,7 +614,7 @@ namespace GREATServer
 		{
 			return new ServerChampion(IDGenerator.GenerateID(),
 			                   new Vec2(Utilities.RandomFloat(Utilities.Random, 100f, 400f), 150f),
-			                          GetSmallestTeam(), 100f, 100f); // TODO: depend on champion
+			                          GetSmallestTeam());
 		}
 
 		Teams GetSmallestTeam()

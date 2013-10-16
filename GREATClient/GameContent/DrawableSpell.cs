@@ -41,9 +41,9 @@ namespace GREATClient.GameContent
 			Tint = Color.White;
         }
 
-		public override void Load(Container container, Microsoft.Xna.Framework.Graphics.GraphicsDevice gd)
+		protected override void OnLoad(Microsoft.Xna.Framework.Content.ContentManager content, Microsoft.Xna.Framework.Graphics.GraphicsDevice gd)
 		{
-			base.Load(container, gd);
+			base.OnLoad(content, gd);
 			AddChild(Display = new DrawableRectangle(new Rect(Spell.Position.X, Spell.Position.Y, 5f, 5f), Color.Cyan) { RelativeOrigin = new Vector2(.5f)});
 
 			Particles = new ParticleSystem(100, null, new TimeSpan(0, 0, 1));

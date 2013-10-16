@@ -36,6 +36,7 @@ namespace GREATServer
 		public NetConnection Connection { get; private set; }
 		public ServerChampion Champion { get; private set; }
 		public ChampionAnimData AnimData { get; private set; }
+		public ChampionStats ChampStats { get; private set; }
 		public List<PlayerAction> ActionsPackage { get; private set; }
 		public ulong LastAcknowledgedActionID { get; set; }
 
@@ -46,6 +47,7 @@ namespace GREATServer
 			ActionsPackage = new List<PlayerAction>();
 			LastAcknowledgedActionID = IDGenerator.NO_ID;
 			AnimData = new ChampionAnimData();
+			ChampStats = new ChampionStats(100f); //TODO: depend on champion
         }
     }
 }

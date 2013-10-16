@@ -36,46 +36,21 @@ namespace GREATLib.Entities
 		/// <example>0.9 would keep 90% of the entity's X velocity every frame.</example>
 		public float HorizontalAcceleration { get; set; }
 
-		public float Health { get; private set; }
-		public float MaxHealth { get; private set; }
-		public bool Alive { get { return Health > 0f; } }
 		public ChampionAnimation Animation { get; set; }
 		public bool FacingLeft { get; set; }
 		public Teams Team { get; private set; }
-		public bool HealthChanged { get; private set; }
 
-        public ICharacter(ulong id, Vec2 position, Teams team, float maxhp, float hp)
+        public ICharacter(ulong id, Vec2 position, Teams team)
 			: base(id, position,
 			       100f, 26f, 40f)//TODO: stats by champion
         {
 			JumpForce = 800;
 			HorizontalAcceleration = 9e-9f;
 
-			MaxHealth = maxhp;
-			Health = hp;
 			Animation = ChampionAnimation.idle;
 			FacingLeft = false;
 			Team = team;
-			HealthChanged = false;
         }
-
-		public void Heal(float amount)
-		{
-			SetHealth(Health + amount);
-		}
-		public void Hurt(float amount)
-		{
-			SetHealth(Health - amount);
-		}
-		public void SetHealth(float hp)
-		{
-			Health = Math.Max(0f, Math.Min(MaxHealth, hp));
-			HealthChanged = true;
-		}
-		public void ResetHealthChangedFlag()
-		{
-			HealthChanged = false;
-		}
 
 		public override void Clone(IEntity e)
 		{
@@ -85,12 +60,10 @@ namespace GREATLib.Entities
 			HorizontalAcceleration = c.HorizontalAcceleration;
 			Animation = c.Animation;
 			FacingLeft = c.FacingLeft;
-			MaxHealth = c.MaxHealth;
-			Health = c.Health;
 		}
 		public override object Clone()
 		{
-			ICharacter c = new ICharacter(ID, Position, Team, MaxHealth, Health);
+			ICharacter c = new ICharacter(ID, Position, Team);
 			c.Clone(this);
 			return c;
 		}

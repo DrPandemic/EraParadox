@@ -73,10 +73,10 @@ namespace GREATClient.GameContent
 			ChampionSprite.RelativeOrigin = new Vector2(0.5f, 1f);
 			ChampionSprite.Position = new Vector2(Champion.CollisionWidth / 2f, Champion.CollisionHeight);
 
-			LifeBar = new DrawableChampionLifeBar(ally) { 
-				MaxHealth = Champion.MaxHealth, 
-				Health = Champion.Health,
-				Position = new Vector2(0f, -Champion.CollisionHeight/2f)
+			LifeBar = new DrawableChampionLifeBar(ally) {
+				Position = new Vector2(0f, -Champion.CollisionHeight/2f),
+				MaxHealth = champion.MaxHealth,
+				Health = champion.Health
 			};
         }
 		protected override void OnLoad(Microsoft.Xna.Framework.Content.ContentManager content, Microsoft.Xna.Framework.Graphics.GraphicsDevice gd)
@@ -100,7 +100,6 @@ namespace GREATClient.GameContent
 
 			ChampionSprite.Effects = Champion.FacingLeft ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 
-			Console.WriteLine(Champion.MaxHealth);
 			LifeBar.MaxHealth = Champion.MaxHealth;
 			LifeBar.Health = Champion.Health;
 		}

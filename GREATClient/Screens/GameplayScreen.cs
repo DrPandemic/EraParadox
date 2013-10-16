@@ -60,6 +60,7 @@ namespace GREATClient.Screens
 
 		ChampionsInfo ChampionsInfo { get; set; }
 		MainDrawableChampion OurChampion { get; set; }
+		List<ClientChampion> Champions { get; set; }
 
 		GameTime GameTime { get; set; }
 
@@ -84,6 +85,7 @@ namespace GREATClient.Screens
 			RemarkableEvents = new List<RemarkableEventData>();
 			Spells = new Dictionary<ulong, DrawableSpell>();
 			TimeOfLastStateUpdate = 0.0;
+			Champions = new List<ClientChampion>();
         }
 
 		protected override void OnLoadContent()
@@ -149,21 +151,23 @@ namespace GREATClient.Screens
 			ChampionSpawnInfo spawn = new ChampionSpawnInfo(data.ID, data.Position, data.Team, data.MaxHealth, data.Health);
 
 			IDraw idraw;
-			IEntity ientity;
+			ClientChampion champ;
 
 			if (ourChampion) {
 				OurChampion = new MainDrawableChampion(spawn, Match, ChampionsInfo);
 				idraw = OurChampion;
-				ientity = OurChampion.Champion;
+				champ = OurChampion.Champion;
 			} else {
 				var remote = new RemoteDrawableChampion(spawn, spawn.Team == OurChampion.Champion.Team, ChampionsInfo);
 				idraw = remote;
-				ientity = remote.Champion;
+				champ = remote.Champion;
+
 			}
 
+			Champions.Add(champ);
 			AddChild(idraw);
 
-			Match.CurrentState.AddEntity(ientity);
+			Match.CurrentState.AddEntity(champ);
 
 			ILogger.Log(
 				String.Format("New champion: id={0}, pos={1}, isOurChamp={2}", spawn.ID, spawn.SpawningPosition, ourChampion),
@@ -277,7 +281,12 @@ namespace GREATClient.Screens
 		void ChangeStats(StatsChangedEventData e)
 		{
 			if (Match.CurrentState.ContainsEntity(e.ChampID)) {
-				((ICharacter)Match.CurrentState.GetEntity(e.ChampID)).SetHealth(e.Health);
+				Champions.ForEach(c => {
+					if (c.ID == e.ChampID) {
+						c.Health = e.Health;
+						Console.WriteLine("CHanged! " + c.Health + " / " + c.MaxHealth);
+					}
+				});
 			}
 		}
 
