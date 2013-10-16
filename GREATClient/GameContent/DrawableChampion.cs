@@ -102,6 +102,7 @@ namespace GREATClient.GameContent
 
 			LifeBar.MaxHealth = Champion.MaxHealth;
 			LifeBar.Health = Champion.Health;
+			LifeBar.Visible = Champion.Alive;
 		}
 
 		public override bool IsBehind(Vector2 position)

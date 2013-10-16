@@ -44,6 +44,9 @@ namespace GREATClient.GameContent
 
 		[System.Xml.Serialization.XmlAttribute("framerate")]
 		public int FrameRate { get; set; }
+
+		[System.Xml.Serialization.XmlAttribute("repeat")]
+		public bool Repeat { get; set; }
 	}
 
 	/// <summary>

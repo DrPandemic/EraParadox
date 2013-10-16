@@ -485,7 +485,7 @@ namespace GREATServer
 					Match.CurrentState.ApplyPhysicsUpdate(client.Champion.ID, (float)time);
 				}
 
-				client.Champion.Animation = client.Champion.GetAnim(false, //TODO: replace with actual HP
+				client.Champion.Animation = client.Champion.GetAnim(!client.ChampStats.Alive, //TODO: replace with actual HP
 				                                                    Match.CurrentState.IsOnGround(client.Champion.ID),
 				                                                    false,
 				                                                    false,

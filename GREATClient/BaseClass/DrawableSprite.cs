@@ -215,10 +215,15 @@ namespace GREATClient.BaseClass
 					CurrentFrame++;
 
 					if (CurrentFrame >= FrameCount) {
-						CurrentFrame = 0;	
+						CurrentFrame = 0;
 
 						if (RepetitionCount > 0)
 							RepetitionCount--;
+
+						if (RepetitionCount == 0) { // if we are done animating, stay on the last frame
+							CurrentFrame = FrameCount - 1;
+							Console.WriteLine("THE END!" + RepetitionCount);
+						}
 					}
 				}
 			}

@@ -48,7 +48,7 @@ namespace GREATClient.GameContent
 			base.OnLoad(content, gd);
 			//AddChild(Display = new DrawableRectangle(new Rect(Spell.Position.X, Spell.Position.Y, 5f, 5f), Color.Cyan) { RelativeOrigin = new Vector2(.5f)});
 
-			Particles = new ParticleSystem(5000, null, new TimeSpan(0, 0, 1));
+			Particles = new ParticleSystem(100, null, new TimeSpan(0, 0, 1));
 			Particles.ParticleInitialVelocity = new Vector2(Spell.Velocity.X * -1, Spell.Velocity.Y * -1);
 
 			Particles.Tint = Tint;
