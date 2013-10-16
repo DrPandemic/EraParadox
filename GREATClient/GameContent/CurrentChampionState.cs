@@ -28,29 +28,29 @@ namespace GameContent
 		/// Gets or sets the max life.
 		/// </summary>
 		/// <value>The max life.</value>
-		public int MaxLife { get; set; }
+		public float MaxLife { get; set; }
 
 		/// <summary>
 		/// Gets or sets the current life.
 		/// </summary>
 		/// <value>The current life.</value>
-		public int CurrentLife { get; set; }
+		public float CurrentLife { get; set; }
 
 		/// <summary>
 		/// Gets or sets the max resource.
 		/// The resource is the mana/energie/etc.
 		/// </summary>
 		/// <value>The max resource.</value>
-		public int MaxResource { get; set; }
+		public float MaxResource { get; set; }
 
 		/// <summary>
 		/// Gets or sets the current resource.
 		/// The resource is the mana/energie/etc.
 		/// </summary>
 		/// <value>The current resource.</value>
-		public int CurrentResource { get; set; }
+		public float CurrentResource { get; set; }
 
-        public CurrentChampionState(int maxLife, int maxResource)
+		public CurrentChampionState(float maxLife, float maxResource)
         {
 			MaxLife = maxLife;
 			CurrentLife = maxLife;

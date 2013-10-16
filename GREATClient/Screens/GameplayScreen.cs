@@ -62,7 +62,7 @@ namespace GREATClient.Screens
 		ChampionsInfo ChampionsInfo { get; set; }
 		MainDrawableChampion OurChampion { get; set; }
 		List<ClientChampion> Champions { get; set; }
-		CurrentChampionState ChampionState;
+		CurrentChampionState ChampionState { get; set; }
 
 		GameTime GameTime { get; set; }
 
@@ -100,7 +100,7 @@ namespace GREATClient.Screens
 			AddChild(menu, 5);
 			menu.SetPositionInScreenPercent(50, 50);
 
-			ChampionState = new CurrentChampionState(1000,100);
+			ChampionState = new CurrentChampionState(100,100);
 			AddChild(new GameUI(ChampionState, new PingCounter(() => {
 				return Client.Instance.GetPing().TotalMilliseconds;})),
 			         3);
@@ -158,6 +158,8 @@ namespace GREATClient.Screens
 				OurChampion = new MainDrawableChampion(spawn, Match, ChampionsInfo);
 				idraw = OurChampion;
 				champ = OurChampion.Champion;
+				ChampionState.MaxLife = spawn.MaxHealth;
+				ChampionState.CurrentLife = spawn.Health;
 			} else {
 				var remote = new RemoteDrawableChampion(spawn, spawn.Team == OurChampion.Champion.Team, ChampionsInfo);
 				idraw = remote;
@@ -196,9 +198,20 @@ namespace GREATClient.Screens
 			//    our local simulation running.
 			base.OnUpdate(dt); // this is done by the player's drawablechampion
 
+			UpdateHUD();
+
 			if (Keyboard.GetState().IsKeyDown(Keys.Escape) && Keyboard.GetState().IsKeyDown(Keys.LeftShift))
 				Exit = true;
 		}
+
+		void UpdateHUD()
+		{
+			if (OurChampion != null) {
+				ChampionState.MaxLife = OurChampion.Champion.MaxHealth;
+				ChampionState.CurrentLife = OurChampion.Champion.Health;
+			}
+		}
+
 		/// <summary>
 		/// Package local input as actions to eventually send to the server.
 		/// At the same time, we simulate the input locally for client-side prediction.
@@ -285,6 +298,9 @@ namespace GREATClient.Screens
 				Champions.ForEach(c => {
 					if (c.ID == e.ChampID) {
 						c.Health = e.Health;
+
+						if (OurChampion != null)
+							DeathScreen.Visible = !OurChampion.Champion.Alive;
 					}
 				});
 			}

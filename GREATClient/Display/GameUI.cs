@@ -29,6 +29,8 @@ namespace GREATClient.Display
 {
     public class GameUI : Container
     {
+		const float LERP_SPEED = 0.1f;
+
 		// Counters
 		PingCounter UIPingCounter { get; set; }
 		FPSCounter UIFPSCounter { get; set; }
@@ -135,11 +137,13 @@ namespace GREATClient.Display
 			Vector2 v = Life.Scale; 
 			v.Y = (float)ChampionState.CurrentLife / ChampionState.MaxLife;
 			v.Y = v.Y >= 0 ? v.Y : 0;
+			v = Vector2.Lerp(Life.Scale, v, LERP_SPEED);
 			Life.Scale = v;
 			LifeDropshadow.Scale = v;
 			v = Resource.Scale;
 			v.Y = (float)ChampionState.CurrentResource / ChampionState.MaxResource;
 			v.Y = v.Y >= 0 ? v.Y : 0;
+			v = Vector2.Lerp(Resource.Scale, v, LERP_SPEED);
 			Resource.Scale = v;
 			ResourceDropShadow.Scale = v;
 		}
