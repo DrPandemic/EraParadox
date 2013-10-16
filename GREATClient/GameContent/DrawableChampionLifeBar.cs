@@ -73,7 +73,6 @@ namespace GREATClient.GameContent
 
 		protected override void OnUpdate(GameTime dt)
 		{
-			Console.WriteLine(Ratio);
 			currentRatio = MathHelper.Lerp(currentRatio, Ratio, LERP_FACTOR);
 			LifeBar.Size = new Vector2(MAX_WIDTH * currentRatio, NORMAL_HEIGHT);
 		}

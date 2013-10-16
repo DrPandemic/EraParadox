@@ -204,7 +204,7 @@ namespace GREATClient.Screens
 		/// </summary>
 		void HandleInput()
 		{
-			if (OurChampion != null) {
+			if (OurChampion != null && OurChampion.Champion.Alive) {
 				InputTypeForAction.ForEach(pair =>
 				{
 					if (inputManager.IsActionFired(pair.Key)) {
@@ -284,7 +284,6 @@ namespace GREATClient.Screens
 				Champions.ForEach(c => {
 					if (c.ID == e.ChampID) {
 						c.Health = e.Health;
-						Console.WriteLine("CHanged! " + c.Health + " / " + c.MaxHealth);
 					}
 				});
 			}

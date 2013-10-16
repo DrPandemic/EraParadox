@@ -199,7 +199,8 @@ namespace GREATServer
 						client.AnimData.Reset();
 
 						if (IsMovementAction(action.Type)) {
-							HandleMovementAction(client.Champion.ID, action);
+							if (client.ChampStats.Alive)
+								HandleMovementAction(client.Champion.ID, action);
 						} else {
 							HandleAction(client, action);
 						}
@@ -249,7 +250,8 @@ namespace GREATServer
 		{
 			if (ActionTypeHelper.IsSpell(action.Type)) {
 				var spell = GetSpellFromAction(client.Champion, action.Type);
-				if (!IsOnCooldown(client, spell)) {
+				if (client.ChampStats.Alive &&
+				    !IsOnCooldown(client, spell)) {
 					CastSpell(client.Champion, action);
 					client.ChampStats.UsedSpell(spell);
 				}
@@ -520,7 +522,8 @@ namespace GREATServer
 					var rect = s.CreateCollisionRectangle();
 					var enemyTeam = TeamsHelper.Opposite(s.Owner.Team);
 					foreach (ServerClient client in Clients.Values) {
-						if (client.Champion.Team == enemyTeam &&
+						if (client.ChampStats.Alive &&
+							client.Champion.Team == enemyTeam &&
 						    client.Champion.CreateCollisionRectangle().Intersects(rect)) {
 							client.ChampStats.Hurt(s.Damage);
 							Console.WriteLine("COLLISION. HP: " + client.ChampStats.Health + " / " + client.ChampStats.MaxHealth + " (" + (client.ChampStats.Health / client.ChampStats.MaxHealth * 100f) + "%)");

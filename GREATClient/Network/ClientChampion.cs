@@ -37,6 +37,7 @@ namespace GREATClient.Network
 		public Vec2 DrawnPosition { get; protected set; }
 		public float MaxHealth { get; set; }
 		public float Health { get; set; }
+		public bool Alive { get { return Health > 0f; } }
 
         public ClientChampion(ChampionSpawnInfo spawnInfo)
 			: base(spawnInfo.ID, spawnInfo.SpawningPosition, spawnInfo.Type, spawnInfo.Team)
