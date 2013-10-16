@@ -66,7 +66,6 @@ namespace GREATClient.GameContent
 		protected override void OnLoad(Microsoft.Xna.Framework.Content.ContentManager content, Microsoft.Xna.Framework.Graphics.GraphicsDevice gd)
 		{
 			LifeBar = new DrawableRectangle(new Vector2(MAX_WIDTH,NORMAL_HEIGHT),new Vector2(-MAX_WIDTH / 2f, -NORMAL_HEIGHT / 2f), IsAlly ? Color.Green: Color.DarkRed);
-			//AddChild(new DrawableRectangle(new Vector2(7,16),new Vector2(-35, -8), IsAlly ? Color.Green: Color.DarkRed));
 			AddChild(new DrawableRectangle(new Vector2(MAX_WIDTH + CONTOUR_WIDTH * 2f, NORMAL_HEIGHT + CONTOUR_WIDTH * 2f), 
 			                               new Vector2(-(MAX_WIDTH + CONTOUR_WIDTH * 2f)/2f, -(NORMAL_HEIGHT + CONTOUR_WIDTH * 2f)/2f), Color.White));
 			AddChild(LifeBar);

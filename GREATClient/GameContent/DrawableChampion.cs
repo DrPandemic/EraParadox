@@ -74,7 +74,7 @@ namespace GREATClient.GameContent
 			ChampionSprite.Position = new Vector2(Champion.CollisionWidth / 2f, Champion.CollisionHeight);
 
 			LifeBar = new DrawableChampionLifeBar(ally) {
-				Position = new Vector2(0f, -Champion.CollisionHeight/2f),
+				Position = new Vector2(Champion.CollisionWidth/2f, -Champion.CollisionHeight/2f),
 				MaxHealth = champion.MaxHealth,
 				Health = champion.Health
 			};
