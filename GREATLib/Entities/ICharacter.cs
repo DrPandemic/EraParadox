@@ -39,8 +39,9 @@ namespace GREATLib.Entities
 		public ChampionAnimation Animation { get; set; }
 		public bool FacingLeft { get; set; }
 		public Teams Team { get; private set; }
+		public ChampionTypes Type { get; private set; }
 
-        public ICharacter(ulong id, Vec2 position, Teams team)
+        public ICharacter(ulong id, Vec2 position, ChampionTypes type, Teams team)
 			: base(id, position,
 			       100f, 26f, 40f)//TODO: stats by champion
         {
@@ -50,6 +51,7 @@ namespace GREATLib.Entities
 			Animation = ChampionAnimation.idle;
 			FacingLeft = false;
 			Team = team;
+			Type = type;
         }
 
 		public override void Clone(IEntity e)
@@ -63,7 +65,7 @@ namespace GREATLib.Entities
 		}
 		public override object Clone()
 		{
-			ICharacter c = new ICharacter(ID, Position, Team);
+			ICharacter c = new ICharacter(ID, Position, Type, Team);
 			c.Clone(this);
 			return c;
 		}

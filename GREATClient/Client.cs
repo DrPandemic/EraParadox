@@ -281,6 +281,7 @@ namespace GREATClient
 	{
 		public ulong ID { get; private set; }
 		public Vec2 Position { get; private set; }
+		public ChampionTypes Type { get; private set; }
 		public Teams Team { get; private set; }
 		public float MaxHealth { get; private set; }
 		public float Health { get; private set; }
@@ -289,6 +290,7 @@ namespace GREATClient
 		{
 			ID = msg.ReadUInt64();
 			Position = new Vec2(msg.ReadFloat(), msg.ReadFloat());
+			Type = (ChampionTypes)msg.ReadByte();
 			Team = msg.ReadBoolean() ? Teams.Left : Teams.Right;
 			MaxHealth = msg.ReadFloat();
 			Health = msg.ReadFloat();

@@ -19,6 +19,8 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using System.Collections.Generic;
+using GREATLib.Entities.Spells;
 
 namespace GREATServer.Network
 {
@@ -28,11 +30,13 @@ namespace GREATServer.Network
 		public float MaxHealth { get; private set; }
 		public bool Alive { get { return Health > 0f; } }
 		public bool HealthChanged { get; private set; }
+		Dictionary<SpellTypes, float> LastSpellUses { get; set; }
 
         public ChampionStats(float maxhp)
         {
 			MaxHealth = maxhp;
 			Health = MaxHealth;
+			LastSpellUses = new Dictionary<SpellTypes, float>();
 			ClearHealthChangedFlag();
         }
 
@@ -54,6 +58,18 @@ namespace GREATServer.Network
 		public void ClearHealthChangedFlag()
 		{
 			HealthChanged = false;
+		}
+		public void UsedSpell(SpellTypes spell)
+		{
+			float time = (float)Server.Instance.GetTime().TotalSeconds;
+			if (LastSpellUses.ContainsKey(spell))
+				LastSpellUses[spell] = time;
+			else
+				LastSpellUses.Add(spell, time);
+		}
+		public TimeSpan TimeOfLastSpellUse(SpellTypes spell)
+		{
+			return TimeSpan.FromSeconds(LastSpellUses.ContainsKey(spell) ? LastSpellUses[spell] : 0f);
 		}
     }
 }

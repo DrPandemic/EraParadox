@@ -39,7 +39,7 @@ namespace GREATClient.Network
 		public float Health { get; set; }
 
         public ClientChampion(ChampionSpawnInfo spawnInfo)
-			: base(spawnInfo.ID, spawnInfo.SpawningPosition, spawnInfo.Team)
+			: base(spawnInfo.ID, spawnInfo.SpawningPosition, spawnInfo.Type, spawnInfo.Team)
         {
 			DrawnPosition = Position;
 			MaxHealth = spawnInfo.MaxHealth;

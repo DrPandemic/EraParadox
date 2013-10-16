@@ -40,7 +40,7 @@ namespace GREATLib.Entities.Spells
         {
 			//TODO: depend on spell type
 			Range = 350f;
-			Cooldown = TimeSpan.FromSeconds(5.0);
+			Cooldown = SpellsHelper.Cooldown(type);
 			CastingTime = TimeSpan.FromSeconds(0.25);
 			Damage = 10f;
 			IsSolid = true;

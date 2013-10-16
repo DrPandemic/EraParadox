@@ -201,7 +201,7 @@ namespace GREATServer
 						if (IsMovementAction(action.Type)) {
 							HandleMovementAction(client.Champion.ID, action);
 						} else {
-							HandleAction(client.Champion, action);
+							HandleAction(client, action);
 						}
 						client.LastAcknowledgedActionID = Math.Max(client.LastAcknowledgedActionID, action.ID);
 
@@ -245,13 +245,38 @@ namespace GREATServer
 			}
 		}
 
-		void HandleAction(ICharacter champion, PlayerAction action)
+		void HandleAction(ServerClient client, PlayerAction action)
 		{
 			if (ActionTypeHelper.IsSpell(action.Type)) {
-				CastSpell(champion, action);
+				var spell = GetSpellFromAction(client.Champion, action.Type);
+				if (!IsOnCooldown(client, spell)) {
+					CastSpell(client.Champion, action);
+					client.ChampStats.UsedSpell(spell);
+				}
 			} else if (action.Type != PlayerActionType.Idle) {
-				ILogger.Log("Unkown player action type: " + action.Type);
+				ILogger.Log("Unknown player action type: " + action.Type);
 			}
+		}
+		SpellTypes GetSpellFromAction(ICharacter champ, PlayerActionType action)
+		{
+			switch (champ.Type) {
+				case ChampionTypes.StickMan:
+					switch (action) {
+						case PlayerActionType.Spell1: return SpellTypes.StickManSpell1;
+					}
+					break;
+
+				default:
+					ILogger.Log("Champion type not implemented " + champ.Type + ".");
+					break;
+			}
+
+			return SpellTypes.StickManSpell1; // Unknown spell: use one by default
+		}
+		bool IsOnCooldown(ServerClient client, SpellTypes spell)
+		{
+			return client.ChampStats.TimeOfLastSpellUse(spell).TotalSeconds +
+				SpellsHelper.Cooldown(spell).TotalSeconds > Server.Instance.GetTime().TotalSeconds;
 		}
 
 		void CastSpell(ICharacter champ, PlayerAction action)
@@ -594,6 +619,7 @@ namespace GREATServer
 			ulong id = champion.ID;
 			float x = champion.Position.X;
 			float y = champion.Position.Y;
+			byte type = (byte)champion.Type;
 			bool team = champion.Team == Teams.Left;
 			float maxhp = stats.MaxHealth;
 			float hp = stats.Health;
@@ -601,6 +627,7 @@ namespace GREATServer
 			msg.Write(id);
 			msg.Write(x);
 			msg.Write(y);
+			msg.Write(type);
 			msg.Write(team);
 			msg.Write(maxhp);
 			msg.Write(hp);
@@ -614,7 +641,12 @@ namespace GREATServer
 		{
 			return new ServerChampion(IDGenerator.GenerateID(),
 			                   new Vec2(Utilities.RandomFloat(Utilities.Random, 100f, 400f), 150f),
+			                          RandomChampionType(),
 			                          GetSmallestTeam());
+		}
+		ChampionTypes RandomChampionType()
+		{
+			return ChampionTypes.StickMan; // 100% random, obtained using a dice-roll.
 		}
 
 		Teams GetSmallestTeam()

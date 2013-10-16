@@ -26,5 +26,21 @@ namespace GREATLib.Entities.Spells
     {
 		StickManSpell1
     }
+
+	public static class SpellsHelper
+	{
+		public static TimeSpan Cooldown(SpellTypes s)
+		{
+			switch (s)
+			{
+				case SpellTypes.StickManSpell1:
+					return TimeSpan.FromSeconds(1);
+
+				default:
+					ILogger.Log("No cooldown implemented for spell " + s + ".");
+					return new TimeSpan();
+			}
+		}
+	}
 }
 

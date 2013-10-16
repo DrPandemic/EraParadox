@@ -148,7 +148,7 @@ namespace GREATClient.Screens
 		}
 		void AddChampionToGame(PlayerData data, bool ourChampion)
 		{
-			ChampionSpawnInfo spawn = new ChampionSpawnInfo(data.ID, data.Position, data.Team, data.MaxHealth, data.Health);
+			ChampionSpawnInfo spawn = new ChampionSpawnInfo(data.ID, data.Position, data.Type, data.Team, data.MaxHealth, data.Health);
 
 			IDraw idraw;
 			ClientChampion champ;
