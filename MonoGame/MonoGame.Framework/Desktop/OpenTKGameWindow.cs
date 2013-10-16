@@ -316,7 +316,6 @@ namespace Microsoft.Xna.Framework
                 {
                     _isMouseHidden = false;
                     System.Windows.Forms.Cursor.Show();
-					Console.WriteLine("g");
 				}
             }
         }

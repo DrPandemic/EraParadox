@@ -70,7 +70,7 @@ namespace GREATClient.Test
 
 			CCS = new CurrentChampionState(1000,100);
 
-			AddChild(new GameUI(CCS),10);
+			//AddChild(new GameUI(CCS),10);
 
 			ESCMenu menu = new ESCMenu();
 			AddChild(menu, 5);

@@ -102,6 +102,7 @@
     <Compile Include="GameContent\DrawableSpell.cs" />
     <Compile Include="Network\ClientLinearSpell.cs" />
     <Compile Include="GameContent\DrawableChampionLifeBar.cs" />
+    <Compile Include="GameContent\DeathScreen.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />
@@ -271,6 +272,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\megaman.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\bullet.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\particle.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

@@ -54,13 +54,13 @@ namespace GREATClient.Display
 		/// <value>The state of the champion.</value>
 		CurrentChampionState ChampionState { get; set; }
 
-        public GameUI(CurrentChampionState ccs)
+        public GameUI(CurrentChampionState ccs, PingCounter ping)
         {
 			ChampionState = ccs;
 
 			UIFPSCounter = new FPSCounter();
 			AddChild(UIFPSCounter,2);
-			UIPingCounter = new PingCounter(GetPing);
+			UIPingCounter = ping;
 			AddChild(UIPingCounter,2);
 
 			Map = new DrawableImage("UIObjects/map");
@@ -142,11 +142,6 @@ namespace GREATClient.Display
 			v.Y = v.Y >= 0 ? v.Y : 0;
 			Resource.Scale = v;
 			ResourceDropShadow.Scale = v;
-		}
-
-		protected double GetPing()
-		{
-			return 32d;
 		}
     }
 }

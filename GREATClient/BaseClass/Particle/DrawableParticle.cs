@@ -26,7 +26,7 @@ using GREATLib;
 
 namespace GREATClient.BaseClass.Particle
 {
-	public class DrawableParticle : DrawableImage
+	public class DrawableParticle
     {
 
 		/// <summary>
@@ -78,6 +78,42 @@ namespace GREATClient.BaseClass.Particle
 		/// <value><c>true</c> if alive; otherwise, <c>false</c>.</value>
 		public bool Alive {	get; private set; }
 
+		/// <summary>
+		/// Gets or sets the alpha.
+		/// </summary>
+		/// <value>The alpha.</value>
+		public float Alpha { get; set; }
+
+		/// <summary>
+		/// Gets or sets the scale.
+		/// Not a vector2 to limit the use of new during drawing and other recurent call.
+		/// </summary>
+		/// <value>The scale.</value>
+		public float Scale { get; set; }
+
+		/// <summary>
+		/// Gets or sets the position.
+		/// </summary>
+		/// <value>The position.</value>
+		public Vector2 Position { get; set; }
+
+		/// <summary>
+		/// Gets or sets the tint.
+		/// </summary>
+		/// <value>The tint.</value>
+		public Color Tint { get; set; }
+
+		/// <summary>
+		/// Gets or sets the orientation.
+		/// </summary>
+		/// <value>The orientation.</value>
+		public float Orientation { get; set; }
+
+		/// <summary>
+		/// Gets or sets the origin.
+		/// </summary>
+		/// <value>The origin.</value>
+		public Vector2 Origin { get; set; }
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="GREATClient.DrawableParticle"/> class.
@@ -93,13 +129,11 @@ namespace GREATClient.BaseClass.Particle
 		/// <param name="velocityRandomizer">Velocity randomizer.</param>
 		/// <param name="lifeTimeRandomizer">Life time randomizer.</param>
 		/// <param name="file">File.</param>
-        public DrawableParticle(TimeSpan lifeTime, Vector2 initialVelocity, Vector2 force, 
+        public DrawableParticle(TimeSpan lifeTime, Vector2 initialVelocity, Vector2 force,
 		                        float lifeTimeRandomizer = 0, float velocityRandomizer = 0, float forceRandomizer = 0 ,
-		                        float alphaPercent = 0.25f,
-		                        string file = "particle") 
-			: base(file)
+		                        float alphaPercent = 0.25f) 
         {
-			Scale = new Vector2(0.1f, 0.1f);
+			Scale = 0.1f;
 
 			MaxLifeTime =  TimeSpan.FromTicks((long)(lifeTime.Ticks * GetRandomForPrecision(lifeTimeRandomizer)));
 			LifeTime = MaxLifeTime;
@@ -116,10 +150,14 @@ namespace GREATClient.BaseClass.Particle
 
 			Alive = false;
 
-			RelativeOrigin = new Vector2(0.5f, 0.5f);
+			Tint = Color.White;
+			Position = Vector2.Zero;
+			Orientation = 0f;
+
+			Origin = Vector2.Zero;
         }
 
-		protected override void OnUpdate(GameTime dt)
+		public void OnUpdate(GameTime dt)
 		{
 			if (Alive) {
 				//Calculate life time
@@ -149,12 +187,6 @@ namespace GREATClient.BaseClass.Particle
 		float GetRandomForPrecision(float precision)
 		{
 			return 1.0f + Utilities.RandomFloat(Utilities.Random, -precision, precision);
-		}
-
-		public override void Draw(SpriteBatch batch)
-		{
-			if (Alive)
-				base.Draw(batch);
 		}
 
 		public void Reset()
