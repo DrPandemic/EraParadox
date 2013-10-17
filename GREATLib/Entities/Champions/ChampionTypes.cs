@@ -19,6 +19,8 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using GREATLib.Entities.Spells;
+using GREATLib.Network;
 
 namespace GREATLib.Entities.Champions
 {
@@ -37,6 +39,26 @@ namespace GREATLib.Entities.Champions
 	public enum ChampionTypes
 	{
 		StickMan
+	}
+
+	public static class ChampionTypesHelper
+	{
+		public static SpellTypes GetSpellFromAction(ChampionTypes type, PlayerActionType action)
+		{
+			switch (type) {
+				case ChampionTypes.StickMan:
+					switch (action) {
+						case PlayerActionType.Spell1: return SpellTypes.StickManSpell1;
+					}
+					break;
+
+					default:
+					ILogger.Log("Champion type not implemented " + type + ".");
+					break;
+			}
+
+			return SpellTypes.StickManSpell1; // Unknown spell: use one by default
+		}
 	}
 }
 

@@ -249,7 +249,7 @@ namespace GREATServer
 		void HandleAction(ServerClient client, PlayerAction action)
 		{
 			if (ActionTypeHelper.IsSpell(action.Type)) {
-				var spell = GetSpellFromAction(client.Champion, action.Type);
+				var spell = ChampionTypesHelper.GetSpellFromAction(client.Champion.Type, action.Type);
 				if (client.ChampStats.Alive &&
 				    !IsOnCooldown(client, spell)) {
 					CastSpell(client.Champion, action);
@@ -258,22 +258,6 @@ namespace GREATServer
 			} else if (action.Type != PlayerActionType.Idle) {
 				ILogger.Log("Unknown player action type: " + action.Type);
 			}
-		}
-		SpellTypes GetSpellFromAction(ICharacter champ, PlayerActionType action)
-		{
-			switch (champ.Type) {
-				case ChampionTypes.StickMan:
-					switch (action) {
-						case PlayerActionType.Spell1: return SpellTypes.StickManSpell1;
-					}
-					break;
-
-				default:
-					ILogger.Log("Champion type not implemented " + champ.Type + ".");
-					break;
-			}
-
-			return SpellTypes.StickManSpell1; // Unknown spell: use one by default
 		}
 		bool IsOnCooldown(ServerClient client, SpellTypes spell)
 		{
@@ -487,10 +471,10 @@ namespace GREATServer
 
 				client.Champion.Animation = client.Champion.GetAnim(!client.ChampStats.Alive, //TODO: replace with actual HP
 				                                                    Match.CurrentState.IsOnGround(client.Champion.ID),
-				                                                    false,
-				                                                    false,
-				                                                    false,
-				                                                    false,
+				                                                    IsCastingSpell(client.Champion.Type, client.ChampStats, PlayerActionType.Spell1),
+				                                                    IsCastingSpell(client.Champion.Type, client.ChampStats, PlayerActionType.Spell2),
+				                                                    IsCastingSpell(client.Champion.Type, client.ChampStats, PlayerActionType.Spell3),
+				                                                    IsCastingSpell(client.Champion.Type, client.ChampStats, PlayerActionType.Spell4),
 				                                                    client.AnimData.Movement,
 				                                                    client.AnimData.Idle,
 				                                                    client.Champion.Animation);
@@ -504,6 +488,12 @@ namespace GREATServer
 					client.ChampStats.ClearHealthChangedFlag();
 				}
 			}
+		}
+		bool IsCastingSpell(ChampionTypes champ, ChampionStats stats, PlayerActionType action)
+		{
+			SpellTypes spell = ChampionTypesHelper.GetSpellFromAction(champ, action);
+			return stats.TimeOfLastSpellUse(spell).TotalSeconds +
+				SpellsHelper.CastingTime(spell).TotalSeconds >= Server.Instance.GetTime().TotalSeconds;
 		}
 		void UpdateSpells(double dt)
 		{

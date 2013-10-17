@@ -41,6 +41,18 @@ namespace GREATLib.Entities.Spells
 					return new TimeSpan();
 			}
 		}
+
+		public static TimeSpan CastingTime(SpellTypes s)
+		{
+			switch (s) {
+				case SpellTypes.StickManSpell1:
+					return TimeSpan.FromSeconds(0.25);
+
+				default:
+					ILogger.Log("No casting time implemented for spell " + s + ".");
+					return new TimeSpan();
+			}
+		}
 	}
 }
 
