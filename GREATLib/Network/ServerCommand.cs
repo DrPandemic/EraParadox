@@ -59,6 +59,11 @@ namespace GREATLib.Network
 		/// The stats of a player changed.
 		/// </summary>
 		, StatsChanged
+
+		/// <summary>
+		/// A player died.
+		/// </summary>
+		, ChampionDied
     }
 }
 

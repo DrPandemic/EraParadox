@@ -485,9 +485,22 @@ namespace GREATServer
 						msg.Write(client.Champion.ID);
 						msg.Write(client.ChampStats.Health);
 					});
+
+					if (!client.ChampStats.Alive) { // the player died!
+						AddRemarkableEvent(ServerCommand.ChampionDied,
+						                   (msg) => {
+							msg.Write(client.Champion.ID);
+							msg.Write((ushort)GetRespawnTime().TotalSeconds);
+						});
+					}
+
 					client.ChampStats.ClearHealthChangedFlag();
 				}
 			}
+		}
+		TimeSpan GetRespawnTime()
+		{
+			return TimeSpan.FromSeconds(15.0); //TODO: depend on game time
 		}
 		bool IsCastingSpell(ChampionTypes champ, ChampionStats stats, PlayerActionType action)
 		{

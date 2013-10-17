@@ -260,15 +260,19 @@ namespace GREATClient.Screens
 			{
 				switch (r.Command) {
 					case ServerCommand.SpellCast:
-						CastSpell((SpellCastEventData)r);
+						OnCastSpell((SpellCastEventData)r);
 						break;
 
 					case ServerCommand.SpellDisappear:
-						RemoveSpell((SpellDisappearEventData)r);
+						OnRemoveSpell((SpellDisappearEventData)r);
 						break;
 
 					case ServerCommand.StatsChanged:
-						ChangeStats((StatsChangedEventData)r);
+						OnChangeStats((StatsChangedEventData)r);
+						break;
+
+					case ServerCommand.ChampionDied:
+						OnChampionDied((ChampionDiedEventData)r);
 						break;
 
 					default:
@@ -279,28 +283,32 @@ namespace GREATClient.Screens
 
 			RemarkableEvents.Clear();
 		}
-		void CastSpell(SpellCastEventData e)
+		void OnChampionDied(ChampionDiedEventData e)
+		{
+			if (OurChampion != null &&
+				e.ChampID == OurChampion.Champion.ID) { // we died
+				DeathScreen.DisplayScreen(e.RespawnTime);
+			}
+		}
+		void OnCastSpell(SpellCastEventData e)
 		{
 			var s = new DrawableSpell(new ClientLinearSpell(e.ID, e.Position, e.Time, e.Velocity, e.Range, e.Width));
 			Spells.Add(e.ID, s);
 			AddChild(s);
 		}
-		void RemoveSpell(SpellDisappearEventData e)
+		void OnRemoveSpell(SpellDisappearEventData e)
 		{
 			if (Spells.ContainsKey(e.ID)) {
 				Spells[e.ID].Spell.Active = false;
 				Spells.Remove(e.ID);
 			}
 		}
-		void ChangeStats(StatsChangedEventData e)
+		void OnChangeStats(StatsChangedEventData e)
 		{
 			if (Match.CurrentState.ContainsEntity(e.ChampID)) {
 				Champions.ForEach(c => {
 					if (c.ID == e.ChampID) {
 						c.Health = e.Health;
-
-						if (OurChampion != null)
-							DeathScreen.Visible = !OurChampion.Champion.Alive;
 					}
 				});
 			}

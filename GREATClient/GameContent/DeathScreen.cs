@@ -26,19 +26,25 @@ namespace GREATClient.GameContent
 {
     public class DeathScreen : Container
     {
+		const float MIN_RED_ALPHA = 0f;
+		const float MAX_RED_ALPHA = 0.6f;
+		const float PERIOD = 2f; // the time, in seconds, of a full cycle (min->max->min)
+
+		// the cosine function parameters
+		const float SIGN = -1f; // start from the minimum
+		const float A = (MAX_RED_ALPHA - MIN_RED_ALPHA)/2f;
+		const float B = PERIOD / MathHelper.TwoPi;
+		const float H = 0f;
+		const float K = (MAX_RED_ALPHA + MIN_RED_ALPHA)/2f;
+
 		/// <summary>
 		/// It is the red visible around the screen.
 		/// </summary>
 		/// <value>The red rectangle.</value>
 		DrawableRectangle RedRectangle { get; set; }
 
-		/// <summary>
-		/// The color of the border is increasing.
-		/// AKA the red is becoming more red.
-		/// </summary>
-		bool ColorIncreasing;
-
 		TimeSpan DeathDuration { get; set; }
+		float timeDead;
 
 		/// <summary>
 		/// Represents the death timer on the death screen;
@@ -48,9 +54,9 @@ namespace GREATClient.GameContent
 
         public DeathScreen()
         {
-			ColorIncreasing = true;
 			DeathDuration = TimeSpan.FromSeconds(0);
 			Visible = false;
+			timeDead = 0f;
         }
 
 		protected override void OnLoad(Microsoft.Xna.Framework.Content.ContentManager content, Microsoft.Xna.Framework.Graphics.GraphicsDevice gd)
@@ -76,26 +82,18 @@ namespace GREATClient.GameContent
 
 		protected override void OnUpdate(Microsoft.Xna.Framework.GameTime dt)
 		{
-			if(RedRectangle.Alpha <= 0f) {
-				ColorIncreasing = true;
-			} else if (RedRectangle.Alpha >=0.6f) {
-				ColorIncreasing = false;
-			}
-
-			if (ColorIncreasing) {
-				RedRectangle.Alpha += (1.0f / 120);
-			} else {
-				RedRectangle.Alpha -= (1.0f / 120);
-			}
-
 			DeathDuration -= dt.ElapsedGameTime;
+			timeDead += (float)dt.ElapsedGameTime.TotalSeconds;
 			DeathDuration = DeathDuration.Ticks >= 0 ? DeathDuration: TimeSpan.FromSeconds(0);
-			DeathTimer.Text = DeathDuration.Seconds.ToString();
+			DeathTimer.Text = Math.Ceiling(DeathDuration.TotalSeconds).ToString();
+
+			RedRectangle.Alpha = SIGN * A * (float)Math.Cos((timeDead - H) / B) + K;
 		}
 
 		public void DisplayScreen(TimeSpan time) {
 			DeathDuration = time;
 			Visible = true;
+			timeDead = 0f;
 		}
     }
 }

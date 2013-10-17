@@ -362,6 +362,10 @@ namespace GREATClient
 						data = new StatsChangedEventData(msg.ReadUInt64(), msg.ReadFloat());
 						break;
 
+					case ServerCommand.ChampionDied:
+						data = new ChampionDiedEventData(msg.ReadUInt64(), TimeSpan.FromSeconds(msg.ReadUInt16()));
+						break;
+
 					default:
 						Debug.Fail("Unknown server command when updating (unknown remarkable event)");
 						break;
@@ -422,6 +426,17 @@ namespace GREATClient
 		{
 			ChampID = id;
 			Health = hp;
+		}
+	}
+	public class ChampionDiedEventData : RemarkableEventData
+	{
+		public ulong ChampID { get; private set; }
+		public TimeSpan RespawnTime { get; private set; }
+		public ChampionDiedEventData(ulong id, TimeSpan respawn)
+			: base(ServerCommand.ChampionDied)
+		{
+			ChampID = id;
+			RespawnTime = respawn;
 		}
 	}
 }
