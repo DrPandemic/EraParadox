@@ -21,6 +21,8 @@
 using System;
 using System.Collections.Generic;
 using GREATLib.Entities.Spells;
+using GREATLib.Entities.Champions;
+using GREATLib.Network;
 
 namespace GREATServer.Network
 {
@@ -31,12 +33,14 @@ namespace GREATServer.Network
 		public bool Alive { get { return Health > 0f; } }
 		public bool HealthChanged { get; private set; }
 		Dictionary<SpellTypes, float> LastSpellUses { get; set; }
+		public double RevivalTime { get; set; }
 
         public ChampionStats(float maxhp)
         {
 			MaxHealth = maxhp;
 			Health = MaxHealth;
 			LastSpellUses = new Dictionary<SpellTypes, float>();
+			RevivalTime = double.MaxValue;
 			ClearHealthChangedFlag();
         }
 
@@ -67,9 +71,24 @@ namespace GREATServer.Network
 			else
 				LastSpellUses.Add(spell, time);
 		}
-		public TimeSpan TimeOfLastSpellUse(SpellTypes spell)
+		TimeSpan TimeOfLastSpellUse(SpellTypes spell)
 		{
 			return TimeSpan.FromSeconds(LastSpellUses.ContainsKey(spell) ? LastSpellUses[spell] : 0f);
+		}
+		public bool IsCastingSpell(ChampionTypes champ, PlayerActionType action)
+		{
+			SpellTypes spell = ChampionTypesHelper.GetSpellFromAction(champ, action);
+			return TimeOfLastSpellUse(spell).TotalSeconds +
+				SpellsHelper.CastingTime(spell).TotalSeconds >= Server.Instance.GetTime().TotalSeconds;
+		}
+		public bool ShouldRespawn()
+		{
+			return Server.Instance.GetTime().TotalSeconds >= RevivalTime;
+		}
+		public bool IsOnCooldown(SpellTypes spell)
+		{
+			return TimeOfLastSpellUse(spell).TotalSeconds +
+				SpellsHelper.Cooldown(spell).TotalSeconds > Server.Instance.GetTime().TotalSeconds;
 		}
     }
 }

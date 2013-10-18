@@ -49,7 +49,7 @@ namespace GREATLib.Entities
 			HorizontalAcceleration = 9e-9f;
 
 			Animation = ChampionAnimation.idle;
-			FacingLeft = false;
+			FacingLeft = team == Teams.Right; // face the opposite team
 			Team = team;
 			Type = type;
         }

@@ -311,6 +311,9 @@ namespace GREATClient.Screens
 						c.Health = e.Health;
 					}
 				});
+
+				if (OurChampion != null)
+					DeathScreen.Visible = !OurChampion.Champion.Alive;
 			}
 		}
 

@@ -251,18 +251,13 @@ namespace GREATServer
 			if (ActionTypeHelper.IsSpell(action.Type)) {
 				var spell = ChampionTypesHelper.GetSpellFromAction(client.Champion.Type, action.Type);
 				if (client.ChampStats.Alive &&
-				    !IsOnCooldown(client, spell)) {
+				    !client.ChampStats.IsOnCooldown(spell)) { // we're not dead and the spell is not on cooldown
 					CastSpell(client.Champion, action);
 					client.ChampStats.UsedSpell(spell);
 				}
 			} else if (action.Type != PlayerActionType.Idle) {
 				ILogger.Log("Unknown player action type: " + action.Type);
 			}
-		}
-		bool IsOnCooldown(ServerClient client, SpellTypes spell)
-		{
-			return client.ChampStats.TimeOfLastSpellUse(spell).TotalSeconds +
-				SpellsHelper.Cooldown(spell).TotalSeconds > Server.Instance.GetTime().TotalSeconds;
 		}
 
 		void CastSpell(ICharacter champ, PlayerAction action)
@@ -469,44 +464,56 @@ namespace GREATServer
 					Match.CurrentState.ApplyPhysicsUpdate(client.Champion.ID, (float)time);
 				}
 
+				UpdateChampionHealth(client);
+
 				client.Champion.Animation = client.Champion.GetAnim(!client.ChampStats.Alive, //TODO: replace with actual HP
 				                                                    Match.CurrentState.IsOnGround(client.Champion.ID),
-				                                                    IsCastingSpell(client.Champion.Type, client.ChampStats, PlayerActionType.Spell1),
-				                                                    IsCastingSpell(client.Champion.Type, client.ChampStats, PlayerActionType.Spell2),
-				                                                    IsCastingSpell(client.Champion.Type, client.ChampStats, PlayerActionType.Spell3),
-				                                                    IsCastingSpell(client.Champion.Type, client.ChampStats, PlayerActionType.Spell4),
+				                                                    client.ChampStats.IsCastingSpell(client.Champion.Type, PlayerActionType.Spell1),
+				                                                    client.ChampStats.IsCastingSpell(client.Champion.Type, PlayerActionType.Spell2),
+				                                                    client.ChampStats.IsCastingSpell(client.Champion.Type, PlayerActionType.Spell3),
+				                                                    client.ChampStats.IsCastingSpell(client.Champion.Type, PlayerActionType.Spell4),
 				                                                    client.AnimData.Movement,
 				                                                    client.AnimData.Idle,
 				                                                    client.Champion.Animation);
-
-				if (client.ChampStats.HealthChanged) {
-					AddRemarkableEvent(ServerCommand.StatsChanged,
-					                   (msg) => {
-						msg.Write(client.Champion.ID);
-						msg.Write(client.ChampStats.Health);
-					});
-
-					if (!client.ChampStats.Alive) { // the player died!
-						AddRemarkableEvent(ServerCommand.ChampionDied,
-						                   (msg) => {
-							msg.Write(client.Champion.ID);
-							msg.Write((ushort)GetRespawnTime().TotalSeconds);
-						});
-					}
-
-					client.ChampStats.ClearHealthChangedFlag();
-				}
 			}
 		}
-		TimeSpan GetRespawnTime()
+		void UpdateChampionHealth(ServerClient client)
 		{
-			return TimeSpan.FromSeconds(15.0); //TODO: depend on game time
+			// check to respawn after being dead for long enough
+			if (!client.ChampStats.Alive &&
+			    client.ChampStats.ShouldRespawn()) {
+				Respawn(client);
+			}
+
+			if (client.ChampStats.HealthChanged) {
+				AddRemarkableEvent(ServerCommand.StatsChanged,
+				                   (msg) => {
+					msg.Write(client.Champion.ID);
+					msg.Write(client.ChampStats.Health);
+				});
+
+				if (!client.ChampStats.Alive) { // the player died!
+					client.ChampStats.RevivalTime = Server.Instance.GetTime().TotalSeconds + GetRespawnTime().TotalSeconds;
+					AddRemarkableEvent(ServerCommand.ChampionDied,
+					                   (msg) => {
+						msg.Write(client.Champion.ID);
+						msg.Write((ushort)GetRespawnTime().TotalSeconds);
+					});
+				}
+
+				client.ChampStats.ClearHealthChangedFlag();
+			}
 		}
-		bool IsCastingSpell(ChampionTypes champ, ChampionStats stats, PlayerActionType action)
+		void Respawn(ServerClient client)
 		{
-			SpellTypes spell = ChampionTypesHelper.GetSpellFromAction(champ, action);
-			return stats.TimeOfLastSpellUse(spell).TotalSeconds +
-				SpellsHelper.CastingTime(spell).TotalSeconds >= Server.Instance.GetTime().TotalSeconds;
+			client.ChampStats.SetHealth(client.ChampStats.MaxHealth); // heal back to max health
+			client.Champion.Position = RandomPosition(client.Champion.Team);
+			client.ChampStats.RevivalTime = double.MaxValue;
+			client.Champion.FacingLeft = client.Champion.Team == Teams.Right; // face the opposite team
+		}
+		static TimeSpan GetRespawnTime()
+		{
+			return TimeSpan.FromSeconds(15.0); //TODO: depend on game time?
 		}
 		void UpdateSpells(double dt)
 		{
@@ -645,10 +652,17 @@ namespace GREATServer
 		/// </summary>
 		ServerChampion CreateRandomChampion()
 		{
+			var team = GetSmallestTeam();
 			return new ServerChampion(IDGenerator.GenerateID(),
-			                   new Vec2(Utilities.RandomFloat(Utilities.Random, 100f, 400f), 150f),
+			                          RandomPosition(team),
 			                          RandomChampionType(),
-			                          GetSmallestTeam());
+			                          team);
+		}
+		Vec2 RandomPosition(Teams team)
+		{
+			return new Vec2(Utilities.RandomFloat(Utilities.Random, 
+			                                      team == Teams.Left ? 100f : 500f, 
+			                                      team == Teams.Left ? 400f : 900f), 150f);
 		}
 		ChampionTypes RandomChampionType()
 		{
