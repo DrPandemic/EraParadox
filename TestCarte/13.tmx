@@ -1,16 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" width="50" height="30" tilewidth="32" tileheight="32">
+<map version="1.0" orientation="orthogonal" width="178" height="60" tilewidth="32" tileheight="32">
  <tileset firstgid="1" name="tmw_desert_spacing" tilewidth="32" tileheight="32" spacing="1" margin="1">
-  <image source="../../../../Desktop/Tiled/examples/tmw_desert_spacing.png" width="265" height="199"/>
+  <image source="tmw_desert_spacing.png" width="265" height="199"/>
  </tileset>
- <layer name="Calque 2" width="50" height="30">
+ <layer name="Tiles" width="178" height="60">
   <data encoding="base64" compression="zlib">
-   eJztw0ENAAAMA6FTUv8yJ2JfSFg1VVVVVVX19QDfg6/J
+   eJzt3L1Ow0AQhdHUeQk6St7/8SgTRfgX2ztzfY60BVB4s/MJQmT5+Xg8npYVsKAzHZNAxyTQMQl0TAIdk0DHJNAxCXRMAh2TQMck0DEJdEwCHZNAxyTQMQl0TAIdk0DHJNAxCXRMAh2TQMck0DEJdEwCHZNAxyTQMQl0TIKOHS89Y3Hq52ufzbjnuY5nPS9y7zMm955B1+dXdtsv/EXHJOjUcZd9pulw7jpmSYdz79Bxx/87knQ4/+r7gzWqdlxxT7xUm4+O2aPafCp3XHVvd1Z1LhX3BFvpmASdOp67t+Co73d257Ppstele2SOnNXae3qqrKPPYO4aVXXY55UzXLpexXX0GSxdp6Lqe7x6hp2d3XHlc6q0v5+PrzudY7K5GXzObJQKfWz9+8m19r7PGbHHUSqfDS/VWx5x3SqvnWONnKuOOUqljr8uui7813urW9/nfJ++O5jubOv79D3rXZXPY6hnzeerHRb3MLqzUS37Hd7P1MxG91V5McbouacurjF6zndZnGP0XC3rzusXObQzbQ==
   </data>
  </layer>
- <layer name="Calque de Tile 1" width="50" height="30">
-  <data encoding="base64" compression="zlib">
-   eJzt1bEKgCAUhWERIggqaAkaXNt6/8fLQCEu1jWQ9MD54SxS0LeYMYwxxhhjjDHGSrUnztzvX/GtI3GG5LDKNjHt+VoblFnhXjLeaXU5lrnySllQHJoFyfFmQXM8WVa/DswhLS5sAnTcLeiOaLn++73fCOxo5b46AQ4jGhA=
-  </data>
- </layer>
+ <objectgroup name="Meta" width="178" height="60">
+  <object name="l_spawn" x="96" y="1632" width="30" height="29"/>
+  <object name="r_spawn" x="5568" y="1633" width="31" height="30"/>
+  <object name="r_base" x="5283" y="1666" width="25" height="25"/>
+  <object name="r_tower_base" x="4993" y="1697" width="29" height="29"/>
+  <object name="l_tower_base" x="672" y="1696" width="32" height="30"/>
+  <object name="l_tower_top" x="1091" y="1474" width="27" height="27"/>
+  <object name="l_tower_bot" x="1088" y="1762" width="30" height="25"/>
+  <object name="r_tower_top" x="4579" y="1473" width="28" height="28"/>
+  <object name="r_tower_bot" x="4576" y="1762" width="30" height="28"/>
+  <object name="l_base" x="354" y="1668" width="27" height="25"/>
+ </objectgroup>
 </map>

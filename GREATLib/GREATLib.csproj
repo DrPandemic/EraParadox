@@ -30,6 +30,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>dependencies\Newtonsoft.Json.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
@@ -60,6 +63,7 @@
     <Compile Include="Entities\HorizontalDirection.cs" />
     <Compile Include="Entities\Spells\SpellTypes.cs" />
     <Compile Include="Entities\Teams.cs" />
+    <Compile Include="World\Tiles\MapLoader.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -70,5 +74,6 @@
     <Folder Include="Network\" />
     <Folder Include="Entities\Champions\" />
     <Folder Include="Entities\Spells\" />
+    <Folder Include="Maps\" />
   </ItemGroup>
 </Project>

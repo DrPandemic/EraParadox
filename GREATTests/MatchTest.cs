@@ -64,7 +64,7 @@ namespace GREATTests
         [Test()]
         public void TestStateClone()
         {
-			MatchState state = new MatchState(new PhysicsEngine(new GameWorld()));
+			MatchState state = new MatchState(new PhysicsEngine(new GameWorld(null)));
 
 			IEntity e = new IEntity(IDGenerator.GenerateID(), new Vec2(100f, -99f), 1f, 1f, 1f);
 			state.AddEntity(e);

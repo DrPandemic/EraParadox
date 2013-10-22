@@ -35,6 +35,7 @@ using GREATClient.Network;
 using GREATClient.BaseClass.Input;
 using GREATLib.Entities.Spells;
 using GameContent;
+using System.IO;
 
 namespace GREATClient.Screens
 {
@@ -84,7 +85,7 @@ namespace GREATClient.Screens
 			GameTime = null;
 			TimeSinceLastInputSent = 0.0;
 
-			Match = new GameMatch();
+			Match = new GameMatch(Path.Combine("../", MapLoader.MAIN_MAP_PATH));
 			LastStateUpdateData = new List<StateUpdateData>();
 			RemarkableEvents = new List<RemarkableEventData>();
 			Spells = new Dictionary<ulong, DrawableSpell>();

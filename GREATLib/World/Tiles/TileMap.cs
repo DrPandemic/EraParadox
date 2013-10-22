@@ -42,9 +42,15 @@ namespace GREATLib.World.Tiles
 		/// <value>The tile rectangles.</value>
 		private Dictionary<Tile, Rect> TileRectangles { get; set; }
 
-        public TileMap()
+        public TileMap(string mapPath)
         {
-			TileRows = GetDummyData();
+			if (mapPath != null) {
+				var map = new MapLoader(mapPath);
+				TileRows = map.TileRows;
+			} else {
+				TileRows = GetDummyData();
+			}
+
 			InitMap();
         }
 

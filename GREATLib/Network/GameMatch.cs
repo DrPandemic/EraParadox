@@ -45,9 +45,9 @@ namespace GREATLib.Network
 		PhysicsEngine Physics { get; set; }
 
 
-        public GameMatch()
+        public GameMatch(string mapPath)
         {
-			World = new GameWorld();
+			World = new GameWorld(mapPath);
 			Physics = new PhysicsEngine(World);
 			CurrentState = new MatchState(Physics);
         }

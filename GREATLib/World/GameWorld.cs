@@ -41,9 +41,9 @@ namespace GREATLib.World
 		/// <value>The map.</value>
 		public TileMap Map { get; private set; }
 
-        public GameWorld()
+        public GameWorld(string mapPath)
         {
-			Map = new TileMap();
+			Map = new TileMap(mapPath);
         }
 
 		/// <summary>

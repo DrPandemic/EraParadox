@@ -30,6 +30,8 @@ using GREATLib.Entities.Champions;
 using GREATServer.Network;
 using GREATLib.Entities.Spells;
 using GREATLib.Physics;
+using System.IO;
+using GREATLib.World.Tiles;
 
 namespace GREATServer
 {
@@ -77,7 +79,7 @@ namespace GREATServer
 			ActiveSpells = new List<LinearSpell>();
 
 			StateHistory = new SnapshotHistory<MatchState>(HISTORY_MAX_TIME_KEPT);
-			Match = new GameMatch();
+			Match = new GameMatch(MapLoader.MAIN_MAP_PATH);
 			RemarkableEvents = new List<KeyValuePair<ServerCommand, Action<NetBuffer>>>();
 
 			TimeSinceLastCorrection = 0.0;
