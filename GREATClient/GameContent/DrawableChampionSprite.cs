@@ -68,7 +68,6 @@ namespace GREATClient.GameContent
 				FrameCount = anim.FrameCount;
 				FrameRate = anim.FrameRate;
 				CurrentFrame = 0;
-				Console.WriteLine("Starting " + name + " with repeat = " + anim.Repeat);
 				RepetitionCount = anim.Repeat ? INFINITE : 1;
 			}
 		}

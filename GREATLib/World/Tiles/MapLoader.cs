@@ -21,21 +21,68 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace GREATLib.World.Tiles
 {
     public class MapLoader
     {
+		class MapObject
+		{
+			public int height;
+			public int width;
+			public int x;
+			public int y;
+			public string name;
+		}
+		class MapLayer
+		{
+			public List<int> data;
+			public string name;
+			public List<MapObject> objects;
+		}
+		class Map
+		{
+			public int height;
+			public List<MapLayer> layers;
+			public int width;
+		}
+
 		public const string MAIN_MAP_PATH = "Maps/map.json";
 		public List<List<Tile>> TileRows { get; private set; }
 
         public MapLoader(string mapPath)
         {
 			string content = File.ReadAllText(mapPath);
-			Console.WriteLine(content);
+			var map = JsonConvert.DeserializeObject<Map>(content);
 
-			TileRows = new List<List<Tile>>();
+			TileRows = ExtractTileRows(map);
         }
+
+		const string TILES_LAYER = "Tiles";
+		static List<List<Tile>> ExtractTileRows(Map map)
+		{
+			if (!map.layers.Exists(l => l.name == TILES_LAYER))
+				throw new Exception("No Tiles layer in map. Redownload the map of the game.");
+
+			List<List<Tile>> rows = new List<List<Tile>>();
+			var layer = map.layers.Find(l => l.name == TILES_LAYER);
+			int w = map.width;
+			int h = map.height;
+
+			if (layer.data.Count != w * h)
+				throw new Exception("Map has the wrong size. Redownload the map of the game.");
+
+			for (int y = 0; y < h; ++y) {
+				var row = new List<Tile>();
+				for (int x = 0; x < w; ++x) {
+					row.Add(new Tile(layer.data[y * w + x], layer.data[y * w + x] != 0 ? CollisionType.Block : CollisionType.Passable ));
+				}
+				rows.Add(row);
+			}
+
+			return rows;
+		}
     }
 }
 
