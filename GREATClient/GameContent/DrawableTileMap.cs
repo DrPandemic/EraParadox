@@ -25,6 +25,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using GREATClient.BaseClass;
+using System.Diagnostics;
 
 namespace GREATClient.GameContent
 {
@@ -39,18 +40,21 @@ namespace GREATClient.GameContent
 		/// <value>The map.</value>
 		public TileMap Map { get; set; }
 
-		private Texture2D pixel;
+		Texture2D TileSet { get ;set; }
+		string TileSetName { get; set; }
+		int TileSetTilesWidth { get; set; }
 
-		public DrawableTileMap(TileMap map)
+		public DrawableTileMap(TileMap map, string tileset)
         {
 			Map = map;
+			TileSetName = tileset;
         }
 
 		protected override void OnLoad(ContentManager content, GraphicsDevice gd)
 		{
 			base.OnLoad(content, gd);
-			pixel = new Texture2D(gd, 1, 1);
-			pixel.SetData(new Color[] { Color.White });
+			TileSet = content.Load<Texture2D>(TileSetName);
+			TileSetTilesWidth = TileSet.Width / Tile.WIDTH;
 		}
 
 		protected override void OnDraw(SpriteBatch batch)
@@ -60,11 +64,23 @@ namespace GREATClient.GameContent
 			for (int y = 0; y < Map.GetHeightTiles(); ++y)
 				for (int x = 0; x < Map.GetWidthTiles(); ++x)
 					if (Map.TileRows[y][x].Collision != CollisionType.Passable)
-						batch.Draw(pixel, new Rectangle(
+						batch.Draw(TileSet, new Rectangle(
 							(int)(position.X + x * Tile.WIDTH),
 							(int)(position.Y + y * Tile.HEIGHT),
-							Tile.WIDTH, Tile.HEIGHT), Color.Red);
+							Tile.WIDTH, Tile.HEIGHT),
+						    	   GetSourceRectangle(Map.TileRows[y][x].Id),
+						           Color.White);
 			batch.End();
+		}
+        Rectangle GetSourceRectangle(int tileId)
+		{
+            int onImageId = tileId - 1;
+            Debug.Assert(onImageId >= 0);
+            return new Rectangle((onImageId % TileSetTilesWidth) * Tile.WIDTH,
+                                 (onImageId / TileSetTilesWidth) * Tile.HEIGHT,
+			                     Tile.WIDTH,
+			                     Tile.HEIGHT);
+
 		}
 
 		public override bool IsBehind(Vector2 position)

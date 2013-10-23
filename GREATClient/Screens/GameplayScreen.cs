@@ -116,7 +116,7 @@ namespace GREATClient.Screens
 			AddChild(DeathScreen = new DeathScreen(),4);
 			AddChild(GameWorld);
 
-			Map = new DrawableTileMap(Match.World.Map);
+			Map = new DrawableTileMap(Match.World.Map, Match.World.Map.TileSet);
 			GameWorld.AddChild(Map);
 
 			Client.RegisterCommandHandler(ServerCommand.JoinedGame, OnJoinedGame);
