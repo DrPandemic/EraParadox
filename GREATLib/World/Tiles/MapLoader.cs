@@ -41,15 +41,21 @@ namespace GREATLib.World.Tiles
 			public string name;
 			public List<MapObject> objects;
 		}
+		class TileSetObj
+		{
+			public string image;
+		}
 		class Map
 		{
 			public int height;
 			public List<MapLayer> layers;
 			public int width;
+			public List<TileSetObj> tilesets;
 		}
 
 		public const string MAIN_MAP_PATH = "Maps/map.json";
 		public List<List<Tile>> TileRows { get; private set; }
+		public string TileSet { get; private set; }
 
         public MapLoader(string mapPath)
         {
@@ -57,6 +63,7 @@ namespace GREATLib.World.Tiles
 			var map = JsonConvert.DeserializeObject<Map>(content);
 
 			TileRows = ExtractTileRows(map);
+			TileSet = ExtractTileSet(map);
         }
 
 		const string TILES_LAYER = "Tiles";
@@ -82,6 +89,14 @@ namespace GREATLib.World.Tiles
 			}
 
 			return rows;
+		}
+
+		static string ExtractTileSet(Map map)
+		{
+			if (map.tilesets.Count != 1)
+				throw new Exception("Map doesn't have only 1 tileset. Redownload the map of the game.");
+
+			return map.tilesets[0].image;
 		}
     }
 }
