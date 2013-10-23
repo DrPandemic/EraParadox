@@ -103,6 +103,7 @@
     <Compile Include="Network\ClientLinearSpell.cs" />
     <Compile Include="GameContent\DrawableChampionLifeBar.cs" />
     <Compile Include="GameContent\DeathScreen.cs" />
+    <Compile Include="GameContent\CameraService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />

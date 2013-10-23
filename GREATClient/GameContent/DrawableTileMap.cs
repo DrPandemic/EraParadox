@@ -51,7 +51,6 @@ namespace GREATClient.GameContent
 			base.OnLoad(content, gd);
 			pixel = new Texture2D(gd, 1, 1);
 			pixel.SetData(new Color[] { Color.White });
-
 		}
 
 		protected override void OnDraw(SpriteBatch batch)

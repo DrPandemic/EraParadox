@@ -36,6 +36,7 @@ using GREATClient.BaseClass.Input;
 using GREATLib.Entities.Spells;
 using GameContent;
 using System.IO;
+using GREATClient.BaseClass.ScreenInformation;
 
 namespace GREATClient.Screens
 {
@@ -73,6 +74,8 @@ namespace GREATClient.Screens
 		List<StateUpdateData> LastStateUpdateData { get; set; }
 		List<RemarkableEventData> RemarkableEvents { get; set; }
 		Dictionary<ulong, DrawableSpell> Spells { get; set; }
+		Container GameWorld { get; set; }
+		CameraService Camera { get; set; }
 
 		DeathScreen DeathScreen { get; set; }
 
@@ -91,6 +94,10 @@ namespace GREATClient.Screens
 			Spells = new Dictionary<ulong, DrawableSpell>();
 			TimeOfLastStateUpdate = 0.0;
 			Champions = new List<ClientChampion>();
+
+			GameWorld = new Container();
+			Camera = new CameraService();
+			Services.AddService(typeof(CameraService), Camera);
         }
 
 		protected override void OnLoadContent()
@@ -107,9 +114,10 @@ namespace GREATClient.Screens
 			         3);
 
 			AddChild(DeathScreen = new DeathScreen(),4);
+			AddChild(GameWorld);
 
 			Map = new DrawableTileMap(Match.World.Map);
-			AddChild(Map);
+			GameWorld.AddChild(Map);
 
 			Client.RegisterCommandHandler(ServerCommand.JoinedGame, OnJoinedGame);
 			Client.RegisterCommandHandler(ServerCommand.NewRemotePlayer, OnNewRemotePlayer);
@@ -169,7 +177,7 @@ namespace GREATClient.Screens
 			}
 
 			Champions.Add(champ);
-			AddChild(idraw);
+			GameWorld.AddChild(idraw);
 
 			Match.CurrentState.AddEntity(champ);
 
@@ -210,6 +218,13 @@ namespace GREATClient.Screens
 			if (OurChampion != null) {
 				ChampionState.MaxLife = OurChampion.Champion.MaxHealth;
 				ChampionState.CurrentLife = OurChampion.Champion.Health;
+
+				var screen = (ScreenService)Services.GetService(typeof(ScreenService));
+				Camera.CenterCameraTowards(OurChampion.Champion.GetHandsPosition(),
+				                        screen.GameWindowSize.X, screen.GameWindowSize.Y,
+				                        Match.World.Map.GetWidthTiles() * Tile.WIDTH,
+				                        Match.World.Map.GetHeightTiles() * Tile.HEIGHT);
+				GameWorld.Position = GameLibHelper.ToVector2(-Camera.WorldPosition);
 			}
 		}
 
@@ -232,7 +247,7 @@ namespace GREATClient.Screens
 		Vec2 GetTargetWorldPosition()
 		{
 			//TODO: use camera here !
-			return new Vec2(inputManager.MouseX, inputManager.MouseY);
+			return Camera.ToWorld(new Vec2(inputManager.MouseX, inputManager.MouseY));
 		}
 
 		/// <summary>
@@ -295,7 +310,7 @@ namespace GREATClient.Screens
 		{
 			var s = new DrawableSpell(new ClientLinearSpell(e.ID, e.Position, e.Time, e.Velocity, e.Range, e.Width));
 			Spells.Add(e.ID, s);
-			AddChild(s);
+			GameWorld.AddChild(s);
 		}
 		void OnRemoveSpell(SpellDisappearEventData e)
 		{
