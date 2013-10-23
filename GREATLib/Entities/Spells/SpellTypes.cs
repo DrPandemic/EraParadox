@@ -24,7 +24,7 @@ namespace GREATLib.Entities.Spells
 {
     public enum SpellTypes
     {
-		StickManSpell1
+		ManMega_RocketRampage
     }
 
 	public static class SpellsHelper
@@ -33,7 +33,7 @@ namespace GREATLib.Entities.Spells
 		{
 			switch (s)
 			{
-				case SpellTypes.StickManSpell1:
+				case SpellTypes.ManMega_RocketRampage:
 					return TimeSpan.FromSeconds(1);
 
 				default:
@@ -45,7 +45,7 @@ namespace GREATLib.Entities.Spells
 		public static TimeSpan CastingTime(SpellTypes s)
 		{
 			switch (s) {
-				case SpellTypes.StickManSpell1:
+				case SpellTypes.ManMega_RocketRampage:
 					return TimeSpan.FromSeconds(0.25);
 
 				default:

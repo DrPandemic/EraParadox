@@ -38,6 +38,8 @@ namespace GREATLib.World.Tiles
 
 		public string TileSet { get; private set; }
 
+		public MapMetaInfo Meta { get; private set; }
+
 		/// <summary>
 		/// Gets or sets the rectangles of the tiles.
 		/// </summary>
@@ -49,6 +51,7 @@ namespace GREATLib.World.Tiles
 			var map = new MapLoader(mapPath);
 			TileRows = map.TileRows;
 			TileSet = map.TileSet;
+			Meta = map.Meta;
 
 			InitMap();
         }

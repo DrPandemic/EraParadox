@@ -273,7 +273,7 @@ namespace GREATServer
 				champ,
 				champ.GetHandsPosition(),
 				action.Target ?? Vec2.Zero,
-				SpellTypes.StickManSpell1); //TODO: depend on spell used
+				SpellTypes.ManMega_RocketRampage); //TODO: depend on spell used
 
 			Match.CurrentState.AddEntity(spell);
 			ActiveSpells.Add(spell);
@@ -509,7 +509,7 @@ namespace GREATServer
 		void Respawn(ServerClient client)
 		{
 			client.ChampStats.SetHealth(client.ChampStats.MaxHealth); // heal back to max health
-			client.Champion.Position = RandomPosition(client.Champion.Team);
+			client.Champion.Position = GetSpawnPosition(client.Champion.Team);
 			client.ChampStats.RevivalTime = double.MaxValue;
 			client.Champion.FacingLeft = client.Champion.Team == Teams.Right; // face the opposite team
 		}
@@ -656,19 +656,21 @@ namespace GREATServer
 		{
 			var team = GetSmallestTeam();
 			return new ServerChampion(IDGenerator.GenerateID(),
-			                          RandomPosition(team),
+			                          GetSpawnPosition(team),
 			                          RandomChampionType(),
 			                          team);
 		}
-		Vec2 RandomPosition(Teams team)
+		Vec2 GetSpawnPosition(Teams team)
 		{
-			return new Vec2(Utilities.RandomFloat(Utilities.Random, 
-			                                      team == Teams.Left ? 100f : 500f, 
-			                                      team == Teams.Left ? 400f : 900f), 150f);
+			Vec2 tile = team == Teams.Left ? 
+				Match.World.Map.Meta.LeftMeta.SpawnTileIds :
+				Match.World.Map.Meta.RightMeta.SpawnTileIds;
+
+			return tile * new Vec2(Tile.WIDTH, Tile.HEIGHT) + new Vec2(Tile.WIDTH / 2f, -Tile.HEIGHT);
 		}
 		ChampionTypes RandomChampionType()
 		{
-			return ChampionTypes.StickMan; // 100% random, obtained using a dice-roll.
+			return ChampionTypes.ManMega; // 100% random, obtained using a dice-roll.
 		}
 
 		Teams GetSmallestTeam()

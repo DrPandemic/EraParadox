@@ -76,7 +76,7 @@ namespace GREATClient.Test
 			AddChild(menu, 5);
 			menu.SetPositionInScreenPercent(50, 50);
 
-			champSprite = new DrawableChampionSprite(ChampionAnimation.idle, ChampionTypes.StickMan, ChampionsInfo) 
+			champSprite = new DrawableChampionSprite(ChampionAnimation.idle, ChampionTypes.ManMega, ChampionsInfo) 
 			{ Position = new Vector2(200f, 300f) };
 
 			AddChild(champSprite);

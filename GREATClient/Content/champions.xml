@@ -2,7 +2,7 @@
 <champions>
 
   <!-- The Stick-Man -->
-  <champion type="StickMan" name="Stick-Man" assetname="megaman" framewidth="53" frameheight="54" >
+  <champion type="ManMega" name="Stick-Man" assetname="megaman" framewidth="53" frameheight="54" >
     <description>The drawn man that escaped his blank sheet and wants to take revenge upon his creators. 
       Long has he awaited for a mere taste of liberty to finally try and defeat his oppressors. 
       He will use any tools at hand, pencils or erasers, to defeat his enemies. 

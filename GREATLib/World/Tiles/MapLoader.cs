@@ -25,6 +25,44 @@ using Newtonsoft.Json;
 
 namespace GREATLib.World.Tiles
 {
+	public class TeamMetaInfo
+	{
+		// meta info (in tile IDs)
+		public Vec2 SpawnTileIds { get; private set; }
+		public Vec2 BaseTileIds { get; private set; }
+		public Vec2 BaseTowerTileIds { get; private set; }
+		public Vec2 BottomTowerTileIds { get; private set; }
+		public Vec2 TopTowerTileIds { get; private set; }
+
+		public TeamMetaInfo(Vec2 spawnTile, Vec2 baseTile, Vec2 baseTowerTile, Vec2 botTowerTile, Vec2 topTowerTile)
+		{
+			SpawnTileIds = spawnTile;
+			BaseTileIds = baseTile;
+			BaseTowerTileIds = baseTowerTile;
+			BottomTowerTileIds = botTowerTile;
+			TopTowerTileIds = topTowerTile;
+		}
+	}
+	public class MapMetaInfo
+	{
+		// Left meta info (in tile IDs)
+		public TeamMetaInfo LeftMeta { get; private set; }
+
+		// Right meta info (in tile IDs)
+		public TeamMetaInfo RightMeta { get; private set; }
+		public MapMetaInfo(TeamMetaInfo left, TeamMetaInfo right)
+		{
+			LeftMeta = left;
+			RightMeta = right;
+		}
+	}
+	public class MapLoadException : Exception
+	{
+		public MapLoadException(string errorType)
+			: base(errorType + ". Redownload the map of the game to fix.")
+		{
+		}
+	}
     public class MapLoader
     {
 		class MapObject
@@ -56,6 +94,7 @@ namespace GREATLib.World.Tiles
 		public const string MAIN_MAP_PATH = "Maps/map.json";
 		public List<List<Tile>> TileRows { get; private set; }
 		public string TileSet { get; private set; }
+		public MapMetaInfo Meta { get; private set; }
 
         public MapLoader(string mapPath)
         {
@@ -64,13 +103,27 @@ namespace GREATLib.World.Tiles
 
 			TileRows = ExtractTileRows(map);
 			TileSet = ExtractTileSet(map);
+
+			Meta = new MapMetaInfo(
+				new TeamMetaInfo(
+					ExtractMetaTileIds(map, "l_spawn"),
+					ExtractMetaTileIds(map, "l_base"),
+					ExtractMetaTileIds(map, "l_base_tower"),
+					ExtractMetaTileIds(map, "l_bot_tower"),
+					ExtractMetaTileIds(map, "l_top_tower")),
+				new TeamMetaInfo(
+					ExtractMetaTileIds(map, "r_spawn"),
+					ExtractMetaTileIds(map, "r_base"),
+					ExtractMetaTileIds(map, "r_base_tower"),
+					ExtractMetaTileIds(map, "r_bot_tower"),
+					ExtractMetaTileIds(map, "r_top_tower")));
         }
 
 		const string TILES_LAYER = "Tiles";
 		static List<List<Tile>> ExtractTileRows(Map map)
 		{
 			if (!map.layers.Exists(l => l.name == TILES_LAYER))
-				throw new Exception("No Tiles layer in map. Redownload the map of the game.");
+				throw new MapLoadException("No Tiles layer in map");
 
 			List<List<Tile>> rows = new List<List<Tile>>();
 			var layer = map.layers.Find(l => l.name == TILES_LAYER);
@@ -78,7 +131,7 @@ namespace GREATLib.World.Tiles
 			int h = map.height;
 
 			if (layer.data.Count != w * h)
-				throw new Exception("Map has the wrong size. Redownload the map of the game.");
+				throw new MapLoadException("Map has the wrong size");
 
 			for (int y = 0; y < h; ++y) {
 				var row = new List<Tile>();
@@ -94,9 +147,26 @@ namespace GREATLib.World.Tiles
 		static string ExtractTileSet(Map map)
 		{
 			if (map.tilesets.Count != 1)
-				throw new Exception("Map doesn't have only 1 tileset. Redownload the map of the game.");
+				throw new MapLoadException("Map doesn't have only 1 tileset");
 
 			return map.tilesets[0].image;
+		}
+
+		const string META_LAYER = "Meta";
+		static Vec2 ExtractMetaTileIds(Map map, string metaName)
+		{
+			if (!map.layers.Exists(l => l.name == META_LAYER))
+				throw new MapLoadException("No Meta layer in map");
+
+			var layer = map.layers.Find(l => l.name == META_LAYER);
+
+			if (!layer.objects.Exists(o => o.name == metaName))
+				throw new MapLoadException("Missing meta info " + metaName);
+
+			var obj = layer.objects.Find(o => o.name == metaName);
+
+			Vec2 center = new Vec2(obj.x + obj.width / 2f, obj.y + obj.height / 2f);
+			return new Vec2((int)(center.X / Tile.WIDTH), (int)(center.Y / Tile.HEIGHT));
 		}
     }
 }

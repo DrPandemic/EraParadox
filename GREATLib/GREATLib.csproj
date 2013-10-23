@@ -74,6 +74,5 @@
     <Folder Include="Network\" />
     <Folder Include="Entities\Champions\" />
     <Folder Include="Entities\Spells\" />
-    <Folder Include="Maps\" />
   </ItemGroup>
 </Project>

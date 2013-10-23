@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="200" height="80" tilewidth="32" tileheight="32">
+ <tileset firstgid="1" name="ground" tilewidth="32" tileheight="32">
+  <image source="tile.png" width="128" height="128"/>
+ </tileset>
+ <layer name="Tiles" width="200" height="80">
+  <data encoding="base64" compression="zlib">
+   eJztnYtunDAQRZ1UpWqrPv7/a9tVRddBHhaM7bmDz5GuFG3ErsE+YyDBu6SUFkKImd9/840Q8j8/0tOPLwkAcj4n/ACwwA8AG/wAsMEPABv8ALDBDwAb/ACwwQ8AG/wAsMEPABv8ALDBDwAb/ACwwQ8AG/wAsMEPABv8ALDBDwAb/ACwwQ8AG/wAsMEPABv8ALDBj/O8N0rUz58J/PCjZowyrseCH8e4a8296361Aj/8OTI+GcM+4IfNbLV1tv09An5o8Zae4/STc1sAP7Z41tCHGz/Tsz9+JT9HmEv+gR8abN1QcATwQ+HvAZYbKo4oHCMvZvfDm1duqDgyK5H9yK9lz8Yaa1fesyZH3MgdGdm2HscomuOR/cjbfjalerzW8vz755Z07fvrrmz/atuj7137PnvHqPa4Rx5jUdq+1q8r/cQ5y3muupHPgVGOe0Q/vqaPdW/Jft7WxGXnNRw5zurG+h3H1pxTOu6leer72OZXE8mPRx+1HMvrvrdwRPn+ztW25fNGyzHSuj97EMmPx7zRsu7k+848UmZ7TtVyjLTuzx5E8KNXndle39fcHyq1a/Q9sJ5t215v9BgjyvNIBD961Zn1OqZ0nly6VtnGOo8uve92u9I5+d7v9l4vtetV2/Y+d+/1Xv2gOo8o+6FcV6A9iv2t7IdyXYH2KPa3oh+KdQTGodT/in4o1hEYh1L/K/mhVDfAH4XxoOSHUt0AfxTGg4IfCnUCdPEcHwp+KNQJ0MVzfHj6wbwBZ/AYL55+MG/AGTzGi5cfzBtQy9vAz/Lwg3kDrjBy/ChcnwOosn0GwuN5f4Baej9LcPV5Yp73Bi8ebowauzgCkbijG3d1xJrjvfZRrT2tubMbd3Lk1TpDXvc7rHXBoq2tU2IGN6I7cnT9LTU/onsykxsRHTm7Lp2qHxE9mdGNKI7kXlhroS2F33n/T11pXYhtWyN4MrMbURwBH3DjoyPea0Yp19GRqKzh5T0mie3pjJ60Wvub3D8zeYIXpDZ39gQvSKu09OTdeXu8IL1y1ZP1nozH9nhBRqX2flv+HqO39z5mhBBCCCGEEEIIIYSQduE+OCGv8wenDGZd
+  </data>
+ </layer>
+ <layer name="Ignored" width="200" height="80">
+  <data encoding="base64" compression="zlib">
+   eJzt2zkKACAMBMBU/v/JdpYiRjxw5gWB3S5sBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACuV0wfQyAIAAAAAAAAAAAAAAAAAAIAf9Pb1I9t7+3x2y/ZSZwEAAAAAAN7iv3MPWQAAAAAAAAAAAAAAMyrz1QA9
+  </data>
+ </layer>
+ <objectgroup name="Meta" width="200" height="80">
+  <object name="l_spawn" x="172" y="1804" width="11" height="9"/>
+  <object name="r_spawn" x="6212" y="1800" width="16" height="9"/>
+  <object name="r_base" x="5992" y="1797" width="12" height="12"/>
+  <object name="l_base" x="397" y="1804" width="9" height="9"/>
+  <object name="l_base_tower" x="685" y="1804" width="11" height="11"/>
+  <object name="l_bot_tower" x="1605" y="2087" width="17" height="11"/>
+  <object name="l_top_tower" x="1611" y="1133" width="12" height="9"/>
+  <object name="r_top_tower" x="4780" y="1133" width="9" height="12"/>
+  <object name="r_bot_tower" x="4784" y="2089" width="9" height="9"/>
+  <object name="r_base_tower" x="5707" y="1801" width="11" height="13"/>
+ </objectgroup>
+</map>

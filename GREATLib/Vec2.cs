@@ -167,6 +167,13 @@ namespace GREATLib
 		{
 			return (float)k * rhs;
 		}
+		/// <summary>Binary * operator.</summary>
+		/// <param name="lhs">Left-hand side parameter.</param>
+		/// <param name="rhs">Right-hand side parameter.</param>
+		public static Vec2 operator*(Vec2 lhs, Vec2 rhs)
+		{
+			return new Vec2(lhs.X * rhs.X, lhs.Y * rhs.Y);
+		}
 		/// <summary>Scalar division.</summary>
 		/// <param name="lhs">Left-hand side parameter.</param>
 		/// <param name="k">The scalar.</param>
@@ -177,6 +184,13 @@ namespace GREATLib
 		public static Vec2 operator/(Vec2 lhs, double k)
 		{
 			return lhs / (float)k;
+		}
+		/// <summary>Binary / operator.</summary>
+		/// <param name="lhs">Left-hand side parameter.</param>
+		/// <param name="rhs">Right-hand side parameter.</param>
+		public static Vec2 operator/(Vec2 lhs, Vec2 rhs)
+		{
+			return new Vec2(lhs.X / rhs.X, lhs.Y / rhs.Y);
 		}
 		/// <summary>
 		/// Linear interpolation from a vector to another using a specified factor.

@@ -38,7 +38,7 @@ namespace GREATLib.Entities.Champions
 
 	public enum ChampionTypes
 	{
-		StickMan
+		ManMega
 	}
 
 	public static class ChampionTypesHelper
@@ -46,9 +46,9 @@ namespace GREATLib.Entities.Champions
 		public static SpellTypes GetSpellFromAction(ChampionTypes type, PlayerActionType action)
 		{
 			switch (type) {
-				case ChampionTypes.StickMan:
+				case ChampionTypes.ManMega:
 					switch (action) {
-						case PlayerActionType.Spell1: return SpellTypes.StickManSpell1;
+						case PlayerActionType.Spell3: return SpellTypes.ManMega_RocketRampage;
 					}
 					break;
 
@@ -57,7 +57,7 @@ namespace GREATLib.Entities.Champions
 					break;
 			}
 
-			return SpellTypes.StickManSpell1; // Unknown spell: use one by default
+			return SpellTypes.ManMega_RocketRampage; // Unknown spell: use one by default
 		}
 	}
 }

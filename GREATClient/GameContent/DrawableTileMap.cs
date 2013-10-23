@@ -80,7 +80,6 @@ namespace GREATClient.GameContent
                                  (onImageId / TileSetTilesWidth) * Tile.HEIGHT,
 			                     Tile.WIDTH,
 			                     Tile.HEIGHT);
-
 		}
 
 		public override bool IsBehind(Vector2 position)
