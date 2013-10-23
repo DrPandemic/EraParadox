@@ -26,23 +26,18 @@ namespace GREATLib.Entities.Spells
     {
 		public ICharacter Owner { get; private set; }
 		public SpellTypes Type { get; set; }
-		public float Range { get; set; }
-		public TimeSpan Cooldown { get; set; }
-		public TimeSpan CastingTime { get; set; }
-		public float Damage { get; set; }
+		public SpellInfo Info { get; set; }
 
 		Vec2 StartPosition { get; set; }
 		public bool IsSolid { get; private set; }
 
 		public LinearSpell(ulong id, ICharacter owner, Vec2 position, Vec2 target, SpellTypes type)
 			: base(id, position,
-			       900f, 5f, 5f) //TODO: depend on spell type
+			       SpellsHelper.Info(type).Speed, 
+			       SpellsHelper.Info(type).Width, SpellsHelper.Info(type).Width)
         {
-			//TODO: depend on spell type
-			Range = 350f;
-			Cooldown = SpellsHelper.Cooldown(type);
-			CastingTime = TimeSpan.FromSeconds(0.25);
-			Damage = 10f;
+			Info = SpellsHelper.Info(type);
+
 			IsSolid = true;
 
 			Type = type;
@@ -56,10 +51,6 @@ namespace GREATLib.Entities.Spells
 			LinearSpell s = (LinearSpell)e;
 			base.Clone(s);
 			Type = s.Type;
-			Range = s.Range;
-			Cooldown = s.Cooldown;
-			CastingTime = s.CastingTime;
-			Damage = s.Damage;
 		}
 		public override object Clone()
 		{
@@ -70,7 +61,7 @@ namespace GREATLib.Entities.Spells
 
 		public bool ReachedMaxRange()
 		{
-			return Vec2.DistanceSquared(Position, StartPosition) >= Range * Range;
+			return Vec2.DistanceSquared(Position, StartPosition) >= Info.Range * Info.Range;
 		}
     }
 }

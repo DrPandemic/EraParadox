@@ -246,7 +246,6 @@ namespace GREATClient.Screens
 
 		Vec2 GetTargetWorldPosition()
 		{
-			//TODO: use camera here !
 			return Camera.ToWorld(new Vec2(inputManager.MouseX, inputManager.MouseY));
 		}
 

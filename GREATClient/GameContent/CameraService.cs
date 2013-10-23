@@ -52,6 +52,10 @@ namespace GameContent
 		{
 			return screenPos + WorldPosition;
 		}
+		public Vec2 ToScreen(Vec2 worldPos)
+		{
+			return worldPos - WorldPosition;
+		}
     }
 }
 

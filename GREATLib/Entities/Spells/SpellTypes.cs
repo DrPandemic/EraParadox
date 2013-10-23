@@ -19,38 +19,82 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using System.Collections.Generic;
 
 namespace GREATLib.Entities.Spells
 {
     public enum SpellTypes
     {
-		ManMega_RocketRampage
+		// ManMega
+		ManMega_RocketRampage,
+		ManMega_HintOfASpark
     }
+
+	public enum SpellKind
+	{
+		OffensiveSkillshot,
+		DefensiveSkillshot
+	}
+	public class SpellInfo
+	{
+		public TimeSpan Cooldown { get; private set; }
+		public TimeSpan CastingTime { get; private set; }
+		public float Range { get; private set; }
+		public float Speed { get; private set; }
+		public float Width { get; private set; }
+		public SpellKind Kind { get; private set; }
+		public float Value { get; private set; }
+
+		public SpellInfo(TimeSpan cooldown, TimeSpan cast, float range, float speed, float width, SpellKind kind, float value)
+		{
+			Cooldown = cooldown;
+			CastingTime = cast;
+			Range = range;
+			Speed = speed;
+			Width = width;
+			Kind = kind;
+			Value = value;
+		}
+	}
 
 	public static class SpellsHelper
 	{
-		public static TimeSpan Cooldown(SpellTypes s)
-		{
-			switch (s)
-			{
-				case SpellTypes.ManMega_RocketRampage:
-					return TimeSpan.FromSeconds(1);
+		static Dictionary<SpellTypes, SpellInfo> Spells = FillSpellsInfo();
 
-				default:
-					ILogger.Log("No cooldown implemented for spell " + s + ".");
-					return new TimeSpan();
-			}
+		private static Dictionary<SpellTypes, SpellInfo> FillSpellsInfo()
+		{
+			var d = new Dictionary<SpellTypes, SpellInfo>();
+
+			// ManMega
+			d.Add(SpellTypes.ManMega_RocketRampage, new SpellInfo(
+				TimeSpan.FromSeconds(1), 
+				TimeSpan.FromSeconds(0.2),
+				350f,
+				900f,
+				5f,
+				SpellKind.OffensiveSkillshot,
+				10f
+				));
+			d.Add(SpellTypes.ManMega_HintOfASpark, new SpellInfo(
+				TimeSpan.FromSeconds(5),
+				TimeSpan.FromSeconds(0.15),
+				300f,
+				800f,
+				3f,
+				SpellKind.DefensiveSkillshot,
+				15f
+				));
+
+			return d;
 		}
 
-		public static TimeSpan CastingTime(SpellTypes s)
+		public static SpellInfo Info(SpellTypes s)
 		{
-			switch (s) {
-				case SpellTypes.ManMega_RocketRampage:
-					return TimeSpan.FromSeconds(0.25);
-
-				default:
-					ILogger.Log("No casting time implemented for spell " + s + ".");
-					return new TimeSpan();
+			if (Spells.ContainsKey(s))
+				return Spells[s];
+			else {
+				ILogger.Log("Spell not implemented: " + s + ".");
+				return Spells[SpellTypes.ManMega_RocketRampage]; // just a default value that is not relevant
 			}
 		}
 	}

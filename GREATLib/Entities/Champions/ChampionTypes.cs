@@ -48,7 +48,8 @@ namespace GREATLib.Entities.Champions
 			switch (type) {
 				case ChampionTypes.ManMega:
 					switch (action) {
-						case PlayerActionType.Spell3: return SpellTypes.ManMega_RocketRampage;
+						case PlayerActionType.Spell2: return SpellTypes.ManMega_RocketRampage;
+						case PlayerActionType.Spell4: return SpellTypes.ManMega_HintOfASpark;
 					}
 					break;
 

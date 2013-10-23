@@ -79,7 +79,7 @@ namespace GREATServer.Network
 		{
 			SpellTypes spell = ChampionTypesHelper.GetSpellFromAction(champ, action);
 			return TimeOfLastSpellUse(spell).TotalSeconds +
-				SpellsHelper.CastingTime(spell).TotalSeconds >= Server.Instance.GetTime().TotalSeconds;
+				SpellsHelper.Info(spell).CastingTime.TotalSeconds >= Server.Instance.GetTime().TotalSeconds;
 		}
 		public bool ShouldRespawn()
 		{
@@ -88,7 +88,7 @@ namespace GREATServer.Network
 		public bool IsOnCooldown(SpellTypes spell)
 		{
 			return TimeOfLastSpellUse(spell).TotalSeconds +
-				SpellsHelper.Cooldown(spell).TotalSeconds > Server.Instance.GetTime().TotalSeconds;
+				SpellsHelper.Info(spell).Cooldown.TotalSeconds > Server.Instance.GetTime().TotalSeconds;
 		}
     }
 }

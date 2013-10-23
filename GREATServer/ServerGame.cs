@@ -254,6 +254,7 @@ namespace GREATServer
 				var spell = ChampionTypesHelper.GetSpellFromAction(client.Champion.Type, action.Type);
 				if (client.ChampStats.Alive &&
 				    !client.ChampStats.IsOnCooldown(spell)) { // we're not dead and the spell is not on cooldown
+
 					CastSpell(client.Champion, action);
 					client.ChampStats.UsedSpell(spell);
 				}
@@ -273,7 +274,7 @@ namespace GREATServer
 				champ,
 				champ.GetHandsPosition(),
 				action.Target ?? Vec2.Zero,
-				SpellTypes.ManMega_RocketRampage); //TODO: depend on spell used
+				ChampionTypesHelper.GetSpellFromAction(champ.Type, action.Type)); //TODO: depend on spell used
 
 			Match.CurrentState.AddEntity(spell);
 			ActiveSpells.Add(spell);
@@ -290,8 +291,8 @@ namespace GREATServer
 					float py = copy.Position.Y;
 					float vx = copy.Velocity.X;
 					float vy = copy.Velocity.Y;
-					float cd = (float)copy.Cooldown.TotalSeconds;
-					float range = copy.Range;
+					float cd = (float)copy.Info.Cooldown.TotalSeconds;
+					float range = copy.Info.Range;
 					float width = copy.CollisionWidth;
 
 					msg.Write(id);
@@ -409,7 +410,6 @@ namespace GREATServer
 			// and log it (might be a hacker).
 			if (Vec2.DistanceSquared(player.Position, position) >= MAX_TOLERATED_OFF_DISTANCE * MAX_TOLERATED_OFF_DISTANCE) {
 				position = player.Position;
-				//ILogger.Log("Action " + action.ID + "'s position seems a bit odd. Using the stored server position instead (hacker?). Client will need server correction.", LogPriority.Warning);
 			}
 
 			return position;
@@ -535,10 +535,20 @@ namespace GREATServer
 					var enemyTeam = TeamsHelper.Opposite(s.Owner.Team);
 					foreach (ServerClient client in Clients.Values) {
 						if (client.ChampStats.Alive &&
+						    s.Info.Kind == SpellKind.OffensiveSkillshot &&
 							client.Champion.Team == enemyTeam &&
 						    client.Champion.CreateCollisionRectangle().Intersects(rect)) {
-							client.ChampStats.Hurt(s.Damage);
-							Console.WriteLine("COLLISION. HP: " + client.ChampStats.Health + " / " + client.ChampStats.MaxHealth + " (" + (client.ChampStats.Health / client.ChampStats.MaxHealth * 100f) + "%)");
+
+							client.ChampStats.Hurt(s.Info.Value);
+							remove = true;
+
+						} else if (client.ChampStats.Alive &&
+						           s.Info.Kind == SpellKind.DefensiveSkillshot &&
+						           client.Champion.Team == s.Owner.Team &&
+						           client.Champion.ID != s.Owner.ID &&
+						           client.Champion.CreateCollisionRectangle().Intersects(rect)) {
+						
+							client.ChampStats.Heal(s.Info.Value);
 							remove = true;
 						}
 					}
