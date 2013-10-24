@@ -36,6 +36,13 @@ using System.Runtime.InteropServices;
 
 namespace GREATClient
 {
+	public enum InitSate {
+		Openning,
+		ScreenIniting,
+		GameIniting,
+		GameRunning
+	}
+
 	/// <summary>
 	/// This is the main type for your game
 	/// </summary>
@@ -61,8 +68,11 @@ namespace GREATClient
 		GraphicsDeviceManager graphics;
 		GREATClient.BaseClass.Screen gameplay;
 
-		bool ScreenInitialized { get; set; }
 		bool ScreenResized { get; set; }
+
+		ScreenInfo screenInfo { get; set; }
+
+		InitSate GameState { get; set; }
 
 		/// <summary>
 		/// Gets or sets the fail count.
@@ -81,9 +91,10 @@ namespace GREATClient
 			IsMouseVisible = false;
 			Window.AllowUserResizing = false;
 			graphics.ApplyChanges();
-			ScreenInitialized = false;
 			ScreenResized = false;
 			FailCount = 0;
+			screenInfo = ScreenInfo.GetInfo();
+			GameState = InitSate.Openning;
 		}
 
 		/// <summary>
@@ -93,11 +104,20 @@ namespace GREATClient
 		/// <param name="gameTime">Provides a snapshot of timing values.</param>
 		protected override void Update(GameTime gameTime)
 		{
-			if (!ScreenInitialized) {
+			// Start the screen init.
+			if (GameState == InitSate.Openning) {
 				Window.ClientSizeChanged += OnScreenSizeChanged;
-
-				ScreenInitialized = true;
-
+				SetupScreen();
+				GameState = InitSate.ScreenIniting;
+			} 
+			// Checking that the screen had been really inited.
+			else if (GameState == InitSate.ScreenIniting) {
+				if (Window.ClientBounds.Width == graphics.PreferredBackBufferWidth && Window.ClientBounds.Height == graphics.PreferredBackBufferHeight) {
+					GameState = InitSate.GameIniting;
+				}
+			}
+			// The screen is good, now let's init the game.
+			else if(GameState == InitSate.GameIniting) {
 				Console.WriteLine("Starting client...");
 
 				//gameplay = new TestScreen(Content, this);
@@ -108,11 +128,19 @@ namespace GREATClient
 				Console.WriteLine("Loading game content...");
 
 				gameplay.LoadContent(GraphicsDevice);
+				gameplay.WindowIsReady(true);
+				GameState = InitSate.GameRunning;
+			} else if (GameState == InitSate.GameRunning) {
+				client.Update(gameTime.ElapsedGameTime.TotalSeconds);
 
-				SetupScreen();
+				gameplay.Update(gameTime);
+
+				if(gameplay.Exit)
+					Exit();
 			}
+					
 #if LINUX
-			else if (ScreenResized) {
+			if (ScreenResized && GameState != InitSate.Openning  && GameState != InitSate.ScreenIniting) {
 				// Safety net, I really hate MonoGame (on Linux).
 				if ((!(Window.ClientBounds.Width == graphics.PreferredBackBufferWidth && Window.ClientBounds.Height == graphics.PreferredBackBufferHeight)) || Window.IsResizable()) {
 					if (FailCount > 2000) {
@@ -127,16 +155,7 @@ namespace GREATClient
 				}
 			}
 #endif
-			else {
-				client.Update(gameTime.ElapsedGameTime.TotalSeconds);
-
-				gameplay.Update(gameTime);
-
-				if(gameplay.Exit)
-					Exit();
-
-				base.Update(gameTime);
-			}
+			base.Update(gameTime);
 		}
 
 		void OnScreenSizeChanged(object sender, EventArgs args)
@@ -145,7 +164,6 @@ namespace GREATClient
 			Window.FixBorder();
 #endif
 			Mouse.SetPosition(InputManager.DefaultMouseX, InputManager.DefaultMouseY);
-			gameplay.WindowIsReady(true);
 			ScreenResized = true;
 		}
 
@@ -156,9 +174,9 @@ namespace GREATClient
 		protected override void Draw(GameTime gameTime)
 		{
 			GraphicsDevice.Clear(Color.CornflowerBlue);
-
-			gameplay.Draw();
-
+			if (GameState == InitSate.GameRunning) {
+				gameplay.Draw();
+			}
 			base.Draw(gameTime);
 		}
 
@@ -173,7 +191,7 @@ namespace GREATClient
 		}
 
 		void SetupScreen() {
-			ScreenInfo screenInfo = ScreenInfo.GetInfo();
+			screenInfo = ScreenInfo.GetInfo();
 
 			if (screenInfo.WindowHeight < 480) {
 				screenInfo.WindowHeight = 480;
@@ -200,7 +218,7 @@ namespace GREATClient
 				graphics.PreferredBackBufferHeight = screenInfo.WindowHeight;
 			}
 
-			#if DEBUG
+			/*#if DEBUG
 			screenInfo.WindowWidth = 900;
 			screenInfo.WindowHeight = 700;
 			screenInfo.SaveInfo();
@@ -208,7 +226,7 @@ namespace GREATClient
 			graphics.PreferredBackBufferHeight = screenInfo.WindowHeight;
 
 			graphics.IsFullScreen = false;
-			#endif
+			#endif*/
 
 			graphics.ApplyChanges();
 		}

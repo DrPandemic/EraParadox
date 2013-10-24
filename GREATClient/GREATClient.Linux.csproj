@@ -130,6 +130,7 @@
     <Folder Include="Content\UIObjects\" />
     <Folder Include="Content\background\" />
     <Folder Include="GameContent\Spells\" />
+    <Folder Include="Content\Maps\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -296,6 +297,10 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\manmega_hintofaspark.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Maps\map.json">
+      <Link>Content\Maps\map.json</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
