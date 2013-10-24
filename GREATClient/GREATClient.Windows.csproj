@@ -104,6 +104,8 @@
     <Compile Include="GameContent\DrawableChampionLifeBar.cs" />
     <Compile Include="GameContent\DeathScreen.cs" />
     <Compile Include="GameContent\CameraService.cs" />
+    <Compile Include="GameContent\Spells\Drawable_ManMega_RocketRampage.cs" />
+    <Compile Include="GameContent\Spells\Drawable_ManMega_HintOfASpark.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />
@@ -126,6 +128,7 @@
     <Folder Include="BaseClass\ScreenInformation\" />
     <Folder Include="Content\UIObjects\" />
     <Folder Include="Content\background\" />
+    <Folder Include="GameContent\Spells\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -272,16 +275,19 @@
     <Content Include="Content\background\cloud5.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\megaman.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\bullet.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Content\particle.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\tile.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\manmega.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\manmega_rocketrampage.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\manmega_hintofaspark.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

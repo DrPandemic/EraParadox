@@ -20,6 +20,7 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using GREATLib;
+using GREATLib.Entities.Spells;
 
 namespace GREATClient.Network
 {
@@ -27,6 +28,7 @@ namespace GREATClient.Network
     {
 		public bool Active { get; set; }
 		public ulong ID { get; private set; }
+		public SpellTypes Type { get; private set; }
 		float Time { get; set; }
 		public Vec2 Velocity { get; private set; }
 		public Vec2 Position { get; private set; }
@@ -34,9 +36,10 @@ namespace GREATClient.Network
 		float Width { get; set; }
 		Vec2 StartingPosition { get; set; }
 
-		public ClientLinearSpell(ulong id, Vec2 pos, float time, Vec2 velocity, float range, float width)
+		public ClientLinearSpell(ulong id, SpellTypes type, Vec2 pos, float time, Vec2 velocity, float range, float width)
         {
 			ID = id;
+			Type = type;
 			StartingPosition = pos;
 			Position = StartingPosition;
 			Velocity = velocity;

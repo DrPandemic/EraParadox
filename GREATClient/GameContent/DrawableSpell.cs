@@ -24,47 +24,48 @@ using GREATClient.Network;
 using Microsoft.Xna.Framework;
 using GREATLib;
 using GREATClient.BaseClass.Particle;
+using GREATLib.Entities.Spells;
 
 namespace GREATClient.GameContent
 {
     public class DrawableSpell : Container
     {
-		IDraw Display { get; set; } //TODO: change for image/animation class
-		ParticleSystem Particles;
-		public Color Tint;
+		protected Color Tint { get; set; }
 
-		DrawableImage Bullet { get; set; }
+		Drawable Bullet { get; set; }
 
 		public ClientLinearSpell Spell { get; private set; }
 
-        public DrawableSpell(ClientLinearSpell spell)
+        public DrawableSpell(ClientLinearSpell spell, Drawable bullet)
         {
 			Spell = spell;
-			Tint = Color.Red;
+			Bullet = bullet;
+			Tint = Color.White;
         }
+
+		protected void AddParticlesTrail(int particles, TimeSpan particleLifeTime, Color tint, Action<ParticleSystem> modifySystem = null)
+		{
+			var p = new ParticleSystem(particles, null, particleLifeTime);
+			p.ParticleInitialVelocity = GameLibHelper.ToVector2(-Spell.Velocity);
+			p.Tint = tint;
+			if (modifySystem != null)
+				modifySystem(p);
+			AddChild(p);
+		}
 
 		protected override void OnLoad(Microsoft.Xna.Framework.Content.ContentManager content, Microsoft.Xna.Framework.Graphics.GraphicsDevice gd)
 		{
 			base.OnLoad(content, gd);
-			//AddChild(Display = new DrawableRectangle(new Rect(Spell.Position.X, Spell.Position.Y, 5f, 5f), Color.Cyan) { RelativeOrigin = new Vector2(.5f)});
 
-			Particles = new ParticleSystem(100, null, new TimeSpan(0, 0, 1));
-			Particles.ParticleInitialVelocity = new Vector2(Spell.Velocity.X * -1, Spell.Velocity.Y * -1);
-
-			Particles.Tint = Tint;
-
-			AddChild(Particles);
-
-			AddChild(Bullet = new DrawableImage("bullet") {RelativeOrigin = new Vector2(0.5f,0.5f)});
+			AddChild(Bullet);
+			Bullet.RelativeOrigin = new Vector2(0.5f, 0.5f);
 			Bullet.Orientation = (float)Math.Atan2((double)Spell.Velocity.Y,(double)Spell.Velocity.X);
 		}
 
 		protected override void OnUpdate(GameTime dt)
 		{
 			Spell.Update(dt.ElapsedGameTime.TotalSeconds);
-			//Display.Position = GameLibHelper.ToVector2(Spell.Position);
-			Bullet.Position = GameLibHelper.ToVector2(Spell.Position);
-			Particles.Position = GameLibHelper.ToVector2(Spell.Position);
+			Position = GameLibHelper.ToVector2(Spell.Position);
 			base.OnUpdate(dt);
 
 			//TODO: fade out on particles (but put spell icon invisible) here ?

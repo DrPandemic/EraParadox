@@ -105,6 +105,8 @@
     <Compile Include="GameContent\DeathScreen.cs" />
     <Compile Include="GameContent\DrawableChampionLifeBar.cs" />
     <Compile Include="GameContent\CameraService.cs" />
+    <Compile Include="GameContent\Spells\Drawable_ManMega_RocketRampage.cs" />
+    <Compile Include="GameContent\Spells\Drawable_ManMega_HintOfASpark.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />
@@ -127,6 +129,7 @@
     <Folder Include="BaseClass\ScreenInformation\" />
     <Folder Include="Content\UIObjects\" />
     <Folder Include="Content\background\" />
+    <Folder Include="GameContent\Spells\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -141,6 +144,10 @@
     <ProjectReference Include="..\MonoGame\MonoGame.Framework\MonoGame.Framework.Linux.csproj">
       <Project>{35253CE1-C864-4CD3-8249-4D1319748E8F}</Project>
       <Name>MonoGame.Framework.Linux</Name>
+    </ProjectReference>
+    <ProjectReference Include="GREATClient.Windows.csproj">
+      <Project>{0F19250F-56ED-4ADB-80E1-306C9FFA97C7}</Project>
+      <Name>GREATClient.Windows</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -279,13 +286,16 @@
     <Content Include="Content\background\cloud5.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\megaman.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\bullet.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Content\tile.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\manmega.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\manmega_rocketrampage.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\manmega_hintofaspark.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

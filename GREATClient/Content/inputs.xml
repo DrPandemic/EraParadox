@@ -3,6 +3,10 @@
         <input action="Jump" key="W" state="Pressed" />
         <input action="GoRight" key="D" state="Down" />
         <input action="GoLeft" key="A" state="Down" />
+        <!--<input action="Jump" key="W" state="Pressed" deadKey="Shift" />
+        <input action="GoRight" key="D" state="Down" deadKey="Shift" />
+        <input action="GoLeft" key="A" state="Down" deadKey="Shift" />-->
+        
         <input action="ArrowUp" key="Up" state="Released" />
         <input action="ArrowDown" key="Down" state="Released" />
         <input action="ArrowLeft" key="Left" state="Released" />

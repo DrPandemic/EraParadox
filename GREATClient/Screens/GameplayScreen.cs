@@ -37,6 +37,7 @@ using GREATLib.Entities.Spells;
 using GameContent;
 using System.IO;
 using GREATClient.BaseClass.ScreenInformation;
+using GREATClient.GameContent.Spells;
 
 namespace GREATClient.Screens
 {
@@ -307,9 +308,18 @@ namespace GREATClient.Screens
 		}
 		void OnCastSpell(SpellCastEventData e)
 		{
-			var s = new DrawableSpell(new ClientLinearSpell(e.ID, e.Position, e.Time, e.Velocity, e.Range, e.Width));
+			var s = GetSpellFromType(new ClientLinearSpell(e.ID, e.Type, e.Position, e.Time, e.Velocity, e.Range, e.Width));
 			Spells.Add(e.ID, s);
 			GameWorld.AddChild(s);
+		}
+		DrawableSpell GetSpellFromType(ClientLinearSpell s)
+		{
+			switch (s.Type) {
+				case SpellTypes.ManMega_RocketRampage: return new Drawable_ManMega_RocketRampage(s);
+				case SpellTypes.ManMega_HintOfASpark: return new Drawable_ManMega_HintOfASpark(s);
+
+				default: throw new NotImplementedException("Not spell object for spell " + s.Type);
+			}
 		}
 		void OnRemoveSpell(SpellDisappearEventData e)
 		{
