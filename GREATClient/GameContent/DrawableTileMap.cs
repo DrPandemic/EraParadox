@@ -26,6 +26,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using GREATClient.BaseClass;
 using System.Diagnostics;
+using GREATClient.BaseClass.ScreenInformation;
 
 namespace GREATClient.GameContent
 {
@@ -44,6 +45,8 @@ namespace GREATClient.GameContent
 		string TileSetName { get; set; }
 		int TileSetTilesWidth { get; set; }
 
+		ScreenService Screen { get; set; }
+
 		public DrawableTileMap(TileMap map, string tileset)
         {
 			Map = map;
@@ -55,14 +58,21 @@ namespace GREATClient.GameContent
 			base.OnLoad(content, gd);
 			TileSet = content.Load<Texture2D>(TileSetName);
 			TileSetTilesWidth = TileSet.Width / Tile.WIDTH;
+			Screen = (ScreenService)GetScreen().Services.GetService(typeof(ScreenService));
 		}
 
 		protected override void OnDraw(SpriteBatch batch)
 		{
 			Vector2 position = GetAbsolutePosition();
+
+            int startX = MathHelper.Clamp((int)(-position.X / Tile.WIDTH), 0, Map.GetWidthTiles() - 1);
+			int endX = MathHelper.Clamp((int)((-position.X + Screen.GameWindowSize.X) / Tile.WIDTH) + 1, 0, Map.GetWidthTiles() - 1);
+			int startY = MathHelper.Clamp((int)(-position.Y / Tile.HEIGHT), 0, Map.GetHeightTiles() - 1);
+			int endY = MathHelper.Clamp((int)((-position.Y + Screen.GameWindowSize.Y) / Tile.HEIGHT) + 1, 0, Map.GetHeightTiles() - 1);
+
 			batch.Begin();
-			for (int y = 0; y < Map.GetHeightTiles(); ++y)
-				for (int x = 0; x < Map.GetWidthTiles(); ++x)
+			for (int y = startY; y < endY; ++y)
+				for (int x = startX; x <= endX; ++x)
 					if (Map.TileRows[y][x].Collision != CollisionType.Passable)
 						batch.Draw(TileSet, new Rectangle(
 							(int)(position.X + x * Tile.WIDTH),

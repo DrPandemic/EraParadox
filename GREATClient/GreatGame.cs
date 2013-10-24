@@ -127,16 +127,16 @@ namespace GREATClient
 				}
 			}
 #endif
-			
+			else {
+				client.Update(gameTime.ElapsedGameTime.TotalSeconds);
 
-			client.Update(gameTime.ElapsedGameTime.TotalSeconds);
+				gameplay.Update(gameTime);
 
-			gameplay.Update(gameTime);
+				if(gameplay.Exit)
+					Exit();
 
-			if(gameplay.Exit)
-				Exit();
-
-			base.Update(gameTime);
+				base.Update(gameTime);
+			}
 		}
 
 		void OnScreenSizeChanged(object sender, EventArgs args)
