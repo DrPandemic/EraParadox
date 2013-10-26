@@ -1,1 +1,1 @@
-start GREATServer\bin\Debug\GREATServer.exe
+start /DGREATServer\bin\Debug\ GREATServer.exe

@@ -1,2 +1,2 @@
 cd GREATClient
-start bin\Release\GREATClient.Windows.exe
+start /Dbin\Release\ GREATClient.Windows.exe

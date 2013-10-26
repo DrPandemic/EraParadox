@@ -89,7 +89,7 @@ namespace GREATClient.Screens
 			GameTime = null;
 			TimeSinceLastInputSent = 0.0;
 
-			Match = new GameMatch(Path.Combine("../", MapLoader.MAIN_MAP_PATH));
+			Match = new GameMatch(Path.Combine("Content", MapLoader.MAIN_MAP_PATH));
 			LastStateUpdateData = new List<StateUpdateData>();
 			RemarkableEvents = new List<RemarkableEventData>();
 			Spells = new Dictionary<ulong, DrawableSpell>();
@@ -301,6 +301,11 @@ namespace GREATClient.Screens
 		}
 		void OnChampionDied(ChampionDiedEventData e)
 		{
+			foreach (var champ in Champions) {
+				if (champ.ID == e.ChampID) {
+					champ.ForceCurrentPosition();
+				}
+			}
 			if (OurChampion != null &&
 				e.ChampID == OurChampion.Champion.ID) { // we died
 				DeathScreen.DisplayScreen(e.RespawnTime);

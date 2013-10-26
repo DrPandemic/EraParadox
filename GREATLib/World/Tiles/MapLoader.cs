@@ -67,31 +67,32 @@ namespace GREATLib.World.Tiles
     {
 		class MapObject
 		{
-			public int height;
-			public int width;
-			public int x;
-			public int y;
-			public string name;
+			public int height = 0;
+			public int width = 0;
+			public int x = 0;
+			public int y = 0;
+			public string name = "";
 		}
 		class MapLayer
 		{
-			public List<int> data;
-			public string name;
-			public List<MapObject> objects;
+			public List<int> data = new List<int>();
+			public string name = "";
+			public List<MapObject> objects = new List<MapObject>();
 		}
 		class TileSetObj
 		{
-			public string image;
+			public string image = "";
 		}
 		class Map
 		{
-			public int height;
-			public List<MapLayer> layers;
-			public int width;
-			public List<TileSetObj> tilesets;
+			public int height = 0;
+			public List<MapLayer> layers = new List<MapLayer>();
+			public int width = 0;
+			public List<TileSetObj> tilesets = new List<TileSetObj>();
 		}
 
-		public const string MAIN_MAP_PATH = "Maps/map.json";
+		public const string MAP_FOLDER = "Maps";
+		public static readonly string MAIN_MAP_PATH = Path.Combine(MAP_FOLDER, "map.json");
 		public List<List<Tile>> TileRows { get; private set; }
 		public string TileSet { get; private set; }
 		public MapMetaInfo Meta { get; private set; }

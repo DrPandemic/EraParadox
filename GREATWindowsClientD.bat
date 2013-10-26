@@ -1,2 +1,2 @@
 cd GREATClient
-start bin\Debug\GREATClient.Windows.exe
+start /Dbin\Debug\ GREATClient.Windows.exe

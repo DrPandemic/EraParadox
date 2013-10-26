@@ -61,6 +61,11 @@ namespace GREATClient.Network
 			Position = data.Position;
 		}
 
+		public void ForceCurrentPosition()
+		{
+			DrawnPosition = Position;
+		}
+
 		/// <summary>
 		/// Sets the ID of the last acknowledged action by the server.
 		/// </summary>

@@ -27,6 +27,7 @@ using Microsoft.Xna.Framework;
 using GREATClient.BaseClass;
 using System.Diagnostics;
 using GREATClient.BaseClass.ScreenInformation;
+using System.IO;
 
 namespace GREATClient.GameContent
 {
@@ -56,7 +57,7 @@ namespace GREATClient.GameContent
 		protected override void OnLoad(ContentManager content, GraphicsDevice gd)
 		{
 			base.OnLoad(content, gd);
-			TileSet = content.Load<Texture2D>(TileSetName);
+			TileSet = content.Load<Texture2D>(Path.Combine(MapLoader.MAP_FOLDER, TileSetName));
 			TileSetTilesWidth = TileSet.Width / Tile.WIDTH;
 			Screen = (ScreenService)GetScreen().Services.GetService(typeof(ScreenService));
 		}

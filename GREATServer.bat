@@ -1,1 +1,1 @@
-start GREATServer\bin\Release\GREATServer.exe
+start /DGREATServer\bin\Release\ GREATServer.exe
