@@ -64,6 +64,7 @@
     <Compile Include="Entities\Spells\SpellTypes.cs" />
     <Compile Include="Entities\Teams.cs" />
     <Compile Include="World\Tiles\MapLoader.cs" />
+    <Compile Include="Entities\ILiving.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

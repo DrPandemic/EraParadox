@@ -487,7 +487,7 @@ namespace GREATServer
 				Respawn(client);
 			}
 
-			if (client.ChampStats.HealthChanged) {
+			if (client.ChampStats.GetHealthChangedAndClearFlag()) {
 				AddRemarkableEvent(ServerCommand.StatsChanged,
 				                   (msg) => {
 					msg.Write(client.Champion.ID);
@@ -502,8 +502,6 @@ namespace GREATServer
 						msg.Write((ushort)GetRespawnTime().TotalSeconds);
 					});
 				}
-
-				client.ChampStats.ClearHealthChangedFlag();
 			}
 		}
 		void Respawn(ServerClient client)

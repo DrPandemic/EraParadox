@@ -33,7 +33,7 @@ namespace GREATLib.Entities
 		/// Gets or sets the horizontal acceleration of the entity, which is how much of our horizontal velocity
 		/// we maintain per second.
 		/// </summary>
-		/// <example>0.9 would keep 90% of the entity's X velocity every frame.</example>
+		/// <example>0.9 would keep 90% of the entity's X velocity every second. Note: it is usually, much, much lower (almost 0).</example>
 		public float HorizontalAcceleration { get; set; }
 
 		public ChampionAnimation Animation { get; set; }
