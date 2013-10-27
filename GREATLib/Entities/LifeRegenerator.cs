@@ -40,10 +40,10 @@ namespace GREATLib.Entities
 		/// </summary>
 		public float HealValue { get; private set; }
 
-		private TimeSpan TimeSinceLastHeal;
-		private TimeSpan TimeSinceStart;
+		private TimeSpan TimeSinceLastHeal { get; set; }
+		private TimeSpan TimeSinceStart { get; set; }
 
-		public bool IsDone { get { return !HealDuration.HasValue || 
+		public bool IsDone { get { return HealDuration.HasValue &&
 				TimeSinceStart.TotalSeconds > HealDuration.Value.TotalSeconds; } }
 		private bool ShouldHeal { get { return TimeSinceLastHeal.TotalSeconds > HealTick.TotalSeconds; } }
 
@@ -61,11 +61,16 @@ namespace GREATLib.Entities
 
 		public void Update(TimeSpan dt)
 		{
-			TimeSinceStart += dt;
-			TimeSinceLastHeal += dt;
+			if (!IsDone) {
+				TimeSinceStart += dt;
+				TimeSinceLastHeal += dt;
 
-			if (!IsDone && ShouldHeal) {
-				Entity.Heal(HealValue);
+				if (ShouldHeal) {
+					Entity.Heal(HealValue);
+					TimeSinceLastHeal = TimeSpan.Zero;
+				}
+			} else {
+				TimeSinceStart = TimeSpan.Zero;
 			}
 		}
     }
