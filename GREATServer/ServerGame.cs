@@ -274,7 +274,7 @@ namespace GREATServer
 				champ,
 				champ.GetHandsPosition(),
 				action.Target ?? Vec2.Zero,
-				ChampionTypesHelper.GetSpellFromAction(champ.Type, action.Type)); //TODO: depend on spell used
+				ChampionTypesHelper.GetSpellFromAction(champ.Type, action.Type));
 
 			Match.CurrentState.AddEntity(spell);
 			ActiveSpells.Add(spell);

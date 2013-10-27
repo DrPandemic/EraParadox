@@ -208,24 +208,29 @@ namespace GREATClient.Screens
 			//    our local simulation running.
 			base.OnUpdate(dt); // this is done by the player's drawablechampion
 
-			UpdateHUD();
+			UpdateHUD(dt);
 
 			if (Keyboard.GetState().IsKeyDown(Keys.Escape) && Keyboard.GetState().IsKeyDown(Keys.LeftShift))
 				Exit = true;
 		}
 
-		void UpdateHUD()
+		void UpdateHUD(GameTime dt)
 		{
 			if (OurChampion != null) {
+				// Update the health
 				ChampionState.MaxLife = OurChampion.Champion.MaxHealth;
 				ChampionState.CurrentLife = OurChampion.Champion.Health;
 
+				// Update the camera positionning
 				var screen = (ScreenService)Services.GetService(typeof(ScreenService));
 				Camera.CenterCameraTowards(OurChampion.Champion.GetHandsPosition(),
 				                        screen.GameWindowSize.X, screen.GameWindowSize.Y,
 				                        Match.World.Map.GetWidthTiles() * Tile.WIDTH,
 				                        Match.World.Map.GetHeightTiles() * Tile.HEIGHT);
 				GameWorld.Position = GameLibHelper.ToVector2(-Camera.WorldPosition);
+
+				// Update the cooldowns
+				ChampionState.Update(dt.ElapsedGameTime);
 			}
 		}
 
@@ -316,6 +321,8 @@ namespace GREATClient.Screens
 			var s = GetSpellFromType(new ClientLinearSpell(e.ID, e.Type, e.Position, e.Time, e.Velocity, e.Range, e.Width));
 			Spells.Add(e.ID, s);
 			GameWorld.AddChild(s);
+
+			ChampionState.SetSpellCooldown(e.Type, e.Cooldown);
 		}
 		DrawableSpell GetSpellFromType(ClientLinearSpell s)
 		{

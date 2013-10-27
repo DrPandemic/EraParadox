@@ -126,13 +126,14 @@ namespace GREATClient.Display
 		protected override void OnUpdate(GameTime dt)
 		{
 			SetLifeAndResource();
+			UpdateSpellCooldowns();
 		}
 
 		/// <summary>
 		/// Sets the life and resource.
 		/// Will update the UI bars.
 		/// </summary>
-		void SetLifeAndResource()
+		private void SetLifeAndResource()
 		{
 			Vector2 v = Life.Scale; 
 			v.Y = (float)ChampionState.CurrentLife / ChampionState.MaxLife;
@@ -146,6 +147,11 @@ namespace GREATClient.Display
 			v = Vector2.Lerp(Resource.Scale, v, LERP_SPEED);
 			Resource.Scale = v;
 			ResourceDropShadow.Scale = v;
+		}
+
+		private void UpdateSpellCooldowns()
+		{
+
 		}
     }
 }

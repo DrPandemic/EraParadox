@@ -20,14 +20,18 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace GREATLib.Entities.Spells
 {
+	// Note: It is VERY important that the spell # here is the same as the one in the ChampionTypesHelper.GetSpellFromAction
+	// function.
+	// PLEASE MAKE SURE TO MODIFY THEM AT BOTH PLACES.
     public enum SpellTypes
     {
 		// ManMega
-		ManMega_RocketRampage,
-		ManMega_HintOfASpark
+		ManMega_RocketRampage = SpellsHelper.SPELL_1,
+		ManMega_HintOfASpark = SpellsHelper.SPELL_3
     }
 
 	public enum SpellKind
@@ -45,7 +49,8 @@ namespace GREATLib.Entities.Spells
 		public SpellKind Kind { get; private set; }
 		public float Value { get; private set; }
 
-		public SpellInfo(TimeSpan cooldown, TimeSpan cast, float range, float speed, float width, SpellKind kind, float value)
+		public SpellInfo(TimeSpan cooldown, TimeSpan cast, float range, 
+		                 float speed, float width, SpellKind kind, float value)
 		{
 			Cooldown = cooldown;
 			CastingTime = cast;
@@ -59,6 +64,14 @@ namespace GREATLib.Entities.Spells
 
 	public static class SpellsHelper
 	{
+		public const int SPELL_1 = 1;
+		public const int SPELL_2 = 2;
+		public const int SPELL_3 = 3;
+		public const int SPELL_4 = 4;
+		const int NB_SPELLS = 4;
+		const int MIN_SPELL_NUM = 1;
+		const int MAX_SPELL_NUM = MIN_SPELL_NUM + NB_SPELLS - 1;
+
 		static Dictionary<SpellTypes, SpellInfo> Spells = FillSpellsInfo();
 
 		private static Dictionary<SpellTypes, SpellInfo> FillSpellsInfo()
@@ -96,6 +109,13 @@ namespace GREATLib.Entities.Spells
 				ILogger.Log("Spell not implemented: " + s + ".");
 				return Spells[SpellTypes.ManMega_RocketRampage]; // just a default value that is not relevant
 			}
+		}
+
+		public static int SpellNumber(SpellTypes s)
+		{
+			int num = (int)s;
+			Debug.Assert(num >= MIN_SPELL_NUM && num <= MAX_SPELL_NUM);
+			return num;
 		}
 	}
 }
