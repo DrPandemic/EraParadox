@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using GREATLib.Physics;
 using GREATLib.Entities;
+using GREATLib.Entities.Structures;
 
 namespace GREATLib.Network
 {
@@ -42,6 +43,10 @@ namespace GREATLib.Network
 		public GameWorld World { get; private set; }
 		public MatchState CurrentState { get; set; }
 
+		public TeamStructures LeftStructures { get; private set; }
+		public TeamStructures RightStructures { get; private set; }
+		public List<IStructure> Structures { get; private set; }
+
 		PhysicsEngine Physics { get; set; }
 
 
@@ -50,6 +55,15 @@ namespace GREATLib.Network
 			World = new GameWorld(mapPath);
 			Physics = new PhysicsEngine(World);
 			CurrentState = new MatchState(Physics);
+
+			LeftStructures = new TeamStructures(
+				World.Map.Meta.LeftMeta.BaseTileIds);
+			RightStructures = new TeamStructures(
+				World.Map.Meta.RightMeta.BaseTileIds);
+
+			Structures = new List<IStructure>();
+			LeftStructures.Structures.ForEach(Structures.Add);
+			RightStructures.Structures.ForEach(Structures.Add);
         }
 
 		public void Update(double deltaSeconds)

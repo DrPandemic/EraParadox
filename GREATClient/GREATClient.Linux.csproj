@@ -107,6 +107,7 @@
     <Compile Include="GameContent\CameraService.cs" />
     <Compile Include="GameContent\Spells\Drawable_ManMega_RocketRampage.cs" />
     <Compile Include="GameContent\Spells\Drawable_ManMega_HintOfASpark.cs" />
+    <Compile Include="GameContent\DrawableBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />
@@ -300,6 +301,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Maps\tile.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\lbase.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\rbase.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

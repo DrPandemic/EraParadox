@@ -24,7 +24,7 @@ using GREATLib;
 using System.Collections.Generic;
 using GREATLib.World.Tiles;
 
-namespace GREATServer
+namespace GREATLib.Entities.Structures
 {
     public class TeamStructures
     {

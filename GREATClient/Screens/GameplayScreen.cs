@@ -119,6 +119,8 @@ namespace GREATClient.Screens
 
 			Map = new DrawableTileMap(Match.World.Map, Match.World.Map.TileSet);
 			GameWorld.AddChild(Map);
+			GameWorld.AddChild(new DrawableBase(Teams.Left, Match.LeftStructures.Base));
+			GameWorld.AddChild(new DrawableBase(Teams.Right, Match.RightStructures.Base));
 
 			Client.RegisterCommandHandler(ServerCommand.JoinedGame, OnJoinedGame);
 			Client.RegisterCommandHandler(ServerCommand.NewRemotePlayer, OnNewRemotePlayer);

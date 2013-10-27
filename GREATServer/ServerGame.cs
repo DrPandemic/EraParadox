@@ -53,9 +53,6 @@ namespace GREATServer
 		NetServer NetServer { get; set; }
 		Dictionary<NetConnection, ServerClient> Clients { get; set; }
 		List<LinearSpell> ActiveSpells { get; set; }
-		TeamStructures LeftStructures { get; set; }
-		TeamStructures RightStructures { get; set; }
-		List<IStructure> Structures { get; set; }
 
 		GameMatch Match { get; set; }
 		/// <summary>
@@ -84,15 +81,6 @@ namespace GREATServer
 
 			StateHistory = new SnapshotHistory<MatchState>(HISTORY_MAX_TIME_KEPT);
 			Match = new GameMatch(MapLoader.MAIN_MAP_PATH);
-
-			LeftStructures = new TeamStructures(
-				Match.World.Map.Meta.LeftMeta.BaseTileIds);
-			RightStructures = new TeamStructures(
-				Match.World.Map.Meta.RightMeta.BaseTileIds);
-
-			Structures = new List<IStructure>();
-			LeftStructures.Structures.ForEach(Structures.Add);
-			RightStructures.Structures.ForEach(Structures.Add);
 
 			RemarkableEvents = new List<KeyValuePair<ServerCommand, Action<NetBuffer>>>();
 
@@ -472,7 +460,7 @@ namespace GREATServer
 		}
 		void UpdateStructures(double dt)
 		{
-			Structures.ForEach(s => {
+			Match.Structures.ForEach(s => {
 				s.Update(TimeSpan.FromSeconds(dt));
 
 				//TODO: check for health changes and sync with players, check for game end
@@ -559,7 +547,8 @@ namespace GREATServer
 
 					// Check to hit structures
 					if (!remove) {
-						remove = CheckForSpellStructuresCollisions(s, rect, enemyTeam == Teams.Left ? LeftStructures : RightStructures);
+						remove = CheckForSpellStructuresCollisions(s, rect, 
+                                   enemyTeam == Teams.Left ? Match.LeftStructures : Match.RightStructures);
 					}
 
 					// Check to remove spells
