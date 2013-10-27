@@ -29,6 +29,9 @@ namespace GREATClient.GameContent
 {
     public class DrawableBase : Container
     {
+		const string LEFT_IMAGE = "lbase";
+		const string RIGHT_IMAGE = "rbase";
+
 		private Base Base { get; set; }
 		private Teams Team { get; set; }
 
@@ -36,12 +39,17 @@ namespace GREATClient.GameContent
         {
 			Base = theBase;
 			Team = team;
+
+			Position = new Vector2(theBase.Rectangle.X + theBase.Rectangle.Width / 2f,
+			                       theBase.Rectangle.Bottom);
         }
 		protected override void OnLoad(Microsoft.Xna.Framework.Content.ContentManager content, Microsoft.Xna.Framework.Graphics.GraphicsDevice gd)
 		{
 			base.OnLoad(content, gd);
 
-			AddChild(new DrawableRectangle(Base.Rectangle, Team == Teams.Left ? Color.Red : Color.Blue));
+			AddChild(new DrawableImage(Team == Teams.Left ? LEFT_IMAGE : RIGHT_IMAGE) {
+				RelativeOrigin = new Vector2(0.5f, 1.0f)
+			});
 		}
     }
 }

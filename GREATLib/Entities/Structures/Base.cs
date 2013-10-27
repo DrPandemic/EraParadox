@@ -28,7 +28,7 @@ namespace GREATLib.Entities.Structures
 		private const float WIDTH = 100f;
 		private const float HEIGHT = 100f;
 
-		private static readonly TimeSpan RegenTick = TimeSpan.FromSeconds(15.0);
+		private static readonly TimeSpan RegenTick = TimeSpan.FromSeconds(20.0);
 		private const float HEALTH_REGEN = 1f;
 
 		private LifeRegenerator Regen { get; set; }
