@@ -111,8 +111,6 @@ namespace GameContent
 			Spell2.TimeLeft -= dt;
 			Spell3.TimeLeft -= dt;
 			Spell4.TimeLeft -= dt;
-
-			Console.WriteLine(Spell1.TimeLeft.TotalSeconds);
 		}
     }
 }

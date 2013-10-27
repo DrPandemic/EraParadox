@@ -1,5 +1,5 @@
 //
-//  IStructure.cs
+//  TeamStructures.cs
 //
 //  Author:
 //       Jesse <jesse.emond@hotmail.com>
@@ -19,21 +19,28 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using GREATLib.Entities.Structures;
+using GREATLib;
+using System.Collections.Generic;
+using GREATLib.World.Tiles;
 
-namespace GREATLib.Entities.Structures
+namespace GREATServer
 {
-    public class IStructure : ILiving
+    public class TeamStructures
     {
-		public Rect Rectangle { get; private set; }
+		public List<IStructure> Structures { get; private set; }
+		public Base Base { get; private set; }
 
-        public IStructure(float maxhp, Rect rectangle)
-			: base(maxhp)
+        public TeamStructures(Vec2 baseTileIds)
         {
-			Rectangle = rectangle;
+			Base = new Base(GetFeetPosForStructure(baseTileIds));
+
+			Structures = Utilities.MakeList<IStructure>(Base); //TODO: fill this
         }
 
-		public virtual void Update(TimeSpan dt)
+		private static Vec2 GetFeetPosForStructure(Vec2 tileIds)
 		{
+			return tileIds * new Vec2(Tile.WIDTH, Tile.HEIGHT) + new Vec2(Tile.WIDTH / 2f, Tile.HEIGHT);
 		}
     }
 }

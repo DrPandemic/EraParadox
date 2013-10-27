@@ -33,19 +33,20 @@ namespace GREATLib.Entities.Structures
 
 		private LifeRegenerator Regen { get; set; }
 
-        public Base(Vec2 centerPos)
+        public Base(Vec2 feetPos)
 			: base(HEALTH,
-			       new Rect(centerPos.X - WIDTH / 2f,
-			         		centerPos.X + WIDTH / 2f,
-			         		centerPos.Y - HEIGHT / 2f,
-			         		centerPos.Y + HEIGHT / 2f))
+			       new Rect(
+					feetPos.X - WIDTH / 2f,
+					feetPos.Y - HEIGHT,
+			        WIDTH,
+			        HEIGHT))
         {
 			Regen = new LifeRegenerator(this,
 			                            null,
 			                            RegenTick, HEALTH_REGEN);
         }
 
-		public void Update(TimeSpan dt)
+		public override void Update(TimeSpan dt)
 		{
 			Regen.Update(dt);
 		}

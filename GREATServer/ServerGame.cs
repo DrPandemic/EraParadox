@@ -32,6 +32,7 @@ using GREATLib.Entities.Spells;
 using GREATLib.Physics;
 using System.IO;
 using GREATLib.World.Tiles;
+using GREATLib.Entities.Structures;
 
 namespace GREATServer
 {
@@ -52,6 +53,9 @@ namespace GREATServer
 		NetServer NetServer { get; set; }
 		Dictionary<NetConnection, ServerClient> Clients { get; set; }
 		List<LinearSpell> ActiveSpells { get; set; }
+		TeamStructures LeftStructures { get; set; }
+		TeamStructures RightStructures { get; set; }
+		List<IStructure> Structures { get; set; }
 
 		GameMatch Match { get; set; }
 		/// <summary>
@@ -80,6 +84,16 @@ namespace GREATServer
 
 			StateHistory = new SnapshotHistory<MatchState>(HISTORY_MAX_TIME_KEPT);
 			Match = new GameMatch(MapLoader.MAIN_MAP_PATH);
+
+			LeftStructures = new TeamStructures(
+				Match.World.Map.Meta.LeftMeta.BaseTileIds);
+			RightStructures = new TeamStructures(
+				Match.World.Map.Meta.RightMeta.BaseTileIds);
+
+			Structures = new List<IStructure>();
+			LeftStructures.Structures.ForEach(Structures.Add);
+			RightStructures.Structures.ForEach(Structures.Add);
+
 			RemarkableEvents = new List<KeyValuePair<ServerCommand, Action<NetBuffer>>>();
 
 			TimeSinceLastCorrection = 0.0;
@@ -454,6 +468,15 @@ namespace GREATServer
 		{
 			UpdateSpells(dt);
 			UpdateChampions(dt);
+			UpdateStructures(dt);
+		}
+		void UpdateStructures(double dt)
+		{
+			Structures.ForEach(s => {
+				s.Update(TimeSpan.FromSeconds(dt));
+
+				//TODO: check for health changes and sync with players, check for game end
+			});
 		}
 		void UpdateChampions(double dt)
 		{
@@ -525,34 +548,22 @@ namespace GREATServer
 				Vec2 pass = (s.Position - before) / PhysicsEngine.PHYSICS_PASSES;
 
 				s.Position = before;
-				bool remove = false;
 				for (int i = 0; i < PhysicsEngine.PHYSICS_PASSES; ++i) {
 
 					// Check for entities collisions
 					var rect = s.CreateCollisionRectangle();
 					var enemyTeam = TeamsHelper.Opposite(s.Owner.Team);
-					foreach (ServerClient client in Clients.Values) {
-						if (client.ChampStats.Alive &&
-						    s.Info.Kind == SpellKind.OffensiveSkillshot &&
-							client.Champion.Team == enemyTeam &&
-						    client.Champion.CreateCollisionRectangle().Intersects(rect)) {
 
-							client.ChampStats.Hurt(s.Info.Value);
-							remove = true;
+					// Check to hit players
+					bool remove = CheckForSpellPlayerCollisions(s, rect, enemyTeam);
 
-						} else if (client.ChampStats.Alive &&
-						           s.Info.Kind == SpellKind.DefensiveSkillshot &&
-						           client.Champion.Team == s.Owner.Team &&
-						           client.Champion.ID != s.Owner.ID &&
-						           client.Champion.CreateCollisionRectangle().Intersects(rect)) {
-						
-							client.ChampStats.Heal(s.Info.Value);
-							remove = true;
-						}
+					// Check to hit structures
+					if (!remove) {
+						remove = CheckForSpellStructuresCollisions(s, rect, enemyTeam == Teams.Left ? LeftStructures : RightStructures);
 					}
 
 					// Check to remove spells
-					if (!remove && // don't check if we know it has to be removed
+					if (!remove && // don't check if we know it already has to be removed
 					   Match.CurrentState.SpellShouldDisappear(s)) {
 						remove = true;
 					}
@@ -577,6 +588,48 @@ namespace GREATServer
 					msg.Write(id);
 				}));
 			});
+		}
+
+		bool CheckForSpellStructuresCollisions(LinearSpell spell, Rect spellRect, TeamStructures structures)
+		{
+			foreach (IStructure structure in structures.Structures) {
+				if (structure.Alive && // not a destroyed target
+					spell.Info.Kind == SpellKind.OffensiveSkillshot && // offensive spell
+					structure.Rectangle.Intersects(spellRect)) { // we hit it
+
+					structure.Hurt(spell.Info.Value); // we hurt it
+
+					Console.WriteLine(structure.Health);
+					return true;
+				}
+			}
+
+			return false;
+		}
+		bool CheckForSpellPlayerCollisions(LinearSpell spell, Rect spellRect, Teams enemyTeam)
+		{
+			foreach (ServerClient client in Clients.Values) { // check for collisions with players
+				// With ennemies
+				if (client.ChampStats.Alive && // not a dead target
+				    spell.Info.Kind == SpellKind.OffensiveSkillshot && // offensive spell
+				    client.Champion.Team == enemyTeam && // against an ennemy
+				    client.Champion.CreateCollisionRectangle().Intersects(spellRect)) { // we hit him
+
+					client.ChampStats.Hurt(spell.Info.Value); // we hurt him
+					return true;
+				}
+				// With allies
+				else if (client.ChampStats.Alive && // not a dead target
+				         spell.Info.Kind == SpellKind.DefensiveSkillshot && // deffensive spell
+				         client.Champion.Team == spell.Owner.Team &&  // on an ally
+				         client.Champion.ID != spell.Owner.ID && // that is NOT us
+				         client.Champion.CreateCollisionRectangle().Intersects(spellRect)) { // we hit him
+
+					client.ChampStats.Heal(spell.Info.Value); // we heal him
+					return true;
+				}
+			}
+			return false;
 		}
 
 		/// <summary>

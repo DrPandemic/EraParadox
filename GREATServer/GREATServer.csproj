@@ -56,6 +56,7 @@
     <Compile Include="ServerClient.cs" />
     <Compile Include="Network\ServerChampion.cs" />
     <Compile Include="Network\ChampionStats.cs" />
+    <Compile Include="TeamStructures.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
