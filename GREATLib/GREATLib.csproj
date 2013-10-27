@@ -65,6 +65,9 @@
     <Compile Include="Entities\Teams.cs" />
     <Compile Include="World\Tiles\MapLoader.cs" />
     <Compile Include="Entities\ILiving.cs" />
+    <Compile Include="Entities\Structures\IStructure.cs" />
+    <Compile Include="Entities\Structures\Base.cs" />
+    <Compile Include="Entities\LifeRegenerator.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -75,5 +78,6 @@
     <Folder Include="Network\" />
     <Folder Include="Entities\Champions\" />
     <Folder Include="Entities\Spells\" />
+    <Folder Include="Entities\Structures\" />
   </ItemGroup>
 </Project>

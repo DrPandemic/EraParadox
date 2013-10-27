@@ -28,6 +28,7 @@ namespace GREATLib.Entities
 		public float MaxHealth { get; private set; }
 		public bool Alive { get { return Health > 0f; } }
 		private bool HealthChanged { get; set; }
+		public bool IsFullHealth { get { return Health == MaxHealth; } }
 
         public ILiving(float maxhp)
         {
@@ -46,10 +47,10 @@ namespace GREATLib.Entities
 		}
 		public void SetHealth(float amount)
 		{
+			Health = Math.Min(MaxHealth, Math.Max(0f, amount));
 			if (amount != Health) {
 				HealthChanged = true;
 			}
-			Health = Math.Min(MaxHealth, Math.Max(0f, amount));
 		}
 		/// <summary>
 		/// Gets whether the health recently changed or not, clearing the flag
