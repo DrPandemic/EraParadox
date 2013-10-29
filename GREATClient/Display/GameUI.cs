@@ -82,7 +82,7 @@ namespace GREATClient.Display
 			AddChild(Life);
 			Resource = new DrawableImage("UIObjects/mana");
 			Resource.RelativeOrigin = new Vector2(0f,1f);
-			AddChild(Resource);
+			//AddChild(Resource);
 
 			MoneyBackground = new DrawableImage("UIObjects/boxBackground");
 			AddChild(MoneyBackground);
@@ -99,10 +99,12 @@ namespace GREATClient.Display
 		{
 			Map.SetPositionRelativeToScreen(ScreenBound.BottomRight, 
 			                                new Vector2(- Map.Texture.Width - 10, - Map.Texture.Height - 10));
-			Resource.SetPositionRelativeToObject(Map, new Vector2(-Resource.Texture.Width - 8, 
-			                                                   Map.Texture.Height - 8), false);
-			Life.SetPositionRelativeToObject(Resource, new Vector2(-Life.Texture.Width - 8, 
-			                                                   0), false);
+			//Resource.SetPositionRelativeToObject(Map, new Vector2(-Resource.Texture.Width - 8, 
+			                                                 //  Map.Texture.Height - 8), false);
+			Life.SetPositionRelativeToObject(Map, new Vector2(-Life.Texture.Width - 8, 
+			                                                    Map.Texture.Height - 8), false);
+			/*Life.SetPositionRelativeToObject(Resource, new Vector2(-Life.Texture.Width - 8, 
+			                                                       0), false);*/
 
 			ResourceDropShadow.SetPositionRelativeToObject(Resource, new Vector2(0,5), false);
 			LifeDropshadow.SetPositionRelativeToObject(Life, new Vector2(0,5), false);
