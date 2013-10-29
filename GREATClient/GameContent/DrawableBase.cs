@@ -25,6 +25,7 @@ using GREATLib.Entities.Structures;
 using GREATLib.Entities;
 using Microsoft.Xna.Framework;
 using GREATClient.BaseClass.BaseAction;
+using GREATClient.BaseClass.Particle;
 
 namespace GREATClient.GameContent
 {
@@ -58,6 +59,9 @@ namespace GREATClient.GameContent
 					Position = new Vector2(-70,-85)};
 				AddChild(gear);
 				gear.PerformAction(new ActionSequence(ActionSequence.INFINITE_SEQUENCE, new ActionRotateBy(new TimeSpan(0, 0, 1), 20, false)));
+
+				AddChild(new SmokeSystem() {Position = new Vector2(-80,-180)});
+				AddChild(new SmokeSystem() {Position = new Vector2(-13,-160)});
 			}
 		}
     }
