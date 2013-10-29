@@ -228,8 +228,6 @@ namespace GREATClient
 			graphics.IsFullScreen = false;
 			#endif*/
 
-			graphics.SynchronizeWithVerticalRetrace = true;
-
 			graphics.ApplyChanges();
 		}
 	}

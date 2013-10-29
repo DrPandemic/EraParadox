@@ -22,31 +22,49 @@ using System;
 using GREATClient.BaseClass.Menu;
 using GREATClient.BaseClass;
 using Microsoft.Xna.Framework;
+using GameContent;
 
 namespace GREATClient.Display
 {
     public class SpellMenuItem : MenuItem
     {
-		public SpellMenuItem() : base(new DrawableImage("UIObjects/spellBox"),
+		static float NORMAL_WIDTH = 45f;
+
+		private SpellCastInfo Info { get; set; }
+
+		private DrawableRectangle CoolDown { get; set; }
+
+
+
+		public SpellMenuItem(SpellCastInfo info) : base(new DrawableImage("UIObjects/spellBox"),
 		                              new DrawableImage("UIObjects/spellBox"),
 		                              new DrawableImage("UIObjects/spellBox"))
         {
 			Clickable = false;
-			StateClicking.Position = new Vector2(2, 2);
+			//StateClicking.Position = new Vector2(2, 2);
 			AddChild(new DrawableImage("UIObjects/spellBoxDropShadow"){Position = new Vector2(2,2)},0);
 
-			ClickAction = () => Cast();
+			//ClickAction = () => Cast();
+
+			Info = info;
+
+			CoolDown = new DrawableRectangle(new Rectangle((int)NORMAL_WIDTH/2, (int)NORMAL_WIDTH, (int)NORMAL_WIDTH, (int)NORMAL_WIDTH), Color.Aqua);
+			CoolDown.RelativeOrigin = new Vector2(0.5f,1f);
+			CoolDown.Alpha = 0.3f;
+			AddChild(CoolDown,2);
         }
 
-		public void SetSpell()
+		protected override void OnUpdate(GameTime dt)
 		{
-
+			if(Info.TimeLeft.Ticks <= 0) {
+				CoolDown.Size = new Vector2(1f);
+			} else {
+				CoolDown.Size = new Vector2(NORMAL_WIDTH,NORMAL_WIDTH*Info.TimeLeft.Ticks/Info.Cooldown.Ticks);
+			}
+			base.OnUpdate(dt);
 		}
 
-		public void Cast()
-		{
-
-		}
+		public void Cast() {}
     }
 }
 

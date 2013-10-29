@@ -25,6 +25,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using GREATClient.BaseClass.Input;
+using GameContent;
 
 namespace GREATClient.Display
 {
@@ -35,12 +36,12 @@ namespace GREATClient.Display
 		SpellMenuItem Spell3Item { get; set; }
 		SpellMenuItem Spell4Item { get; set; }
 
-        public SpellMenu()
+		public SpellMenu(CurrentChampionState state)
         {
-			Spell1Item = new SpellMenuItem();
-			Spell2Item = new SpellMenuItem();
-			Spell3Item = new SpellMenuItem();
-			Spell4Item = new SpellMenuItem();
+			Spell1Item = new SpellMenuItem(state.Spell1);
+			Spell2Item = new SpellMenuItem(state.Spell2);
+			Spell3Item = new SpellMenuItem(state.Spell3);
+			Spell4Item = new SpellMenuItem(state.Spell4);
 
 			AddItem(Spell1Item);
 			AddItem(Spell2Item);

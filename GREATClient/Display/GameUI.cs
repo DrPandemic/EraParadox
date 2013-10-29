@@ -84,8 +84,6 @@ namespace GREATClient.Display
 			Resource.RelativeOrigin = new Vector2(0f,1f);
 			AddChild(Resource);
 
-
-
 			MoneyBackground = new DrawableImage("UIObjects/boxBackground");
 			AddChild(MoneyBackground);
 			/*ObjectBackground = new DrawableImage("UIObjects/boxBackground");
@@ -93,7 +91,7 @@ namespace GREATClient.Display
 			StatBackground = new DrawableImage("UIObjects/boxBackground");
 			AddChild(StatBackground);*/
 
-			UISpellMenu = new SpellMenu();
+			UISpellMenu = new SpellMenu(ChampionState);
 			AddChild(UISpellMenu,3);
         }
 
