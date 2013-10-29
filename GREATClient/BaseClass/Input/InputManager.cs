@@ -154,7 +154,7 @@ namespace GREATClient.BaseClass.Input
 						// The type of key state.
 						case KeyState.Up:
 							// Makes sure it is in the good state.
-							if (keyboardState.IsKeyUp(action.Value.KeyboardKey) && CheckDeadKey(keyboardState, action.Value.DeadKey)) {
+							if (keyboardState.IsKeyUp(action.Value.KeyboardKey) && (!action.Value.Sensitive || CheckDeadKey(keyboardState, action.Value.DeadKey))) {
 								if (InputEvents.ContainsKey(action.Key)) {
 									InputEvents[action.Key](this, new InputEventArgs());
 								}
@@ -163,7 +163,7 @@ namespace GREATClient.BaseClass.Input
 							}
 						break;
 						case KeyState.Down:
-							if (keyboardState.IsKeyDown(action.Value.KeyboardKey) && CheckDeadKey(keyboardState,action.Value.DeadKey)) {
+							if (keyboardState.IsKeyDown(action.Value.KeyboardKey) && (!action.Value.Sensitive ||CheckDeadKey(keyboardState,action.Value.DeadKey))) {
 								if (InputEvents.ContainsKey(action.Key)) {
 									InputEvents[action.Key](this, new InputEventArgs());
 								}
@@ -172,7 +172,7 @@ namespace GREATClient.BaseClass.Input
 						break;
 						case KeyState.Pressed:
 							if (keyboardState.IsKeyDown(action.Value.KeyboardKey) && OldKeyboard.IsKeyUp(action.Value.KeyboardKey) && 
-							    CheckDeadKey(keyboardState,action.Value.DeadKey)) 
+							    (!action.Value.Sensitive ||CheckDeadKey(keyboardState,action.Value.DeadKey))) 
 							{
 								if (InputEvents.ContainsKey(action.Key)) {
 									InputEvents[action.Key](this, new InputEventArgs());
@@ -182,7 +182,7 @@ namespace GREATClient.BaseClass.Input
 						break;
 						case KeyState.Released:
 							if (keyboardState.IsKeyUp(action.Value.KeyboardKey) && OldKeyboard.IsKeyDown(action.Value.KeyboardKey) && 
-							    CheckDeadKey(keyboardState,action.Value.DeadKey)) 
+							    (!action.Value.Sensitive ||CheckDeadKey(keyboardState,action.Value.DeadKey)))
 							{
 								if (InputEvents.ContainsKey(action.Key)) {
 									InputEvents[action.Key](this, new InputEventArgs());
@@ -221,7 +221,7 @@ namespace GREATClient.BaseClass.Input
 
 			if (inputState.MouseKey != MouseKeys.None) {
 				// Start with dead key.
-				if (CheckDeadKey(keyboardState,inputState.DeadKey)) {				
+				if (!inputState.Sensitive || CheckDeadKey(keyboardState,inputState.DeadKey)) {				
 					// Manage wheel mouvement.
 					if (inputState.MouseKey == MouseKeys.WheelDown) {
 						if (mouseState.ScrollWheelValue < OldMouse.ScrollWheelValue) {

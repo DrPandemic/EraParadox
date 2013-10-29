@@ -16,12 +16,12 @@
         <input action="Escape" key="Escape" state="Released" />
     </keyboardInputs>
     <MouseInputs>
-        <input action="Spell1" key="Left" state="Pressed" />
-        <input action="Spell2" key="Right" state="Pressed" />
-        <input action="Spell3" key="Left" state="Pressed" deadKey="Shift"/>
-        <input action="Spell4" key="Right" state="Pressed" deadKey="Shift"/>
-        <input action="LeftClick" key="Left" state="Released" />
-        <input action="LeftPressed" key="Left" state="Pressed" />
-        <input action="RightClick" key="Right" state="Released" />
+        <input action="Spell1" key="Left" state="Pressed" sensitive="true" />
+        <input action="Spell2" key="Right" state="Pressed" sensitive="true"/>
+        <input action="Spell3" key="Left" state="Pressed" deadKey="Shift" sensitive="true"/>
+        <input action="Spell4" key="Right" state="Pressed" deadKey="Shift" sensitive="true"/>
+        <input action="LeftClick" key="Left" state="Released" sensitive="true"/>
+        <input action="LeftPressed" key="Left" state="Pressed" sensitive="true"/>
+        <input action="RightClick" key="Right" state="Released" sensitive="true"/>
     </MouseInputs>
 </inputCollection>
