@@ -80,6 +80,8 @@ namespace GREATClient.Screens
 
 		DeathScreen DeathScreen { get; set; }
 
+		Parallax Parallax { get; set; }
+
         public GameplayScreen(ContentManager content, Game game, Client client)
 			: base(content, game)
         {
@@ -99,6 +101,8 @@ namespace GREATClient.Screens
 			GameWorld = new Container();
 			Camera = new CameraService();
 			Services.AddService(typeof(CameraService), Camera);
+
+			Parallax = new Parallax();
         }
 
 		protected override void OnLoadContent()
@@ -115,7 +119,7 @@ namespace GREATClient.Screens
 			         3);
 
 			AddChild(DeathScreen = new DeathScreen(),4);
-			AddChild(GameWorld);
+			AddChild(GameWorld,1);
 
 			Map = new DrawableTileMap(Match.World.Map, Match.World.Map.TileSet);
 			GameWorld.AddChild(Map);
@@ -125,6 +129,8 @@ namespace GREATClient.Screens
 			Client.RegisterCommandHandler(ServerCommand.JoinedGame, OnJoinedGame);
 			Client.RegisterCommandHandler(ServerCommand.NewRemotePlayer, OnNewRemotePlayer);
 			Client.RegisterCommandHandler(ServerCommand.StateUpdate, OnStateUpdate);
+
+			AddChild(Parallax,0);
 		}
 
 		void OnStateUpdate(object sender, CommandEventArgs args)
@@ -212,6 +218,8 @@ namespace GREATClient.Screens
 
 			UpdateHUD(dt);
 
+			UpdateParallax();
+
 			if (Keyboard.GetState().IsKeyDown(Keys.Escape) && Keyboard.GetState().IsKeyDown(Keys.LeftShift))
 				Exit = true;
 		}
@@ -234,6 +242,12 @@ namespace GREATClient.Screens
 				// Update the cooldowns
 				ChampionState.Update(dt.ElapsedGameTime);
 			}
+		}
+
+		void UpdateParallax() {
+			Parallax.SetCurrentRatio(Camera.WorldPosition.X/(Match.World.Map.GetWidthTiles()*Tile.WIDTH) * 80,
+			                         Camera.WorldPosition.Y/(Match.World.Map.GetHeightTiles()*Tile.HEIGHT) * 100);
+
 		}
 
 		/// <summary>
