@@ -25,8 +25,8 @@ namespace GREATLib.Entities.Structures
     public class Base : IStructure
     {
 		private const float HEALTH = 250f;
-		private const float WIDTH = 100f;
-		private const float HEIGHT = 100f;
+		private const float WIDTH = 200f;
+		private const float HEIGHT = 200f;
 
 		private static readonly TimeSpan RegenTick = TimeSpan.FromSeconds(20.0);
 		private const float HEALTH_REGEN = 1f;

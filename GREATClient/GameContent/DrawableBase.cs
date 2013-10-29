@@ -24,6 +24,7 @@ using GREATLib;
 using GREATLib.Entities.Structures;
 using GREATLib.Entities;
 using Microsoft.Xna.Framework;
+using GREATClient.BaseClass.BaseAction;
 
 namespace GREATClient.GameContent
 {
@@ -49,7 +50,15 @@ namespace GREATClient.GameContent
 
 			AddChild(new DrawableImage(Team == Teams.Left ? LEFT_IMAGE : RIGHT_IMAGE) {
 				RelativeOrigin = new Vector2(0.5f, 1.0f)
-			});
+			},2);
+			// Add the gear and smoke.
+			if (Team == Teams.Left) {
+				DrawableImage gear = new DrawableImage("gearnexus") {
+					RelativeOrigin = new Vector2(0.5f),
+					Position = new Vector2(-70,-85)};
+				AddChild(gear);
+				gear.PerformAction(new ActionSequence(ActionSequence.INFINITE_SEQUENCE, new ActionRotateBy(new TimeSpan(0, 0, 1), 20, false)));
+			}
 		}
     }
 }
