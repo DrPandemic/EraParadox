@@ -107,6 +107,7 @@
     <Compile Include="GameContent\Spells\Drawable_ManMega_RocketRampage.cs" />
     <Compile Include="GameContent\Spells\Drawable_ManMega_HintOfASpark.cs" />
     <Compile Include="GameContent\DrawableBase.cs" />
+    <Compile Include="BaseClass\Particle\SmokeSystem.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />
