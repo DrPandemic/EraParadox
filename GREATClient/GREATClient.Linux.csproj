@@ -110,6 +110,7 @@
     <Compile Include="GameContent\Spells\Drawable_ManMega_HintOfASpark.cs" />
     <Compile Include="GameContent\DrawableBase.cs" />
     <Compile Include="BaseClass\Particle\SmokeSystem.cs" />
+    <Compile Include="GameContent\DrawableBaseLifeBar.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />

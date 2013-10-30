@@ -37,6 +37,8 @@ namespace GREATClient.GameContent
 		private Base Base { get; set; }
 		private Teams Team { get; set; }
 
+		DrawableBaseLifeBar LifeBar { get; set; }
+
         public DrawableBase(Teams team, Base theBase)
         {
 			Base = theBase;
@@ -44,6 +46,12 @@ namespace GREATClient.GameContent
 
 			Position = new Vector2(theBase.Rectangle.X + theBase.Rectangle.Width / 2f,
 			                       theBase.Rectangle.Bottom);
+
+			//Jesse vient mettre de quoi d'intélligent ici parce que je trouve pas :P thx
+			LifeBar = new DrawableBaseLifeBar(true) { 
+				Position = new Vector2(0f,-150f),
+				MaxHealth = theBase.MaxHealth,
+				Health = theBase.Health };
         }
 		protected override void OnLoad(Microsoft.Xna.Framework.Content.ContentManager content, Microsoft.Xna.Framework.Graphics.GraphicsDevice gd)
 		{
@@ -63,6 +71,19 @@ namespace GREATClient.GameContent
 				AddChild(new SmokeSystem() {Position = new Vector2(-80,-180)});
 				AddChild(new SmokeSystem() {Position = new Vector2(-13,-160)});
 			}
+
+			//Add the life bar
+			AddChild(LifeBar,3);
+		}
+
+		protected override void OnUpdate(GameTime dt)
+		{
+			//Update life bar
+			LifeBar.MaxHealth = Base.MaxHealth;
+			LifeBar.Health = Base.Health;
+			LifeBar.Visible = Base.Alive;
+
+			base.OnUpdate(dt);
 		}
     }
 }
