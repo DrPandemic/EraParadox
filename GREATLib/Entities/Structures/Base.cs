@@ -33,8 +33,8 @@ namespace GREATLib.Entities.Structures
 
 		private LifeRegenerator Regen { get; set; }
 
-        public Base(Vec2 feetPos)
-			: base(HEALTH,
+        public Base(Teams team, Vec2 feetPos)
+			: base(HEALTH, StructureTypes.Base, team,
 			       new Rect(
 					feetPos.X - WIDTH / 2f,
 					feetPos.Y - HEIGHT,

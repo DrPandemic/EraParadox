@@ -1,10 +1,10 @@
 //
-//  TeamStructures.cs
+//  DrawableStructure.cs
 //
 //  Author:
-//       Jesse <jesse.emond@hotmail.com>
+//       HPSETUP3 <${AuthorEmail}>
 //
-//  Copyright (c) 2013 Jesse
+//  Copyright (c) 2013 HPSETUP3
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -20,28 +20,23 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using GREATLib.Entities.Structures;
-using GREATLib;
-using System.Collections.Generic;
-using GREATLib.World.Tiles;
+using GREATLib.Entities;
+using GREATClient.BaseClass;
 
-namespace GREATLib.Entities.Structures
+namespace GREATClient.GameContent
 {
-    public class TeamStructures
+    public class DrawableStructure : Container
     {
-		public List<IStructure> Structures { get; private set; }
-		public Base Base { get; private set; }
+		public StructureTypes Type { get; private set; }
+		public Teams Team { get; private set; }
+		public IStructure Structure { get; private set; }
 
-        public TeamStructures(Teams team, Vec2 baseTileIds)
+        public DrawableStructure(Teams team, StructureTypes type, IStructure structure)
         {
-			Base = new Base(team, GetFeetPosForStructure(baseTileIds));
-
-			Structures = Utilities.MakeList<IStructure>(Base); //TODO: fill this
+			Type = type;
+			Team = team;
+			Structure = structure;
         }
-
-		private static Vec2 GetFeetPosForStructure(Vec2 tileIds)
-		{
-			return tileIds * new Vec2(Tile.WIDTH, Tile.HEIGHT) + new Vec2(Tile.WIDTH / 2f, Tile.HEIGHT);
-		}
     }
 }
 

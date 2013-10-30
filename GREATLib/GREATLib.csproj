@@ -69,6 +69,7 @@
     <Compile Include="Entities\Structures\Base.cs" />
     <Compile Include="Entities\LifeRegenerator.cs" />
     <Compile Include="Entities\Structures\TeamStructures.cs" />
+    <Compile Include="Entities\Structures\StructureTypes.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

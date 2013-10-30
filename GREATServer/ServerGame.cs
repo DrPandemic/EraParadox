@@ -463,7 +463,21 @@ namespace GREATServer
 			Match.Structures.ForEach(s => {
 				s.Update(TimeSpan.FromSeconds(dt));
 
-				//TODO: check for health changes and sync with players, check for game end
+				if (s.GetHealthChangedAndClearFlag()) { // the health of the structure changed
+					AddRemarkableEvent(ServerCommand.StructureStatsChanged,
+					                   (msg) => {
+						bool left = s.Team == Teams.Left;
+						byte type = (byte)s.Type;
+						float health = s.Health;
+						msg.Write(left);
+						msg.Write(type);
+						msg.Write(health);
+					});
+
+					if (!s.Alive) { // the structure is destroyed
+						//TODO: end game if it is a nexus
+					}
+				}
 			});
 		}
 		void UpdateChampions(double dt)
@@ -498,7 +512,7 @@ namespace GREATServer
 				Respawn(client);
 			}
 
-			if (client.ChampStats.HealthChanged) {
+			if (client.ChampStats.GetHealthChangedAndClearFlag()) {
 				AddRemarkableEvent(ServerCommand.StatsChanged,
 				                   (msg) => {
 					msg.Write(client.Champion.ID);
@@ -513,8 +527,6 @@ namespace GREATServer
 						msg.Write((ushort)GetRespawnTime().TotalSeconds);
 					});
 				}
-
-				client.ChampStats.ClearHealthChangedFlag();
 			}
 		}
 		void Respawn(ServerClient client)
@@ -590,7 +602,6 @@ namespace GREATServer
 
 					structure.Hurt(spell.Info.Value); // we hurt it
 
-					Console.WriteLine(structure.Health);
 					return true;
 				}
 			}

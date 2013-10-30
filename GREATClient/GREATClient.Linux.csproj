@@ -112,6 +112,7 @@
     <Compile Include="GameContent\DrawableBaseLifeBar.cs" />
     <Compile Include="Display\DeathScreen.cs" />
     <Compile Include="Display\WinLoseScreen.cs" />
+    <Compile Include="GameContent\DrawableStructure.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />

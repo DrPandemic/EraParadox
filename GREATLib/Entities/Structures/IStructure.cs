@@ -24,11 +24,15 @@ namespace GREATLib.Entities.Structures
 {
     public class IStructure : ILiving
     {
+		public StructureTypes Type { get; private set; }
+		public Teams Team { get; private set; }
 		public Rect Rectangle { get; private set; }
 
-        public IStructure(float maxhp, Rect rectangle)
+        public IStructure(float maxhp, StructureTypes type, Teams team, Rect rectangle)
 			: base(maxhp)
         {
+			Type = type;
+			Team = team;
 			Rectangle = rectangle;
         }
 

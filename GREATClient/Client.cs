@@ -29,6 +29,7 @@ using GREATLib.Network;
 using GREATLib.Entities.Champions;
 using GREATLib.Entities.Spells;
 using GREATLib.Entities;
+using GREATLib.Entities.Structures;
 
 
 namespace GREATClient
@@ -366,6 +367,12 @@ namespace GREATClient
 						data = new ChampionDiedEventData(msg.ReadUInt64(), TimeSpan.FromSeconds(msg.ReadUInt16()));
 						break;
 
+					case ServerCommand.StructureStatsChanged:
+						data = new StructureStatsChangedEventData(msg.ReadBoolean() ? Teams.Left : Teams.Right,
+						                                          (StructureTypes)msg.ReadByte(),
+						                                          msg.ReadFloat());
+						break;
+
 					default:
 						Debug.Fail("Unknown server command when updating (unknown remarkable event)");
 						break;
@@ -437,6 +444,19 @@ namespace GREATClient
 		{
 			ChampID = id;
 			RespawnTime = respawn;
+		}
+	}
+	public class StructureStatsChangedEventData : RemarkableEventData
+	{
+		public Teams Team { get; private set; }
+		public StructureTypes Type { get; private set; }
+		public float Health { get; private set; }
+		public StructureStatsChangedEventData(Teams team, StructureTypes type, float hp)
+			: base(ServerCommand.StructureStatsChanged)
+		{
+			Team = team;
+			Type = type;
+			Health = hp;
 		}
 	}
 }

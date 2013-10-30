@@ -75,6 +75,8 @@ namespace GREATClient.GameContent
 		{
 			currentRatio = MathHelper.Lerp(currentRatio, Ratio, LERP_FACTOR);
 			LifeBar.Size = new Vector2(MAX_WIDTH * currentRatio, NORMAL_HEIGHT);
+			if (LifeBar.Size.X > 0f)
+				LifeBar.Size = new Vector2(Math.Max(1f, LifeBar.Size.X), LifeBar.Size.Y); // at least 1pixel wide if we're not entirely dead
 		}
     }
 }

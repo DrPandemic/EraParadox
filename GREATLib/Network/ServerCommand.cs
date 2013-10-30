@@ -32,7 +32,7 @@ namespace GREATLib.Network
 		/// You just joined the game. Here is the data about your freshly created champion along with
 		/// the data of all the players already in the game.
 		/// </summary>
-		JoinedGame = 10
+		JoinedGame = 0
 
 		/// <summary>
 		/// Here is an update of the state of all the entities that changed. Force your data to
@@ -64,6 +64,21 @@ namespace GREATLib.Network
 		/// A player died.
 		/// </summary>
 		, ChampionDied
+
+		/// <summary>
+		/// The stats of a structure have changed.
+		/// </summary>
+		, StructureStatsChanged
+
+		/// <summary>
+		/// A structure has been destroyed.
+		/// </summary>
+		, StructureDestroyed
+
+		/// <summary>
+		/// The game has ended.
+		/// </summary>
+		, EndOfGame
     }
 }
 

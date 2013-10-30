@@ -29,26 +29,20 @@ using GREATClient.BaseClass.Particle;
 
 namespace GREATClient.GameContent
 {
-    public class DrawableBase : Container
+    public class DrawableBase : DrawableStructure
     {
 		const string LEFT_IMAGE = "lbase";
 		const string RIGHT_IMAGE = "rbase";
 
-		private Base Base { get; set; }
-		private Teams Team { get; set; }
-
 		DrawableBaseLifeBar LifeBar { get; set; }
 
-        public DrawableBase(Teams team, Base theBase)
+        public DrawableBase(Teams team, Base theBase, bool ally)
+			: base(team, StructureTypes.Base, theBase)
         {
-			Base = theBase;
-			Team = team;
-
 			Position = new Vector2(theBase.Rectangle.X + theBase.Rectangle.Width / 2f,
 			                       theBase.Rectangle.Bottom);
 
-			//Jesse vient mettre de quoi d'intélligent ici parce que je trouve pas :P thx
-			LifeBar = new DrawableBaseLifeBar(true) { 
+			LifeBar = new DrawableBaseLifeBar(ally) { 
 				Position = new Vector2(0f,-150f),
 				MaxHealth = theBase.MaxHealth,
 				Health = theBase.Health };
@@ -79,9 +73,9 @@ namespace GREATClient.GameContent
 		protected override void OnUpdate(GameTime dt)
 		{
 			//Update life bar
-			LifeBar.MaxHealth = Base.MaxHealth;
-			LifeBar.Health = Base.Health;
-			LifeBar.Visible = Base.Alive;
+			LifeBar.MaxHealth = Structure.MaxHealth;
+			LifeBar.Health = Structure.Health;
+			LifeBar.Visible = Structure.Alive;
 
 			base.OnUpdate(dt);
 		}

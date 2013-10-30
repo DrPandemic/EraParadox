@@ -56,9 +56,9 @@ namespace GREATLib.Network
 			Physics = new PhysicsEngine(World);
 			CurrentState = new MatchState(Physics);
 
-			LeftStructures = new TeamStructures(
+			LeftStructures = new TeamStructures(Teams.Left,
 				World.Map.Meta.LeftMeta.BaseTileIds);
-			RightStructures = new TeamStructures(
+			RightStructures = new TeamStructures(Teams.Right,
 				World.Map.Meta.RightMeta.BaseTileIds);
 
 			Structures = new List<IStructure>();

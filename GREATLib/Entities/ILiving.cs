@@ -27,7 +27,7 @@ namespace GREATLib.Entities
 		public float Health { get; private set; }
 		public float MaxHealth { get; private set; }
 		public bool Alive { get { return Health > 0f; } }
-		public bool HealthChanged { get; private set; }
+		private bool HealthChanged { get; set; }
 		public bool IsFullHealth { get { return Health == MaxHealth; } }
 
         public ILiving(float maxhp)
@@ -53,7 +53,13 @@ namespace GREATLib.Entities
 				Health = amount;
 			}
 		}
-		public void ClearHealthChangedFlag()
+		public bool GetHealthChangedAndClearFlag()
+		{
+			bool changed = HealthChanged;
+			ClearHealthChangedFlag();
+			return changed;
+		}
+		private void ClearHealthChangedFlag()
 		{
 			HealthChanged = false;
 		}

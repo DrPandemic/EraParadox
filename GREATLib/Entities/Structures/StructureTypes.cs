@@ -1,10 +1,10 @@
 //
-//  TeamStructures.cs
+//  StructureTypes.cs
 //
 //  Author:
-//       Jesse <jesse.emond@hotmail.com>
+//       HPSETUP3 <${AuthorEmail}>
 //
-//  Copyright (c) 2013 Jesse
+//  Copyright (c) 2013 HPSETUP3
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -19,29 +19,15 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using GREATLib.Entities.Structures;
-using GREATLib;
-using System.Collections.Generic;
-using GREATLib.World.Tiles;
 
 namespace GREATLib.Entities.Structures
 {
-    public class TeamStructures
+    public enum StructureTypes
     {
-		public List<IStructure> Structures { get; private set; }
-		public Base Base { get; private set; }
-
-        public TeamStructures(Teams team, Vec2 baseTileIds)
-        {
-			Base = new Base(team, GetFeetPosForStructure(baseTileIds));
-
-			Structures = Utilities.MakeList<IStructure>(Base); //TODO: fill this
-        }
-
-		private static Vec2 GetFeetPosForStructure(Vec2 tileIds)
-		{
-			return tileIds * new Vec2(Tile.WIDTH, Tile.HEIGHT) + new Vec2(Tile.WIDTH / 2f, Tile.HEIGHT);
-		}
+		Base = 0,
+		BaseTower,
+		BottomTower,
+		TopTower
     }
 }
 

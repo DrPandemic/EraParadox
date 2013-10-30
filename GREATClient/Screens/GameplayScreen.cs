@@ -38,6 +38,7 @@ using GameContent;
 using System.IO;
 using GREATClient.BaseClass.ScreenInformation;
 using GREATClient.GameContent.Spells;
+using GREATLib.Entities.Structures;
 
 namespace GREATClient.Screens
 {
@@ -61,6 +62,7 @@ namespace GREATClient.Screens
 
 		GameMatch Match { get; set; }
 		DrawableTileMap Map { get; set; }
+		List<DrawableStructure> Structures { get; set; }
 
 		ChampionsInfo ChampionsInfo { get; set; }
 		MainDrawableChampion OurChampion { get; set; }
@@ -100,6 +102,8 @@ namespace GREATClient.Screens
 			Champions = new List<ClientChampion>();
 
 			GameWorld = new Container();
+			Structures = new List<DrawableStructure>();
+
 			Camera = new CameraService();
 			Services.AddService(typeof(CameraService), Camera);
 
@@ -125,14 +129,18 @@ namespace GREATClient.Screens
 
 			Map = new DrawableTileMap(Match.World.Map, Match.World.Map.TileSet);
 			GameWorld.AddChild(Map);
-			GameWorld.AddChild(new DrawableBase(Teams.Left, Match.LeftStructures.Base));
-			GameWorld.AddChild(new DrawableBase(Teams.Right, Match.RightStructures.Base));
 
 			Client.RegisterCommandHandler(ServerCommand.JoinedGame, OnJoinedGame);
 			Client.RegisterCommandHandler(ServerCommand.NewRemotePlayer, OnNewRemotePlayer);
 			Client.RegisterCommandHandler(ServerCommand.StateUpdate, OnStateUpdate);
 
 			AddChild(Parallax,0);
+		}
+
+		void AddStructure(DrawableStructure structure)
+		{
+			GameWorld.AddChild(structure);
+			Structures.Add(structure);
 		}
 
 		void OnStateUpdate(object sender, CommandEventArgs args)
@@ -153,6 +161,14 @@ namespace GREATClient.Screens
 			Debug.Assert(ChampionsInfo != null && Match != null);
 
 			AddChampionToGame(e.OurData, true);
+
+			bool leftIsAlly = e.OurData.Team == Teams.Left;
+			bool rightIsAlly = !leftIsAlly;
+			// Add the structures here so we can specify if they're friendly or not.
+			// Left side
+			AddStructure(new DrawableBase(Teams.Left, Match.LeftStructures.Base, leftIsAlly));
+			// Right side
+			AddStructure(new DrawableBase(Teams.Right, Match.RightStructures.Base, rightIsAlly));
 
 			foreach (PlayerData remote in e.RemotePlayers) {
 				AddChampionToGame(remote, false);
@@ -314,6 +330,10 @@ namespace GREATClient.Screens
 						OnChampionDied((ChampionDiedEventData)r);
 						break;
 
+					case ServerCommand.StructureStatsChanged:
+						OnStructureStatsChanged((StructureStatsChangedEventData)r);
+						break;
+
 					default:
 						Debug.Fail("Unknown server command (unknown remarkable event).");
 						break;
@@ -321,6 +341,18 @@ namespace GREATClient.Screens
 			});
 
 			RemarkableEvents.Clear();
+		}
+		void OnStructureStatsChanged(StructureStatsChangedEventData e)
+		{
+			Debug.Assert(Structures.Exists(s => s.Team == e.Team && s.Type == e.Type));
+
+			if (Structures.Exists(s => s.Team == e.Team && s.Type == e.Type)) {
+				var structure = Structures.Find(s => s.Team == e.Team && s.Type == e.Type);
+
+				Console.WriteLine(e.Health);
+				structure.Structure.SetHealth(e.Health);
+				Console.WriteLine("s: " + structure.Structure.Health);
+			}
 		}
 		void OnChampionDied(ChampionDiedEventData e)
 		{
