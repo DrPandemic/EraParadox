@@ -22,7 +22,7 @@ using System;
 using GREATClient.BaseClass;
 using Microsoft.Xna.Framework;
 
-namespace GREATClient.GameContent
+namespace GREATClient.Display
 {
     public class DeathScreen : Container
     {

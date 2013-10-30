@@ -103,13 +103,15 @@
     <Compile Include="Display\GameUI.cs" />
     <Compile Include="GameContent\DrawableSpell.cs" />
     <Compile Include="Network\ClientLinearSpell.cs" />
-    <Compile Include="GameContent\DeathScreen.cs" />
     <Compile Include="GameContent\DrawableChampionLifeBar.cs" />
     <Compile Include="GameContent\CameraService.cs" />
     <Compile Include="GameContent\Spells\Drawable_ManMega_RocketRampage.cs" />
     <Compile Include="GameContent\Spells\Drawable_ManMega_HintOfASpark.cs" />
     <Compile Include="GameContent\DrawableBase.cs" />
     <Compile Include="BaseClass\Particle\SmokeSystem.cs" />
+    <Compile Include="GameContent\DrawableBaseLifeBar.cs" />
+    <Compile Include="Display\DeathScreen.cs" />
+    <Compile Include="Display\WinLoseScreen.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />
@@ -311,6 +313,18 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\smoke.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\spell1Icon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\spell2Icon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\spell3Icon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\spell4Icon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

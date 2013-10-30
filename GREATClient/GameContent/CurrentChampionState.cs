@@ -82,7 +82,10 @@ namespace GameContent
 			MaxResource = maxResource;
 			CurrentResource = maxResource;
 
-			Spell1 = Spell2 = Spell3 = Spell4 = new SpellCastInfo(TimeSpan.Zero);
+			Spell1 = new SpellCastInfo(TimeSpan.Zero);
+			Spell2 = new SpellCastInfo(TimeSpan.Zero);
+			Spell3 = new SpellCastInfo(TimeSpan.Zero);
+			Spell4 = new SpellCastInfo(TimeSpan.Zero);
         }
 
 		public void SetSpellCooldown(SpellTypes spell, TimeSpan cooldown)
