@@ -79,6 +79,7 @@ namespace GREATClient.Screens
 		CameraService Camera { get; set; }
 
 		DeathScreen DeathScreen { get; set; }
+		WinLoseScreen WinLoseScreen { get; set; }
 
 		Parallax Parallax { get; set; }
 
@@ -119,6 +120,7 @@ namespace GREATClient.Screens
 			         3);
 
 			AddChild(DeathScreen = new DeathScreen(),4);
+			AddChild(WinLoseScreen = new WinLoseScreen(), 5);
 			AddChild(GameWorld,1);
 
 			Map = new DrawableTileMap(Match.World.Map, Match.World.Map.TileSet);
