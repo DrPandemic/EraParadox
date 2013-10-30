@@ -373,6 +373,15 @@ namespace GREATClient
 						                                          msg.ReadFloat());
 						break;
 
+					case ServerCommand.StructureDestroyed:
+						data = new StructureDestroyedEventData(msg.ReadBoolean() ? Teams.Left : Teams.Right,
+						                                       (StructureTypes)msg.ReadByte());
+						break;
+
+					case ServerCommand.EndOfGame:
+						data = new EndOfGameEventData(msg.ReadBoolean() ? Teams.Left : Teams.Right);
+						break;
+
 					default:
 						Debug.Fail("Unknown server command when updating (unknown remarkable event)");
 						break;
@@ -457,6 +466,26 @@ namespace GREATClient
 			Team = team;
 			Type = type;
 			Health = hp;
+		}
+	}
+	public class StructureDestroyedEventData : RemarkableEventData
+	{
+		public Teams Team { get; private set; }
+		public StructureTypes Type { get; private set; }
+		public StructureDestroyedEventData(Teams team, StructureTypes type)
+			: base(ServerCommand.StructureDestroyed)
+		{
+			Team = team;
+			Type = type;
+		}
+	}
+	public class EndOfGameEventData : RemarkableEventData
+	{
+		public Teams Winner { get; private set; }
+		public EndOfGameEventData(Teams winner)
+			: base(ServerCommand.EndOfGame)
+		{
+			Winner = winner;
 		}
 	}
 }

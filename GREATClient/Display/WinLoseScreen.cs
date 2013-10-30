@@ -27,7 +27,7 @@ namespace GREATClient.Display
 	public class WinLoseScreen : Container
     {
 		const string LOST_MESSAGE = "You lost the game!";
-		const string WON_MESSAGE = "Congratulation, you won!";
+		const string WON_MESSAGE = "Congratulations, you won!";
 		const double CHANGING_DURATION = 2.0;
 		const float MAX_ALPHA = 0.5f;
 

@@ -65,7 +65,7 @@ namespace GREATLib.Entities
 				TimeSinceStart += dt;
 				TimeSinceLastHeal += dt;
 
-				if (ShouldHeal) {
+				if (ShouldHeal && Entity.Alive) {
 					Entity.Heal(HealValue);
 					TimeSinceLastHeal = TimeSpan.Zero;
 				}

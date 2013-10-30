@@ -334,6 +334,14 @@ namespace GREATClient.Screens
 						OnStructureStatsChanged((StructureStatsChangedEventData)r);
 						break;
 
+					case ServerCommand.StructureDestroyed:
+						OnStructureDestroyed((StructureDestroyedEventData)r);
+						break;
+
+					case ServerCommand.EndOfGame:
+						OnEndOfGame((EndOfGameEventData)r);
+						break;
+
 					default:
 						Debug.Fail("Unknown server command (unknown remarkable event).");
 						break;
@@ -342,17 +350,30 @@ namespace GREATClient.Screens
 
 			RemarkableEvents.Clear();
 		}
+		void OnStructureDestroyed(StructureDestroyedEventData e)
+		{
+			//var structure = GetStructure(e.Team, e.Type);
+			// TODO: tower eplosions here
+			// TODO: vocal/visual message here
+		}
+		void OnEndOfGame(EndOfGameEventData e)
+		{
+			if (OurChampion != null) {
+				WinLoseScreen.Display(e.Winner == OurChampion.Champion.Team);
+        	}
+		}
 		void OnStructureStatsChanged(StructureStatsChangedEventData e)
 		{
-			Debug.Assert(Structures.Exists(s => s.Team == e.Team && s.Type == e.Type));
-
-			if (Structures.Exists(s => s.Team == e.Team && s.Type == e.Type)) {
-				var structure = Structures.Find(s => s.Team == e.Team && s.Type == e.Type);
-
-				Console.WriteLine(e.Health);
+			var structure = GetStructure(e.Team, e.Type);
+			if (structure != null) {
 				structure.Structure.SetHealth(e.Health);
-				Console.WriteLine("s: " + structure.Structure.Health);
 			}
+		}
+		DrawableStructure GetStructure(Teams team, StructureTypes type)
+		{
+			Debug.Assert(Structures.Exists(s => s.Team == team && s.Type == type));
+			return Structures.Exists(s => s.Team == team && s.Type == type) ? 
+				Structures.Find(s => s.Team == team && s.Type == type) : null;
 		}
 		void OnChampionDied(ChampionDiedEventData e)
 		{

@@ -475,7 +475,21 @@ namespace GREATServer
 					});
 
 					if (!s.Alive) { // the structure is destroyed
-						//TODO: end game if it is a nexus
+						AddRemarkableEvent(ServerCommand.StructureDestroyed,
+						                   (msg) => {
+							bool left = s.Team == Teams.Left;
+							byte type = (byte)s.Type;
+							msg.Write(left);
+							msg.Write(type);
+						});
+
+						if (s.Type == StructureTypes.Base) {
+							AddRemarkableEvent(ServerCommand.EndOfGame,
+							                   (msg) => {
+								bool winnerIsLeft = TeamsHelper.Opposite(s.Team) == Teams.Left;
+								msg.Write(winnerIsLeft);
+							});
+						}
 					}
 				}
 			});
