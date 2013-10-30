@@ -34,9 +34,9 @@ namespace GREATClient.Display
 
 		private DrawableRectangle CoolDown { get; set; }
 
+		DrawableImage Icon { get; set; }
 
-
-		public SpellMenuItem(SpellCastInfo info) : base(new DrawableImage("UIObjects/spellBox"),
+		public SpellMenuItem(SpellCastInfo info, DrawableImage icon) : base(new DrawableImage("UIObjects/spellBox"),
 		                              new DrawableImage("UIObjects/spellBox"),
 		                              new DrawableImage("UIObjects/spellBox"))
         {
@@ -51,8 +51,20 @@ namespace GREATClient.Display
 			CoolDown = new DrawableRectangle(new Rectangle((int)NORMAL_WIDTH/2, (int)NORMAL_WIDTH, (int)NORMAL_WIDTH, (int)NORMAL_WIDTH), Color.Aqua);
 			CoolDown.RelativeOrigin = new Vector2(0.5f,1f);
 			CoolDown.Alpha = 0.3f;
-			AddChild(CoolDown,2);
-        }
+			AddChild(CoolDown,3);
+
+			Icon = icon;
+			AddChild(Icon,2);
+		}
+
+		protected override void OnLoad(Microsoft.Xna.Framework.Content.ContentManager content, Microsoft.Xna.Framework.Graphics.GraphicsDevice gd)
+		{
+			// Yes magic numbers.
+			Icon.Position = new Vector2(13,18 - Icon.Texture.Height/3);
+
+
+			base.OnLoad(content, gd);
+		}
 
 		protected override void OnUpdate(GameTime dt)
 		{

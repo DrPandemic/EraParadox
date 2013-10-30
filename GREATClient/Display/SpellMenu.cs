@@ -26,6 +26,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using GREATClient.BaseClass.Input;
 using GameContent;
+using GREATClient.BaseClass;
 
 namespace GREATClient.Display
 {
@@ -38,10 +39,10 @@ namespace GREATClient.Display
 
 		public SpellMenu(CurrentChampionState state)
         {
-			Spell1Item = new SpellMenuItem(state.Spell1);
-			Spell2Item = new SpellMenuItem(state.Spell2);
-			Spell3Item = new SpellMenuItem(state.Spell3);
-			Spell4Item = new SpellMenuItem(state.Spell4);
+			Spell1Item = new SpellMenuItem(state.Spell1, new DrawableImage("spell1Icon"));
+			Spell2Item = new SpellMenuItem(state.Spell2, new DrawableImage("spell2Icon"));
+			Spell3Item = new SpellMenuItem(state.Spell3, new DrawableImage("spell3Icon"));
+			Spell4Item = new SpellMenuItem(state.Spell4, new DrawableImage("spell4Icon"));
 
 			AddItem(Spell1Item);
 			AddItem(Spell2Item);
@@ -54,7 +55,6 @@ namespace GREATClient.Display
 			AlignItemsHorizontally(60);
 
 			// Set all spell infos.
-
 			inputManager.RegisterEvent(InputActions.Spell1, new EventHandler(Spell1Event));
 			inputManager.RegisterEvent(InputActions.Spell2, new EventHandler(Spell2Event));
 			inputManager.RegisterEvent(InputActions.Spell3, new EventHandler(Spell3Event));
