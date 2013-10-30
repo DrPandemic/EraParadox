@@ -43,7 +43,7 @@ namespace GREATClient.GameContent
 			                       theBase.Rectangle.Bottom);
 
 			LifeBar = new DrawableBaseLifeBar(ally) { 
-				Position = new Vector2(0f,-150f),
+				Position = new Vector2(0f,-250f),
 				MaxHealth = theBase.MaxHealth,
 				Health = theBase.Health };
         }

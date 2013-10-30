@@ -211,7 +211,7 @@ namespace GREATClient.BaseClass.Particle
 
 		protected override void OnDraw(SpriteBatch batch)
 		{
-			batch.Begin();
+			batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied);
 			foreach(DrawableParticle particle in Particles) {
 				if (particle.Alive) {
 					batch.Draw(ParticleTexture,GetAbsolutePosition() + particle.Position,null, particle.Tint * particle.Alpha, particle.Orientation,

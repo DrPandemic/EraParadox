@@ -86,7 +86,7 @@ namespace GREATClient.BaseClass
 		protected override void OnDraw(SpriteBatch batch)
 		{
 
-			batch.Begin();
+			batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied);
 
 			batch.Draw(Texture,GetAbsolutePosition(),SourceRectangle,Tint * Alpha, Orientation,
 			           RelativeOrigin * new Vector2(Width, Height),Scale,Effects,0);

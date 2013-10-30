@@ -74,7 +74,7 @@ namespace GREATClient.BaseClass
 
 		protected override void OnDraw(SpriteBatch batch)
 		{
-			batch.Begin();
+			batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied);
 
 			Vector2 FontOrigin = Font.MeasureString( Text ) / 2;
 			// Draw the string

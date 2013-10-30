@@ -71,7 +71,7 @@ namespace GREATClient.GameContent
 			int startY = MathHelper.Clamp((int)(-position.Y / Tile.HEIGHT), 0, Map.GetHeightTiles() - 1);
 			int endY = MathHelper.Clamp((int)((-position.Y + Screen.GameWindowSize.Y) / Tile.HEIGHT) + 1, 0, Map.GetHeightTiles() - 1);
 
-			batch.Begin();
+			batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied);
 			for (int y = startY; y < endY; ++y)
 				for (int x = startX; x <= endX; ++x)
 					if (Map.TileRows[y][x].Collision != CollisionType.Passable)
