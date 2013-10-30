@@ -139,7 +139,7 @@ namespace GREATClient.Screens
 
 		void AddStructure(DrawableStructure structure)
 		{
-			GameWorld.AddChild(structure);
+			GameWorld.AddChild(structure, 0);
 			Structures.Add(structure);
 		}
 
@@ -160,8 +160,6 @@ namespace GREATClient.Screens
 			Debug.Assert(e != null);
 			Debug.Assert(ChampionsInfo != null && Match != null);
 
-			AddChampionToGame(e.OurData, true);
-
 			bool leftIsAlly = e.OurData.Team == Teams.Left;
 			bool rightIsAlly = !leftIsAlly;
 			// Add the structures here so we can specify if they're friendly or not.
@@ -169,6 +167,8 @@ namespace GREATClient.Screens
 			AddStructure(new DrawableBase(Teams.Left, Match.LeftStructures.Base, leftIsAlly));
 			// Right side
 			AddStructure(new DrawableBase(Teams.Right, Match.RightStructures.Base, rightIsAlly));
+
+			AddChampionToGame(e.OurData, true);
 
 			foreach (PlayerData remote in e.RemotePlayers) {
 				AddChampionToGame(remote, false);
@@ -204,7 +204,7 @@ namespace GREATClient.Screens
 			}
 
 			Champions.Add(champ);
-			GameWorld.AddChild(idraw);
+			GameWorld.AddChild(idraw, 1);
 
 			Match.CurrentState.AddEntity(champ);
 
