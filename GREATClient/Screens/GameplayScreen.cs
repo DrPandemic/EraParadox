@@ -218,8 +218,6 @@ namespace GREATClient.Screens
 
 			UpdateHUD(dt);
 
-			UpdateParallax();
-
 			if (Keyboard.GetState().IsKeyDown(Keys.Escape) && Keyboard.GetState().IsKeyDown(Keys.LeftShift))
 				Exit = true;
 		}
@@ -242,6 +240,8 @@ namespace GREATClient.Screens
 				// Update the cooldowns
 				ChampionState.Update(dt.ElapsedGameTime);
 			}
+
+			UpdateParallax();
 		}
 
 		void UpdateParallax() {
