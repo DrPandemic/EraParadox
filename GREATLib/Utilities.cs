@@ -61,6 +61,11 @@ namespace GREATLib
 			return new KeyValuePair<T,V>(key, value);
 		}
 
+		public static bool InRange(Vec2 p, Vec2 q, float dist)
+		{
+			return Vec2.DistanceSquared(p, q) <= dist * dist;
+		}
+
 		/// <summary>
 		/// Clamp the specified value in the interval [min, max].
 		/// It forces it to be between both.

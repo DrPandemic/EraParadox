@@ -30,6 +30,8 @@ namespace GREATLib.Entities.Structures
 		private const float WIDTH = 100f;
 		private const float HEIGHT = 200f;
 
+		public const float RANGE = 450f;
+
         public Tower(StructureTypes type, Teams team, Vec2 feetPos)
 			: base(HEALTH,
 			       type,

@@ -493,6 +493,19 @@ namespace GREATServer
 						}
 					}
 				}
+
+				// Check to hit entities
+				if (StructureHelper.IsTower(s.Type) &&
+				    s.Alive) {
+					foreach (ServerClient client in Clients.Values) {
+						var clientRect = client.Champion.CreateCollisionRectangle();
+						if (s.Team == TeamsHelper.Opposite(client.Champion.Team) && // is enemy
+						    client.ChampStats.Alive && // is alive
+						    Utilities.InRange(Rect.Center(s.Rectangle), Rect.Center(clientRect), Tower.RANGE)) { // in range
+							Console.WriteLine("POW!");
+						}
+					}
+				}
 			});
 		}
 		void UpdateChampions(double dt)
