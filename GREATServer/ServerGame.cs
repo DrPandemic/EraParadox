@@ -497,12 +497,17 @@ namespace GREATServer
 				// Check to hit entities
 				if (StructureHelper.IsTower(s.Type) &&
 				    s.Alive) {
+					Tower t = (Tower)s;
+					float now = (float)Server.Instance.GetTime().TotalSeconds;
 					foreach (ServerClient client in Clients.Values) {
 						var clientRect = client.Champion.CreateCollisionRectangle();
-						if (s.Team == TeamsHelper.Opposite(client.Champion.Team) && // is enemy
+						if (t.CanShoot(now) && // not on cooldown
+							s.Team == TeamsHelper.Opposite(client.Champion.Team) && // is enemy
 						    client.ChampStats.Alive && // is alive
 						    Utilities.InRange(Rect.Center(s.Rectangle), Rect.Center(clientRect), Tower.RANGE)) { // in range
-							Console.WriteLine("POW!");
+
+							Console.WriteLine("POW!"); //TODO: fire projectile.
+							t.OnShot(now);
 						}
 					}
 				}

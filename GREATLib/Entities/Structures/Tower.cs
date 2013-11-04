@@ -31,6 +31,9 @@ namespace GREATLib.Entities.Structures
 		private const float HEIGHT = 200f;
 
 		public const float RANGE = 450f;
+		public static readonly TimeSpan COOLDOWN = TimeSpan.FromSeconds(2);
+
+		private float TimeOfLastShot { get; set; }
 
         public Tower(StructureTypes type, Teams team, Vec2 feetPos)
 			: base(HEALTH,
@@ -43,7 +46,17 @@ namespace GREATLib.Entities.Structures
 					HEIGHT))
         {
 			Debug.Assert(StructureHelper.IsTower(type));
+			TimeOfLastShot = 0f;
         }
+
+		public void OnShot(float time)
+		{
+			TimeOfLastShot = time;
+		}
+		public bool CanShoot(float now)
+		{
+			return now - TimeOfLastShot >= COOLDOWN.TotalSeconds;
+		}
     }
 }
 
