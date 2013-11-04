@@ -57,9 +57,15 @@ namespace GREATLib.Network
 			CurrentState = new MatchState(Physics);
 
 			LeftStructures = new TeamStructures(Teams.Left,
-				World.Map.Meta.LeftMeta.BaseTileIds);
+				World.Map.Meta.LeftMeta.BaseTileIds,
+				World.Map.Meta.LeftMeta.BaseTowerTileIds,
+                World.Map.Meta.LeftMeta.TopTowerTileIds,
+                World.Map.Meta.LeftMeta.BottomTowerTileIds);
 			RightStructures = new TeamStructures(Teams.Right,
-				World.Map.Meta.RightMeta.BaseTileIds);
+				World.Map.Meta.RightMeta.BaseTileIds,
+                World.Map.Meta.RightMeta.BaseTowerTileIds,
+                World.Map.Meta.RightMeta.TopTowerTileIds,
+                World.Map.Meta.RightMeta.BottomTowerTileIds);
 
 			Structures = new List<IStructure>();
 			LeftStructures.Structures.ForEach(Structures.Add);

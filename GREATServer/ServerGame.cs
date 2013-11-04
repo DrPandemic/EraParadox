@@ -464,6 +464,7 @@ namespace GREATServer
 				s.Update(TimeSpan.FromSeconds(dt));
 
 				if (s.GetHealthChangedAndClearFlag()) { // the health of the structure changed
+					Console.WriteLine(s.Team + " " + s.Type + " - " + s.Health + " / " + s.MaxHealth);
 					AddRemarkableEvent(ServerCommand.StructureStatsChanged,
 					                   (msg) => {
 						bool left = s.Team == Teams.Left;

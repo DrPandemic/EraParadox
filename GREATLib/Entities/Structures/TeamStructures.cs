@@ -30,12 +30,18 @@ namespace GREATLib.Entities.Structures
     {
 		public List<IStructure> Structures { get; private set; }
 		public Base Base { get; private set; }
+		public Tower BaseTower { get; private set; }
+		public Tower TopTower { get; private set; }
+		public Tower BottomTower { get; private set; }
 
-        public TeamStructures(Teams team, Vec2 baseTileIds)
+        public TeamStructures(Teams team, Vec2 baseTileIds, Vec2 baseTowerTileIds,
+		                      Vec2 topTowerTileIds, Vec2 bottomTowerTileIds)
         {
-			Base = new Base(team, GetFeetPosForStructure(baseTileIds));
-
-			Structures = Utilities.MakeList<IStructure>(Base); //TODO: fill this
+			Structures = Utilities.MakeList<IStructure>(
+				Base = new Base(team, GetFeetPosForStructure(baseTileIds)),
+				BaseTower = new Tower(StructureTypes.BaseTower, team, GetFeetPosForStructure(baseTowerTileIds)),
+				TopTower = new Tower(StructureTypes.TopTower, team, GetFeetPosForStructure(topTowerTileIds)),
+				BottomTower = new Tower(StructureTypes.BottomTower, team, GetFeetPosForStructure(bottomTowerTileIds)));
         }
 
 		private static Vec2 GetFeetPosForStructure(Vec2 tileIds)

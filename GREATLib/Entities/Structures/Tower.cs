@@ -1,5 +1,6 @@
+
 //
-//  StructureTypes.cs
+//  Tower.cs
 //
 //  Author:
 //       HPSETUP3 <${AuthorEmail}>
@@ -19,25 +20,28 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using System.Diagnostics;
 
 namespace GREATLib.Entities.Structures
 {
-    public enum StructureTypes
+    public class Tower : IStructure
     {
-		Base = 0,
-		BaseTower,
-		BottomTower,
-		TopTower
-    }
+		private const float HEALTH = 100f;
+		private const float WIDTH = 100f;
+		private const float HEIGHT = 200f;
 
-	public static class StructureHelper
-	{
-		public static bool IsTower(StructureTypes type)
-		{
-			return Utilities.MakeList(StructureTypes.BaseTower,
-			                          StructureTypes.BottomTower,
-			                          StructureTypes.TopTower).Contains(type);
-		}
-	}
+        public Tower(StructureTypes type, Teams team, Vec2 feetPos)
+			: base(HEALTH,
+			       type,
+			       team,
+			       new Rect(
+				   	feetPos.X - WIDTH / 2f,
+					feetPos.Y - HEIGHT,
+					WIDTH,
+					HEIGHT))
+        {
+			Debug.Assert(StructureHelper.IsTower(type));
+        }
+    }
 }
 
