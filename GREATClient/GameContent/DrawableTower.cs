@@ -23,24 +23,50 @@ using GREATLib.Entities;
 using GREATLib.Entities.Structures;
 using GREATClient.BaseClass;
 using Microsoft.Xna.Framework;
+using GREATLib;
 
 namespace GREATClient.GameContent
 {
     public class DrawableTower : DrawableStructure
     {
+		private DrawableTowerLifeBar LifeBar { get; set; }
 		private bool Ally { get; set; }
 
         public DrawableTower(Tower tower, bool isAlly)
 			: base(tower)
         {
 			Ally = isAlly;
+
+			Position = new Vector2(tower.Rectangle.X + tower.Rectangle.Width / 2f,
+			                       tower.Rectangle.Bottom);
         }
 
 		protected override void OnLoad(Microsoft.Xna.Framework.Content.ContentManager content, Microsoft.Xna.Framework.Graphics.GraphicsDevice gd)
 		{
 			base.OnLoad(content, gd);
 
-			AddChild(new DrawableRectangle(Structure.Rectangle, Ally ? Color.Green : Color.Red));
+			AddChild(new DrawableRectangle(new Rect(0f, 0f, Structure.Rectangle.Width, Structure.Rectangle.Height), 
+			                               Ally ? Color.Green : Color.Red) {
+				RelativeOrigin = new Vector2(0.5f, 1.0f)
+			});
+			AddChild(LifeBar = new DrawableTowerLifeBar(Ally) {
+				Position = new Vector2(0f, -Structure.Rectangle.Height * 1.1f),
+				Health = Structure.Health,
+				MaxHealth = Structure.MaxHealth
+			});
+		}
+
+		protected override void OnUpdate(GameTime dt)
+		{
+			base.OnUpdate(dt);
+
+			LifeBar.Health = Structure.Health;
+			LifeBar.MaxHealth = Structure.MaxHealth;
+			LifeBar.Visible = Structure.Alive;
+
+			if (!Structure.Alive) {
+				Parent.RemoveChild(this);
+			}
 		}
     }
 }
