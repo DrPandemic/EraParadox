@@ -164,9 +164,15 @@ namespace GREATClient.Screens
 			bool rightIsAlly = !leftIsAlly;
 			// Add the structures here so we can specify if they're friendly or not.
 			// Left side
-			AddStructure(new DrawableBase(Teams.Left, Match.LeftStructures.Base, leftIsAlly));
+			AddStructure(new DrawableBase(Match.LeftStructures.Base, leftIsAlly));
+			AddStructure(new DrawableTower(Match.LeftStructures.BaseTower, leftIsAlly));
+			AddStructure(new DrawableTower(Match.LeftStructures.BottomTower, leftIsAlly));
+			AddStructure(new DrawableTower(Match.LeftStructures.TopTower, leftIsAlly));
 			// Right side
-			AddStructure(new DrawableBase(Teams.Right, Match.RightStructures.Base, rightIsAlly));
+			AddStructure(new DrawableBase(Match.RightStructures.Base, rightIsAlly));
+			AddStructure(new DrawableTower(Match.RightStructures.BaseTower, rightIsAlly));
+			AddStructure(new DrawableTower(Match.RightStructures.BottomTower, rightIsAlly));
+			AddStructure(new DrawableTower(Match.RightStructures.TopTower, rightIsAlly));
 
 			AddChampionToGame(e.OurData, true);
 
@@ -371,9 +377,9 @@ namespace GREATClient.Screens
 		}
 		DrawableStructure GetStructure(Teams team, StructureTypes type)
 		{
-			Debug.Assert(Structures.Exists(s => s.Team == team && s.Type == type));
-			return Structures.Exists(s => s.Team == team && s.Type == type) ? 
-				Structures.Find(s => s.Team == team && s.Type == type) : null;
+			Debug.Assert(Structures.Exists(s => s.Structure.Team == team && s.Structure.Type == type));
+			return Structures.Exists(s => s.Structure.Team == team && s.Structure.Type == type) ? 
+				Structures.Find(s => s.Structure.Team == team && s.Structure.Type == type) : null;
 		}
 		void OnChampionDied(ChampionDiedEventData e)
 		{

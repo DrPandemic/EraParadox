@@ -36,8 +36,8 @@ namespace GREATClient.GameContent
 
 		DrawableBaseLifeBar LifeBar { get; set; }
 
-        public DrawableBase(Teams team, Base theBase, bool ally)
-			: base(team, StructureTypes.Base, theBase)
+        public DrawableBase(Base theBase, bool ally)
+			: base(theBase)
         {
 			Position = new Vector2(theBase.Rectangle.X + theBase.Rectangle.Width / 2f,
 			                       theBase.Rectangle.Bottom);
@@ -51,11 +51,11 @@ namespace GREATClient.GameContent
 		{
 			base.OnLoad(content, gd);
 
-			AddChild(new DrawableImage(Team == Teams.Left ? LEFT_IMAGE : RIGHT_IMAGE) {
+			AddChild(new DrawableImage(Structure.Team == Teams.Left ? LEFT_IMAGE : RIGHT_IMAGE) {
 				RelativeOrigin = new Vector2(0.5f, 1.0f)
 			},2);
 			// Add the gear and smoke.
-			if (Team == Teams.Left) {
+			if (Structure.Team == Teams.Left) {
 				DrawableImage gear = new DrawableImage("gearnexus") {
 					RelativeOrigin = new Vector2(0.5f),
 					Position = new Vector2(-70,-85)};

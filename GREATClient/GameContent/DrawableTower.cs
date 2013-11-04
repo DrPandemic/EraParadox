@@ -1,5 +1,5 @@
 //
-//  DrawableStructure.cs
+//  DrawableTower.cs
 //
 //  Author:
 //       HPSETUP3 <${AuthorEmail}>
@@ -19,20 +19,29 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using GREATLib.Entities.Structures;
 using GREATLib.Entities;
+using GREATLib.Entities.Structures;
 using GREATClient.BaseClass;
+using Microsoft.Xna.Framework;
 
 namespace GREATClient.GameContent
 {
-    public class DrawableStructure : Container
+    public class DrawableTower : DrawableStructure
     {
-		public IStructure Structure { get; private set; }
+		private bool Ally { get; set; }
 
-        public DrawableStructure(IStructure structure)
+        public DrawableTower(Tower tower, bool isAlly)
+			: base(tower)
         {
-			Structure = structure;
+			Ally = isAlly;
         }
+
+		protected override void OnLoad(Microsoft.Xna.Framework.Content.ContentManager content, Microsoft.Xna.Framework.Graphics.GraphicsDevice gd)
+		{
+			base.OnLoad(content, gd);
+
+			AddChild(new DrawableRectangle(Structure.Rectangle, Ally ? Color.Green : Color.Red));
+		}
     }
 }
 

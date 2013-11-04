@@ -111,6 +111,7 @@
     <Compile Include="BaseClass\Particle\SmokeSystem.cs" />
     <Compile Include="GameContent\DrawableBaseLifeBar.cs" />
     <Compile Include="GameContent\DrawableStructure.cs" />
+    <Compile Include="GameContent\DrawableTower.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />
