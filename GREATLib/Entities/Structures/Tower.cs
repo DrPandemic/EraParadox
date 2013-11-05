@@ -31,6 +31,7 @@ namespace GREATLib.Entities.Structures
 		private const float HEIGHT = 200f;
 
 		public const float RANGE = 450f;
+		public const float PROJECTILE_RANGE = RANGE * 1.3f;
 		public static readonly TimeSpan COOLDOWN = TimeSpan.FromSeconds(2);
 
 		private float TimeOfLastShot { get; set; }

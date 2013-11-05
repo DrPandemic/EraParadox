@@ -407,7 +407,7 @@ namespace GREATClient.Screens
 				case SpellTypes.ManMega_RocketRampage: return new Drawable_ManMega_RocketRampage(s);
 				case SpellTypes.ManMega_HintOfASpark: return new Drawable_ManMega_HintOfASpark(s);
 
-				default: throw new NotImplementedException("Not spell object for spell " + s.Type);
+				default: throw new NotImplementedException("No spell object for spell " + s.Type);
 			}
 		}
 		void OnRemoveSpell(SpellDisappearEventData e)

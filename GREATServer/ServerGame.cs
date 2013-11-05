@@ -506,19 +506,33 @@ namespace GREATServer
 				    s.Alive) {
 					Tower t = (Tower)s;
 					float now = (float)Server.Instance.GetTime().TotalSeconds;
+					Vec2 towerCenter = Rect.Center(t.Rectangle);
 					foreach (ServerClient client in Clients.Values) {
 						var clientRect = client.Champion.CreateCollisionRectangle();
+						Vec2 clientCenter = Rect.Center(clientRect);
 						if (t.CanShoot(now) && // not on cooldown
 							s.Team == TeamsHelper.Opposite(client.Champion.Team) && // is enemy
 						    client.ChampStats.Alive && // is alive
-						    Utilities.InRange(Rect.Center(s.Rectangle), Rect.Center(clientRect), Tower.RANGE)) { // in range
+						    Utilities.InRange(towerCenter, clientCenter, Tower.RANGE)) { // in range
 
-							Console.WriteLine("POW!"); //TODO: fire projectile.
+							CastTowerSpell(s.Team, clientCenter, clientCenter);
 							t.OnShot(now);
 						}
 					}
 				}
 			});
+		}
+		void CastTowerSpell(Teams team, Vec2 origin, Vec2 target)
+		{
+			LinearSpell spell = new LinearSpell(
+                IDGenerator.GenerateID(),
+                team,
+                origin,
+                target,
+                SpellTypes.Tower_Shot,
+                null);
+
+			CastSpell(spell, target);
 		}
 		void UpdateChampions(double dt)
 		{

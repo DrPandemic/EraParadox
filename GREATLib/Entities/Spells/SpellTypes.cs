@@ -21,17 +21,18 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using GREATLib.Entities.Structures;
 
 namespace GREATLib.Entities.Spells
 {
-	// Note: It is VERY important that the spell # here is the same as the one in the ChampionTypesHelper.GetSpellFromAction
-	// function.
-	// PLEASE MAKE SURE TO MODIFY THEM AT BOTH PLACES.
     public enum SpellTypes
     {
+		// Towers
+		Tower_Shot,
+
 		// ManMega
-		ManMega_RocketRampage = SpellsHelper.SPELL_1,
-		ManMega_HintOfASpark = SpellsHelper.SPELL_3
+		ManMega_RocketRampage,
+		ManMega_HintOfASpark
     }
 
 	public enum SpellKind
@@ -48,9 +49,11 @@ namespace GREATLib.Entities.Spells
 		public float Width { get; private set; }
 		public SpellKind Kind { get; private set; }
 		public float Value { get; private set; }
+		public int SpellNumber { get; private set; }
 
 		public SpellInfo(TimeSpan cooldown, TimeSpan cast, float range, 
-		                 float speed, float width, SpellKind kind, float value)
+		                 float speed, float width, SpellKind kind, float value,
+		                 int spellNumber)
 		{
 			Cooldown = cooldown;
 			CastingTime = cast;
@@ -59,6 +62,7 @@ namespace GREATLib.Entities.Spells
 			Width = width;
 			Kind = kind;
 			Value = value;
+			SpellNumber = spellNumber;
 		}
 	}
 
@@ -78,6 +82,18 @@ namespace GREATLib.Entities.Spells
 		{
 			var d = new Dictionary<SpellTypes, SpellInfo>();
 
+			// Tower
+			d.Add(SpellTypes.Tower_Shot, new SpellInfo(
+				Tower.COOLDOWN,
+				TimeSpan.Zero,
+				Tower.PROJECTILE_RANGE,
+				1500f,
+				5f,
+				SpellKind.OffensiveSkillshot,
+				15f,
+				SPELL_1
+			));
+
 			// ManMega
 			d.Add(SpellTypes.ManMega_RocketRampage, new SpellInfo(
 				TimeSpan.FromSeconds(1), 
@@ -86,7 +102,8 @@ namespace GREATLib.Entities.Spells
 				900f,
 				5f,
 				SpellKind.OffensiveSkillshot,
-				10f
+				10f,
+				SPELL_1
 				));
 			d.Add(SpellTypes.ManMega_HintOfASpark, new SpellInfo(
 				TimeSpan.FromSeconds(5),
@@ -95,7 +112,8 @@ namespace GREATLib.Entities.Spells
 				800f,
 				3f,
 				SpellKind.DefensiveSkillshot,
-				15f
+				15f,
+				SPELL_3
 				));
 
 			return d;
@@ -113,7 +131,7 @@ namespace GREATLib.Entities.Spells
 
 		public static int SpellNumber(SpellTypes s)
 		{
-			int num = (int)s;
+			int num = Info(s).SpellNumber;
 			Debug.Assert(num >= MIN_SPELL_NUM && num <= MAX_SPELL_NUM);
 			return num;
 		}
