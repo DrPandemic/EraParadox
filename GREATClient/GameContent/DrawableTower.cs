@@ -24,6 +24,7 @@ using GREATLib.Entities.Structures;
 using GREATClient.BaseClass;
 using Microsoft.Xna.Framework;
 using GREATLib;
+using GREATClient.BaseClass.Particle;
 
 namespace GREATClient.GameContent
 {
@@ -45,10 +46,28 @@ namespace GREATClient.GameContent
 		{
 			base.OnLoad(content, gd);
 
-			AddChild(new DrawableRectangle(new Rect(0f, 0f, Structure.Rectangle.Width, Structure.Rectangle.Height), 
+			/*AddChild(new DrawableRectangle(new Rect(0f, 0f, Structure.Rectangle.Width, Structure.Rectangle.Height), 
 			                               Ally ? Color.Green : Color.Red) {
 				RelativeOrigin = new Vector2(0.5f, 1.0f)
-			});
+			});*/
+
+			if (Structure.Team == Teams.Left) {
+				AddChild(new DrawableImage("tower1") {
+					RelativeOrigin = new Vector2(0.5f, 0.95f)
+				}, 2);
+			} else {
+				AddChild(new DrawableImage("tower2") {
+					RelativeOrigin = new Vector2(0.5f, 0.95f)
+				}, 2);
+				AddChild(new ParticleSystem(70,null,new TimeSpan(0,0,3)) {
+				Tint = Color.White,
+				ParticleInitialVelocity = new Vector2(5, 20),
+				ParticleForce = new Vector2(-5, 2),
+				Position = new Vector2(0,-135)},1);
+			}
+
+
+
 			AddChild(LifeBar = new DrawableTowerLifeBar(Ally) {
 				Position = new Vector2(0f, -Structure.Rectangle.Height * 1.1f),
 				Health = Structure.Health,

@@ -40,8 +40,8 @@
       <HintPath>..\ThirdParty\GamepadConfig\Tao.Sdl.dll</HintPath>
     </Reference>
     <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="Lidgren.Network, Version=2011.3.12.0, Culture=neutral">
-      <Private>False</Private>
+    <Reference Include="Lidgren.Network">
+      <HintPath>..\..\assemblies\WindowsGL\Lidgren.Network.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
