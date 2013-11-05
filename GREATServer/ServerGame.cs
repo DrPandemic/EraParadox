@@ -651,6 +651,7 @@ namespace GREATServer
 		{
 			foreach (IStructure structure in enemyStructures.Structures) {
 				if (structure.Alive && // not a destroyed target
+				    enemyStructures.IsDestructible(structure.Type) && // not an indestructible target
 					spell.Info.Kind == SpellKind.OffensiveSkillshot && // offensive spell
 					structure.Rectangle.Intersects(spellRect)) { // we hit it
 

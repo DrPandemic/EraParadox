@@ -26,11 +26,11 @@ namespace GREATLib.Entities.Structures
 {
     public class Tower : IStructure
     {
-		private const float HEALTH = 100f;
+		private const float HEALTH = 125f;
 		private const float WIDTH = 100f;
 		private const float HEIGHT = 200f;
 
-		public const float RANGE = 450f;
+		public const float RANGE = 500f;
 		public const float PROJECTILE_RANGE = RANGE * 1.3f;
 		public static readonly TimeSpan COOLDOWN = TimeSpan.FromSeconds(2);
 

@@ -48,6 +48,24 @@ namespace GREATLib.Entities.Structures
 		{
 			return tileIds * new Vec2(Tile.WIDTH, Tile.HEIGHT) + new Vec2(Tile.WIDTH / 2f, Tile.HEIGHT);
 		}
+
+		public bool IsDestructible(StructureTypes type)
+		{
+			switch (type) {
+				case StructureTypes.TopTower:
+				case StructureTypes.BottomTower:
+					return true; // we can always destroy the first towers.
+
+				case StructureTypes.BaseTower:
+					return !TopTower.Alive || !BottomTower.Alive; // one of the first towers must be down
+
+				case StructureTypes.Base:
+					return !BaseTower.Alive; // base tower must be down
+
+				default:
+					throw new NotImplementedException("Structure " + type + " not implemented (IsDestructible).");
+			}
+		}
     }
 }
 
