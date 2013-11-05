@@ -24,6 +24,7 @@ namespace GREATLib.Entities.Spells
 {
     public class LinearSpell : IEntity
     {
+		public Teams Team { get; private set; }
 		public ICharacter Owner { get; private set; }
 		public SpellTypes Type { get; set; }
 		public SpellInfo Info { get; set; }
@@ -31,7 +32,7 @@ namespace GREATLib.Entities.Spells
 		Vec2 StartPosition { get; set; }
 		public bool IsSolid { get; private set; }
 
-		public LinearSpell(ulong id, ICharacter owner, Vec2 position, Vec2 target, SpellTypes type)
+		public LinearSpell(ulong id, Teams team, Vec2 position, Vec2 target, SpellTypes type, ICharacter owner)
 			: base(id, position,
 			       SpellsHelper.Info(type).Speed, 
 			       SpellsHelper.Info(type).Width, SpellsHelper.Info(type).Width)
@@ -43,6 +44,7 @@ namespace GREATLib.Entities.Spells
 			Type = type;
 			Velocity = Vec2.Normalize(target - position) * MoveSpeed;
 			StartPosition = (Vec2)position.Clone();
+			Team = team;
 			Owner = owner;
         }
 
@@ -54,7 +56,7 @@ namespace GREATLib.Entities.Spells
 		}
 		public override object Clone()
 		{
-			LinearSpell s = new LinearSpell(ID, Owner, Position, Position + Velocity, Type);
+			LinearSpell s = new LinearSpell(ID, Team, Position, Position + Velocity, Type, Owner);
 			s.Clone(this);
 			return s;
 		}

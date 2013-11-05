@@ -257,7 +257,7 @@ namespace GREATServer
 				if (client.ChampStats.Alive &&
 				    !client.ChampStats.IsOnCooldown(spell)) { // we're not dead and the spell is not on cooldown
 
-					CastSpell(client.Champion, action);
+					CastChampionSpell(client.Champion, action);
 					client.ChampStats.UsedSpell(spell);
 				}
 			} else if (action.Type != PlayerActionType.Idle) {
@@ -265,19 +265,26 @@ namespace GREATServer
 			}
 		}
 
-		void CastSpell(ICharacter champ, PlayerAction action)
+		void CastChampionSpell(ICharacter champ, PlayerAction action)
 		{
 			Debug.Assert(action.Target != null);
 
+			// aim in the direction of the spell
 			champ.FacingLeft = action.Target.X < champ.Position.X + champ.CollisionWidth / 2f;
 
 			LinearSpell spell = new LinearSpell(
 				IDGenerator.GenerateID(),
-				champ,
+				champ.Team,
 				champ.GetHandsPosition(),
 				action.Target ?? Vec2.Zero,
-				ChampionTypesHelper.GetSpellFromAction(champ.Type, action.Type));
+				ChampionTypesHelper.GetSpellFromAction(champ.Type, action.Type),
+				champ);
 
+			CastSpell(spell, action.Target);
+		}
+
+		void CastSpell(LinearSpell spell, Vec2 target)
+		{
 			Match.CurrentState.AddEntity(spell);
 			ActiveSpells.Add(spell);
 
@@ -285,28 +292,28 @@ namespace GREATServer
 			LinearSpell copy = (LinearSpell)spell.Clone();
 
 			AddRemarkableEvent(ServerCommand.SpellCast,
-				(NetBuffer msg) => {
-					ulong id = copy.ID;
-					byte type = (byte)copy.Type;
-					float time = castTime;
-					float px = copy.Position.X;
-					float py = copy.Position.Y;
-					float vx = copy.Velocity.X;
-					float vy = copy.Velocity.Y;
-					float cd = (float)copy.Info.Cooldown.TotalSeconds;
-					float range = copy.Info.Range;
-					float width = copy.CollisionWidth;
+			                   (NetBuffer msg) => {
+				ulong id = copy.ID;
+				byte type = (byte)copy.Type;
+				float time = castTime;
+				float px = copy.Position.X;
+				float py = copy.Position.Y;
+				float vx = copy.Velocity.X;
+				float vy = copy.Velocity.Y;
+				float cd = (float)copy.Info.Cooldown.TotalSeconds;
+				float range = copy.Info.Range;
+				float width = copy.CollisionWidth;
 
-					msg.Write(id);
-					msg.Write(type);
-					msg.Write(time);
-					msg.Write(px);
-					msg.Write(py);
-					msg.Write(vx);
-					msg.Write(vy);
-					msg.Write(cd);
-					msg.Write(range);
-					msg.Write(width);
+				msg.Write(id);
+				msg.Write(type);
+				msg.Write(time);
+				msg.Write(px);
+				msg.Write(py);
+				msg.Write(vx);
+				msg.Write(vy);
+				msg.Write(cd);
+				msg.Write(range);
+				msg.Write(width);
 			});
 		}
 
@@ -587,7 +594,7 @@ namespace GREATServer
 
 					// Check for entities collisions
 					var rect = s.CreateCollisionRectangle();
-					var enemyTeam = TeamsHelper.Opposite(s.Owner.Team);
+					var enemyTeam = TeamsHelper.Opposite(s.Team);
 
 					// Check to hit players
 					bool remove = CheckForSpellPlayerCollisions(s, rect, enemyTeam);
@@ -626,9 +633,9 @@ namespace GREATServer
 			});
 		}
 
-		bool CheckForSpellStructuresCollisions(LinearSpell spell, Rect spellRect, TeamStructures structures)
+		bool CheckForSpellStructuresCollisions(LinearSpell spell, Rect spellRect, TeamStructures enemyStructures)
 		{
-			foreach (IStructure structure in structures.Structures) {
+			foreach (IStructure structure in enemyStructures.Structures) {
 				if (structure.Alive && // not a destroyed target
 					spell.Info.Kind == SpellKind.OffensiveSkillshot && // offensive spell
 					structure.Rectangle.Intersects(spellRect)) { // we hit it
@@ -656,8 +663,8 @@ namespace GREATServer
 				// With allies
 				else if (client.ChampStats.Alive && // not a dead target
 				         spell.Info.Kind == SpellKind.DefensiveSkillshot && // deffensive spell
-				         client.Champion.Team == spell.Owner.Team &&  // on an ally
-				         client.Champion.ID != spell.Owner.ID && // that is NOT us
+				         client.Champion.Team == spell.Team &&  // on an ally
+				         (spell.Owner == null || client.Champion.ID != spell.Owner.ID) && // that is NOT us
 				         client.Champion.CreateCollisionRectangle().Intersects(spellRect)) { // we hit him
 
 					client.ChampStats.Heal(spell.Info.Value); // we heal him
