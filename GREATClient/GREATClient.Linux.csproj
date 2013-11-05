@@ -115,6 +115,7 @@
     <Compile Include="GameContent\DrawableStructure.cs" />
     <Compile Include="GameContent\DrawableTower.cs" />
     <Compile Include="GameContent\DrawableTowerLifeBar.cs" />
+    <Compile Include="GameContent\Spells\Drawable_TowerShot.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />
@@ -328,6 +329,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\spell4Icon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\towershot.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

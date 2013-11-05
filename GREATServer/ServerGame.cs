@@ -515,7 +515,7 @@ namespace GREATServer
 						    client.ChampStats.Alive && // is alive
 						    Utilities.InRange(towerCenter, clientCenter, Tower.RANGE)) { // in range
 
-							CastTowerSpell(s.Team, clientCenter, clientCenter);
+							CastTowerSpell(s.Team, towerCenter, clientCenter);
 							t.OnShot(now);
 						}
 					}

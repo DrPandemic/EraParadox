@@ -398,7 +398,6 @@ namespace GREATClient.Screens
 			var s = GetSpellFromType(new ClientLinearSpell(e.ID, e.Type, e.Position, e.Time, e.Velocity, e.Range, e.Width));
 			Spells.Add(e.ID, s);
 			GameWorld.AddChild(s);
-
 			ChampionState.SetSpellCooldown(e.Type, e.Cooldown);
 		}
 		DrawableSpell GetSpellFromType(ClientLinearSpell s)
@@ -406,6 +405,7 @@ namespace GREATClient.Screens
 			switch (s.Type) {
 				case SpellTypes.ManMega_RocketRampage: return new Drawable_ManMega_RocketRampage(s);
 				case SpellTypes.ManMega_HintOfASpark: return new Drawable_ManMega_HintOfASpark(s);
+				case SpellTypes.Tower_Shot: return new Drawable_TowerShot(s);
 
 				default: throw new NotImplementedException("No spell object for spell " + s.Type);
 			}
