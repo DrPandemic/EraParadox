@@ -107,9 +107,9 @@ namespace GREATLib.Entities.Spells
 				SPELL_1
 			));
 			d.Add(SpellTypes.ManMega_Slash, new SpellInfo(
-				TimeSpan.FromSeconds(3),
+				TimeSpan.FromSeconds(2),
 				TimeSpan.FromSeconds(0.2),
-				5f,
+				0f,
 				500f,
 				20f,
 				SpellKind.OffensiveSkillshot,

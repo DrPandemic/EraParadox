@@ -114,6 +114,7 @@
     <Compile Include="GameContent\DrawableTower.cs" />
     <Compile Include="GameContent\DrawableTowerLifeBar.cs" />
     <Compile Include="GameContent\Spells\Drawable_TowerShot.cs" />
+    <Compile Include="GameContent\Spells\Drawable_ManMega_Slash.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />
