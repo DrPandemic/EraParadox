@@ -53,7 +53,10 @@ namespace GREATClient.GameContent
 			Map = map;
 			TileSetName = tileset;
         }
-
+		public override float GetEffectiveAlpha()
+		{
+			throw new NotImplementedException();
+		}
 		protected override void OnLoad(ContentManager content, GraphicsDevice gd)
 		{
 			base.OnLoad(content, gd);

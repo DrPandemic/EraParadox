@@ -214,7 +214,7 @@ namespace GREATClient.BaseClass.Particle
 			batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied);
 			foreach(DrawableParticle particle in Particles) {
 				if (particle.Alive) {
-					batch.Draw(ParticleTexture,GetAbsolutePosition() + particle.Position,null, particle.Tint * particle.Alpha, particle.Orientation,
+					batch.Draw(ParticleTexture,GetAbsolutePosition() + particle.Position,null, particle.Tint * particle.Alpha * GetEffectiveAlpha(), particle.Orientation,
 					           particle.Origin,particle.Scale,SpriteEffects.None,0);
 				}
 			}

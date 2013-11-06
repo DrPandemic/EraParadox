@@ -74,6 +74,10 @@ namespace GREATClient.BaseClass
 		{
 			return Position;
 		}
+		public override float GetEffectiveAlpha()
+		{
+			return Alpha * (Parent != null ? Parent.GetEffectiveAlpha() : 1);
+		}
 
 		/// <summary>
 		/// Gets the services.

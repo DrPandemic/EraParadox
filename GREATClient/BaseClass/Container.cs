@@ -59,6 +59,10 @@ namespace GREATClient.BaseClass
 				return Parent.GetGraphics();
 			return null;
 		}
+		public override float GetEffectiveAlpha()
+		{
+			return Alpha * (Parent != null ? Parent.GetEffectiveAlpha() : 1);
+		}
 
 		public Container() 
         {

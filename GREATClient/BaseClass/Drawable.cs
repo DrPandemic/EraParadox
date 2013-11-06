@@ -41,13 +41,6 @@ namespace GREATClient.BaseClass
 		public Texture2D Texture { get; protected set; }
 
 		/// <summary>
-		/// Gets or sets the alpha.
-		/// 0 to 1.
-		/// </summary>
-		/// <value>The alpha.</value>
-		public float Alpha { get; set; }
-
-		/// <summary>
 		/// Gets or sets the orientation.
 		/// </summary>
 		/// <value>The orientation.</value>

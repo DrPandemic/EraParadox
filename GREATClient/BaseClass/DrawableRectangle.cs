@@ -60,6 +60,10 @@ namespace GREATClient.BaseClass
 			Tint = tint;
 		
         }
+		public override float GetEffectiveAlpha()
+		{
+			return Alpha * (Parent != null ? Parent.GetEffectiveAlpha() : 1);
+		}
 		protected override void OnLoad(ContentManager content, GraphicsDevice gd)
 		{
 			Texture = new Texture2D(gd,1,1);
@@ -71,7 +75,7 @@ namespace GREATClient.BaseClass
 			batch.Draw(Texture,new Rectangle((int)(GetAbsolutePosition().X-RelativeOrigin.X*Size.X),
 			                                 (int)(GetAbsolutePosition().Y-RelativeOrigin.Y*Size.Y),
 			                                 (int)Size.X,(int)Size.Y),
-			           						Tint * Alpha);		
+			           						Tint * GetEffectiveAlpha());		
 			batch.End();
 		}
 

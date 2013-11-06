@@ -80,7 +80,7 @@ namespace GREATClient.Display
 			batch.Begin();
 			Vector2 FontOrigin = Font.MeasureString( Text ) / 2;
 			// Draw the string
-			batch.DrawString( Font, Text, GetAbsolutePosition(), Tint * Alpha, 
+			batch.DrawString( Font, Text, GetAbsolutePosition(), Tint * GetEffectiveAlpha(), 
 			                 (float)Orientation, RelativeOrigin * Font.MeasureString(Text), Scale, Effects, 0 );
 			batch.End();
 		}

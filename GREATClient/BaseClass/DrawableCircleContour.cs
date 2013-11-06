@@ -37,7 +37,10 @@ namespace GREATClient.BaseClass
         {
 			Radius = radius;
         }
-
+		public override float GetEffectiveAlpha()
+		{
+			return Alpha * (Parent != null ? Parent.GetEffectiveAlpha() : 1);
+		}
 		public Texture2D CreateCircle(int radius, GraphicsDevice gd)
 		{
 			int outerRadius = radius*2 + 2; // So circle doesn't go out of bounds
@@ -73,7 +76,7 @@ namespace GREATClient.BaseClass
 		protected override void OnDraw(SpriteBatch batch)
 		{
 			batch.Begin();
-			batch.Draw(Texture,GetAbsolutePosition(),SourceRectangle,Tint,(float)Orientation,
+			batch.Draw(Texture,GetAbsolutePosition(),SourceRectangle,Tint * GetEffectiveAlpha(),(float)Orientation,
 			           RelativeOrigin * new Vector2(Texture.Width, Texture.Height),Scale,Effects,0);
 			batch.End();
 		}
