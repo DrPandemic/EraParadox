@@ -75,7 +75,7 @@ namespace GREATClient.Display
 			AddChild(LifeDropshadow);
 			ResourceDropShadow = new DrawableImage("UIObjects/manaDrop");
 			ResourceDropShadow.RelativeOrigin = new Vector2(0f,1f);
-			AddChild(ResourceDropShadow);
+			//AddChild(ResourceDropShadow);
 
 			Life = new DrawableImage("UIObjects/life");
 			Life.RelativeOrigin = new Vector2(0f,1f);
@@ -106,7 +106,7 @@ namespace GREATClient.Display
 			/*Life.SetPositionRelativeToObject(Resource, new Vector2(-Life.Texture.Width - 8, 
 			                                                       0), false);*/
 
-			ResourceDropShadow.SetPositionRelativeToObject(Resource, new Vector2(0,5), false);
+			//ResourceDropShadow.SetPositionRelativeToObject(Resource, new Vector2(0,5), false);
 			LifeDropshadow.SetPositionRelativeToObject(Life, new Vector2(0,5), false);
 
 			SpellBackground.SetPositionRelativeToObject(Life, new Vector2(-SpellBackground.Texture.Width - 10, 
