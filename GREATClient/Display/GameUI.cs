@@ -24,6 +24,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using GameContent;
+using GREATClient.BaseClass.BaseAction;
 
 namespace GREATClient.Display
 {

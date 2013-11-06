@@ -67,6 +67,10 @@ namespace GREATClient.BaseClass
         {
 			FileName = file;
         }
+		public override float GetEffectiveAlpha()
+		{
+			return Alpha * (Parent != null ? Parent.GetEffectiveAlpha() : 1);
+		}
 
 		/// <summary>
 		/// Loads the image of the object.
@@ -88,7 +92,7 @@ namespace GREATClient.BaseClass
 
 			batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied);
 
-			batch.Draw(Texture,GetAbsolutePosition(),SourceRectangle,Tint * Alpha, Orientation,
+			batch.Draw(Texture,GetAbsolutePosition(),SourceRectangle,Tint * GetEffectiveAlpha(), Orientation,
 			           RelativeOrigin * new Vector2(Width, Height),Scale,Effects,0);
 
 			batch.End();

@@ -51,7 +51,10 @@ namespace GREATClient.BaseClass
 		/// </summary>
 		/// <value>The update.</value>
 		Action<DrawableLabel> UpdateAction { get; set; }
-	
+		public override float GetEffectiveAlpha()
+		{
+			return Alpha * (Parent != null ? Parent.GetEffectiveAlpha() : 1);
+		}
 
 		public DrawableLabel(string fontName = UIConstants.UI_FONT, Action<DrawableLabel> update = null) : base()
         {
@@ -78,7 +81,7 @@ namespace GREATClient.BaseClass
 
 			Vector2 FontOrigin = Font.MeasureString( Text ) / 2;
 			// Draw the string
-			batch.DrawString( Font, Text, GetAbsolutePosition(), Tint * Alpha, 
+			batch.DrawString( Font, Text, GetAbsolutePosition(), Tint * GetEffectiveAlpha(), 
 			                 (float)Orientation, RelativeOrigin * Font.MeasureString(Text), Scale, Effects, 0 );
 
 			batch.End();

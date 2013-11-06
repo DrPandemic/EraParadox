@@ -33,7 +33,7 @@ namespace GREATClient.BaseClass.BaseAction
 		{
 			Debug.Assert(Target != null);
 
-			AlphaChangeBeMillisecond = (Alpha - ((Drawable)Target).Alpha) / Duration.TotalMilliseconds;
+			AlphaChangeBeMillisecond = (Alpha - (Target).Alpha) / Duration.TotalMilliseconds;
 		}
     }
 }

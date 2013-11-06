@@ -334,7 +334,7 @@
     <Content Include="Content\towershot.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-     <Content Include="Content\tower1.png">
+    <Content Include="Content\tower1.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\tower2.png">
