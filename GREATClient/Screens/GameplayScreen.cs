@@ -139,7 +139,7 @@ namespace GREATClient.Screens
 
 		void AddStructure(DrawableStructure structure)
 		{
-			GameWorld.AddChild(structure, 0);
+			GameWorld.AddChild(structure, 1);
 			Structures.Add(structure);
 		}
 
@@ -210,7 +210,7 @@ namespace GREATClient.Screens
 			}
 
 			Champions.Add(champ);
-			GameWorld.AddChild(idraw, 1);
+			GameWorld.AddChild(idraw, 2);
 
 			Match.CurrentState.AddEntity(champ);
 

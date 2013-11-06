@@ -32,7 +32,8 @@ namespace GREATLib.Entities.Spells
 
 		// ManMega
 		ManMega_RocketRampage,
-		ManMega_HintOfASpark
+		ManMega_HintOfASpark,
+		ManMega_Slash
     }
 
 	public enum SpellKind
@@ -104,7 +105,17 @@ namespace GREATLib.Entities.Spells
 				SpellKind.OffensiveSkillshot,
 				10f,
 				SPELL_1
-				));
+			));
+			d.Add(SpellTypes.ManMega_Slash, new SpellInfo(
+				TimeSpan.FromSeconds(3),
+				TimeSpan.FromSeconds(0.2),
+				5f,
+				500f,
+				20f,
+				SpellKind.OffensiveSkillshot,
+				15f,
+				SPELL_2
+			));
 			d.Add(SpellTypes.ManMega_HintOfASpark, new SpellInfo(
 				TimeSpan.FromSeconds(5),
 				TimeSpan.FromSeconds(0.15),
@@ -114,7 +125,7 @@ namespace GREATLib.Entities.Spells
 				SpellKind.DefensiveSkillshot,
 				15f,
 				SPELL_3
-				));
+			));
 
 			return d;
 		}
