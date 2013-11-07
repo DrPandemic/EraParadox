@@ -32,7 +32,7 @@ namespace GREATClient.GameContent
     {
 		protected Color Tint { get; set; }
 
-		Drawable Bullet { get; set; }
+		protected Drawable Bullet { get; set; }
 
 		public ClientLinearSpell Spell { get; private set; }
 
@@ -65,7 +65,6 @@ namespace GREATClient.GameContent
 
 			AddChild(Bullet);
 			Bullet.RelativeOrigin = new Vector2(0.5f, 0.5f);
-			Bullet.Orientation = (float)Math.Atan2((double)Spell.Velocity.Y,(double)Spell.Velocity.X);
 		}
 
 		protected override void OnUpdate(GameTime dt)
