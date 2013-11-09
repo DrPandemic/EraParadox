@@ -32,6 +32,12 @@ namespace GREATClient.BaseClass
     {
 		public const int INFINITE = -1;
 
+		/// <summary>
+		/// Gets or sets the over action.
+		/// Will be performed after the animation.
+		/// </summary>
+		/// <value>The over action.</value>
+		public Action OverAction { get; set; }
 
 		/// <summary>
 		/// Gets or sets the width of a frame.
@@ -158,6 +164,8 @@ namespace GREATClient.BaseClass
 		public DrawableSprite(string assetName, int frameWidth, int frameHeight, int line, float frameRate, int frameCount, int repetitionCount = INFINITE, bool autoStart = true)
 			: base(assetName)
         {
+
+
 			FrameWidth = frameWidth;
 			FrameHeight = frameHeight;
 			Line = line;
@@ -169,6 +177,8 @@ namespace GREATClient.BaseClass
 
 			UntilNextAnim = TimeSpan.FromSeconds(0);
 			CurrentFrame = 0;
+
+			OverAction = null;
         }
 	
 		/// <summary>
@@ -222,6 +232,8 @@ namespace GREATClient.BaseClass
 
 						if (RepetitionCount == 0) { // if we are done animating, stay on the last frame
 							CurrentFrame = FrameCount - 1;
+							if (OverAction != null)
+								OverAction();
 						}
 					}
 				}
