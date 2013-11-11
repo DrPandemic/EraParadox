@@ -294,6 +294,7 @@ namespace GREATServer
 			AddRemarkableEvent(ServerCommand.SpellCast,
 			                   (NetBuffer msg) => {
 				ulong id = copy.ID;
+				ulong owner = copy.Owner != null ? copy.Owner.ID : IDGenerator.NO_ID;
 				byte type = (byte)copy.Type;
 				float time = castTime;
 				float px = copy.Position.X;
@@ -305,6 +306,7 @@ namespace GREATServer
 				float width = copy.CollisionWidth;
 
 				msg.Write(id);
+				msg.Write(owner);
 				msg.Write(type);
 				msg.Write(time);
 				msg.Write(px);

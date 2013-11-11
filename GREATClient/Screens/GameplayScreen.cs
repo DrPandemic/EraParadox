@@ -398,7 +398,10 @@ namespace GREATClient.Screens
 			var s = GetSpellFromType(new ClientLinearSpell(e.ID, e.Type, e.Position, e.Time, e.Velocity, e.Range, e.Width));
 			Spells.Add(e.ID, s);
 			GameWorld.AddChild(s);
-			ChampionState.SetSpellCooldown(e.Type, e.Cooldown);
+
+			if (OurChampion != null && OurChampion.Champion.ID == e.OwnerID) {
+				ChampionState.SetSpellCooldown(e.Type, e.Cooldown);
+			}
 		}
 		static DrawableSpell GetSpellFromType(ClientLinearSpell s)
 		{

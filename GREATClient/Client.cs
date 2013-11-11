@@ -83,7 +83,7 @@ namespace GREATClient
 			client.UPnP.ForwardPort(client.Port, "GREAT Client");
 			client.DiscoverLocalPeers(14242);
 			// If the discover cluster-fucks on localhost, use that line instead
-			//client.Connect("172.17.104.127", 14242);
+			//client.Connect("192.168.0.101", 14242);
 		}
 
 		public void Stop()
@@ -346,6 +346,7 @@ namespace GREATClient
 					case ServerCommand.SpellCast:
 						data = new SpellCastEventData(
 							msg.ReadUInt64(),
+							msg.ReadUInt64(),
 							(SpellTypes)msg.ReadByte(),
 							msg.ReadFloat(),
 							new Vec2(msg.ReadFloat(), msg.ReadFloat()),
@@ -403,6 +404,7 @@ namespace GREATClient
 	public class SpellCastEventData : RemarkableEventData
 	{
 		public ulong ID { get; private set; }
+		public ulong OwnerID { get; private set; }
 		public SpellTypes Type { get; private set; }
 		public float Time { get; private set; }
 		public Vec2 Position { get; private set; }
@@ -411,10 +413,12 @@ namespace GREATClient
 		public float Range { get; private set; }
 		public float Width { get; private set; }
 
-		public SpellCastEventData(ulong id, SpellTypes type, float time, Vec2 pos, Vec2 vel, TimeSpan cooldown, float range, float width)
+		public SpellCastEventData(ulong id, ulong owner, SpellTypes type, float time, Vec2 pos, 
+		                          Vec2 vel, TimeSpan cooldown, float range, float width)
 			: base(ServerCommand.SpellCast)
 		{
 			ID = id;
+			OwnerID = owner;
 			Type = type;
 			Time = time;
 			Position = pos;
