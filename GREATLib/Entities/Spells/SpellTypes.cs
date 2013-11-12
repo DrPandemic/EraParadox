@@ -152,9 +152,9 @@ namespace GREATLib.Entities.Spells
 				null
 			));
 			d.Add(SpellTypes.ManMega_Shotgun, new SpellInfo(
-				TimeSpan.FromSeconds(20),
+				TimeSpan.FromSeconds(35),
 				TimeSpan.FromSeconds(0.15),
-				5,
+				4,
 				450f,
 				1000f,
 				5f,

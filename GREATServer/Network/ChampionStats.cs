@@ -63,8 +63,10 @@ namespace GREATServer.Network
 		}
 		public bool IsOnCooldown(SpellTypes spell)
 		{
-			return TimeOfLastSpellUse(spell).TotalSeconds +
-				SpellsHelper.Info(spell).Cooldown.TotalSeconds > Server.Instance.GetTime().TotalSeconds;
+			TimeSpan lastUse = TimeOfLastSpellUse(spell);
+			return lastUse == TimeSpan.Zero ? false : 
+				lastUse.TotalSeconds + SpellsHelper.Info(spell).Cooldown.TotalSeconds > 
+					Server.Instance.GetTime().TotalSeconds;
 		}
     }
 }

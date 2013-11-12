@@ -26,7 +26,7 @@ namespace GREATLib.Entities.Structures
 {
     public class Tower : IStructure
     {
-		private const float HEALTH = 175f;
+		private const float HEALTH = 250f;
 		private const float WIDTH = 100f;
 		private const float HEIGHT = 150;
 
