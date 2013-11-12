@@ -38,7 +38,9 @@ namespace GREATLib.Entities.Spells
 
 		// Zoro
 		Zoro_Tooth,
-		Zoro_Double
+		Zoro_Slash,
+		Zoro_Double,
+		Zoro_Wall
     }
 
 	public enum SpellKind
@@ -186,10 +188,23 @@ namespace GREATLib.Entities.Spells
 				8f,
 				true,
 				SpellKind.OffensiveSkillshot,
-				7f,
+				5f,
 				SPELL_1,
 				null
 			));
+			d.Add(SpellTypes.Zoro_Slash, new SpellInfo(
+				TimeSpan.FromSeconds(3),
+				TimeSpan.FromSeconds(0.2),
+				1,
+				0f,
+				500f,
+				30f,
+				false,
+				SpellKind.OffensiveSkillshot,
+				20f,
+				SPELL_2,
+				KnockbackFunc(1200f)
+				));
 			d.Add(SpellTypes.Zoro_Double, new SpellInfo(
 				TimeSpan.FromSeconds(2),
 				TimeSpan.FromSeconds(0.2),
@@ -199,9 +214,22 @@ namespace GREATLib.Entities.Spells
 				8f,
 				true,
 				SpellKind.OffensiveSkillshot,
-				8f,
+				7f,
 				SPELL_3,
 				null
+			));
+			d.Add(SpellTypes.Zoro_Wall, new SpellInfo(
+				TimeSpan.FromSeconds(30),
+				TimeSpan.FromSeconds(0.2),
+				18,
+				300f,
+				1000f,
+				8f,
+				true,
+				SpellKind.OffensiveSkillshot,
+				2f,
+				SPELL_4,
+				KnockbackFunc(1000f)
 				));
 
 			return d;
