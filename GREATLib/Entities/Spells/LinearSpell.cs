@@ -39,7 +39,7 @@ namespace GREATLib.Entities.Spells
         {
 			Info = SpellsHelper.Info(type);
 
-			IsSolid = true;
+			IsSolid = Info.Solid;
 
 			Type = type;
 			Velocity = Vec2.Normalize(target - position) * MoveSpeed;

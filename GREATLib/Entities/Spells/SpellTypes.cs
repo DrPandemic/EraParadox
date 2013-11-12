@@ -50,13 +50,14 @@ namespace GREATLib.Entities.Spells
 		public float Range { get; private set; }
 		public float Speed { get; private set; }
 		public float Width { get; private set; }
+		public bool Solid { get; private set; }
 		public SpellKind Kind { get; private set; }
 		public float Value { get; private set; }
 		public int SpellNumber { get; private set; }
 		public Action<WorldInfoForSpell> OnActivation { get; private set; }
 
 		public SpellInfo(TimeSpan cooldown, TimeSpan cast, int projectiles, float range, 
-		                 float speed, float width, SpellKind kind, float value,
+		                 float speed, float width, bool solid, SpellKind kind, float value,
 		                 int spellNumber, Action<WorldInfoForSpell> onActivation)
 		{
 			Cooldown = cooldown;
@@ -68,6 +69,7 @@ namespace GREATLib.Entities.Spells
 			Kind = kind;
 			Value = value;
 			SpellNumber = spellNumber;
+			Solid = solid;
 			OnActivation = onActivation;
 		}
 	}
@@ -108,6 +110,7 @@ namespace GREATLib.Entities.Spells
 				Tower.PROJECTILE_RANGE,
 				1500f,
 				5f,
+				true,
 				SpellKind.OffensiveSkillshot,
 				15f,
 				SPELL_1,
@@ -122,6 +125,7 @@ namespace GREATLib.Entities.Spells
 				350f,
 				900f,
 				8f,
+				true,
 				SpellKind.OffensiveSkillshot,
 				10f,
 				SPELL_1,
@@ -134,6 +138,7 @@ namespace GREATLib.Entities.Spells
 				0f,
 				500f,
 				30f,
+				false,
 				SpellKind.OffensiveSkillshot,
 				15f,
 				SPELL_2,
@@ -146,6 +151,7 @@ namespace GREATLib.Entities.Spells
 				300f,
 				800f,
 				10f,
+				false,
 				SpellKind.DefensiveSkillshot,
 				15f,
 				SPELL_3,
@@ -158,6 +164,7 @@ namespace GREATLib.Entities.Spells
 				450f,
 				1000f,
 				5f,
+				true,
 				SpellKind.OffensiveSkillshot,
 				10f,
 				SPELL_4,
