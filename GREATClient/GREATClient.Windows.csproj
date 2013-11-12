@@ -116,6 +116,7 @@
     <Compile Include="GameContent\Spells\Drawable_TowerShot.cs" />
     <Compile Include="GameContent\Spells\Drawable_ManMega_Slash.cs" />
     <Compile Include="GameContent\DrawableBuildingExplosion.cs" />
+    <Compile Include="GameContent\Spells\Drawable_Zoro_Tooth.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />
@@ -344,6 +345,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\zoro.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\zoro_tooth.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

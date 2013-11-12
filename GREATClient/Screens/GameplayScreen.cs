@@ -411,6 +411,8 @@ namespace GREATClient.Screens
 				case SpellTypes.ManMega_HintOfASpark: return new Drawable_ManMega_HintOfASpark(s);
 				case SpellTypes.ManMega_Shotgun: return new Drawable_ManMega_RocketRampage(s);
 
+				case SpellTypes.Zoro_Tooth: return new Drawable_Zoro_Tooth(s);
+
 				case SpellTypes.Tower_Shot: return new Drawable_TowerShot(s);
 
 				default: throw new NotImplementedException("No spell object for spell " + s.Type);

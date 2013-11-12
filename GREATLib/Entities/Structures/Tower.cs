@@ -30,7 +30,7 @@ namespace GREATLib.Entities.Structures
 		private const float WIDTH = 100f;
 		private const float HEIGHT = 150;
 
-		public const float RANGE = 500f;
+		public const float RANGE = 600f;
 		public const float PROJECTILE_RANGE = RANGE * 1.3f;
 		public static readonly TimeSpan COOLDOWN = TimeSpan.FromSeconds(2);
 

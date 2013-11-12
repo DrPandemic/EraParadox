@@ -58,6 +58,12 @@ namespace GREATLib.Entities.Champions
 					}
 					break;
 
+				case ChampionTypes.Zoro:
+					switch (action) {
+						case PlayerActionType.Spell1: return SpellTypes.Zoro_Tooth;
+					}
+					break;
+
 					default:
 					ILogger.Log("Champion type not implemented " + type + ".");
 					break;

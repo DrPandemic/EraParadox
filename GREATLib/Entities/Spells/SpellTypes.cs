@@ -34,7 +34,10 @@ namespace GREATLib.Entities.Spells
 		ManMega_RocketRampage,
 		ManMega_Slash,
 		ManMega_HintOfASpark,
-		ManMega_Shotgun
+		ManMega_Shotgun,
+
+		// Zoro
+		Zoro_Tooth
     }
 
 	public enum SpellKind
@@ -168,6 +171,22 @@ namespace GREATLib.Entities.Spells
 				SpellKind.OffensiveSkillshot,
 				10f,
 				SPELL_4,
+				null
+			));
+
+
+			// Zoro
+			d.Add(SpellTypes.Zoro_Tooth, new SpellInfo(
+				TimeSpan.FromSeconds(0.6),
+				TimeSpan.FromSeconds(0.1),
+				1,
+				250f,
+				700f,
+				8f,
+				true,
+				SpellKind.OffensiveSkillshot,
+				7f,
+				SPELL_1,
 				null
 			));
 
