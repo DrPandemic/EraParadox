@@ -115,6 +115,7 @@
     <Compile Include="GameContent\DrawableTowerLifeBar.cs" />
     <Compile Include="GameContent\Spells\Drawable_TowerShot.cs" />
     <Compile Include="GameContent\Spells\Drawable_ManMega_Slash.cs" />
+    <Compile Include="GameContent\DrawableBuildingExplosion.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />
@@ -334,6 +335,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\tower2.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\manmega_slashofdoom.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\explosion.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

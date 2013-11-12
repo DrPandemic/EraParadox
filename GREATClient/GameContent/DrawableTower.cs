@@ -84,7 +84,9 @@ namespace GREATClient.GameContent
 			LifeBar.Visible = Structure.Alive;
 
 			if (!Structure.Alive) {
-				Parent.RemoveChild(this);
+				AddChild(new DrawableBuildingExplosion() {Position = new Vector2(0,-75), RelativeOrigin = new Vector2(0.5f,0.5f), OverAction = () => {
+						Parent.RemoveChild(this);
+					}}, 3);
 			}
 		}
     }

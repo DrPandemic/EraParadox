@@ -39,6 +39,12 @@ namespace GREATClient.GameContent.Spells
 			base.Load(container, gd);
 			AddParticlesTrail(100, TimeSpan.FromSeconds(1.0), Tint);
 		}
+		protected override void OnLoad(Microsoft.Xna.Framework.Content.ContentManager content, Microsoft.Xna.Framework.Graphics.GraphicsDevice gd)
+		{
+			base.OnLoad(content, gd);
+
+			Bullet.Orientation = (float)Math.Atan2((double)Spell.Velocity.Y,(double)Spell.Velocity.X);
+		}
     }
 }
 

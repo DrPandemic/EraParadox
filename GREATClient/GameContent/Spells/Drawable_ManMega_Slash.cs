@@ -33,15 +33,23 @@ namespace GREATClient.GameContent.Spells
 
         public Drawable_ManMega_Slash(ClientLinearSpell spell)
 			: base(spell,
-			       new DrawableRectangle(
-						new Rect(0,0,20,20), Color.DarkRed))
+			       new DrawableSprite("manmega_slashofdoom",32,32,0,30f,5,1))
         {
 			//TODO: refactor in DrawableMeleeSpell
 			RemoveWhenDeleted = false;
 			ApplyUpdates = false;
 
 			TimeAlive = 0.0;
+
+			Console.WriteLine(spell.Velocity);
         }
+
+		protected override void OnLoad(Microsoft.Xna.Framework.Content.ContentManager content, Microsoft.Xna.Framework.Graphics.GraphicsDevice gd)
+		{
+			base.OnLoad(content, gd);
+
+			if (Spell.Velocity.X < 0f ) Bullet.Effects = Microsoft.Xna.Framework.Graphics.SpriteEffects.FlipHorizontally;
+		}
 
 		protected override void OnUpdate(GameTime dt)
 		{
