@@ -36,6 +36,10 @@ namespace GREATClient.GameContent
 
 		DrawableBaseLifeBar LifeBar { get; set; }
 
+		// Is used to animate the diamond of the right base.
+		DrawableImage Diamond { get; set; }
+		long ticks; 
+
         public DrawableBase(Base theBase, bool ally)
 			: base(theBase)
         {
@@ -46,6 +50,9 @@ namespace GREATClient.GameContent
 				Position = new Vector2(0f,-250f),
 				MaxHealth = theBase.MaxHealth,
 				Health = theBase.Health };
+
+			Diamond = null;
+			ticks = 0;
         }
 		protected override void OnLoad(Microsoft.Xna.Framework.Content.ContentManager content, Microsoft.Xna.Framework.Graphics.GraphicsDevice gd)
 		{
@@ -67,8 +74,12 @@ namespace GREATClient.GameContent
 				AddChild(new SmokeSystem() { Position = new Vector2(-13, -160) });
 			} else {
 				AddChild(new DrawableImage(RIGHT_IMAGE) {
-					RelativeOrigin = new Vector2(0.5f, 0.9f)
-				},2);
+					RelativeOrigin = new Vector2(0.5f, 1f),
+					Position = new Vector2(0,20)
+				},3);
+				AddChild(Diamond = new DrawableImage("rbaseDiamond") {
+					RelativeOrigin = new Vector2(0.5f, 1f),
+					Position = new Vector2(5,-20)},2);
 			}
 
 			//Add the life bar
@@ -81,6 +92,14 @@ namespace GREATClient.GameContent
 			LifeBar.MaxHealth = Structure.MaxHealth;
 			LifeBar.Health = Structure.Health;
 			LifeBar.Visible = Structure.Alive;
+
+			// Move the diamond
+			if(Diamond != null) {
+				float move = (float)Math.Cos(ticks/50f)/10;
+				Console.WriteLine(move);
+				Diamond.Position += new Vector2(0,move);
+				++ticks;
+			}
 
 			base.OnUpdate(dt);
 		}
