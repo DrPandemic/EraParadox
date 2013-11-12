@@ -412,6 +412,7 @@ namespace GREATClient.Screens
 				case SpellTypes.ManMega_Shotgun: return new Drawable_ManMega_RocketRampage(s);
 
 				case SpellTypes.Zoro_Tooth: return new Drawable_Zoro_Tooth(s);
+				case SpellTypes.Zoro_Double: return new Drawable_Zoro_Tooth(s);
 
 				case SpellTypes.Tower_Shot: return new Drawable_TowerShot(s);
 

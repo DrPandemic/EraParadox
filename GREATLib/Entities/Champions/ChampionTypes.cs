@@ -61,6 +61,7 @@ namespace GREATLib.Entities.Champions
 				case ChampionTypes.Zoro:
 					switch (action) {
 						case PlayerActionType.Spell1: return SpellTypes.Zoro_Tooth;
+						case PlayerActionType.Spell3: return SpellTypes.Zoro_Double;
 					}
 					break;
 

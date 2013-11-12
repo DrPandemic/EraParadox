@@ -37,7 +37,8 @@ namespace GREATLib.Entities.Spells
 		ManMega_Shotgun,
 
 		// Zoro
-		Zoro_Tooth
+		Zoro_Tooth,
+		Zoro_Double
     }
 
 	public enum SpellKind
@@ -189,6 +190,19 @@ namespace GREATLib.Entities.Spells
 				SPELL_1,
 				null
 			));
+			d.Add(SpellTypes.Zoro_Double, new SpellInfo(
+				TimeSpan.FromSeconds(2),
+				TimeSpan.FromSeconds(0.2),
+				2,
+				350f,
+				900f,
+				8f,
+				true,
+				SpellKind.OffensiveSkillshot,
+				8f,
+				SPELL_3,
+				null
+				));
 
 			return d;
 		}
