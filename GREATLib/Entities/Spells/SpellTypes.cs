@@ -32,8 +32,9 @@ namespace GREATLib.Entities.Spells
 
 		// ManMega
 		ManMega_RocketRampage,
+		ManMega_Slash,
 		ManMega_HintOfASpark,
-		ManMega_Slash
+		ManMega_Shotgun
     }
 
 	public enum SpellKind
@@ -45,6 +46,7 @@ namespace GREATLib.Entities.Spells
 	{
 		public TimeSpan Cooldown { get; private set; }
 		public TimeSpan CastingTime { get; private set; }
+		public int Projectiles { get; private set; }
 		public float Range { get; private set; }
 		public float Speed { get; private set; }
 		public float Width { get; private set; }
@@ -53,12 +55,13 @@ namespace GREATLib.Entities.Spells
 		public int SpellNumber { get; private set; }
 		public Action<WorldInfoForSpell> OnActivation { get; private set; }
 
-		public SpellInfo(TimeSpan cooldown, TimeSpan cast, float range, 
+		public SpellInfo(TimeSpan cooldown, TimeSpan cast, int projectiles, float range, 
 		                 float speed, float width, SpellKind kind, float value,
 		                 int spellNumber, Action<WorldInfoForSpell> onActivation)
 		{
 			Cooldown = cooldown;
 			CastingTime = cast;
+			Projectiles = projectiles;
 			Range = range;
 			Speed = speed;
 			Width = width;
@@ -101,6 +104,7 @@ namespace GREATLib.Entities.Spells
 			d.Add(SpellTypes.Tower_Shot, new SpellInfo(
 				Tower.COOLDOWN,
 				TimeSpan.Zero,
+				1,
 				Tower.PROJECTILE_RANGE,
 				1500f,
 				5f,
@@ -114,9 +118,10 @@ namespace GREATLib.Entities.Spells
 			d.Add(SpellTypes.ManMega_RocketRampage, new SpellInfo(
 				TimeSpan.FromSeconds(1), 
 				TimeSpan.FromSeconds(0.2),
+				1,
 				350f,
 				900f,
-				5f,
+				8f,
 				SpellKind.OffensiveSkillshot,
 				10f,
 				SPELL_1,
@@ -125,6 +130,7 @@ namespace GREATLib.Entities.Spells
 			d.Add(SpellTypes.ManMega_Slash, new SpellInfo(
 				TimeSpan.FromSeconds(2),
 				TimeSpan.FromSeconds(0.2),
+				1,
 				0f,
 				500f,
 				30f,
@@ -136,12 +142,25 @@ namespace GREATLib.Entities.Spells
 			d.Add(SpellTypes.ManMega_HintOfASpark, new SpellInfo(
 				TimeSpan.FromSeconds(5),
 				TimeSpan.FromSeconds(0.15),
+				1,
 				300f,
 				800f,
-				3f,
+				10f,
 				SpellKind.DefensiveSkillshot,
 				15f,
 				SPELL_3,
+				null
+			));
+			d.Add(SpellTypes.ManMega_Shotgun, new SpellInfo(
+				TimeSpan.FromSeconds(20),
+				TimeSpan.FromSeconds(0.15),
+				5,
+				450f,
+				1000f,
+				5f,
+				SpellKind.OffensiveSkillshot,
+				10f,
+				SPELL_4,
 				null
 			));
 

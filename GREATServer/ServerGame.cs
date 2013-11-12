@@ -265,6 +265,7 @@ namespace GREATServer
 			}
 		}
 
+		const double RADIANS_BETWEEN_PROJECTILES = Math.PI / 36.0; // ~5 degrees
 		void CastChampionSpell(ICharacter champ, PlayerAction action)
 		{
 			Debug.Assert(action.Target != null);
@@ -272,15 +273,35 @@ namespace GREATServer
 			// aim in the direction of the spell
 			champ.FacingLeft = action.Target.X < champ.Position.X + champ.CollisionWidth / 2f;
 
-			LinearSpell spell = new LinearSpell(
-				IDGenerator.GenerateID(),
-				champ.Team,
-				champ.GetHandsPosition(),
-				action.Target ?? Vec2.Zero,
-				ChampionTypesHelper.GetSpellFromAction(champ.Type, action.Type),
-				champ);
+			SpellTypes type = ChampionTypesHelper.GetSpellFromAction(champ.Type, action.Type);
+			int projectiles = SpellsHelper.Info(type).Projectiles;
+			Vec2 spawn = champ.GetHandsPosition();
 
-			CastSpell(spell, action.Target);
+			double angle = 0.0;
+			if (action.Target != null) {
+				Vec2 dir = action.Target - spawn;
+				angle = Math.Atan2(dir.Y, dir.X); // current angle
+				double completeArc = RADIANS_BETWEEN_PROJECTILES * (projectiles - 1); // complete arc that we'll cover
+				angle -= completeArc / 2f; // start from the lowest angle
+			}
+
+			for (int i = 0; i < projectiles; ++i) {
+				Vec2 dir = Vec2.Zero;
+				if (action.Target != null) {
+					double current = angle + i * RADIANS_BETWEEN_PROJECTILES;
+					dir = new Vec2((float)Math.Cos(current), (float)Math.Sin(current));
+				}
+
+				LinearSpell spell = new LinearSpell(
+					                   IDGenerator.GenerateID(),
+					                   champ.Team,
+									   spawn,
+									   spawn + dir,
+					                   type,
+					                   champ);
+
+				CastSpell(spell, action.Target);
+			}
 		}
 
 		void CastSpell(LinearSpell spell, Vec2 target)

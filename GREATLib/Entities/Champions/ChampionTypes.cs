@@ -53,6 +53,7 @@ namespace GREATLib.Entities.Champions
 						case PlayerActionType.Spell1: return SpellTypes.ManMega_RocketRampage;
 						case PlayerActionType.Spell2: return SpellTypes.ManMega_Slash;
 						case PlayerActionType.Spell3: return SpellTypes.ManMega_HintOfASpark;
+						case PlayerActionType.Spell4: return SpellTypes.ManMega_Shotgun;
 					}
 					break;
 

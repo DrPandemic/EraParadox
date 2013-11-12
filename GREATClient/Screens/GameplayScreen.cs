@@ -409,6 +409,7 @@ namespace GREATClient.Screens
 				case SpellTypes.ManMega_RocketRampage: return new Drawable_ManMega_RocketRampage(s);
 				case SpellTypes.ManMega_Slash: return new Drawable_ManMega_Slash(s);
 				case SpellTypes.ManMega_HintOfASpark: return new Drawable_ManMega_HintOfASpark(s);
+				case SpellTypes.ManMega_Shotgun: return new Drawable_ManMega_RocketRampage(s);
 
 				case SpellTypes.Tower_Shot: return new Drawable_TowerShot(s);
 
