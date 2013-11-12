@@ -51,19 +51,24 @@ namespace GREATClient.GameContent
 		{
 			base.OnLoad(content, gd);
 
-			AddChild(new DrawableImage(Structure.Team == Teams.Left ? LEFT_IMAGE : RIGHT_IMAGE) {
-				RelativeOrigin = new Vector2(0.5f, 1.0f)
-			},2);
 			// Add the gear and smoke.
 			if (Structure.Team == Teams.Left) {
+				AddChild(new DrawableImage(LEFT_IMAGE) {
+					RelativeOrigin = new Vector2(0.5f, 1.0f)
+				}, 2);
 				DrawableImage gear = new DrawableImage("gearnexus") {
 					RelativeOrigin = new Vector2(0.5f),
-					Position = new Vector2(-70,-85)};
+					Position = new Vector2(-70, -85)
+				};
 				AddChild(gear);
 				gear.PerformAction(new ActionSequence(ActionSequence.INFINITE_SEQUENCE, new ActionRotateBy(new TimeSpan(0, 0, 1), 20, false)));
 
-				AddChild(new SmokeSystem() {Position = new Vector2(-80,-180)});
-				AddChild(new SmokeSystem() {Position = new Vector2(-13,-160)});
+				AddChild(new SmokeSystem() { Position = new Vector2(-80, -180) });
+				AddChild(new SmokeSystem() { Position = new Vector2(-13, -160) });
+			} else {
+				AddChild(new DrawableImage(RIGHT_IMAGE) {
+					RelativeOrigin = new Vector2(0.5f, 0.9f)
+				},2);
 			}
 
 			//Add the life bar
