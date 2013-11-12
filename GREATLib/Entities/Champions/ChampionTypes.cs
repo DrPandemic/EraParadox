@@ -38,12 +38,13 @@ namespace GREATLib.Entities.Champions
 
 	public enum ChampionTypes
 	{
-		ManMega
+		ManMega,
+		Zoro
 	}
 
 	public static class ChampionTypesHelper
 	{
-		// Note: It is VERY important that the spell # here is the same as the one in the SpellTypes enum.
+		// Note: It is VERY important that the spell # here is the same as the one in the SpellTypes enum (see SpellTypesHelper).
 		// PLEASE MAKE SURE TO MODIFY THEM AT BOTH PLACES.
 		public static SpellTypes GetSpellFromAction(ChampionTypes type, PlayerActionType action)
 		{

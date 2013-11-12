@@ -38,6 +38,11 @@ namespace GREATLib
 		{
 			return (float)random.NextDouble() * (max - min) + min;
 		}
+		public static T RandomEnumValue<T>(this Random random)
+		{
+			var vals = Enum.GetValues(typeof(T));
+			return (T)vals.GetValue(random.Next(vals.Length));
+		}
 
 		/// <summary>
 		/// Makes a list from the passed arguments, generally used for fast

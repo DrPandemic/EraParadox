@@ -814,7 +814,7 @@ namespace GREATServer
 		}
 		ChampionTypes RandomChampionType()
 		{
-			return ChampionTypes.ManMega; // 100% random, obtained using a dice-roll.
+			return Utilities.RandomEnumValue<ChampionTypes>(Utilities.Random);
 		}
 
 		Teams GetSmallestTeam()
