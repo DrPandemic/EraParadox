@@ -96,7 +96,6 @@ namespace GREATClient.GameContent
 			// Move the diamond
 			if(Diamond != null) {
 				float move = (float)Math.Cos(ticks/50f)/10;
-				Console.WriteLine(move);
 				Diamond.Position += new Vector2(0,move);
 				++ticks;
 			}
