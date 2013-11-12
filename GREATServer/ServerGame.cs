@@ -675,6 +675,9 @@ namespace GREATServer
 				    client.Champion.CreateCollisionRectangle().Intersects(spellRect)) { // we hit him
 
 					client.ChampStats.Hurt(spell.Info.Value); // we hurt him
+					if (spell.Info.OnActivation != null)
+						spell.Info.OnActivation(
+							new WorldInfoForSpell(client.Champion, spell.Velocity));
 					return true;
 				}
 				// With allies

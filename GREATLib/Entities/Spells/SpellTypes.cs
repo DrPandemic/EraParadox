@@ -51,10 +51,11 @@ namespace GREATLib.Entities.Spells
 		public SpellKind Kind { get; private set; }
 		public float Value { get; private set; }
 		public int SpellNumber { get; private set; }
+		public Action<WorldInfoForSpell> OnActivation { get; private set; }
 
 		public SpellInfo(TimeSpan cooldown, TimeSpan cast, float range, 
 		                 float speed, float width, SpellKind kind, float value,
-		                 int spellNumber)
+		                 int spellNumber, Action<WorldInfoForSpell> onActivation)
 		{
 			Cooldown = cooldown;
 			CastingTime = cast;
@@ -64,6 +65,19 @@ namespace GREATLib.Entities.Spells
 			Kind = kind;
 			Value = value;
 			SpellNumber = spellNumber;
+			OnActivation = onActivation;
+		}
+	}
+
+	public class WorldInfoForSpell
+	{
+		public Vec2 SpellVelocity { get; private set; }
+		public IEntity Target { get; private set; }
+
+		public WorldInfoForSpell(IEntity target, Vec2 spellVelocity)
+		{
+			Target = target;
+			SpellVelocity = spellVelocity;
 		}
 	}
 
@@ -92,7 +106,8 @@ namespace GREATLib.Entities.Spells
 				5f,
 				SpellKind.OffensiveSkillshot,
 				15f,
-				SPELL_1
+				SPELL_1,
+				null
 			));
 
 			// ManMega
@@ -104,17 +119,19 @@ namespace GREATLib.Entities.Spells
 				5f,
 				SpellKind.OffensiveSkillshot,
 				10f,
-				SPELL_1
+				SPELL_1,
+				null
 			));
 			d.Add(SpellTypes.ManMega_Slash, new SpellInfo(
 				TimeSpan.FromSeconds(2),
 				TimeSpan.FromSeconds(0.2),
 				0f,
 				500f,
-				20f,
+				30f,
 				SpellKind.OffensiveSkillshot,
 				15f,
-				SPELL_2
+				SPELL_2,
+				KnockbackFunc(1500f)
 			));
 			d.Add(SpellTypes.ManMega_HintOfASpark, new SpellInfo(
 				TimeSpan.FromSeconds(5),
@@ -124,7 +141,8 @@ namespace GREATLib.Entities.Spells
 				3f,
 				SpellKind.DefensiveSkillshot,
 				15f,
-				SPELL_3
+				SPELL_3,
+				null
 			));
 
 			return d;
@@ -145,6 +163,19 @@ namespace GREATLib.Entities.Spells
 			int num = Info(s).SpellNumber;
 			Debug.Assert(num >= MIN_SPELL_NUM && num <= MAX_SPELL_NUM);
 			return num;
+		}
+
+
+
+
+		private static Action<WorldInfoForSpell> KnockbackFunc(float force)
+		{
+			return (WorldInfoForSpell world) => {
+				Vec2 dir = world.SpellVelocity != Vec2.Zero ? Vec2.Normalize(world.SpellVelocity) : Vec2.Zero;
+				Console.WriteLine("b4" + world.Target.Velocity);
+				world.Target.Velocity += dir * force;
+				Console.WriteLine("after:" + world.Target.Velocity);
+			};
 		}
 	}
 }
