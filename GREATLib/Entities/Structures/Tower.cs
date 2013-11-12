@@ -36,6 +36,14 @@ namespace GREATLib.Entities.Structures
 
 		private float TimeOfLastShot { get; set; }
 
+		const float SPAWN_RATIO_FROM_TOP = 0.1f;
+		public Vec2 SpellSpawnPosition {
+			get {
+				return new Vec2(Rectangle.Left + Rectangle.Width / 2f,
+								Rectangle.Top + Rectangle.Height * SPAWN_RATIO_FROM_TOP);
+			}
+		}
+
         public Tower(StructureTypes type, Teams team, Vec2 feetPos)
 			: base(HEALTH,
 			       type,

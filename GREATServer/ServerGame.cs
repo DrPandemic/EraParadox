@@ -529,7 +529,7 @@ namespace GREATServer
 				    s.Alive) {
 					Tower t = (Tower)s;
 					float now = (float)Server.Instance.GetTime().TotalSeconds;
-					Vec2 towerCenter = Rect.Center(t.Rectangle);
+					Vec2 towerCenter = t.SpellSpawnPosition;
 					foreach (ServerClient client in Clients.Values) {
 						var clientRect = client.Champion.CreateCollisionRectangle();
 						Vec2 clientCenter = Rect.Center(clientRect);
