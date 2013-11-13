@@ -68,7 +68,7 @@ namespace GREATClient.BaseClass.BaseAction
 		{
 			Debug.Assert(Target != null);
 
-			((Drawable)Target).Alpha += (float)(AlphaChangeBeMillisecond * dt.ElapsedGameTime.TotalMilliseconds);
+			(Target).Alpha += (float)(AlphaChangeBeMillisecond * dt.ElapsedGameTime.TotalMilliseconds);
 		}
     }
 }

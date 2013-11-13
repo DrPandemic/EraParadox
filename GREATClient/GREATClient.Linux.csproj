@@ -31,6 +31,7 @@
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
     <ConsolePause>False</ConsolePause>
+    <DefineConstants>LINUX</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -102,11 +103,22 @@
     <Compile Include="Display\GameUI.cs" />
     <Compile Include="GameContent\DrawableSpell.cs" />
     <Compile Include="Network\ClientLinearSpell.cs" />
-    <Compile Include="GameContent\DeathScreen.cs" />
     <Compile Include="GameContent\DrawableChampionLifeBar.cs" />
     <Compile Include="GameContent\CameraService.cs" />
     <Compile Include="GameContent\Spells\Drawable_ManMega_RocketRampage.cs" />
     <Compile Include="GameContent\Spells\Drawable_ManMega_HintOfASpark.cs" />
+    <Compile Include="GameContent\DrawableBase.cs" />
+    <Compile Include="BaseClass\Particle\SmokeSystem.cs" />
+    <Compile Include="GameContent\DrawableBaseLifeBar.cs" />
+    <Compile Include="Display\DeathScreen.cs" />
+    <Compile Include="Display\WinLoseScreen.cs" />
+    <Compile Include="GameContent\DrawableStructure.cs" />
+    <Compile Include="GameContent\DrawableTower.cs" />
+    <Compile Include="GameContent\DrawableTowerLifeBar.cs" />
+    <Compile Include="GameContent\Spells\Drawable_TowerShot.cs" />
+    <Compile Include="GameContent\Spells\Drawable_ManMega_Slash.cs" />
+    <Compile Include="GameContent\DrawableBuildingExplosion.cs" />
+    <Compile Include="GameContent\Spells\Drawable_Zoro_Tooth.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />
@@ -130,6 +142,7 @@
     <Folder Include="Content\UIObjects\" />
     <Folder Include="Content\background\" />
     <Folder Include="GameContent\Spells\" />
+    <Folder Include="Content\Maps\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -144,10 +157,6 @@
     <ProjectReference Include="..\MonoGame\MonoGame.Framework\MonoGame.Framework.Linux.csproj">
       <Project>{35253CE1-C864-4CD3-8249-4D1319748E8F}</Project>
       <Name>MonoGame.Framework.Linux</Name>
-    </ProjectReference>
-    <ProjectReference Include="GREATClient.Windows.csproj">
-      <Project>{0F19250F-56ED-4ADB-80E1-306C9FFA97C7}</Project>
-      <Name>GREATClient.Windows</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -286,9 +295,6 @@
     <Content Include="Content\background\cloud5.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\tile.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Content\manmega.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -296,6 +302,60 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\manmega_hintofaspark.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Maps\map.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Maps\tile.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\lbase.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\rbase.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\gearnexus.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\smoke.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\spell1Icon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\spell2Icon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\spell3Icon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\spell4Icon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\towershot.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\tower1.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\tower2.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\manmega_slashofdoom.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\explosion.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\zoro.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\zoro_tooth.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\rbaseDiamond.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

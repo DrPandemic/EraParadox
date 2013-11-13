@@ -146,6 +146,15 @@ namespace GREATClient.BaseClass
 		}
 
 		/// <summary>
+		/// Gets or sets the alpha.
+		/// 0 to 1.
+		/// </summary>
+		/// <value>The alpha.</value>
+		public float Alpha { get; set; }
+
+		public abstract float GetEffectiveAlpha();
+
+		/// <summary>
 		/// Gets or sets the position mode.
 		/// </summary>
 		/// <value>The position mode.</value>
@@ -221,6 +230,7 @@ namespace GREATClient.BaseClass
 			XPercentOfTheScreen = 0;
 			YPercentOfTheScreen = 0;
 			MoveEvent = null;
+			Alpha = 1;
 
 			Parent = null;
 			Loaded = false;

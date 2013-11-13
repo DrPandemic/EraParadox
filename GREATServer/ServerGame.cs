@@ -32,6 +32,7 @@ using GREATLib.Entities.Spells;
 using GREATLib.Physics;
 using System.IO;
 using GREATLib.World.Tiles;
+using GREATLib.Entities.Structures;
 
 namespace GREATServer
 {
@@ -80,6 +81,7 @@ namespace GREATServer
 
 			StateHistory = new SnapshotHistory<MatchState>(HISTORY_MAX_TIME_KEPT);
 			Match = new GameMatch(MapLoader.MAIN_MAP_PATH);
+
 			RemarkableEvents = new List<KeyValuePair<ServerCommand, Action<NetBuffer>>>();
 
 			TimeSinceLastCorrection = 0.0;
@@ -255,7 +257,7 @@ namespace GREATServer
 				if (client.ChampStats.Alive &&
 				    !client.ChampStats.IsOnCooldown(spell)) { // we're not dead and the spell is not on cooldown
 
-					CastSpell(client.Champion, action);
+					CastChampionSpell(client.Champion, action);
 					client.ChampStats.UsedSpell(spell);
 				}
 			} else if (action.Type != PlayerActionType.Idle) {
@@ -263,19 +265,47 @@ namespace GREATServer
 			}
 		}
 
-		void CastSpell(ICharacter champ, PlayerAction action)
+		const double RADIANS_BETWEEN_PROJECTILES = Math.PI / 36.0; // ~5 degrees
+		void CastChampionSpell(ICharacter champ, PlayerAction action)
 		{
 			Debug.Assert(action.Target != null);
 
+			// aim in the direction of the spell
 			champ.FacingLeft = action.Target.X < champ.Position.X + champ.CollisionWidth / 2f;
 
-			LinearSpell spell = new LinearSpell(
-				IDGenerator.GenerateID(),
-				champ,
-				champ.GetHandsPosition(),
-				action.Target ?? Vec2.Zero,
-				ChampionTypesHelper.GetSpellFromAction(champ.Type, action.Type)); //TODO: depend on spell used
+			SpellTypes type = ChampionTypesHelper.GetSpellFromAction(champ.Type, action.Type);
+			int projectiles = SpellsHelper.Info(type).Projectiles;
+			Vec2 spawn = champ.GetHandsPosition();
 
+			double angle = 0.0;
+			if (action.Target != null) {
+				Vec2 dir = action.Target - spawn;
+				angle = Math.Atan2(dir.Y, dir.X); // current angle
+				double completeArc = RADIANS_BETWEEN_PROJECTILES * (projectiles - 1); // complete arc that we'll cover
+				angle -= completeArc / 2f; // start from the lowest angle
+			}
+
+			for (int i = 0; i < projectiles; ++i) {
+				Vec2 dir = Vec2.Zero;
+				if (action.Target != null) {
+					double current = angle + i * RADIANS_BETWEEN_PROJECTILES;
+					dir = new Vec2((float)Math.Cos(current), (float)Math.Sin(current));
+				}
+
+				LinearSpell spell = new LinearSpell(
+					                   IDGenerator.GenerateID(),
+					                   champ.Team,
+									   spawn,
+									   spawn + dir,
+					                   type,
+					                   champ);
+
+				CastSpell(spell, action.Target);
+			}
+		}
+
+		void CastSpell(LinearSpell spell, Vec2 target)
+		{
 			Match.CurrentState.AddEntity(spell);
 			ActiveSpells.Add(spell);
 
@@ -283,28 +313,30 @@ namespace GREATServer
 			LinearSpell copy = (LinearSpell)spell.Clone();
 
 			AddRemarkableEvent(ServerCommand.SpellCast,
-				(NetBuffer msg) => {
-					ulong id = copy.ID;
-					byte type = (byte)copy.Type;
-					float time = castTime;
-					float px = copy.Position.X;
-					float py = copy.Position.Y;
-					float vx = copy.Velocity.X;
-					float vy = copy.Velocity.Y;
-					float cd = (float)copy.Info.Cooldown.TotalSeconds;
-					float range = copy.Info.Range;
-					float width = copy.CollisionWidth;
+			                   (NetBuffer msg) => {
+				ulong id = copy.ID;
+				ulong owner = copy.Owner != null ? copy.Owner.ID : IDGenerator.NO_ID;
+				byte type = (byte)copy.Type;
+				float time = castTime;
+				float px = copy.Position.X;
+				float py = copy.Position.Y;
+				float vx = copy.Velocity.X;
+				float vy = copy.Velocity.Y;
+				float cd = (float)copy.Info.Cooldown.TotalSeconds;
+				float range = copy.Info.Range;
+				float width = copy.CollisionWidth;
 
-					msg.Write(id);
-					msg.Write(type);
-					msg.Write(time);
-					msg.Write(px);
-					msg.Write(py);
-					msg.Write(vx);
-					msg.Write(vy);
-					msg.Write(cd);
-					msg.Write(range);
-					msg.Write(width);
+				msg.Write(id);
+				msg.Write(owner);
+				msg.Write(type);
+				msg.Write(time);
+				msg.Write(px);
+				msg.Write(py);
+				msg.Write(vx);
+				msg.Write(vy);
+				msg.Write(cd);
+				msg.Write(range);
+				msg.Write(width);
 			});
 		}
 
@@ -454,6 +486,76 @@ namespace GREATServer
 		{
 			UpdateSpells(dt);
 			UpdateChampions(dt);
+			UpdateStructures(dt);
+		}
+		void UpdateStructures(double dt)
+		{
+			Match.Structures.ForEach(s => {
+				s.Update(TimeSpan.FromSeconds(dt));
+
+				if (s.GetHealthChangedAndClearFlag()) { // the health of the structure changed
+					Console.WriteLine(s.Team + " " + s.Type + " - " + s.Health + " / " + s.MaxHealth);
+					AddRemarkableEvent(ServerCommand.StructureStatsChanged,
+					                   (msg) => {
+						bool left = s.Team == Teams.Left;
+						byte type = (byte)s.Type;
+						float health = s.Health;
+						msg.Write(left);
+						msg.Write(type);
+						msg.Write(health);
+					});
+
+					if (!s.Alive) { // the structure is destroyed
+						AddRemarkableEvent(ServerCommand.StructureDestroyed,
+						                   (msg) => {
+							bool left = s.Team == Teams.Left;
+							byte type = (byte)s.Type;
+							msg.Write(left);
+							msg.Write(type);
+						});
+
+						if (s.Type == StructureTypes.Base) {
+							AddRemarkableEvent(ServerCommand.EndOfGame,
+							                   (msg) => {
+								bool winnerIsLeft = TeamsHelper.Opposite(s.Team) == Teams.Left;
+								msg.Write(winnerIsLeft);
+							});
+						}
+					}
+				}
+
+				// Check to hit entities
+				if (StructureHelper.IsTower(s.Type) &&
+				    s.Alive) {
+					Tower t = (Tower)s;
+					float now = (float)Server.Instance.GetTime().TotalSeconds;
+					Vec2 towerCenter = t.SpellSpawnPosition;
+					foreach (ServerClient client in Clients.Values) {
+						var clientRect = client.Champion.CreateCollisionRectangle();
+						Vec2 clientCenter = Rect.Center(clientRect);
+						if (t.CanShoot(now) && // not on cooldown
+							s.Team == TeamsHelper.Opposite(client.Champion.Team) && // is enemy
+						    client.ChampStats.Alive && // is alive
+						    Utilities.InRange(towerCenter, clientCenter, Tower.RANGE)) { // in range
+
+							CastTowerSpell(s.Team, towerCenter, clientCenter);
+							t.OnShot(now);
+						}
+					}
+				}
+			});
+		}
+		void CastTowerSpell(Teams team, Vec2 origin, Vec2 target)
+		{
+			LinearSpell spell = new LinearSpell(
+                IDGenerator.GenerateID(),
+                team,
+                origin,
+                target,
+                SpellTypes.Tower_Shot,
+                null);
+
+			CastSpell(spell, target);
 		}
 		void UpdateChampions(double dt)
 		{
@@ -487,7 +589,7 @@ namespace GREATServer
 				Respawn(client);
 			}
 
-			if (client.ChampStats.HealthChanged) {
+			if (client.ChampStats.GetHealthChangedAndClearFlag()) {
 				AddRemarkableEvent(ServerCommand.StatsChanged,
 				                   (msg) => {
 					msg.Write(client.Champion.ID);
@@ -502,8 +604,6 @@ namespace GREATServer
 						msg.Write((ushort)GetRespawnTime().TotalSeconds);
 					});
 				}
-
-				client.ChampStats.ClearHealthChangedFlag();
 			}
 		}
 		void Respawn(ServerClient client)
@@ -527,34 +627,23 @@ namespace GREATServer
 				Vec2 pass = (s.Position - before) / PhysicsEngine.PHYSICS_PASSES;
 
 				s.Position = before;
-				bool remove = false;
 				for (int i = 0; i < PhysicsEngine.PHYSICS_PASSES; ++i) {
 
 					// Check for entities collisions
 					var rect = s.CreateCollisionRectangle();
-					var enemyTeam = TeamsHelper.Opposite(s.Owner.Team);
-					foreach (ServerClient client in Clients.Values) {
-						if (client.ChampStats.Alive &&
-						    s.Info.Kind == SpellKind.OffensiveSkillshot &&
-							client.Champion.Team == enemyTeam &&
-						    client.Champion.CreateCollisionRectangle().Intersects(rect)) {
+					var enemyTeam = TeamsHelper.Opposite(s.Team);
 
-							client.ChampStats.Hurt(s.Info.Value);
-							remove = true;
+					// Check to hit players
+					bool remove = CheckForSpellPlayerCollisions(s, rect, enemyTeam);
 
-						} else if (client.ChampStats.Alive &&
-						           s.Info.Kind == SpellKind.DefensiveSkillshot &&
-						           client.Champion.Team == s.Owner.Team &&
-						           client.Champion.ID != s.Owner.ID &&
-						           client.Champion.CreateCollisionRectangle().Intersects(rect)) {
-						
-							client.ChampStats.Heal(s.Info.Value);
-							remove = true;
-						}
+					// Check to hit structures
+					if (!remove) {
+						remove = CheckForSpellStructuresCollisions(s, rect, 
+                                   enemyTeam == Teams.Left ? Match.LeftStructures : Match.RightStructures);
 					}
 
 					// Check to remove spells
-					if (!remove && // don't check if we know it has to be removed
+					if (!remove && // don't check if we know it already has to be removed
 					   Match.CurrentState.SpellShouldDisappear(s)) {
 						remove = true;
 					}
@@ -579,6 +668,51 @@ namespace GREATServer
 					msg.Write(id);
 				}));
 			});
+		}
+
+		bool CheckForSpellStructuresCollisions(LinearSpell spell, Rect spellRect, TeamStructures enemyStructures)
+		{
+			foreach (IStructure structure in enemyStructures.Structures) {
+				if (structure.Alive && // not a destroyed target
+				    enemyStructures.IsDestructible(structure.Type) && // not an indestructible target
+					spell.Info.Kind == SpellKind.OffensiveSkillshot && // offensive spell
+					structure.Rectangle.Intersects(spellRect)) { // we hit it
+
+					structure.Hurt(spell.Info.Value); // we hurt it
+
+					return true;
+				}
+			}
+
+			return false;
+		}
+		bool CheckForSpellPlayerCollisions(LinearSpell spell, Rect spellRect, Teams enemyTeam)
+		{
+			foreach (ServerClient client in Clients.Values) { // check for collisions with players
+				// With ennemies
+				if (client.ChampStats.Alive && // not a dead target
+				    spell.Info.Kind == SpellKind.OffensiveSkillshot && // offensive spell
+				    client.Champion.Team == enemyTeam && // against an ennemy
+				    client.Champion.CreateCollisionRectangle().Intersects(spellRect)) { // we hit him
+
+					client.ChampStats.Hurt(spell.Info.Value); // we hurt him
+					if (spell.Info.OnActivation != null)
+						spell.Info.OnActivation(
+							new WorldInfoForSpell(client.Champion, spell.Velocity));
+					return true;
+				}
+				// With allies
+				else if (client.ChampStats.Alive && // not a dead target
+				         spell.Info.Kind == SpellKind.DefensiveSkillshot && // deffensive spell
+				         client.Champion.Team == spell.Team &&  // on an ally
+				         (spell.Owner == null || client.Champion.ID != spell.Owner.ID) && // that is NOT us
+				         client.Champion.CreateCollisionRectangle().Intersects(spellRect)) { // we hit him
+
+					client.ChampStats.Heal(spell.Info.Value); // we heal him
+					return true;
+				}
+			}
+			return false;
 		}
 
 		/// <summary>
@@ -680,7 +814,7 @@ namespace GREATServer
 		}
 		ChampionTypes RandomChampionType()
 		{
-			return ChampionTypes.ManMega; // 100% random, obtained using a dice-roll.
+			return Utilities.RandomEnumValue<ChampionTypes>(Utilities.Random);
 		}
 
 		Teams GetSmallestTeam()

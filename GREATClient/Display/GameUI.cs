@@ -24,6 +24,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using GameContent;
+using GREATClient.BaseClass.BaseAction;
 
 namespace GREATClient.Display
 {
@@ -75,16 +76,14 @@ namespace GREATClient.Display
 			AddChild(LifeDropshadow);
 			ResourceDropShadow = new DrawableImage("UIObjects/manaDrop");
 			ResourceDropShadow.RelativeOrigin = new Vector2(0f,1f);
-			AddChild(ResourceDropShadow);
+			//AddChild(ResourceDropShadow);
 
 			Life = new DrawableImage("UIObjects/life");
 			Life.RelativeOrigin = new Vector2(0f,1f);
 			AddChild(Life);
 			Resource = new DrawableImage("UIObjects/mana");
 			Resource.RelativeOrigin = new Vector2(0f,1f);
-			AddChild(Resource);
-
-
+			//AddChild(Resource);
 
 			MoneyBackground = new DrawableImage("UIObjects/boxBackground");
 			AddChild(MoneyBackground);
@@ -93,7 +92,7 @@ namespace GREATClient.Display
 			StatBackground = new DrawableImage("UIObjects/boxBackground");
 			AddChild(StatBackground);*/
 
-			UISpellMenu = new SpellMenu();
+			UISpellMenu = new SpellMenu(ChampionState);
 			AddChild(UISpellMenu,3);
         }
 
@@ -101,12 +100,14 @@ namespace GREATClient.Display
 		{
 			Map.SetPositionRelativeToScreen(ScreenBound.BottomRight, 
 			                                new Vector2(- Map.Texture.Width - 10, - Map.Texture.Height - 10));
-			Resource.SetPositionRelativeToObject(Map, new Vector2(-Resource.Texture.Width - 8, 
-			                                                   Map.Texture.Height - 8), false);
-			Life.SetPositionRelativeToObject(Resource, new Vector2(-Life.Texture.Width - 8, 
-			                                                   0), false);
+			//Resource.SetPositionRelativeToObject(Map, new Vector2(-Resource.Texture.Width - 8, 
+			                                                 //  Map.Texture.Height - 8), false);
+			Life.SetPositionRelativeToObject(Map, new Vector2(-Life.Texture.Width - 8, 
+			                                                    Map.Texture.Height - 8), false);
+			/*Life.SetPositionRelativeToObject(Resource, new Vector2(-Life.Texture.Width - 8, 
+			                                                       0), false);*/
 
-			ResourceDropShadow.SetPositionRelativeToObject(Resource, new Vector2(0,5), false);
+			//ResourceDropShadow.SetPositionRelativeToObject(Resource, new Vector2(0,5), false);
 			LifeDropshadow.SetPositionRelativeToObject(Life, new Vector2(0,5), false);
 
 			SpellBackground.SetPositionRelativeToObject(Life, new Vector2(-SpellBackground.Texture.Width - 10, 
@@ -126,13 +127,14 @@ namespace GREATClient.Display
 		protected override void OnUpdate(GameTime dt)
 		{
 			SetLifeAndResource();
+			UpdateSpellCooldowns();
 		}
 
 		/// <summary>
 		/// Sets the life and resource.
 		/// Will update the UI bars.
 		/// </summary>
-		void SetLifeAndResource()
+		private void SetLifeAndResource()
 		{
 			Vector2 v = Life.Scale; 
 			v.Y = (float)ChampionState.CurrentLife / ChampionState.MaxLife;
@@ -146,6 +148,11 @@ namespace GREATClient.Display
 			v = Vector2.Lerp(Resource.Scale, v, LERP_SPEED);
 			Resource.Scale = v;
 			ResourceDropShadow.Scale = v;
+		}
+
+		private void UpdateSpellCooldowns()
+		{
+
 		}
     }
 }

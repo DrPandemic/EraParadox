@@ -32,15 +32,21 @@ namespace GREATClient.GameContent
     {
 		protected Color Tint { get; set; }
 
-		Drawable Bullet { get; set; }
+		protected Drawable Bullet { get; set; }
 
 		public ClientLinearSpell Spell { get; private set; }
+
+		protected bool RemoveWhenDeleted { get; set; }
+		protected bool ApplyUpdates { get; set; }
 
         public DrawableSpell(ClientLinearSpell spell, Drawable bullet)
         {
 			Spell = spell;
 			Bullet = bullet;
 			Tint = Color.White;
+
+			RemoveWhenDeleted = true;
+			ApplyUpdates = true;
         }
 
 		protected void AddParticlesTrail(int particles, TimeSpan particleLifeTime, Color tint, Action<ParticleSystem> modifySystem = null)
@@ -59,17 +65,17 @@ namespace GREATClient.GameContent
 
 			AddChild(Bullet);
 			Bullet.RelativeOrigin = new Vector2(0.5f, 0.5f);
-			Bullet.Orientation = (float)Math.Atan2((double)Spell.Velocity.Y,(double)Spell.Velocity.X);
 		}
 
 		protected override void OnUpdate(GameTime dt)
 		{
-			Spell.Update(dt.ElapsedGameTime.TotalSeconds);
+			if (ApplyUpdates) {
+				Spell.Update(dt.ElapsedGameTime.TotalSeconds);
+			}
 			Position = GameLibHelper.ToVector2(Spell.Position);
 			base.OnUpdate(dt);
 
-			//TODO: fade out on particles (but put spell icon invisible) here ?
-			if (!Spell.Active) {
+			if (RemoveWhenDeleted && !Spell.Active) {
 				Parent.RemoveChild(this);
 			}
 		}

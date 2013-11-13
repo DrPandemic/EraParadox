@@ -38,7 +38,7 @@ namespace GREATClient.BaseClass.Particle
 		/// The number of particules.
 		/// </summary>
 		int numberOfPaticules;
-		int NumberOfParticles 
+		protected int NumberOfParticles 
 		{ 
 			get { return numberOfPaticules; }
 			set {
@@ -65,7 +65,7 @@ namespace GREATClient.BaseClass.Particle
 		/// </summary>
 		/// <value>The length of the max animation.</value>
 		TimeSpan? maxAnimationLength;
-		TimeSpan? MaxAnimationLength 
+		protected TimeSpan? MaxAnimationLength 
 		{
 			get { return maxAnimationLength; }
 			set 
@@ -95,10 +95,12 @@ namespace GREATClient.BaseClass.Particle
 		public float ParticleForceRandomizer { get; set; }
 		public float ParticleAlphaPercent { get; set; }
 		public string ParticleFile { get; set; }
-		TimeSpan LifeTime;
+		protected TimeSpan LifeTime;
 		public Color Tint;
 
 		Texture2D ParticleTexture { get; set; }
+
+		protected float ParticleScale { get; set; }
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="GREATClient.ParticleSystem"/> class.
@@ -108,12 +110,13 @@ namespace GREATClient.BaseClass.Particle
 		/// <param name="numberOfParticle">Number of particle.</param>
 		/// <param name="animationLength">Animation length.</param>
 		/// <param name="particleLifeTime">Particle life time.</param>
-        public ParticleSystem(int numberOfParticle, 
+        public ParticleSystem(int numberOfParticle = 100, 
 		                      TimeSpan? animationLength = null,
 		                      TimeSpan? particleLifeTime = null) 
 							  : base()
         {
 			// Particles settings
+			ParticleScale = 0.1f;
 			ParticleFile = "particle";
 			ParticleInitialVelocity = new Vector2(30, -100);
 			ParticleForce = new Vector2(2, 10);
@@ -142,7 +145,8 @@ namespace GREATClient.BaseClass.Particle
 			for (int i = 0; i < number; ++i) {
 				DrawableParticle particle = new DrawableParticle(lifeTime, ParticleInitialVelocity, ParticleForce, 
 				                                                 ParticleLifeTimeRandomizer, ParticleVelocityRandomizer, ParticleForceRandomizer, 
-				                                                 ParticleAlphaPercent) { Origin = new Vector2(0.5f * ParticleTexture.Width, 0.5f * ParticleTexture.Height) };
+				                                                 ParticleAlphaPercent) { Origin = new Vector2(0.5f * ParticleTexture.Width, 0.5f * ParticleTexture.Height), 
+																 Scale = ParticleScale };
 				particle.Tint = Tint;
 
 				Particles.Add(particle);
@@ -207,10 +211,10 @@ namespace GREATClient.BaseClass.Particle
 
 		protected override void OnDraw(SpriteBatch batch)
 		{
-			batch.Begin();
+			batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied);
 			foreach(DrawableParticle particle in Particles) {
 				if (particle.Alive) {
-					batch.Draw(ParticleTexture,GetAbsolutePosition() + particle.Position,null, particle.Tint * particle.Alpha, particle.Orientation,
+					batch.Draw(ParticleTexture,GetAbsolutePosition() + particle.Position,null, particle.Tint * particle.Alpha * GetEffectiveAlpha(), particle.Orientation,
 					           particle.Origin,particle.Scale,SpriteEffects.None,0);
 				}
 			}

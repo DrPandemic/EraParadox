@@ -1,7 +1,7 @@
 <championcollection>
 <champions>
 
-  <!-- The Stick-Man -->
+  <!-- ManMega -->
   <champion type="ManMega" name="ManMega" assetname="manmega" framewidth="53" frameheight="54" >
     <description>The drawn man that escaped his blank sheet and wants to take revenge upon his creators. 
       Long has he awaited for a mere taste of liberty to finally try and defeat his oppressors. 
@@ -13,6 +13,22 @@
       <animation name="run" line="1" framecount="10" framerate="10" repeat="true"/>
       <animation name="jump" line="4" framecount="1" framerate="1"/>
       <animation name="die" line="3" framecount="6" framerate="10"/>
+      <animation name="spell1" line="2" framecount="1" framerate="1"/>
+      <animation name="spell2" line="2" framecount="1" framerate="1"/>
+      <animation name="spell3" line="2" framecount="1" framerate="1"/>
+      <animation name="spell4" line="2" framecount="1" framerate="1"/>
+    </animations>
+  </champion>
+  
+  
+  <!-- Zoro -->
+  <champion type="Zoro" name="Zoro" assetname="zoro" framewidth="52" frameheight="56" >
+    <description>ManMega's friend.</description>
+    <animations>
+      <animation name="idle" line="0" framecount="7" framerate="4" repeat="true"/>
+      <animation name="run" line="1" framecount="10" framerate="10" repeat="true"/>
+      <animation name="jump" line="4" framecount="5" framerate="10"/>
+      <animation name="die" line="3" framecount="3" framerate="10"/>
       <animation name="spell1" line="2" framecount="1" framerate="1"/>
       <animation name="spell2" line="2" framecount="1" framerate="1"/>
       <animation name="spell3" line="2" framecount="1" framerate="1"/>

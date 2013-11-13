@@ -29,6 +29,7 @@ using GREATLib.Network;
 using GREATLib.Entities.Champions;
 using GREATLib.Entities.Spells;
 using GREATLib.Entities;
+using GREATLib.Entities.Structures;
 
 
 namespace GREATClient
@@ -345,6 +346,7 @@ namespace GREATClient
 					case ServerCommand.SpellCast:
 						data = new SpellCastEventData(
 							msg.ReadUInt64(),
+							msg.ReadUInt64(),
 							(SpellTypes)msg.ReadByte(),
 							msg.ReadFloat(),
 							new Vec2(msg.ReadFloat(), msg.ReadFloat()),
@@ -364,6 +366,21 @@ namespace GREATClient
 
 					case ServerCommand.ChampionDied:
 						data = new ChampionDiedEventData(msg.ReadUInt64(), TimeSpan.FromSeconds(msg.ReadUInt16()));
+						break;
+
+					case ServerCommand.StructureStatsChanged:
+						data = new StructureStatsChangedEventData(msg.ReadBoolean() ? Teams.Left : Teams.Right,
+						                                          (StructureTypes)msg.ReadByte(),
+						                                          msg.ReadFloat());
+						break;
+
+					case ServerCommand.StructureDestroyed:
+						data = new StructureDestroyedEventData(msg.ReadBoolean() ? Teams.Left : Teams.Right,
+						                                       (StructureTypes)msg.ReadByte());
+						break;
+
+					case ServerCommand.EndOfGame:
+						data = new EndOfGameEventData(msg.ReadBoolean() ? Teams.Left : Teams.Right);
 						break;
 
 					default:
@@ -387,6 +404,7 @@ namespace GREATClient
 	public class SpellCastEventData : RemarkableEventData
 	{
 		public ulong ID { get; private set; }
+		public ulong OwnerID { get; private set; }
 		public SpellTypes Type { get; private set; }
 		public float Time { get; private set; }
 		public Vec2 Position { get; private set; }
@@ -395,10 +413,12 @@ namespace GREATClient
 		public float Range { get; private set; }
 		public float Width { get; private set; }
 
-		public SpellCastEventData(ulong id, SpellTypes type, float time, Vec2 pos, Vec2 vel, TimeSpan cooldown, float range, float width)
+		public SpellCastEventData(ulong id, ulong owner, SpellTypes type, float time, Vec2 pos, 
+		                          Vec2 vel, TimeSpan cooldown, float range, float width)
 			: base(ServerCommand.SpellCast)
 		{
 			ID = id;
+			OwnerID = owner;
 			Type = type;
 			Time = time;
 			Position = pos;
@@ -437,6 +457,39 @@ namespace GREATClient
 		{
 			ChampID = id;
 			RespawnTime = respawn;
+		}
+	}
+	public class StructureStatsChangedEventData : RemarkableEventData
+	{
+		public Teams Team { get; private set; }
+		public StructureTypes Type { get; private set; }
+		public float Health { get; private set; }
+		public StructureStatsChangedEventData(Teams team, StructureTypes type, float hp)
+			: base(ServerCommand.StructureStatsChanged)
+		{
+			Team = team;
+			Type = type;
+			Health = hp;
+		}
+	}
+	public class StructureDestroyedEventData : RemarkableEventData
+	{
+		public Teams Team { get; private set; }
+		public StructureTypes Type { get; private set; }
+		public StructureDestroyedEventData(Teams team, StructureTypes type)
+			: base(ServerCommand.StructureDestroyed)
+		{
+			Team = team;
+			Type = type;
+		}
+	}
+	public class EndOfGameEventData : RemarkableEventData
+	{
+		public Teams Winner { get; private set; }
+		public EndOfGameEventData(Teams winner)
+			: base(ServerCommand.EndOfGame)
+		{
+			Winner = winner;
 		}
 	}
 }

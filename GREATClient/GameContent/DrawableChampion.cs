@@ -68,7 +68,7 @@ namespace GREATClient.GameContent
         public DrawableChampion(ChampionT champion, bool ally, ChampionsInfo championsInfo)
         {
 			Champion = champion;
-			ChampionSprite = new DrawableChampionSprite(ChampionAnimation.idle, ChampionTypes.ManMega, championsInfo);
+			ChampionSprite = new DrawableChampionSprite(ChampionAnimation.idle, champion.Type, championsInfo);
 			ChampionSprite.PlayAnimation(ChampionAnimation.run);
 			ChampionSprite.RelativeOrigin = new Vector2(0.5f, 1f);
 			ChampionSprite.Position = new Vector2(Champion.CollisionWidth / 2f, Champion.CollisionHeight);

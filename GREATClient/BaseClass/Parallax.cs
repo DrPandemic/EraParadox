@@ -27,6 +27,8 @@ namespace GREATClient.BaseClass
 {
     public class Parallax : Container
     {
+		const float PARALLAX_ALPHA = 0.5f;
+
 		Container Land;
 		int LandLength;
 		Container Fog;
@@ -59,32 +61,32 @@ namespace GREATClient.BaseClass
 		protected override void OnLoad(Microsoft.Xna.Framework.Content.ContentManager content, Microsoft.Xna.Framework.Graphics.GraphicsDevice gd)
 		{
 			float landOffset = 100;
-			Land.AddChild(new DrawableImage("background/land1") {Position = new Vector2(0,landOffset)});
-			Land.AddChild(new DrawableImage("background/land2") {Position = new Vector2(1024,landOffset)});
-			Land.AddChild(new DrawableImage("background/land3") {Position = new Vector2(1024*2,landOffset)});
-			Land.AddChild(new DrawableImage("background/land4") {Position = new Vector2(1024*3,landOffset)});
-			Land.AddChild(new DrawableImage("background/land5") {Position = new Vector2(1024*4,landOffset)});
-			Land.AddChild(new DrawableImage("background/land6") {Position = new Vector2(1024*5,landOffset)});
+			Land.AddChild(new DrawableImage("background/land1") {Position = new Vector2(0,landOffset), Alpha = PARALLAX_ALPHA});
+			Land.AddChild(new DrawableImage("background/land2") {Position = new Vector2(1024,landOffset), Alpha = PARALLAX_ALPHA});
+			Land.AddChild(new DrawableImage("background/land3") {Position = new Vector2(1024*2,landOffset), Alpha = PARALLAX_ALPHA});
+			Land.AddChild(new DrawableImage("background/land4") {Position = new Vector2(1024*3,landOffset), Alpha = PARALLAX_ALPHA});
+			Land.AddChild(new DrawableImage("background/land5") {Position = new Vector2(1024*4,landOffset), Alpha = PARALLAX_ALPHA});
+			Land.AddChild(new DrawableImage("background/land6") {Position = new Vector2(1024*5,landOffset), Alpha = PARALLAX_ALPHA});
 			LandLength = 1024 * 5 + 372;
 
 			float fogOffset = 250;
 			float xFogOffset = -40;
-			Fog.AddChild(new DrawableImage("background/fog1") {Position = new Vector2(0 + xFogOffset,fogOffset)});
-			Fog.AddChild(new DrawableImage("background/fog2") {Position = new Vector2(1024 + xFogOffset,fogOffset)});
-			Fog.AddChild(new DrawableImage("background/fog3") {Position = new Vector2(1024*2 + xFogOffset,fogOffset)});
-			Fog.AddChild(new DrawableImage("background/fog4") {Position = new Vector2(1024*3 + xFogOffset,fogOffset)});
-			Fog.AddChild(new DrawableImage("background/fog5") {Position = new Vector2(1024*4 + xFogOffset,fogOffset)});
-			Fog.AddChild(new DrawableImage("background/fog6") {Position = new Vector2(1024*5 + xFogOffset,fogOffset)});
-			Fog.AddChild(new DrawableImage("background/fog7") {Position = new Vector2(1024*6 + xFogOffset,fogOffset)});
+			Fog.AddChild(new DrawableImage("background/fog1") {Position = new Vector2(0 + xFogOffset,fogOffset), Alpha = PARALLAX_ALPHA});
+			Fog.AddChild(new DrawableImage("background/fog2") {Position = new Vector2(1024 + xFogOffset,fogOffset), Alpha = PARALLAX_ALPHA});
+			Fog.AddChild(new DrawableImage("background/fog3") {Position = new Vector2(1024*2 + xFogOffset,fogOffset), Alpha = PARALLAX_ALPHA});
+			Fog.AddChild(new DrawableImage("background/fog4") {Position = new Vector2(1024*3 + xFogOffset,fogOffset), Alpha = PARALLAX_ALPHA});
+			Fog.AddChild(new DrawableImage("background/fog5") {Position = new Vector2(1024*4 + xFogOffset,fogOffset), Alpha = PARALLAX_ALPHA});
+			Fog.AddChild(new DrawableImage("background/fog6") {Position = new Vector2(1024*5 + xFogOffset,fogOffset), Alpha = PARALLAX_ALPHA});
+			Fog.AddChild(new DrawableImage("background/fog7") {Position = new Vector2(1024*6 + xFogOffset,fogOffset), Alpha = PARALLAX_ALPHA});
 			FogLength = 1024 * 7 + (int)xFogOffset - 250;
 
 			float cloudOffset = -200;
 			float xCloudOffset = -40;
-			Cloud.AddChild(new DrawableImage("background/cloud1") {Position = new Vector2(xCloudOffset,cloudOffset)});
-			Cloud.AddChild(new DrawableImage("background/cloud2") {Position = new Vector2(1024 + xCloudOffset,cloudOffset)});
-			Cloud.AddChild(new DrawableImage("background/cloud3") {Position = new Vector2(1024*2 + xCloudOffset,cloudOffset)});
-			Cloud.AddChild(new DrawableImage("background/cloud4") {Position = new Vector2(1024*3 + xCloudOffset,cloudOffset)});
-			Cloud.AddChild(new DrawableImage("background/cloud5") {Position = new Vector2(1024*4 + xCloudOffset,cloudOffset)});
+			Cloud.AddChild(new DrawableImage("background/cloud1") {Position = new Vector2(xCloudOffset,cloudOffset), Alpha = PARALLAX_ALPHA});
+			Cloud.AddChild(new DrawableImage("background/cloud2") {Position = new Vector2(1024 + xCloudOffset,cloudOffset), Alpha = PARALLAX_ALPHA});
+			Cloud.AddChild(new DrawableImage("background/cloud3") {Position = new Vector2(1024*2 + xCloudOffset,cloudOffset), Alpha = PARALLAX_ALPHA});
+			Cloud.AddChild(new DrawableImage("background/cloud4") {Position = new Vector2(1024*3 + xCloudOffset,cloudOffset), Alpha = PARALLAX_ALPHA});
+			Cloud.AddChild(new DrawableImage("background/cloud5") {Position = new Vector2(1024*4 + xCloudOffset,cloudOffset), Alpha = PARALLAX_ALPHA});
 			CloudLength = 1024 * 4 + 408 + (int)xCloudOffset;
 
 			WindowSize = screenService.GameWindowSize;

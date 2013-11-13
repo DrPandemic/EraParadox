@@ -64,6 +64,13 @@
     <Compile Include="Entities\Spells\SpellTypes.cs" />
     <Compile Include="Entities\Teams.cs" />
     <Compile Include="World\Tiles\MapLoader.cs" />
+    <Compile Include="Entities\ILiving.cs" />
+    <Compile Include="Entities\Structures\IStructure.cs" />
+    <Compile Include="Entities\Structures\Base.cs" />
+    <Compile Include="Entities\LifeRegenerator.cs" />
+    <Compile Include="Entities\Structures\TeamStructures.cs" />
+    <Compile Include="Entities\Structures\StructureTypes.cs" />
+    <Compile Include="Entities\Structures\Tower.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -74,5 +81,6 @@
     <Folder Include="Network\" />
     <Folder Include="Entities\Champions\" />
     <Folder Include="Entities\Spells\" />
+    <Folder Include="Entities\Structures\" />
   </ItemGroup>
 </Project>

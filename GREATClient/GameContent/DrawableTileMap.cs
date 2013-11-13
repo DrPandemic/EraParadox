@@ -27,6 +27,7 @@ using Microsoft.Xna.Framework;
 using GREATClient.BaseClass;
 using System.Diagnostics;
 using GREATClient.BaseClass.ScreenInformation;
+using System.IO;
 
 namespace GREATClient.GameContent
 {
@@ -52,11 +53,14 @@ namespace GREATClient.GameContent
 			Map = map;
 			TileSetName = tileset;
         }
-
+		public override float GetEffectiveAlpha()
+		{
+			throw new NotImplementedException();
+		}
 		protected override void OnLoad(ContentManager content, GraphicsDevice gd)
 		{
 			base.OnLoad(content, gd);
-			TileSet = content.Load<Texture2D>(TileSetName);
+			TileSet = content.Load<Texture2D>(Path.Combine(MapLoader.MAP_FOLDER, TileSetName));
 			TileSetTilesWidth = TileSet.Width / Tile.WIDTH;
 			Screen = (ScreenService)GetScreen().Services.GetService(typeof(ScreenService));
 		}
@@ -70,7 +74,7 @@ namespace GREATClient.GameContent
 			int startY = MathHelper.Clamp((int)(-position.Y / Tile.HEIGHT), 0, Map.GetHeightTiles() - 1);
 			int endY = MathHelper.Clamp((int)((-position.Y + Screen.GameWindowSize.Y) / Tile.HEIGHT) + 1, 0, Map.GetHeightTiles() - 1);
 
-			batch.Begin();
+			batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied);
 			for (int y = startY; y < endY; ++y)
 				for (int x = startX; x <= endX; ++x)
 					if (Map.TileRows[y][x].Collision != CollisionType.Passable)

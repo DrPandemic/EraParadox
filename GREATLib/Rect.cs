@@ -72,6 +72,11 @@ namespace GREATLib
 		{
 			return base.GetHashCode();
 		}
+		public static Vec2 Center(Rect r)
+		{
+			return new Vec2(r.Left + r.Width / 2f,
+			                r.Top + r.Height / 2f);
+		}
     }
 }
 

@@ -38,18 +38,32 @@ namespace GREATLib.Entities.Champions
 
 	public enum ChampionTypes
 	{
-		ManMega
+		ManMega,
+		Zoro
 	}
 
 	public static class ChampionTypesHelper
 	{
+		// Note: It is VERY important that the spell # here is the same as the one in the SpellTypes enum (see SpellTypesHelper).
+		// PLEASE MAKE SURE TO MODIFY THEM AT BOTH PLACES.
 		public static SpellTypes GetSpellFromAction(ChampionTypes type, PlayerActionType action)
 		{
 			switch (type) {
 				case ChampionTypes.ManMega:
 					switch (action) {
 						case PlayerActionType.Spell1: return SpellTypes.ManMega_RocketRampage;
+						case PlayerActionType.Spell2: return SpellTypes.ManMega_Slash;
 						case PlayerActionType.Spell3: return SpellTypes.ManMega_HintOfASpark;
+						case PlayerActionType.Spell4: return SpellTypes.ManMega_Shotgun;
+					}
+					break;
+
+				case ChampionTypes.Zoro:
+					switch (action) {
+						case PlayerActionType.Spell1: return SpellTypes.Zoro_Tooth;
+						case PlayerActionType.Spell2: return SpellTypes.Zoro_Slash;
+						case PlayerActionType.Spell3: return SpellTypes.Zoro_Double;
+						case PlayerActionType.Spell4: return SpellTypes.Zoro_Wall;
 					}
 					break;
 

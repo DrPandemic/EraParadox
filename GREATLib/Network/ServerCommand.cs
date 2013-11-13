@@ -64,6 +64,21 @@ namespace GREATLib.Network
 		/// A player died.
 		/// </summary>
 		, ChampionDied
+
+		/// <summary>
+		/// The stats of a structure have changed.
+		/// </summary>
+		, StructureStatsChanged
+
+		/// <summary>
+		/// A structure has been destroyed.
+		/// </summary>
+		, StructureDestroyed
+
+		/// <summary>
+		/// The game has ended.
+		/// </summary>
+		, EndOfGame
     }
 }
 

@@ -105,6 +105,7 @@ namespace GREATClient.Network
 					Debug.Assert(0.0 - double.Epsilon <= progress && progress <= 1.0 + double.Epsilon);
 
 					Position = Vec2.Lerp(before.Value.Position, after.Value.Value.Position, (float)progress);
+					
 					// Take animation of closest state
 					var closestState = after.Value.Value;
 					Animation = closestState.Animation;

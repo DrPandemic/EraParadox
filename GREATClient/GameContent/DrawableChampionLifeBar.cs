@@ -28,9 +28,9 @@ namespace GREATClient.GameContent
     {
 		const float LERP_FACTOR = 0.1f;
 
-		const float CONTOUR_WIDTH = 1f;
-		const float MAX_WIDTH = 50.0f;
-		const float NORMAL_HEIGHT = 3.0f;
+		protected virtual float CONTOUR_WIDTH { get { return 1f;}}
+		protected virtual float MAX_WIDTH { get { return 50f;}}
+		protected virtual float NORMAL_HEIGHT { get { return 3f;}}
 
 		bool IsAlly { get; set; }
 
@@ -75,6 +75,8 @@ namespace GREATClient.GameContent
 		{
 			currentRatio = MathHelper.Lerp(currentRatio, Ratio, LERP_FACTOR);
 			LifeBar.Size = new Vector2(MAX_WIDTH * currentRatio, NORMAL_HEIGHT);
+			if (LifeBar.Size.X > 0f)
+				LifeBar.Size = new Vector2(Math.Max(1f, LifeBar.Size.X), LifeBar.Size.Y); // at least 1pixel wide if we're not entirely dead
 		}
     }
 }

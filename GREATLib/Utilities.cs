@@ -38,6 +38,11 @@ namespace GREATLib
 		{
 			return (float)random.NextDouble() * (max - min) + min;
 		}
+		public static T RandomEnumValue<T>(this Random random)
+		{
+			var vals = Enum.GetValues(typeof(T));
+			return (T)vals.GetValue(random.Next(vals.Length));
+		}
 
 		/// <summary>
 		/// Makes a list from the passed arguments, generally used for fast
@@ -59,6 +64,11 @@ namespace GREATLib
 		public static KeyValuePair<T, V> MakePair<T,V>(T key, V value)
 		{
 			return new KeyValuePair<T,V>(key, value);
+		}
+
+		public static bool InRange(Vec2 p, Vec2 q, float dist)
+		{
+			return Vec2.DistanceSquared(p, q) <= dist * dist;
 		}
 
 		/// <summary>

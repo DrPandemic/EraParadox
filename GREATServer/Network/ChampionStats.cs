@@ -23,46 +23,22 @@ using System.Collections.Generic;
 using GREATLib.Entities.Spells;
 using GREATLib.Entities.Champions;
 using GREATLib.Network;
+using GREATLib.Entities;
 
 namespace GREATServer.Network
 {
-    public class ChampionStats
+    public class ChampionStats : ILiving
     {
-		public float Health { get; private set; }
-		public float MaxHealth { get; private set; }
-		public bool Alive { get { return Health > 0f; } }
-		public bool HealthChanged { get; private set; }
 		Dictionary<SpellTypes, float> LastSpellUses { get; set; }
 		public double RevivalTime { get; set; }
 
         public ChampionStats(float maxhp)
+			: base(maxhp)
         {
-			MaxHealth = maxhp;
-			Health = MaxHealth;
 			LastSpellUses = new Dictionary<SpellTypes, float>();
 			RevivalTime = double.MaxValue;
-			ClearHealthChangedFlag();
         }
 
-		public void Heal(float amount)
-		{
-			SetHealth(Health + amount);
-		}
-		public void Hurt(float amount)
-		{
-			SetHealth(Health - amount);
-		}
-		public void SetHealth(float amount)
-		{
-			if (amount != Health) {
-				HealthChanged = true;
-			}
-			Health = Math.Min(MaxHealth, Math.Max(0f, amount));
-		}
-		public void ClearHealthChangedFlag()
-		{
-			HealthChanged = false;
-		}
 		public void UsedSpell(SpellTypes spell)
 		{
 			float time = (float)Server.Instance.GetTime().TotalSeconds;
@@ -87,8 +63,10 @@ namespace GREATServer.Network
 		}
 		public bool IsOnCooldown(SpellTypes spell)
 		{
-			return TimeOfLastSpellUse(spell).TotalSeconds +
-				SpellsHelper.Info(spell).Cooldown.TotalSeconds > Server.Instance.GetTime().TotalSeconds;
+			TimeSpan lastUse = TimeOfLastSpellUse(spell);
+			return lastUse == TimeSpan.Zero ? false : 
+				lastUse.TotalSeconds + SpellsHelper.Info(spell).Cooldown.TotalSeconds > 
+					Server.Instance.GetTime().TotalSeconds;
 		}
     }
 }

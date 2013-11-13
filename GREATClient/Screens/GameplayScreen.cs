@@ -38,6 +38,7 @@ using GameContent;
 using System.IO;
 using GREATClient.BaseClass.ScreenInformation;
 using GREATClient.GameContent.Spells;
+using GREATLib.Entities.Structures;
 
 namespace GREATClient.Screens
 {
@@ -61,6 +62,7 @@ namespace GREATClient.Screens
 
 		GameMatch Match { get; set; }
 		DrawableTileMap Map { get; set; }
+		List<DrawableStructure> Structures { get; set; }
 
 		ChampionsInfo ChampionsInfo { get; set; }
 		MainDrawableChampion OurChampion { get; set; }
@@ -79,6 +81,9 @@ namespace GREATClient.Screens
 		CameraService Camera { get; set; }
 
 		DeathScreen DeathScreen { get; set; }
+		WinLoseScreen WinLoseScreen { get; set; }
+
+		Parallax Parallax { get; set; }
 
         public GameplayScreen(ContentManager content, Game game, Client client)
 			: base(content, game)
@@ -89,7 +94,7 @@ namespace GREATClient.Screens
 			GameTime = null;
 			TimeSinceLastInputSent = 0.0;
 
-			Match = new GameMatch(Path.Combine("../", MapLoader.MAIN_MAP_PATH));
+			Match = new GameMatch(Path.Combine("Content", MapLoader.MAIN_MAP_PATH));
 			LastStateUpdateData = new List<StateUpdateData>();
 			RemarkableEvents = new List<RemarkableEventData>();
 			Spells = new Dictionary<ulong, DrawableSpell>();
@@ -97,8 +102,12 @@ namespace GREATClient.Screens
 			Champions = new List<ClientChampion>();
 
 			GameWorld = new Container();
+			Structures = new List<DrawableStructure>();
+
 			Camera = new CameraService();
 			Services.AddService(typeof(CameraService), Camera);
+
+			Parallax = new Parallax();
         }
 
 		protected override void OnLoadContent()
@@ -115,7 +124,8 @@ namespace GREATClient.Screens
 			         3);
 
 			AddChild(DeathScreen = new DeathScreen(),4);
-			AddChild(GameWorld);
+			AddChild(WinLoseScreen = new WinLoseScreen(), 5);
+			AddChild(GameWorld,1);
 
 			Map = new DrawableTileMap(Match.World.Map, Match.World.Map.TileSet);
 			GameWorld.AddChild(Map);
@@ -123,6 +133,14 @@ namespace GREATClient.Screens
 			Client.RegisterCommandHandler(ServerCommand.JoinedGame, OnJoinedGame);
 			Client.RegisterCommandHandler(ServerCommand.NewRemotePlayer, OnNewRemotePlayer);
 			Client.RegisterCommandHandler(ServerCommand.StateUpdate, OnStateUpdate);
+
+			AddChild(Parallax,0);
+		}
+
+		void AddStructure(DrawableStructure structure)
+		{
+			GameWorld.AddChild(structure, 1);
+			Structures.Add(structure);
 		}
 
 		void OnStateUpdate(object sender, CommandEventArgs args)
@@ -141,6 +159,20 @@ namespace GREATClient.Screens
 			JoinedGameEventArgs e = args as JoinedGameEventArgs;
 			Debug.Assert(e != null);
 			Debug.Assert(ChampionsInfo != null && Match != null);
+
+			bool leftIsAlly = e.OurData.Team == Teams.Left;
+			bool rightIsAlly = !leftIsAlly;
+			// Add the structures here so we can specify if they're friendly or not.
+			// Left side
+			AddStructure(new DrawableBase(Match.LeftStructures.Base, leftIsAlly));
+			AddStructure(new DrawableTower(Match.LeftStructures.BaseTower, leftIsAlly));
+			AddStructure(new DrawableTower(Match.LeftStructures.BottomTower, leftIsAlly));
+			AddStructure(new DrawableTower(Match.LeftStructures.TopTower, leftIsAlly));
+			// Right side
+			AddStructure(new DrawableBase(Match.RightStructures.Base, rightIsAlly));
+			AddStructure(new DrawableTower(Match.RightStructures.BaseTower, rightIsAlly));
+			AddStructure(new DrawableTower(Match.RightStructures.BottomTower, rightIsAlly));
+			AddStructure(new DrawableTower(Match.RightStructures.TopTower, rightIsAlly));
 
 			AddChampionToGame(e.OurData, true);
 
@@ -178,7 +210,7 @@ namespace GREATClient.Screens
 			}
 
 			Champions.Add(champ);
-			GameWorld.AddChild(idraw);
+			GameWorld.AddChild(idraw, 2);
 
 			Match.CurrentState.AddEntity(champ);
 
@@ -208,25 +240,38 @@ namespace GREATClient.Screens
 			//    our local simulation running.
 			base.OnUpdate(dt); // this is done by the player's drawablechampion
 
-			UpdateHUD();
+			UpdateHUD(dt);
 
 			if (Keyboard.GetState().IsKeyDown(Keys.Escape) && Keyboard.GetState().IsKeyDown(Keys.LeftShift))
 				Exit = true;
 		}
 
-		void UpdateHUD()
+		void UpdateHUD(GameTime dt)
 		{
 			if (OurChampion != null) {
+				// Update the health
 				ChampionState.MaxLife = OurChampion.Champion.MaxHealth;
 				ChampionState.CurrentLife = OurChampion.Champion.Health;
 
+				// Update the camera positionning
 				var screen = (ScreenService)Services.GetService(typeof(ScreenService));
 				Camera.CenterCameraTowards(OurChampion.Champion.GetHandsPosition(),
 				                        screen.GameWindowSize.X, screen.GameWindowSize.Y,
 				                        Match.World.Map.GetWidthTiles() * Tile.WIDTH,
 				                        Match.World.Map.GetHeightTiles() * Tile.HEIGHT);
 				GameWorld.Position = GameLibHelper.ToVector2(-Camera.WorldPosition);
+
+				// Update the cooldowns
+				ChampionState.Update(dt.ElapsedGameTime);
 			}
+
+			UpdateParallax();
+		}
+
+		void UpdateParallax() {
+			Parallax.SetCurrentRatio(Camera.WorldPosition.X/(Match.World.Map.GetWidthTiles()*Tile.WIDTH) * 80,
+			                         Camera.WorldPosition.Y/(Match.World.Map.GetHeightTiles()*Tile.HEIGHT) * 100);
+
 		}
 
 		/// <summary>
@@ -291,6 +336,18 @@ namespace GREATClient.Screens
 						OnChampionDied((ChampionDiedEventData)r);
 						break;
 
+					case ServerCommand.StructureStatsChanged:
+						OnStructureStatsChanged((StructureStatsChangedEventData)r);
+						break;
+
+					case ServerCommand.StructureDestroyed:
+						OnStructureDestroyed((StructureDestroyedEventData)r);
+						break;
+
+					case ServerCommand.EndOfGame:
+						OnEndOfGame((EndOfGameEventData)r);
+						break;
+
 					default:
 						Debug.Fail("Unknown server command (unknown remarkable event).");
 						break;
@@ -299,8 +356,38 @@ namespace GREATClient.Screens
 
 			RemarkableEvents.Clear();
 		}
+		void OnStructureDestroyed(StructureDestroyedEventData e)
+		{
+			//var structure = GetStructure(e.Team, e.Type);
+			// TODO: tower eplosions here
+			// TODO: vocal/visual message here
+		}
+		void OnEndOfGame(EndOfGameEventData e)
+		{
+			if (OurChampion != null) {
+				WinLoseScreen.Display(e.Winner == OurChampion.Champion.Team);
+        	}
+		}
+		void OnStructureStatsChanged(StructureStatsChangedEventData e)
+		{
+			var structure = GetStructure(e.Team, e.Type);
+			if (structure != null) {
+				structure.Structure.SetHealth(e.Health);
+			}
+		}
+		DrawableStructure GetStructure(Teams team, StructureTypes type)
+		{
+			Debug.Assert(Structures.Exists(s => s.Structure.Team == team && s.Structure.Type == type));
+			return Structures.Exists(s => s.Structure.Team == team && s.Structure.Type == type) ? 
+				Structures.Find(s => s.Structure.Team == team && s.Structure.Type == type) : null;
+		}
 		void OnChampionDied(ChampionDiedEventData e)
 		{
+			foreach (var champ in Champions) {
+				if (champ.ID == e.ChampID) {
+					champ.ForceCurrentPosition();
+				}
+			}
 			if (OurChampion != null &&
 				e.ChampID == OurChampion.Champion.ID) { // we died
 				DeathScreen.DisplayScreen(e.RespawnTime);
@@ -311,14 +398,27 @@ namespace GREATClient.Screens
 			var s = GetSpellFromType(new ClientLinearSpell(e.ID, e.Type, e.Position, e.Time, e.Velocity, e.Range, e.Width));
 			Spells.Add(e.ID, s);
 			GameWorld.AddChild(s);
+
+			if (OurChampion != null && OurChampion.Champion.ID == e.OwnerID) {
+				ChampionState.SetSpellCooldown(e.Type, e.Cooldown);
+			}
 		}
-		DrawableSpell GetSpellFromType(ClientLinearSpell s)
+		static DrawableSpell GetSpellFromType(ClientLinearSpell s)
 		{
 			switch (s.Type) {
 				case SpellTypes.ManMega_RocketRampage: return new Drawable_ManMega_RocketRampage(s);
+				case SpellTypes.ManMega_Slash: return new Drawable_ManMega_Slash(s);
 				case SpellTypes.ManMega_HintOfASpark: return new Drawable_ManMega_HintOfASpark(s);
+				case SpellTypes.ManMega_Shotgun: return new Drawable_ManMega_RocketRampage(s);
 
-				default: throw new NotImplementedException("Not spell object for spell " + s.Type);
+				case SpellTypes.Zoro_Tooth: return new Drawable_Zoro_Tooth(s);
+				case SpellTypes.Zoro_Slash: return new Drawable_ManMega_Slash(s);
+				case SpellTypes.Zoro_Double: return new Drawable_Zoro_Tooth(s);
+				case SpellTypes.Zoro_Wall: return new Drawable_Zoro_Tooth(s);
+
+				case SpellTypes.Tower_Shot: return new Drawable_TowerShot(s);
+
+				default: throw new NotImplementedException("No spell object for spell " + s.Type);
 			}
 		}
 		void OnRemoveSpell(SpellDisappearEventData e)

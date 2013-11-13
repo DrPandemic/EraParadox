@@ -43,6 +43,9 @@ namespace GREATClient.BaseClass.Input
 
 		[System.Xml.Serialization.XmlAttribute("deadKey")]
 		public DeadKeys DeadKey { get; set; }
+
+		[System.Xml.Serialization.XmlAttribute("sensitive"), ]
+		public bool Sensitive { get; set; }
 	}
 
 	[Serializable]
@@ -60,6 +63,9 @@ namespace GREATClient.BaseClass.Input
 
 		[System.Xml.Serialization.XmlAttribute("deadKey")]
 		public DeadKeys DeadKey { get; set; }
+
+		[System.Xml.Serialization.XmlAttribute("sensitive")]
+		public bool Sensitive { get; set; }
 	}
 
 	[Serializable]
@@ -107,9 +113,10 @@ namespace GREATClient.BaseClass.Input
 			}
 		}
 
-		KeyState state;
 		public KeyState State { get; set; }
 		public DeadKeys DeadKey { get; set; }
+		// If false, will ignore dead keys.
+		public bool Sensitive { get; set; }
 	}
 
 	public class Inputs
@@ -186,7 +193,7 @@ namespace GREATClient.BaseClass.Input
 				if (Info.ContainsKey(info.Action)) {
 					throw new ActionDeserializationException();
 				} else {					
-					Info.Add(info.Action, new InputState() {KeyboardKey = info.Key, State = info.State, DeadKey = info.DeadKey});				
+					Info.Add(info.Action, new InputState() {KeyboardKey = info.Key, State = info.State, DeadKey = info.DeadKey, Sensitive = info.Sensitive});				
 				}
 			}
 			foreach (MouseInputInfo info in inputs.MouseInputs)
@@ -194,7 +201,7 @@ namespace GREATClient.BaseClass.Input
 				if (Info.ContainsKey(info.Action)) {
 					throw new ActionDeserializationException();
 				} else {
-					Info.Add(info.Action, new InputState() {MouseKey = info.Key, State = info.State, DeadKey = info.DeadKey});				
+					Info.Add(info.Action, new InputState() {MouseKey = info.Key, State = info.State, DeadKey = info.DeadKey, Sensitive = info.Sensitive});				
 				}
 			}
 		}

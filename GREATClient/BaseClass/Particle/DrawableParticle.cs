@@ -133,8 +133,6 @@ namespace GREATClient.BaseClass.Particle
 		                        float lifeTimeRandomizer = 0, float velocityRandomizer = 0, float forceRandomizer = 0 ,
 		                        float alphaPercent = 0.25f) 
         {
-			Scale = 0.1f;
-
 			MaxLifeTime =  TimeSpan.FromTicks((long)(lifeTime.Ticks * GetRandomForPrecision(lifeTimeRandomizer)));
 			LifeTime = MaxLifeTime;
 
