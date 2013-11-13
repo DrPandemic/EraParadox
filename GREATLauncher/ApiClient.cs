@@ -38,23 +38,26 @@ namespace GREATLauncher
         public bool SignIn(string email, string password)
         {
             ASCIIEncoding enc = new ASCIIEncoding();
-            byte[] postData = enc.GetBytes("email=" + HttpUtility.UrlEncode(email) + "&password=" + HttpUtility.UrlEncode(password));
+            byte[] reqData = enc.GetBytes("email=" + HttpUtility.UrlEncode(email) + "&password=" + HttpUtility.UrlEncode(password));
 
             HttpWebRequest req = WebRequest.CreateHttp(BASE_URI + "sessions");
             req.Method = "POST";
             req.ContentType = "application/x-www-form-urlencoded";
-            req.ContentLength = postData.Length;
+            req.ContentLength = reqData.Length;
 
-            using (Stream postStream = req.GetRequestStream()) {
-                postStream.Write(postData, 0, postData.Length);
-                postStream.Flush();
-                postStream.Close();
+            using (Stream reqStream = req.GetRequestStream()) {
+                reqStream.Write(reqData, 0, reqData.Length);
+                reqStream.Flush();
+                reqStream.Close();
             }
 
             using (HttpWebResponse resp = (HttpWebResponse)req.GetResponse()) {
                 if (resp.StatusCode != HttpStatusCode.InternalServerError) {
                     using (StreamReader respReader = new StreamReader(resp.GetResponseStream())) {
-                        Dictionary<string, string> respJson = JsonConvert.DeserializeObject<Dictionary<string, string>>(respReader.ReadToEnd());
+                        string respData = respReader.ReadToEnd();
+                        respReader.Close();
+
+                        Dictionary<string, string> respJson = JsonConvert.DeserializeObject<Dictionary<string, string>>(respData);
                         if (resp.StatusCode == HttpStatusCode.OK) {
                             this.token = respJson["token"];
                             return true;
@@ -73,7 +76,10 @@ namespace GREATLauncher
             using (HttpWebResponse resp = (HttpWebResponse)req.GetResponse()) {
                 if (resp.StatusCode != HttpStatusCode.InternalServerError) {
                     using (StreamReader respReader = new StreamReader(resp.GetResponseStream())) {
-                        Dictionary<string, string> respJson = JsonConvert.DeserializeObject<Dictionary<string, string>>(respReader.ReadToEnd());
+                        string respData = respReader.ReadToEnd();
+                        respReader.Close();
+
+                        Dictionary<string, string> respJson = JsonConvert.DeserializeObject<Dictionary<string, string>>(respData);
                         if (resp.StatusCode == HttpStatusCode.OK) {
                             this.token = respJson["token"];
                             return true;
@@ -92,7 +98,12 @@ namespace GREATLauncher
             using (HttpWebResponse resp = (HttpWebResponse)req.GetResponse()) {
                 if (resp.StatusCode != HttpStatusCode.InternalServerError) {
                     using (StreamReader respReader = new StreamReader(resp.GetResponseStream())) {
-                        return JsonConvert.DeserializeObject<User>(respReader.ReadToEnd());
+                        string respData = respReader.ReadToEnd();
+                        respReader.Close();
+
+                        if (resp.StatusCode == HttpStatusCode.OK) {
+                            return JsonConvert.DeserializeObject<User>(respData);
+                        }
                     }
                 }
             }
@@ -107,7 +118,12 @@ namespace GREATLauncher
             using (HttpWebResponse resp = (HttpWebResponse)req.GetResponse()) {
                 if (resp.StatusCode != HttpStatusCode.InternalServerError) {
                     using (StreamReader respReader = new StreamReader(resp.GetResponseStream())) {
-                        return JsonConvert.DeserializeObject<User>(respReader.ReadToEnd());
+                        string respData = respReader.ReadToEnd();
+                        respReader.Close();
+
+                        if (resp.StatusCode == HttpStatusCode.OK) {
+                            return JsonConvert.DeserializeObject<User>(respData);
+                        }
                     }
                 }
             }
