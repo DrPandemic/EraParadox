@@ -12,7 +12,7 @@ namespace GREATLauncher
 {
     public class ApiClient
     {
-        private const string BASE_URI = "http://172.16.10.127:3000/api/v1/";
+        private const string BASE_URI = "http://172.17.104.126:3000/api/v1/";
 
         private WebClient client = new WebClient();
 
@@ -23,6 +23,16 @@ namespace GREATLauncher
             {
                 return this.token;
             }
+        }
+
+        public class User
+        {
+            public int id { get; set; }
+            public string email { get; set; }
+            public string username { get; set; }
+            public bool admin { get; set; }
+            public DateTime created_at { get; set; }
+            public DateTime updated_at { get; set; }
         }
 
         public bool SignIn(string email, string password)
@@ -57,6 +67,7 @@ namespace GREATLauncher
 
         public bool SignOut()
         {
+            if (String.IsNullOrEmpty(this.token)) throw new InvalidOperationException();
             HttpWebRequest req = WebRequest.CreateHttp(BASE_URI + "sessions/" + this.token);
             req.Method = "DELETE";
             using (HttpWebResponse resp = (HttpWebResponse)req.GetResponse()) {
@@ -71,6 +82,36 @@ namespace GREATLauncher
                 }
             }
             return false;
+        }
+
+        public User GetUser()
+        {
+            if (String.IsNullOrEmpty(this.token)) throw new InvalidOperationException();
+            HttpWebRequest req = WebRequest.CreateHttp(BASE_URI + "users/?auth_token=" + this.token);
+            req.Method = "GET";
+            using (HttpWebResponse resp = (HttpWebResponse)req.GetResponse()) {
+                if (resp.StatusCode != HttpStatusCode.InternalServerError) {
+                    using (StreamReader respReader = new StreamReader(resp.GetResponseStream())) {
+                        return JsonConvert.DeserializeObject<User>(respReader.ReadToEnd());
+                    }
+                }
+            }
+            return null;
+        }
+
+        public User GetUser(int id)
+        {
+            if (String.IsNullOrEmpty(this.token)) throw new InvalidOperationException();
+            HttpWebRequest req = WebRequest.CreateHttp(BASE_URI + "users/" + id.ToString() + "?auth_token=" + this.token);
+            req.Method = "GET";
+            using (HttpWebResponse resp = (HttpWebResponse)req.GetResponse()) {
+                if (resp.StatusCode != HttpStatusCode.InternalServerError) {
+                    using (StreamReader respReader = new StreamReader(resp.GetResponseStream())) {
+                        return JsonConvert.DeserializeObject<User>(respReader.ReadToEnd());
+                    }
+                }
+            }
+            return null;
         }
     }
 }
