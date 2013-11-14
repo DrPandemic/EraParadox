@@ -48,6 +48,7 @@ namespace GREATClient.Screens
 			Utilities.MakePair(InputActions.GoLeft, PlayerActionType.MoveLeft),
 			Utilities.MakePair(InputActions.GoRight, PlayerActionType.MoveRight),
 			Utilities.MakePair(InputActions.Jump, PlayerActionType.Jump),
+			Utilities.MakePair(InputActions.AlternateJump, PlayerActionType.Jump),
 			Utilities.MakePair(InputActions.Spell1, PlayerActionType.Spell1),
 			Utilities.MakePair(InputActions.Spell2, PlayerActionType.Spell2),
 			Utilities.MakePair(InputActions.Spell3, PlayerActionType.Spell3),

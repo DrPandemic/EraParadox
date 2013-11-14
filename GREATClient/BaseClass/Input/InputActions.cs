@@ -29,6 +29,7 @@ namespace GREATClient.BaseClass.Input
 		Spell3,
 		Spell4,
 		Jump,
+		AlternateJump,
 		GoLeft,
 		GoRight,
 		ArrowUp,
