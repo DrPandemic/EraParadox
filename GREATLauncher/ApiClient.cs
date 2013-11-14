@@ -12,9 +12,7 @@ namespace GREATLauncher
 {
     public class ApiClient
     {
-        private const string BASE_URI = "http://172.17.104.126:3000/api/v1/";
-
-        private WebClient client = new WebClient();
+        private const string BASE_URI = "http://172.16.10.127:3000/api/v1/";
 
         private string token;
         public string Token
@@ -35,8 +33,10 @@ namespace GREATLauncher
             public DateTime updated_at { get; set; }
         }
 
-        public bool SignIn(string email, string password)
+        public async Task<bool> SignIn(string email, string password)
         {
+            if (!String.IsNullOrEmpty(this.token)) throw new InvalidOperationException();
+
             ASCIIEncoding enc = new ASCIIEncoding();
             byte[] reqData = enc.GetBytes("email=" + HttpUtility.UrlEncode(email) + "&password=" + HttpUtility.UrlEncode(password));
 
@@ -44,88 +44,115 @@ namespace GREATLauncher
             req.Method = "POST";
             req.ContentType = "application/x-www-form-urlencoded";
             req.ContentLength = reqData.Length;
+            
 
-            using (Stream reqStream = req.GetRequestStream()) {
+            using (Stream reqStream = await req.GetRequestStreamAsync()) {
                 reqStream.Write(reqData, 0, reqData.Length);
                 reqStream.Flush();
                 reqStream.Close();
             }
 
-            using (HttpWebResponse resp = (HttpWebResponse)req.GetResponse()) {
-                if (resp.StatusCode != HttpStatusCode.InternalServerError) {
-                    using (StreamReader respReader = new StreamReader(resp.GetResponseStream())) {
-                        string respData = respReader.ReadToEnd();
-                        respReader.Close();
+            try {
+                using (HttpWebResponse resp = (HttpWebResponse)await req.GetResponseAsync()) {
+                    if (resp.StatusCode != HttpStatusCode.InternalServerError) {
+                        using (StreamReader respReader = new StreamReader(resp.GetResponseStream())) {
+                            string respData = respReader.ReadToEnd();
+                            respReader.Close();
 
-                        Dictionary<string, string> respJson = JsonConvert.DeserializeObject<Dictionary<string, string>>(respData);
-                        if (resp.StatusCode == HttpStatusCode.OK) {
-                            this.token = respJson["token"];
-                            return true;
+                            Dictionary<string, string> respJson = JsonConvert.DeserializeObject<Dictionary<string, string>>(respData);
+                            if (resp.StatusCode == HttpStatusCode.OK) {
+                                this.token = respJson["token"];
+                                return true;
+                            }
                         }
                     }
+                    resp.Close();
                 }
+            } catch (WebException) {
+
             }
             return false;
         }
 
-        public bool SignOut()
+        public async Task<bool> SignOut()
         {
             if (String.IsNullOrEmpty(this.token)) throw new InvalidOperationException();
+
             HttpWebRequest req = WebRequest.CreateHttp(BASE_URI + "sessions/" + this.token);
             req.Method = "DELETE";
-            using (HttpWebResponse resp = (HttpWebResponse)req.GetResponse()) {
-                if (resp.StatusCode != HttpStatusCode.InternalServerError) {
-                    using (StreamReader respReader = new StreamReader(resp.GetResponseStream())) {
-                        string respData = respReader.ReadToEnd();
-                        respReader.Close();
 
-                        Dictionary<string, string> respJson = JsonConvert.DeserializeObject<Dictionary<string, string>>(respData);
-                        if (resp.StatusCode == HttpStatusCode.OK) {
-                            this.token = respJson["token"];
-                            return true;
+            try {
+                using (HttpWebResponse resp = (HttpWebResponse)await req.GetResponseAsync()) {
+                    if (resp.StatusCode != HttpStatusCode.InternalServerError) {
+                        using (StreamReader respReader = new StreamReader(resp.GetResponseStream())) {
+                            string respData = respReader.ReadToEnd();
+                            respReader.Close();
+
+                            Dictionary<string, string> respJson = JsonConvert.DeserializeObject<Dictionary<string, string>>(respData);
+                            if (resp.StatusCode == HttpStatusCode.OK) {
+                                this.token = null;
+                                return true;
+                            }
                         }
                     }
+                    resp.Close();
                 }
+            } catch (WebException) {
+
             }
             return false;
         }
 
-        public User GetUser()
+        public async Task<User> GetUser()
         {
             if (String.IsNullOrEmpty(this.token)) throw new InvalidOperationException();
+
             HttpWebRequest req = WebRequest.CreateHttp(BASE_URI + "users/?auth_token=" + this.token);
             req.Method = "GET";
-            using (HttpWebResponse resp = (HttpWebResponse)req.GetResponse()) {
-                if (resp.StatusCode != HttpStatusCode.InternalServerError) {
-                    using (StreamReader respReader = new StreamReader(resp.GetResponseStream())) {
-                        string respData = respReader.ReadToEnd();
-                        respReader.Close();
 
-                        if (resp.StatusCode == HttpStatusCode.OK) {
-                            return JsonConvert.DeserializeObject<User>(respData);
+            try {
+                using (HttpWebResponse resp = (HttpWebResponse)await req.GetResponseAsync()) {
+                    if (resp.StatusCode != HttpStatusCode.InternalServerError) {
+                        using (StreamReader respReader = new StreamReader(resp.GetResponseStream())) {
+                            string respData = respReader.ReadToEnd();
+                            respReader.Close();
+
+                            if (resp.StatusCode == HttpStatusCode.OK) {
+                                return JsonConvert.DeserializeObject<User>(respData);
+                            }
                         }
                     }
+                    resp.Close();
                 }
+            } catch (WebException) {
+
             }
             return null;
         }
 
-        public User GetUser(int id)
+        public async Task<User> GetUser(int id)
         {
             if (String.IsNullOrEmpty(this.token)) throw new InvalidOperationException();
+
             HttpWebRequest req = WebRequest.CreateHttp(BASE_URI + "users/" + id.ToString() + "?auth_token=" + this.token);
             req.Method = "GET";
-            using (HttpWebResponse resp = (HttpWebResponse)req.GetResponse()) {
-                if (resp.StatusCode != HttpStatusCode.InternalServerError) {
-                    using (StreamReader respReader = new StreamReader(resp.GetResponseStream())) {
-                        string respData = respReader.ReadToEnd();
-                        respReader.Close();
 
-                        if (resp.StatusCode == HttpStatusCode.OK) {
-                            return JsonConvert.DeserializeObject<User>(respData);
+            try {
+                using (HttpWebResponse resp = (HttpWebResponse)await req.GetResponseAsync()) {
+                    if (resp.StatusCode != HttpStatusCode.InternalServerError) {
+                        using (StreamReader respReader = new StreamReader(resp.GetResponseStream())) {
+                            string respData = respReader.ReadToEnd();
+                            respReader.Close();
+
+                            if (resp.StatusCode == HttpStatusCode.OK) {
+                                return JsonConvert.DeserializeObject<User>(respData);
+                            }
                         }
                     }
+                    resp.Close();
                 }
+            } catch (WebException) {
+
             }
             return null;
         }

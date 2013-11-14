@@ -30,13 +30,19 @@ namespace GREATLauncher
             DragMove();
         }
 
-        private void signInButton_Click(object sender, RoutedEventArgs e)
+        private async void signInButton_Click(object sender, RoutedEventArgs e)
         {
+            this.signInButton.Visibility = Visibility.Hidden;
+            this.signInMarqueeControl.Visibility = Visibility.Visible;
+
             ApiClient client = new ApiClient();
-            if (client.SignIn(this.emailTextBox.Text, this.passwordTextBox.Password)) {
-                new MainWindow(client).Show();
+            if (await client.SignIn(this.emailTextBox.Text, this.passwordTextBox.Password)) {
+                new MainWindow(client, await client.GetUser()).Show();
                 this.Close();
             }
+
+            this.signInMarqueeControl.Visibility = Visibility.Hidden;
+            this.signInButton.Visibility = Visibility.Visible;
         }
     }
 }

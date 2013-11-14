@@ -20,12 +20,13 @@ namespace GREATLauncher
         private ApiClient client;
         private ApiClient.User user;
 
-		public MainWindow(ApiClient client)
+		public MainWindow(ApiClient client, ApiClient.User user)
 		{
             this.client = client;
-			this.InitializeComponent();
+            this.user = user;
+			
+            this.InitializeComponent();
 
-            this.user = this.client.GetUser();
             this.Title = "EraParadox - " + this.user.username;
 		}
 

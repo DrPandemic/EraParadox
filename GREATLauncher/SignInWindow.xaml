@@ -3,61 +3,68 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:local="clr-namespace:GREATLauncher"
 		x:Name="window" mc:Ignorable="d" x:Class="GREATLauncher.SignInWindow"
         Title="EraParadox - Sign In" Width="532" Height="240" WindowStartupLocation="CenterScreen" Background="{x:Null}" AllowsTransparency="True" WindowStyle="None">
-	<Window.Resources>
-		<Storyboard x:Key="rotateGear">
-			<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(RotateTransform.Angle)" Storyboard.TargetName="gearImage" RepeatBehavior="Forever">
-				<EasingDoubleKeyFrame KeyTime="0:0:45" Value="360"/>
-			</DoubleAnimationUsingKeyFrames>
-		</Storyboard>
-	</Window.Resources>
-	<Window.Triggers>
-		<EventTrigger RoutedEvent="FrameworkElement.Loaded">
-			<BeginStoryboard Storyboard="{StaticResource rotateGear}"/>
-		</EventTrigger>
-	</Window.Triggers>
-	<Grid>
-		<Image x:Name="gearImage" Margin="0,0,432,0" Source="panel_gear.png" Width="100" Height="100" HorizontalAlignment="Center" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" d:IsLocked="True">
-			<Image.RenderTransform>
-				<TransformGroup>
-					<RotateTransform/>
-				</TransformGroup>
-			</Image.RenderTransform>
-		</Image>
-		<Rectangle x:Name="bgRectangle" Margin="37,60,15,25" Width="480" HorizontalAlignment="Center" VerticalAlignment="Stretch" d:IsLocked="True">
-			<Rectangle.Fill>
-				<ImageBrush ImageSource="panel_bg.png" TileMode="Tile" ViewportUnits="Absolute" Viewport="0,0,480,175"/>
-			</Rectangle.Fill>
-		</Rectangle>
-		<Image x:Name="headerImage" Margin="37,10,0,0" Source="panel_header.png" Width="495" Height="75" HorizontalAlignment="Center" VerticalAlignment="Top" d:IsLocked="True"/>
-		<Label x:Name="titleLabel" Content="{Binding Title, ElementName=window, Mode=OneWay}" Margin="42,15,20,0" Width="470" Height="45" Padding="20,5"
+    <Window.Resources>
+        <Storyboard x:Key="rotateGear">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(RotateTransform.Angle)" Storyboard.TargetName="gearImage" RepeatBehavior="Forever">
+                <EasingDoubleKeyFrame KeyTime="0:0:45" Value="360"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+    </Window.Resources>
+    <Window.Triggers>
+        <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+            <BeginStoryboard Storyboard="{StaticResource rotateGear}"/>
+        </EventTrigger>
+    </Window.Triggers>
+    <Grid>
+        <Image x:Name="gearImage" Margin="0,0,432,0" Source="panel_gear.png" Width="100" Height="100" HorizontalAlignment="Center" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" d:IsLocked="True">
+            <Image.RenderTransform>
+                <TransformGroup>
+                    <RotateTransform/>
+                </TransformGroup>
+            </Image.RenderTransform>
+        </Image>
+        <Rectangle x:Name="bgRectangle" Margin="37,60,15,25" Width="480" HorizontalAlignment="Center" VerticalAlignment="Stretch" d:IsLocked="True">
+            <Rectangle.Fill>
+                <ImageBrush ImageSource="panel_bg.png" TileMode="Tile" ViewportUnits="Absolute" Viewport="0,0,480,175"/>
+            </Rectangle.Fill>
+        </Rectangle>
+        <Image x:Name="headerImage" Margin="37,10,0,0" Source="panel_header.png" Width="495" Height="75" HorizontalAlignment="Center" VerticalAlignment="Top" d:IsLocked="True"/>
+        <Label x:Name="titleLabel" Content="{Binding Title, ElementName=window, Mode=OneWay}" Margin="42,15,20,0" Width="470" Height="45" Padding="20,5"
 			HorizontalAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Center" Foreground="White" FontSize="24"
-			MouseLeftButtonDown="titleLabel_MouseLeftButtonDown" d:IsLocked="True"/>
-		<Image x:Name="botImage" Margin="37,0,15,0" Source="panel_bot.png" Width="480" Height="25" HorizontalAlignment="Center" VerticalAlignment="Bottom" d:IsLocked="True"/>
+			MouseLeftButtonDown="titleLabel_MouseLeftButtonDown" d:IsLocked="True">
+            <Label.Effect>
+                <DropShadowEffect ShadowDepth="0" Color="White" Opacity="1" BlurRadius="3"/>
+            </Label.Effect>
+        </Label>
+        <Image x:Name="botImage" Margin="37,0,15,0" Source="panel_bot.png" Width="480" Height="25" HorizontalAlignment="Center" VerticalAlignment="Bottom" d:IsLocked="True"/>
 
-		<Grid Margin="57,80,35,30" Width="440" HorizontalAlignment="Center" VerticalAlignment="Stretch">
-			<Grid.RowDefinitions>
-				<RowDefinition/>
-				<RowDefinition/>
-				<RowDefinition/>
-				<RowDefinition/>
-			</Grid.RowDefinitions>
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="2*"/>
-				<ColumnDefinition Width="3*"/>
-			</Grid.ColumnDefinitions>
+        <Grid Margin="57,80,35,30" Width="440" HorizontalAlignment="Center" VerticalAlignment="Stretch">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="3*"/>
+            </Grid.ColumnDefinitions>
 
-			<Label Content="Email"/>
-			<TextBox x:Name="emailTextBox" Grid.Column="1"/>
+            <Label Content="Email"/>
+            <TextBox x:Name="emailTextBox" Grid.Column="1"/>
 
-			<Label Content="Password" Grid.Row="1"/>
-			<PasswordBox x:Name="passwordTextBox" Grid.Row="1" Grid.Column="1"/>
+            <Label Content="Password" Grid.Row="1"/>
+            <PasswordBox x:Name="passwordTextBox" Grid.Row="1" Grid.Column="1"/>
 
-			<Label Content="Remember me" Grid.Row="2"/>
-			<CheckBox x:Name="rememberCheckBox" Grid.Row="2" Grid.Column="1"/>
+            <Label Content="Remember me" Grid.Row="2"/>
+            <CheckBox x:Name="rememberCheckBox" Grid.Row="2" Grid.Column="1"/>
 
-			<Button Content="Sign in" Grid.Row="3" Grid.Column="1" Click="signInButton_Click"/>
-		</Grid>
-	</Grid>
+            <Button x:Name="signInButton" Content="Sign in" Grid.Row="3" Grid.Column="1" Click="signInButton_Click"/>
+            
+            <local:MarqueeControl x:Name="signInMarqueeControl" Grid.Row="3" Grid.ColumnSpan="2" Width="160" Height="20" Visibility="Hidden"/>
+        </Grid>
+    </Grid>
 </Window>

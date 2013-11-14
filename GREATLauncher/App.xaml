@@ -4,7 +4,7 @@
              StartupUri="SignInWindow.xaml">
     <Application.Resources>
 		<Style TargetType="{x:Type TextBox}">
-			<Setter Property="Width" Value="150"/>
+			<Setter Property="Width" Value="160"/>
 			<Setter Property="Padding" Value="5,3"/>
 			<Setter Property="Background" Value="#EE001A1C"/>
 			<Setter Property="BorderBrush" Value="#FF1CEBFF"/>
@@ -17,7 +17,7 @@
 			<Setter Property="FocusVisualStyle" Value="{x:Null}"/>
 		</Style>
 		<Style TargetType="{x:Type PasswordBox}">
-			<Setter Property="Width" Value="150"/>
+			<Setter Property="Width" Value="160"/>
 			<Setter Property="Padding" Value="5,3"/>
 			<Setter Property="Background" Value="#EE001A1C"/>
 			<Setter Property="BorderBrush" Value="#FF1CEBFF"/>
