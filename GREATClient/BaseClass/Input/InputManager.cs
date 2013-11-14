@@ -265,8 +265,7 @@ namespace GREATClient.BaseClass.Input
 		/// <param name="buttonState">Button state.</param>
 		/// <param name="oldButtonState">Old button state.</param>
 		/// <param name="keyState">Key state.</param>
-		bool CheckAMouseKey(ButtonState buttonState, ButtonState oldButtonState, KeyState keyState ) {			
-
+		bool CheckAMouseKey(ButtonState buttonState, ButtonState oldButtonState, KeyState keyState ) {
 			switch (keyState) {
 				case KeyState.Down:
 					if (buttonState == ButtonState.Pressed) {

@@ -1,6 +1,7 @@
 <inputCollection>
     <keyboardInputs>
         <input action="Jump" key="W" state="Pressed" />
+        <input action="AlternateJump" key="Space" state="Pressed" />
         <input action="GoRight" key="D" state="Down" />
         <input action="GoLeft" key="A" state="Down" />
         <!--<input action="Jump" key="W" state="Pressed" deadKey="Shift" />
