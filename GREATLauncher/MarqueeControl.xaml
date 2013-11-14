@@ -4,11 +4,11 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	mc:Ignorable="d" x:Class="GREATLauncher.MarqueeControl"
-	d:DesignWidth="160" d:DesignHeight="20">
+	d:DesignWidth="160" d:DesignHeight="15">
 	<UserControl.Resources>
 		<Storyboard x:Key="moveMarquee" RepeatBehavior="Forever">
 			<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(TranslateTransform.X)" Storyboard.TargetName="marqueeRectangle">
-				<EasingDoubleKeyFrame KeyTime="0:0:1" Value="125"/>
+				<EasingDoubleKeyFrame KeyTime="0:0:1" Value="130"/>
 				<EasingDoubleKeyFrame KeyTime="0:0:2" Value="0"/>
 			</DoubleAnimationUsingKeyFrames>
 		</Storyboard>
@@ -18,11 +18,11 @@
 			<BeginStoryboard Storyboard="{StaticResource moveMarquee}"/>
 		</EventTrigger>
 	</UserControl.Triggers>
-	<Border Padding="1" BorderBrush="#FF1CEBFF" BorderThickness="1">
+	<Border Padding="2" BorderBrush="#FF1CEBFF" BorderThickness="1">
         <Border.Effect>
             <DropShadowEffect ShadowDepth="0" Color="#FF1CEBFF" Opacity="1" BlurRadius="3"/>
         </Border.Effect>
-		<Rectangle x:Name="marqueeRectangle" Fill="#FF1CEBFF" Margin="0,0,125,0" RenderTransformOrigin="0.5,0.5">
+		<Rectangle x:Name="marqueeRectangle" Fill="#FF1CEBFF" Margin="0,0,130,0" RenderTransformOrigin="0.5,0.5">
 			<Rectangle.RenderTransform>
 				<TransformGroup>
 					<TranslateTransform/>

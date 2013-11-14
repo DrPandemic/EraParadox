@@ -1,0 +1,25 @@
+﻿<UserControl
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	mc:Ignorable="d" x:Class="GREATLauncher.ProgressBarControl"
+	d:DesignWidth="200" d:DesignHeight="15">
+    <Grid>
+        <Border x:Name="progressBorder" Margin="0,0,35,0" Padding="2" BorderBrush="#FF1CEBFF" BorderThickness="1">
+            <Border.Effect>
+                <DropShadowEffect ShadowDepth="0" Color="#FF1CEBFF" Opacity="1" BlurRadius="3"/>
+            </Border.Effect>
+            <Rectangle x:Name="progressRectangle" Fill="#FF1CEBFF" Margin="0,0,0,0" Width="196" HorizontalAlignment="Left">
+                <Rectangle.Effect>
+                    <DropShadowEffect ShadowDepth="0" Color="#FF1CEBFF" Opacity="1" BlurRadius="3"/>
+                </Rectangle.Effect>
+            </Rectangle>
+        </Border>
+        <Label x:Name="progressLabel" Content="100%" Margin="0,0,0,0" Padding="3,0" Width="35" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="#FF1CEBFF" FontSize="10">
+            <Label.Effect>
+                <DropShadowEffect ShadowDepth="0" Color="#FF1CEBFF" Opacity="1" BlurRadius="3"/>
+            </Label.Effect>
+        </Label>
+    </Grid>
+</UserControl>
