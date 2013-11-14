@@ -64,7 +64,7 @@
 
             <Button x:Name="signInButton" Content="Sign in" Grid.Row="3" Grid.Column="1" Click="signInButton_Click"/>
             
-            <local:MarqueeControl x:Name="signInMarqueeControl" Grid.Row="3" Grid.ColumnSpan="2" Width="160" Height="15" Visibility="Hidden"/>
+            <local:MarqueeControl x:Name="signInMarqueeControl" Grid.Row="3" Grid.ColumnSpan="2" Width="150" Height="15" Visibility="Hidden"/>
         </Grid>
     </Grid>
 </Window>

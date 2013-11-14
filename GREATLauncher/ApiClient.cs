@@ -12,7 +12,7 @@ namespace GREATLauncher
 {
     public class ApiClient
     {
-        private const string BASE_URI = "http://172.16.10.127:3000/api/v1/";
+        private const string BASE_URI = "http://172.17.104.126:3000/api/v1/";
 
         private string token;
         public string Token
@@ -40,19 +40,18 @@ namespace GREATLauncher
             ASCIIEncoding enc = new ASCIIEncoding();
             byte[] reqData = enc.GetBytes("email=" + HttpUtility.UrlEncode(email) + "&password=" + HttpUtility.UrlEncode(password));
 
-            HttpWebRequest req = WebRequest.CreateHttp(BASE_URI + "sessions");
-            req.Method = "POST";
-            req.ContentType = "application/x-www-form-urlencoded";
-            req.ContentLength = reqData.Length;
-            
-
-            using (Stream reqStream = await req.GetRequestStreamAsync()) {
-                reqStream.Write(reqData, 0, reqData.Length);
-                reqStream.Flush();
-                reqStream.Close();
-            }
-
             try {
+                HttpWebRequest req = WebRequest.CreateHttp(BASE_URI + "sessions");
+                req.Method = "POST";
+                req.ContentType = "application/x-www-form-urlencoded";
+                req.ContentLength = reqData.Length;
+            
+                using (Stream reqStream = await req.GetRequestStreamAsync()) {
+                    reqStream.Write(reqData, 0, reqData.Length);
+                    reqStream.Flush();
+                    reqStream.Close();
+                }
+
                 using (HttpWebResponse resp = (HttpWebResponse)await req.GetResponseAsync()) {
                     if (resp.StatusCode != HttpStatusCode.InternalServerError) {
                         using (StreamReader respReader = new StreamReader(resp.GetResponseStream())) {
@@ -78,10 +77,10 @@ namespace GREATLauncher
         {
             if (String.IsNullOrEmpty(this.token)) throw new InvalidOperationException();
 
-            HttpWebRequest req = WebRequest.CreateHttp(BASE_URI + "sessions/" + this.token);
-            req.Method = "DELETE";
-
             try {
+                HttpWebRequest req = WebRequest.CreateHttp(BASE_URI + "sessions/" + this.token);
+                req.Method = "DELETE";
+
                 using (HttpWebResponse resp = (HttpWebResponse)await req.GetResponseAsync()) {
                     if (resp.StatusCode != HttpStatusCode.InternalServerError) {
                         using (StreamReader respReader = new StreamReader(resp.GetResponseStream())) {
@@ -107,10 +106,10 @@ namespace GREATLauncher
         {
             if (String.IsNullOrEmpty(this.token)) throw new InvalidOperationException();
 
-            HttpWebRequest req = WebRequest.CreateHttp(BASE_URI + "users/?auth_token=" + this.token);
-            req.Method = "GET";
-
             try {
+                HttpWebRequest req = WebRequest.CreateHttp(BASE_URI + "users/?auth_token=" + this.token);
+                req.Method = "GET";
+
                 using (HttpWebResponse resp = (HttpWebResponse)await req.GetResponseAsync()) {
                     if (resp.StatusCode != HttpStatusCode.InternalServerError) {
                         using (StreamReader respReader = new StreamReader(resp.GetResponseStream())) {
@@ -134,10 +133,10 @@ namespace GREATLauncher
         {
             if (String.IsNullOrEmpty(this.token)) throw new InvalidOperationException();
 
-            HttpWebRequest req = WebRequest.CreateHttp(BASE_URI + "users/" + id.ToString() + "?auth_token=" + this.token);
-            req.Method = "GET";
-
             try {
+                HttpWebRequest req = WebRequest.CreateHttp(BASE_URI + "users/" + id.ToString() + "?auth_token=" + this.token);
+                req.Method = "GET";
+
                 using (HttpWebResponse resp = (HttpWebResponse)await req.GetResponseAsync()) {
                     if (resp.StatusCode != HttpStatusCode.InternalServerError) {
                         using (StreamReader respReader = new StreamReader(resp.GetResponseStream())) {

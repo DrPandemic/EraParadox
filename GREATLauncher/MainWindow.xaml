@@ -42,8 +42,8 @@
 		<Image x:Name="botImage" Margin="37,0,15,0" Source="panel_wide_bot.png" Width="990" Height="25" HorizontalAlignment="Center" VerticalAlignment="Bottom" d:IsLocked="True"/>
 
 		<Grid Margin="57,80,35,30" Width="950" HorizontalAlignment="Center" VerticalAlignment="Stretch">
-            <local:MarqueeControl x:Name="signInMarqueeControl" Width="160" Height="15"/>
-            <local:ProgressBarControl HorizontalAlignment="Left" Margin="383,245,0,0" Width="200" Height="15" VerticalAlignment="Top" Value="0.5"/>
+            <local:MarqueeControl x:Name="signInMarqueeControl" Width="150" Height="15"/>
+            <local:ProgressBarControl Margin="0,245,0,0" Width="200" Height="15" HorizontalAlignment="Center" VerticalAlignment="Top"/>
         </Grid>
 	</Grid>
 </Window>

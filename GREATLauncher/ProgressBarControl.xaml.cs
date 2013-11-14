@@ -58,8 +58,7 @@ namespace GREATLauncher
                 if (value > this.max) this.value = this.max;
                 else if (value < this.min) this.value = this.min;
                 else this.value = value;
-                this.progressRectangle.Width = (this.progressBorder.ActualWidth - 4) / (this.max - this.min) * (this.value - this.min);
-                this.progressLabel.Content = Math.Floor((this.value - this.min) / (this.max - this.min) * 100).ToString() + "%";
+                this.ChangeProgress();
             }
         }
 		
@@ -67,5 +66,18 @@ namespace GREATLauncher
 		{
 			this.InitializeComponent();
 		}
+
+        private void ChangeProgress()
+        {
+            if (this.progressBorder.ActualWidth > 4) {
+                this.progressRectangle.Width = (this.progressBorder.ActualWidth - 4) / (this.max - this.min) * (this.value - this.min);
+                this.progressLabel.Content = Math.Floor((this.value - this.min) / (this.max - this.min) * 100).ToString() + "%";
+            }
+        }
+
+        private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            this.ChangeProgress();
+        }
 	}
 }
