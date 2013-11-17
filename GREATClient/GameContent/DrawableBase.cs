@@ -31,8 +31,8 @@ namespace GREATClient.GameContent
 {
     public class DrawableBase : DrawableStructure
     {
-		const string LEFT_IMAGE = "lbase";
-		const string RIGHT_IMAGE = "rbase";
+		const string LEFT_IMAGE = "MapObjects/lbase";
+		const string RIGHT_IMAGE = "MapObjects/rbase";
 
 		DrawableBaseLifeBar LifeBar { get; set; }
 
@@ -63,7 +63,7 @@ namespace GREATClient.GameContent
 				AddChild(new DrawableImage(LEFT_IMAGE) {
 					RelativeOrigin = new Vector2(0.5f, 1.0f)
 				}, 2);
-				DrawableImage gear = new DrawableImage("gearnexus") {
+				DrawableImage gear = new DrawableImage("MapObjects/gearnexus") {
 					RelativeOrigin = new Vector2(0.5f),
 					Position = new Vector2(-70, -85)
 				};
@@ -77,7 +77,7 @@ namespace GREATClient.GameContent
 					RelativeOrigin = new Vector2(0.5f, 1f),
 					Position = new Vector2(0,20)
 				},3);
-				AddChild(Diamond = new DrawableImage("rbaseDiamond") {
+				AddChild(Diamond = new DrawableImage("MapObjects/rbaseDiamond") {
 					RelativeOrigin = new Vector2(0.5f, 1f),
 					Position = new Vector2(5,-20)},2);
 			}

@@ -147,7 +147,7 @@ namespace GREATClient.BaseClass
 			spriteBatch = new SpriteBatch(gd);
 			OnLoadContent();
 
-			Cursor = new DrawableImage("cursor");
+			Cursor = new DrawableImage("Base/cursor");
 			AddChild(Cursor,100);
 			((InputManager)Services.GetService(typeof(InputManager))).Cursor = Cursor;
 		}

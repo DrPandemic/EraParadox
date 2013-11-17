@@ -117,7 +117,7 @@ namespace GREATClient.BaseClass.Particle
         {
 			// Particles settings
 			ParticleScale = 0.1f;
-			ParticleFile = "particle";
+			ParticleFile = "Base/particle";
 			ParticleInitialVelocity = new Vector2(30, -100);
 			ParticleForce = new Vector2(2, 10);
 			ParticleLifeTimeRandomizer = 0.3f;

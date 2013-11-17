@@ -52,11 +52,11 @@ namespace GREATClient.GameContent
 			});*/
 
 			if (Structure.Team == Teams.Left) {
-				AddChild(new DrawableImage("tower1") {
+				AddChild(new DrawableImage("MapObjects/tower1") {
 					RelativeOrigin = new Vector2(0.5f, 0.95f)
 				}, 2);
 			} else {
-				AddChild(new DrawableImage("tower2") {
+				AddChild(new DrawableImage("MapObjects/tower2") {
 					RelativeOrigin = new Vector2(0.5f, 0.95f)
 				}, 2);
 				AddChild(new ParticleSystem(70,null,new TimeSpan(0,0,3)) {
@@ -65,8 +65,6 @@ namespace GREATClient.GameContent
 				ParticleForce = new Vector2(-5, 2),
 				Position = new Vector2(0,-135)},1);
 			}
-
-
 
 			AddChild(LifeBar = new DrawableTowerLifeBar(Ally) {
 				Position = new Vector2(0f, -Structure.Rectangle.Height * 1.1f),

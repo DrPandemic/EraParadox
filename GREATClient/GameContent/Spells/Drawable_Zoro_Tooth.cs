@@ -29,7 +29,7 @@ namespace GREATClient.GameContent.Spells
 	{
 		public Drawable_Zoro_Tooth(ClientLinearSpell spell)
 			: base(spell,
-			       new DrawableImage("zoro_tooth"))
+			       new DrawableImage("Champions/Zoro/zoro_tooth"))
 		{
 		}
 

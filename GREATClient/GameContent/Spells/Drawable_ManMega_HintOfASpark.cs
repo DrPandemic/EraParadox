@@ -30,7 +30,7 @@ namespace GREATClient.GameContent.Spells
     {
         public Drawable_ManMega_HintOfASpark(ClientLinearSpell spell)
 			: base(spell,
-			       new DrawableImage("manmega_hintofaspark"))
+			       new DrawableImage("Champions/ManMega/manmega_hintofaspark"))
         {
 			Tint = Color.Teal;
         }

@@ -39,10 +39,10 @@ namespace GREATClient.Display
 
 		public SpellMenu(CurrentChampionState state)
         {
-			Spell1Item = new SpellMenuItem(state.Spell1, new DrawableImage("spell1Icon"));
-			Spell2Item = new SpellMenuItem(state.Spell2, new DrawableImage("spell2Icon"));
-			Spell3Item = new SpellMenuItem(state.Spell3, new DrawableImage("spell3Icon"));
-			Spell4Item = new SpellMenuItem(state.Spell4, new DrawableImage("spell4Icon"));
+			Spell1Item = new SpellMenuItem(state.Spell1, new DrawableImage("UIObjects/spell1Icon"));
+			Spell2Item = new SpellMenuItem(state.Spell2, new DrawableImage("UIObjects/spell2Icon"));
+			Spell3Item = new SpellMenuItem(state.Spell3, new DrawableImage("UIObjects/spell3Icon"));
+			Spell4Item = new SpellMenuItem(state.Spell4, new DrawableImage("UIObjects/spell4Icon"));
 
 			AddItem(Spell1Item);
 			AddItem(Spell2Item);

@@ -24,7 +24,7 @@ namespace GREATClient.BaseClass
 {
     public class DrawableCircle : DrawableImage
     {
-        public DrawableCircle() : base("circle")
+        public DrawableCircle() : base("Base/circle")
         {
         }
     }

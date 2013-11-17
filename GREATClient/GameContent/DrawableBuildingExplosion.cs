@@ -25,7 +25,7 @@ namespace GREATClient.GameContent
 {
     public class DrawableBuildingExplosion : DrawableSprite
     {
-		public DrawableBuildingExplosion() : base("explosion",150,150,0,20f,10,1)
+		public DrawableBuildingExplosion() : base("MapObjects/explosion",150,150,0,20f,10,1)
         {
         }
     }

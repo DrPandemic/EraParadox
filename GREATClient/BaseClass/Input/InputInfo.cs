@@ -124,7 +124,7 @@ namespace GREATClient.BaseClass.Input
 		/// <summary>
 		/// The XML file containing the inputs.
 		/// </summary>
-		public const string INPUT_FILE = "inputs.xml";
+		public const string INPUT_FILE = "Settings/inputs.xml";
 
 		/// <summary>
 		/// All the key infos.

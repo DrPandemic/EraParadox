@@ -124,7 +124,7 @@ namespace GREATClient.GameContent
 
 		private void FillInfo()
 		{
-			const string CHAMPIONS_PATH = "Content/champions.xml";
+			const string CHAMPIONS_PATH = "Content/Settings/champions.xml";
 			Info = new Dictionary<ChampionTypes, ChampionInfo>();
 
 			ChampionInfoCollection champions = null;
