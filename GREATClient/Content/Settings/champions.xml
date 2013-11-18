@@ -2,7 +2,7 @@
 <champions>
 
   <!-- ManMega -->
-  <champion type="ManMega" name="ManMega" assetname="manmega" framewidth="53" frameheight="54" >
+  <champion type="ManMega" name="ManMega" assetname="manmega" framewidth="53" frameheight="54" portrait="ManMegaPortrait" >
     <description>The drawn man that escaped his blank sheet and wants to take revenge upon his creators. 
       Long has he awaited for a mere taste of liberty to finally try and defeat his oppressors. 
       He will use any tools at hand, pencils or erasers, to defeat his enemies. 
@@ -22,7 +22,7 @@
   
   
   <!-- Zoro -->
-  <champion type="Zoro" name="Zoro" assetname="zoro" framewidth="52" frameheight="56" >
+  <champion type="Zoro" name="Zoro" assetname="zoro" framewidth="52" frameheight="56" portrait="ZoroPortrait">
     <description>ManMega's friend.</description>
     <animations>
       <animation name="idle" line="0" framecount="7" framerate="4" repeat="true"/>

@@ -47,15 +47,15 @@ namespace GREATClient.BaseClass.BaseAction
         {
 			Debug.Assert(duration.Ticks > 0);
 			Destination = destination;
-			MouvementByMillisecond = new Vector2();
         }
 
 		public override void Ready()
 		{
 			Debug.Assert(Target != null);
+			float x = (Destination.X - Target.Position.X) / (float)Duration.TotalMilliseconds;
+			float y = (Destination.Y - Target.Position.Y) / (float)Duration.TotalMilliseconds;
 
-			MouvementByMillisecond = new Vector2((Destination.X - Target.Position.X) / (float)Duration.TotalMilliseconds, 
-			                                     (Destination.Y - Target.Position.Y) / (float)Duration.TotalMilliseconds); 
+			MouvementByMillisecond = new Vector2(x,y);
 		}
 
 		protected override void OnUpdate(GameTime dt)

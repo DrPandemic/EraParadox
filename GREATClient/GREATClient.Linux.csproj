@@ -119,6 +119,7 @@
     <Compile Include="GameContent\Spells\Drawable_ManMega_Slash.cs" />
     <Compile Include="GameContent\DrawableBuildingExplosion.cs" />
     <Compile Include="GameContent\Spells\Drawable_Zoro_Tooth.cs" />
+    <Compile Include="Display\KillDisplay.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />
@@ -277,9 +278,6 @@
     <Content Include="Content\Maps\tile.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\UIObjects\deathCercle.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Content\MapObjects\explosion.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -362,6 +360,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Base\circle.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\UIObjects\deathCircle.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

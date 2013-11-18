@@ -117,6 +117,7 @@
     <Compile Include="GameContent\Spells\Drawable_ManMega_Slash.cs" />
     <Compile Include="GameContent\DrawableBuildingExplosion.cs" />
     <Compile Include="GameContent\Spells\Drawable_Zoro_Tooth.cs" />
+    <Compile Include="Display\KillDisplay.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />

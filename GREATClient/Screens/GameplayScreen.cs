@@ -39,6 +39,7 @@ using System.IO;
 using GREATClient.BaseClass.ScreenInformation;
 using GREATClient.GameContent.Spells;
 using GREATLib.Entities.Structures;
+using GREATLib.Entities.Champions;
 
 namespace GREATClient.Screens
 {
@@ -86,6 +87,8 @@ namespace GREATClient.Screens
 
 		Parallax Parallax { get; set; }
 
+		KillDisplay KillDisplay { get; set; }
+
         public GameplayScreen(ContentManager content, Game game, Client client)
 			: base(content, game)
         {
@@ -109,20 +112,29 @@ namespace GREATClient.Screens
 			Services.AddService(typeof(CameraService), Camera);
 
 			Parallax = new Parallax();
+
+			KillDisplay = new KillDisplay();
         }
+
+		void test(object sender, EventArgs e) {
+			KillDisplay.Display(ChampionTypes.ManMega, ChampionTypes.Zoro);
+		}
 
 		protected override void OnLoadContent()
 		{
 			base.OnLoadContent();
 
+			inputManager.RegisterEvent(InputActions.ArrowUp, test);
+
 			ESCMenu menu = new ESCMenu();
-			AddChild(menu, 5);
+			AddChild(menu, 6);
 			menu.SetPositionInScreenPercent(50, 50);
 
 			ChampionState = new CurrentChampionState(100,100);
 			AddChild(new GameUI(ChampionState, new PingCounter(() => {
 				return Client.Instance.GetPing().TotalMilliseconds;})),
 			         3);
+			AddChild(KillDisplay,3);
 
 			AddChild(DeathScreen = new DeathScreen(),4);
 			AddChild(WinLoseScreen = new WinLoseScreen(), 5);
@@ -136,6 +148,7 @@ namespace GREATClient.Screens
 			Client.RegisterCommandHandler(ServerCommand.StateUpdate, OnStateUpdate);
 
 			AddChild(Parallax,0);
+
 		}
 
 		void AddStructure(DrawableStructure structure)
