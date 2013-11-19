@@ -50,6 +50,8 @@ namespace GREATClient.Display
 			public RemovingState Remove { get; private set; }
 
 			public Kill(ChampionTypes killer, ChampionTypes killed, bool FirstIsAlly, ChampionsInfo championsInfo) {
+				AddChild(new DrawableImage("UIObjects/killed") {Position = new Vector2(60,0)});
+
 				AddChild(new DrawableImage("UIObjects/deathCircle") {Tint = FirstIsAlly ? Color.Green : Color.Red});
 				AddChild(new DrawableImage("UIObjects/innerDeathCircle") {Position = new Vector2(5)});
 				AddChild(new DrawableImage("UIObjects/deathCircle") {Position = new Vector2(Width - 80,0),
@@ -58,6 +60,8 @@ namespace GREATClient.Display
 
 				AddChild(new DrawableImage(championsInfo.GetInfo(killer).Portait) {Position = new Vector2(Width - 75,5)});
 				AddChild(new DrawableImage(championsInfo.GetInfo(killed).Portait) {Position = new Vector2(5)});
+
+
 
 				MoveFinished = true;
 				MoveCounter = 0;

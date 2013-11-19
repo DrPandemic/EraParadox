@@ -150,7 +150,6 @@
     <None Include="Content\Champions\ManMega\manmega_slashofdoom.png" />
     <None Include="Content\Champions\Zoro\zoro.png" />
     <None Include="Content\Champions\Zoro\zoro_tooth.png" />
-    <None Include="Content\UIObjects\innerDeathCercle.png" />
     <None Include="Content\UIObjects\deathCircle.png" />
     <None Include="Content\Champions\Zoro\zoro_face.png" />
   </ItemGroup>
@@ -304,6 +303,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Champions\ManMega\manmega_face.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\UIObjects\innerDeathCircle.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\UIObjects\killed.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
