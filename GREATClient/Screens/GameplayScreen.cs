@@ -113,11 +113,11 @@ namespace GREATClient.Screens
 
 			Parallax = new Parallax();
 
-			KillDisplay = new KillDisplay();
+			KillDisplay = new KillDisplay(ChampionsInfo);
         }
 
 		void test(object sender, EventArgs e) {
-			KillDisplay.Display(ChampionTypes.ManMega, ChampionTypes.Zoro);
+			KillDisplay.Display(ChampionTypes.ManMega, ChampionTypes.Zoro, true);
 		}
 
 		protected override void OnLoadContent()

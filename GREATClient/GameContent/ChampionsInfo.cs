@@ -70,7 +70,7 @@ namespace GREATClient.GameContent
 		[System.Xml.Serialization.XmlAttribute("frameheight")]
 		public int FrameHeight { get; set; }
 
-		[System.Xml.Serialization.XmlAttribute("portait")]
+		[System.Xml.Serialization.XmlAttribute("portrait")]
 		public string Portait { get; set; }
 
 		[System.Xml.Serialization.XmlElement("description")]

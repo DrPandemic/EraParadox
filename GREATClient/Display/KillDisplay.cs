@@ -49,8 +49,16 @@ namespace GREATClient.Display
 
 			public RemovingState Remove { get; private set; }
 
-			public Kill(ChampionTypes killer, ChampionTypes killed) {
-				AddChild(new DrawableImage("UIObjects/deathCircle"));
+			public Kill(ChampionTypes killer, ChampionTypes killed, bool FirstIsAlly, ChampionsInfo championsInfo) {
+				AddChild(new DrawableImage("UIObjects/deathCircle") {Tint = FirstIsAlly ? Color.Green : Color.Red});
+				AddChild(new DrawableImage("UIObjects/innerDeathCircle") {Position = new Vector2(5)});
+				AddChild(new DrawableImage("UIObjects/deathCircle") {Position = new Vector2(Width - 80,0),
+					Tint = FirstIsAlly ? Color.Red : Color.Green});
+				AddChild(new DrawableImage("UIObjects/innerDeathCircle") {Position = new Vector2(Width - 75,5)});
+
+				AddChild(new DrawableImage(championsInfo.GetInfo(killer).Portait) {Position = new Vector2(Width - 75,5)});
+				AddChild(new DrawableImage(championsInfo.GetInfo(killed).Portait) {Position = new Vector2(5)});
+
 				MoveFinished = true;
 				MoveCounter = 0;
 				Timer = new TimeSpan(0,0,DurationShown);
@@ -111,11 +119,14 @@ namespace GREATClient.Display
 		List<Kill> KillsToBeAdded { get; set; }
 		List<Kill> KillsToRemove { get; set; }
 
-        public KillDisplay() {
+		ChampionsInfo ChampionsInfo { get; set; }
+
+		public KillDisplay(ChampionsInfo championsInfo) {
 			AddChild(Panel = new Container());
 			Kills = new List<Kill>();
 			KillsToBeAdded = new List<Kill>();
 			KillsToRemove = new List<Kill>();
+			ChampionsInfo = championsInfo;
         }
 
 		protected override void OnLoad(Microsoft.Xna.Framework.Content.ContentManager content, Microsoft.Xna.Framework.Graphics.GraphicsDevice gd)
@@ -127,7 +138,6 @@ namespace GREATClient.Display
 		protected override void OnUpdate(Microsoft.Xna.Framework.GameTime dt)
 		{
 			ActiveAKill();
-			bool test = false;
 			foreach (Kill aKill in Kills) {
 				if(aKill.Remove == Kill.RemovingState.Remove) {
 					RemoveChild(aKill);
@@ -137,8 +147,8 @@ namespace GREATClient.Display
 			base.OnUpdate(dt);
 		}
 
-		public void Display(ChampionTypes killer, ChampionTypes killed) {
-			Kill kill = new Kill(killer,killed);
+		public void Display(ChampionTypes killer, ChampionTypes killed, bool FirstIsAlly) {
+			Kill kill = new Kill(killer,killed,FirstIsAlly, ChampionsInfo);
 			kill.Position = new Vector2(Kill.Width + ScreenOffset, 0);
 			kill.Alpha = 0;
 			KillsToBeAdded.Add(kill);
