@@ -121,36 +121,18 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />
-    <None Include="Content\MapObjects\explosion.png" />
-    <None Include="Content\MapObjects\gearnexus.png" />
-    <None Include="Content\MapObjects\lbase.png" />
-    <None Include="Content\MapObjects\rbase.png" />
-    <None Include="Content\MapObjects\rbaseDiamond.png" />
-    <None Include="Content\MapObjects\smoke.png" />
-    <None Include="Content\MapObjects\tower1.png" />
-    <None Include="Content\MapObjects\tower2.png" />
-    <None Include="Content\MapObjects\towershot.png" />
-    <None Include="Content\UIObjects\spell1Icon.png" />
-    <None Include="Content\UIObjects\spell2Icon.png" />
-    <None Include="Content\UIObjects\spell3Icon.png" />
-    <None Include="Content\UIObjects\spell4Icon.png" />
-    <None Include="Content\Base\circle.png" />
-    <None Include="Content\Base\cursor.png" />
-    <None Include="Content\Base\particle.png" />
-    <None Include="Content\Base\triangle.png" />
-    <None Include="Content\Settings\champions.xml" />
-    <None Include="Content\Settings\inputs.xml" />
-    <None Include="Content\Settings\screen.xml" />
+    <None Include="Content\Settings\champions.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Settings\inputs.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Settings\screen.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Content\Champions\Stickman.png" />
     <None Include="Content\Champions\Stickman_run.png" />
     <None Include="Content\Champions\Stickman_stand.png" />
-    <None Include="Content\Champions\ManMega\manmega.png" />
-    <None Include="Content\Champions\ManMega\manmega_hintofaspark.png" />
-    <None Include="Content\Champions\ManMega\manmega_rocketrampage.png" />
-    <None Include="Content\Champions\ManMega\manmega_slashofdoom.png" />
-    <None Include="Content\Champions\Zoro\zoro.png" />
-    <None Include="Content\Champions\Zoro\zoro_tooth.png" />
-    <None Include="Content\UIObjects\deathCircle.png" />
     <None Include="Content\Champions\Zoro\zoro_face.png" />
   </ItemGroup>
   <ItemGroup>
@@ -309,6 +291,78 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\UIObjects\killed.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\UIObjects\spell1Icon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\UIObjects\spell2Icon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\UIObjects\spell3Icon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\UIObjects\spell4Icon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Base\cursor.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Base\circle.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Base\particle.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Base\triangle.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\MapObjects\lbase.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\MapObjects\rbase.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\MapObjects\rbaseDiamond.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\MapObjects\explosion.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\MapObjects\gearnexus.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\MapObjects\smoke.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\MapObjects\tower1.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\MapObjects\tower2.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\MapObjects\towershot.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Champions\ManMega\manmega.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Champions\ManMega\manmega_hintofaspark.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Champions\ManMega\manmega_rocketrampage.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Champions\ManMega\manmega_slashofdoom.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Champions\Zoro\zoro.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Champions\Zoro\zoro_tooth.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\UIObjects\deathCircle.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
