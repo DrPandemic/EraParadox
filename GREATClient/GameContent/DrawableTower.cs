@@ -25,13 +25,28 @@ using GREATClient.BaseClass;
 using Microsoft.Xna.Framework;
 using GREATLib;
 using GREATClient.BaseClass.Particle;
+using GREATClient.BaseClass.BaseAction;
 
 namespace GREATClient.GameContent
 {
     public class DrawableTower : DrawableStructure
     {
+		/// <summary>
+		/// The alert duration in ms.
+		/// </summary>
+		static int AlertDurationMs = 500;
+
+		/// <summary>
+		/// Gets or sets a value indicating whether this <see cref="GREATClient.GameContent.DrawableTower"/> is in alert mode.
+		/// The alert mode set the tower red.
+		/// </summary>
+		/// <value><c>true</c> if alerting; otherwise, <c>false</c>.</value>
+		private bool Alerting { get; set; }
+
 		private DrawableTowerLifeBar LifeBar { get; set; }
 		private bool Ally { get; set; }
+
+		private Drawable Tower { get; set; }
 
         public DrawableTower(Tower tower, bool isAlly)
 			: base(tower)
@@ -40,23 +55,22 @@ namespace GREATClient.GameContent
 
 			Position = new Vector2(tower.Rectangle.X + tower.Rectangle.Width / 2f,
 			                       tower.Rectangle.Bottom);
+
+			Alerting = false;
+
+			Tower = null;
         }
 
 		protected override void OnLoad(Microsoft.Xna.Framework.Content.ContentManager content, Microsoft.Xna.Framework.Graphics.GraphicsDevice gd)
 		{
 			base.OnLoad(content, gd);
 
-			/*AddChild(new DrawableRectangle(new Rect(0f, 0f, Structure.Rectangle.Width, Structure.Rectangle.Height), 
-			                               Ally ? Color.Green : Color.Red) {
-				RelativeOrigin = new Vector2(0.5f, 1.0f)
-			});*/
-
 			if (Structure.Team == Teams.Left) {
-				AddChild(new DrawableImage("MapObjects/tower1") {
+				AddChild(Tower =  new DrawableImage("MapObjects/tower1") {
 					RelativeOrigin = new Vector2(0.5f, 0.95f)
 				}, 2);
 			} else {
-				AddChild(new DrawableImage("MapObjects/tower2") {
+				AddChild(Tower = new DrawableImage("MapObjects/tower2") {
 					RelativeOrigin = new Vector2(0.5f, 0.95f)
 				}, 2);
 				AddChild(new ParticleSystem(70,null,new TimeSpan(0,0,3)) {
@@ -71,6 +85,8 @@ namespace GREATClient.GameContent
 				Health = Structure.Health,
 				MaxHealth = Structure.MaxHealth
 			});
+
+			inputManager.RegisterEvent(GREATClient.BaseClass.Input.InputActions.ArrowDown,(one,two)=> WillShoot());
 		}
 
 		protected override void OnUpdate(GameTime dt)
@@ -87,6 +103,17 @@ namespace GREATClient.GameContent
 					}}, 3);
 			}
 		}
+
+		/// <summary>
+		/// Should be called before shooting to display the alert.
+		/// </summary>
+		public void WillShoot() {
+			if (!Alerting && Tower != null) {
+				Tower.PerformAction(new ActionTintBy(new TimeSpan(0,0,0,0,AlertDurationMs), new Vector3(0,-230,-230) ) { DoneAction = (thing) => 
+						Tower.Tint = Color.White
+				});
+			}
+		} 
     }
 }
 

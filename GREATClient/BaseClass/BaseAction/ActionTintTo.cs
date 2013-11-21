@@ -1,5 +1,5 @@
 //
-//  ActionOverTimeDrawable.cs
+//  ActionTintTo.cs
 //
 //  Author:
 //       Jean-Samuel Aubry-Guzzi <bipbip500@gmail.com>
@@ -19,22 +19,21 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using Microsoft.Xna.Framework;
 using System.Diagnostics;
 
 namespace GREATClient.BaseClass.BaseAction
 {
-    public class ActionOverTimeDrawable : ActionOverTime
-    {
-		public ActionOverTimeDrawable(TimeSpan duration) : base(duration)
-        { }
+	public class ActionTintTo : ActionTintBy
+	{
+		public ActionTintTo(TimeSpan duration, Vector3 color) : base(duration,color)
+		{ }
 
-
-		protected override void TargetChanged()
+		public override void Ready()
 		{
-			if (!(Target != null && Target is Drawable) && Target != null) {
-				Stop();
-				Debug.Fail("The target should have been a Drawable.");
-			}
+			Debug.Assert(Target != null);
+
+			ColorChangeBeMillisecond = (Color - ((Drawable)Target).Tint.ToVector3()) / (float)Duration.TotalMilliseconds;
 		}
     }
 }

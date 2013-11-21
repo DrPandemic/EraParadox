@@ -120,6 +120,8 @@
     <Compile Include="GameContent\DrawableBuildingExplosion.cs" />
     <Compile Include="GameContent\Spells\Drawable_Zoro_Tooth.cs" />
     <Compile Include="Display\KillDisplay.cs" />
+    <Compile Include="BaseClass\BaseAction\ActionTintBy.cs" />
+    <Compile Include="BaseClass\BaseAction\ActionTintTo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />

@@ -83,16 +83,14 @@ namespace GREATClient.BaseClass.BaseAction
 		/// </summary>
 		/// <value>The target.</value>
 		IDraw m_Target;
-		public IDraw Target 
+		public virtual IDraw Target 
 		{ 
 			get {
 				return m_Target;
 			}
 			set {
-				if (m_Target != null) {
-					TargetChanged();
-				}
 				m_Target = value;
+				TargetChanged();
 			}
 		}
 
