@@ -122,6 +122,7 @@
     <Compile Include="Display\KillDisplay.cs" />
     <Compile Include="BaseClass\BaseAction\ActionTintBy.cs" />
     <Compile Include="BaseClass\BaseAction\ActionTintTo.cs" />
+    <Compile Include="BaseClass\SoundService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />
@@ -152,6 +153,8 @@
     <Folder Include="Content\Champions\Zoro\" />
     <Folder Include="Content\Base\" />
     <Folder Include="Content\Settings\" />
+    <Folder Include="Content\Sounds\" />
+    <Folder Include="Content\Sounds\Effects\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -377,6 +380,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\UIObjects\killed.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Sounds\Musics\Jinxed.mp3">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Sounds\Effects\shell.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

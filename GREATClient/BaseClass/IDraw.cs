@@ -71,6 +71,22 @@ namespace GREATClient.BaseClass
 			}
 		}
 
+		SoundService m_SoundService;
+		public SoundService soundService {
+			get {
+				if (m_SoundService != null) {
+					return m_SoundService;
+				} else {
+					if (Parent != null) {
+						m_SoundService = (SoundService)this.GetServices().GetService(typeof(SoundService));
+						return m_SoundService;
+					} else {
+						return null;
+					}
+				}
+			}
+		}
+
 		/// <summary>
 		/// Gets the services.
 		/// Is used to replace Game.Services.

@@ -85,8 +85,6 @@ namespace GREATClient.GameContent
 				Health = Structure.Health,
 				MaxHealth = Structure.MaxHealth
 			});
-
-			inputManager.RegisterEvent(GREATClient.BaseClass.Input.InputActions.ArrowDown,(one,two)=> WillShoot());
 		}
 
 		protected override void OnUpdate(GameTime dt)

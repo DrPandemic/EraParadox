@@ -111,6 +111,8 @@ namespace GREATClient.Screens
 			Camera = new CameraService();
 			Services.AddService(typeof(CameraService), Camera);
 
+			((SoundService)Services.GetService(typeof(SoundService))).CameraService = Camera;
+
 			Parallax = new Parallax();
 
 			KillDisplay = new KillDisplay(ChampionsInfo);
@@ -118,6 +120,8 @@ namespace GREATClient.Screens
 
 		void test(object sender, EventArgs e) {
 			KillDisplay.Display(ChampionTypes.ManMega, ChampionTypes.Zoro, true);
+			((SoundService)this.GetServices().GetService(typeof(SoundService))).PlaySound("Sounds/Effects/shell",new Vector2(0,100));
+			((SoundService)this.GetServices().GetService(typeof(SoundService))).PlayMusic("Sounds/Musics/Jinxed");
 		}
 
 		protected override void OnLoadContent()

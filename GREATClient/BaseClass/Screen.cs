@@ -132,6 +132,7 @@ namespace GREATClient.BaseClass
 			this.Services.AddService(typeof(InputManager), new InputManager());
 			this.Services.AddService(typeof(ScreenService), new ScreenService(
 									(GraphicsDeviceManager)game.Services.GetService(typeof(IGraphicsDeviceService))));
+			this.Services.AddService(typeof(SoundService), new SoundService(Content));
 			Exit = false;
 			Game = game;
         }
