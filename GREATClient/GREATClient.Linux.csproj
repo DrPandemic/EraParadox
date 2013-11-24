@@ -123,6 +123,7 @@
     <Compile Include="BaseClass\BaseAction\ActionTintBy.cs" />
     <Compile Include="BaseClass\BaseAction\ActionTintTo.cs" />
     <Compile Include="BaseClass\SoundService.cs" />
+    <Compile Include="GameContent\GameScore.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />
@@ -386,6 +387,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Sounds\Effects\shell.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\UIObjects\deathIcon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\UIObjects\killIcon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

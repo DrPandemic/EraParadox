@@ -89,6 +89,8 @@ namespace GREATClient.Screens
 
 		KillDisplay KillDisplay { get; set; }
 
+		GameScore GameScore { get; set; }
+
         public GameplayScreen(ContentManager content, Game game, Client client)
 			: base(content, game)
         {
@@ -116,12 +118,15 @@ namespace GREATClient.Screens
 			Parallax = new Parallax();
 
 			KillDisplay = new KillDisplay(ChampionsInfo);
+
+			GameScore = new GameScore();
         }
 
 		void test(object sender, EventArgs e) {
 			KillDisplay.Display(ChampionTypes.ManMega, ChampionTypes.Zoro, true);
 			((SoundService)this.GetServices().GetService(typeof(SoundService))).PlaySound("Sounds/Effects/shell",new Vector2(0,100));
 			((SoundService)this.GetServices().GetService(typeof(SoundService))).PlayMusic("Sounds/Musics/Jinxed");
+			GameScore.PlayerKills += 1;
 		}
 
 		protected override void OnLoadContent()
@@ -136,7 +141,7 @@ namespace GREATClient.Screens
 
 			ChampionState = new CurrentChampionState(100,100);
 			AddChild(new GameUI(ChampionState, new PingCounter(() => {
-				return Client.Instance.GetPing().TotalMilliseconds;})),
+				return Client.Instance.GetPing().TotalMilliseconds;}),GameScore),
 			         3);
 			AddChild(KillDisplay,3);
 
