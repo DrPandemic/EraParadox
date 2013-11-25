@@ -365,7 +365,10 @@ namespace GREATClient
 						break;
 
 					case ServerCommand.ChampionDied:
-						data = new ChampionDiedEventData(msg.ReadUInt64(), TimeSpan.FromSeconds(msg.ReadUInt16()));
+						data = new ChampionDiedEventData(msg.ReadUInt64(),
+						                                 msg.ReadUInt64(),
+						                                 msg.ReadUInt32(), msg.ReadUInt32(), msg.ReadUInt32(), msg.ReadUInt32(),
+						                                 TimeSpan.FromSeconds(msg.ReadUInt16()));
 						break;
 
 					case ServerCommand.StructureStatsChanged:
@@ -451,11 +454,25 @@ namespace GREATClient
 	public class ChampionDiedEventData : RemarkableEventData
 	{
 		public ulong ChampID { get; private set; }
+		public ulong? Killer { get; private set; }
+		public uint Kills { get; private set; }
+		public uint Deaths { get; private set; }
+		public uint LeftKills { get; private set; }
+		public uint RightKills { get; private set; }
 		public TimeSpan RespawnTime { get; private set; }
-		public ChampionDiedEventData(ulong id, TimeSpan respawn)
+		public ChampionDiedEventData(ulong id, ulong killer,
+		                             uint kills, uint deaths, uint leftKills, uint rightKills,
+		                             TimeSpan respawn)
 			: base(ServerCommand.ChampionDied)
 		{
 			ChampID = id;
+			Killer = killer != IDGenerator.NO_ID ? (ulong?)killer : null;
+
+			Kills = kills;
+			Deaths = deaths;
+			LeftKills = leftKills;
+			RightKills = rightKills;
+
 			RespawnTime = respawn;
 		}
 	}

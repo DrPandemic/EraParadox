@@ -72,6 +72,9 @@ namespace GREATServer
 		/// </summary>
 		List<KeyValuePair<ServerCommand, Action<NetBuffer>>> RemarkableEvents { get; set; }
 
+		uint LeftKills { get; set; }
+		uint RightKills { get; set; }
+
 
         public ServerGame(NetServer server)
         {
@@ -86,6 +89,8 @@ namespace GREATServer
 
 			TimeSinceLastCorrection = 0.0;
 			TimeSinceLastGameHistory = 0.0;
+
+			LeftKills = RightKills = 0;
         }
 
 		/// <summary>
@@ -598,9 +603,37 @@ namespace GREATServer
 
 				if (!client.ChampStats.Alive) { // the player died!
 					client.ChampStats.RevivalTime = Server.Instance.GetTime().TotalSeconds + GetRespawnTime().TotalSeconds;
+
+					uint kills = 0;
+					++client.ChampStats.Deaths;
+					if (client.ChampStats.Killer.HasValue) {
+						ServerClient killer = null;
+						foreach (ServerClient c in Clients.Values) {
+							if (c.Champion.ID == client.ChampStats.Killer.Value) {
+								killer = c;
+							}
+						}
+
+						if (killer != null) {
+							++killer.ChampStats.Kills;
+							if (killer.Champion.Team == Teams.Left)
+								++LeftKills;
+							else if (killer.Champion.Team == Teams.Right)
+								++RightKills;
+
+							kills = killer.ChampStats.Kills;
+						}
+					}
+
+
 					AddRemarkableEvent(ServerCommand.ChampionDied,
 					                   (msg) => {
 						msg.Write(client.Champion.ID);
+						msg.Write(client.ChampStats.Killer ?? IDGenerator.NO_ID);
+						msg.Write(kills);
+						msg.Write(client.ChampStats.Deaths);
+						msg.Write(LeftKills);
+						msg.Write(RightKills);
 						msg.Write((ushort)GetRespawnTime().TotalSeconds);
 					});
 				}

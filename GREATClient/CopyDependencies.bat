@@ -1,0 +1,1 @@
+copy "..\assemblies\WindowsGL\OpenAL32.dll" "bin\%1\"

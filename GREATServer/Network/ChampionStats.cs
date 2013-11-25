@@ -31,12 +31,18 @@ namespace GREATServer.Network
     {
 		Dictionary<SpellTypes, float> LastSpellUses { get; set; }
 		public double RevivalTime { get; set; }
+		public ulong? Killer { get; set; }
+		public uint Kills { get; set; }
+		public uint Deaths { get; set; }
 
         public ChampionStats(float maxhp)
 			: base(maxhp)
         {
 			LastSpellUses = new Dictionary<SpellTypes, float>();
 			RevivalTime = double.MaxValue;
+			Killer = null;
+			Kills = 0;
+			Deaths = 0;
         }
 
 		public void UsedSpell(SpellTypes spell)

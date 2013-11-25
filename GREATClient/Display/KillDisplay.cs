@@ -151,8 +151,9 @@ namespace GREATClient.Display
 			base.OnUpdate(dt);
 		}
 
-		public void Display(ChampionTypes killer, ChampionTypes killed, bool FirstIsAlly) {
-			Kill kill = new Kill(killer,killed,FirstIsAlly, ChampionsInfo);
+		public void Display(ChampionTypes? killer, ChampionTypes killed, bool FirstIsAlly) {
+			//TODO: handle tower kills (killer == null)
+			Kill kill = new Kill(killer ?? ChampionTypes.ManMega /*TODO: remove this temporary check*/,killed,FirstIsAlly, ChampionsInfo);
 			kill.Position = new Vector2(Kill.Width + ScreenOffset, 0);
 			kill.Alpha = 0;
 			KillsToBeAdded.Add(kill);

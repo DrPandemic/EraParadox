@@ -123,10 +123,8 @@ namespace GREATClient.Screens
         }
 
 		void test(object sender, EventArgs e) {
-			KillDisplay.Display(ChampionTypes.ManMega, ChampionTypes.Zoro, true);
 			((SoundService)this.GetServices().GetService(typeof(SoundService))).PlaySound("Sounds/Effects/shell",new Vector2(0,100));
 			((SoundService)this.GetServices().GetService(typeof(SoundService))).PlayMusic("Sounds/Musics/Jinxed");
-			GameScore.PlayerKills += 1;
 		}
 
 		protected override void OnLoadContent()
@@ -406,14 +404,42 @@ namespace GREATClient.Screens
 		}
 		void OnChampionDied(ChampionDiedEventData e)
 		{
+			ClientChampion killed = null;
+			ClientChampion killer = null;
 			foreach (var champ in Champions) {
 				if (champ.ID == e.ChampID) {
 					champ.ForceCurrentPosition();
+					killed = champ;
+				} else if (champ.ID == e.Killer) {
+					killer = champ;
 				}
 			}
 			if (OurChampion != null &&
 				e.ChampID == OurChampion.Champion.ID) { // we died
 				DeathScreen.DisplayScreen(e.RespawnTime);
+			}
+
+			if (killed != null && OurChampion != null) {
+				KillDisplay.Display(killer != null ? (ChampionTypes?)killer.Type : null,
+				                    killed.Type,
+				                    killed.Team != OurChampion.Champion.Team);
+			}
+
+			if (OurChampion != null) {
+				if (killed.ID == OurChampion.Champion.ID) {
+					GameScore.PlayerDeaths = (int)e.Deaths;
+				}
+				if (killer != null &&
+				    killer.ID == OurChampion.Champion.ID) {
+					GameScore.PlayerKills = (int)e.Kills;
+				}
+				if (OurChampion.Champion.Team == Teams.Left) {
+					GameScore.TeamKills = (int)e.LeftKills;
+					GameScore.TeamDeaths = (int)e.RightKills;
+				} else {
+					GameScore.TeamKills = (int)e.RightKills;
+					GameScore.TeamDeaths = (int)e.LeftKills;
+				}
 			}
 		}
 		void OnCastSpell(SpellCastEventData e)
