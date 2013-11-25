@@ -12,7 +12,7 @@ namespace GREATLauncher
 {
     public class ApiClient
     {
-        private const string BASE_URI = "http://172.17.104.126:3000/api/v1/";
+        private const string BASE_URI = "http://api.eraparadox.com/api/v1/";
 
         private string token;
         public string Token
@@ -31,6 +31,11 @@ namespace GREATLauncher
             public bool admin { get; set; }
             public DateTime created_at { get; set; }
             public DateTime updated_at { get; set; }
+
+            public override string ToString()
+            {
+                return this.username;
+            }
         }
 
         public async Task<bool> SignIn(string email, string password)

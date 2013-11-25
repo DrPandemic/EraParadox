@@ -37,7 +37,7 @@ namespace GREATLauncher
 
             ApiClient client = new ApiClient();
             if (await client.SignIn(this.emailTextBox.Text, this.passwordTextBox.Password)) {
-                new MainWindow(client, await client.GetUser()).Show();
+                new MainWindow(client).Show();
                 this.Close();
             }
 

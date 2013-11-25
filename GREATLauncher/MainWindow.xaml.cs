@@ -9,6 +9,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace GREATLauncher
 {
@@ -20,19 +21,35 @@ namespace GREATLauncher
         private ApiClient client;
         private ApiClient.User user;
 
-		public MainWindow(ApiClient client, ApiClient.User user)
+		public MainWindow(ApiClient client)
 		{
             this.client = client;
-            this.user = user;
 			
             this.InitializeComponent();
 
-            this.Title = "EraParadox - " + this.user.username;
+            DispatcherTimer timer = new DispatcherTimer(new TimeSpan(0, 0, 1), DispatcherPriority.Normal, delegate {
+                this.serverTimeLabel.Content = "Server Time " + DateTime.Now.ToString("HH:mm:ss");
+            }, this.Dispatcher);
 		}
 
         private void titleLabel_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             DragMove();
+        }
+
+        private async void window_Loaded(object sender, RoutedEventArgs e)
+        {
+            this.user = await this.client.GetUser();
+
+            this.welcomeLabel.Content = "Welcome " + this.user.username;
+
+            this.friendsStackPanel.Children.Add(new FriendControl(new ApiClient.User() { username = "Bob" }, false));
+            this.friendsStackPanel.Children.Add(new FriendControl(new ApiClient.User() { username = "Nigguh" }, true));
+            this.friendsStackPanel.Children.Add(new FriendControl(new ApiClient.User() { username = "Faggit" }, false));
+            this.friendsStackPanel.Children.Add(new FriendControl(new ApiClient.User() { username = "OP" }, true));
+
+            this.loadingGrid.Visibility = System.Windows.Visibility.Hidden;
+            this.mainGrid.Visibility = System.Windows.Visibility.Visible;
         }
 	}
 }

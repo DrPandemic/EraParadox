@@ -59,5 +59,8 @@
 			<Setter Property="FontFamily" Value="/GREATLauncher;component/#Electrolize"/>
 			<Setter Property="FontSize" Value="14"/>
 		</Style>
+		<Style TargetType="{x:Type ScrollViewer}">
+			<Setter Property="BorderBrush" Value="#FF1CEBFF"/>
+		</Style>
     </Application.Resources>
 </Application>

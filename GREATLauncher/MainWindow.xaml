@@ -5,7 +5,8 @@
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:local="clr-namespace:GREATLauncher"
 		x:Name="window" mc:Ignorable="d" x:Class="GREATLauncher.MainWindow"
-        Title="EraParadox" Width="1042" Height="500" WindowStartupLocation="CenterScreen" Background="{x:Null}" AllowsTransparency="True" WindowStyle="None">
+        Title="EraParadox" Width="1042" Height="500" WindowStartupLocation="CenterScreen" Background="{x:Null}" AllowsTransparency="True" WindowStyle="None"
+        Loaded="window_Loaded">
 	<Window.Resources>
 		<Storyboard x:Key="rotateGear">
 			<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(RotateTransform.Angle)" Storyboard.TargetName="gearImage" RepeatBehavior="Forever">
@@ -41,9 +42,46 @@
 		</Label>
 		<Image x:Name="botImage" Margin="37,0,15,0" Source="panel_wide_bot.png" Width="990" Height="25" HorizontalAlignment="Center" VerticalAlignment="Bottom" d:IsLocked="True"/>
 
-		<Grid Margin="57,80,35,30" Width="950" HorizontalAlignment="Center" VerticalAlignment="Stretch">
-            <local:MarqueeControl x:Name="signInMarqueeControl" Width="150" Height="15"/>
-            <local:ProgressBarControl Margin="0,245,0,0" Width="200" Height="15" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+        <Grid x:Name="loadingGrid" Margin="57,80,35,30" Width="950" HorizontalAlignment="Center" VerticalAlignment="Stretch">
+            <local:MarqueeControl x:Name="LoadingMarqueeControl" Width="150" Height="15"/>
+        </Grid>
+        
+		<Grid x:Name="mainGrid" Visibility="Hidden" Margin="57,80,35,30" Width="950" HorizontalAlignment="Center" VerticalAlignment="Stretch">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            
+            <Label x:Name="welcomeLabel" FontSize="24" FontWeight="Bold" HorizontalAlignment="Left"/>
+            <Label x:Name="serverTimeLabel" Content="Server Time 00:00:00" FontSize="10" Grid.Column="1" VerticalAlignment="Top"/>
+            
+            <Border Grid.Row="2">
+                
+            </Border>
+
+            <ScrollViewer Grid.Row="3">
+                <StackPanel x:Name="newsStackPanel">
+                    
+                </StackPanel>
+            </ScrollViewer>
+            
+            <Label Content="Friend List" Grid.Row="2" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+            <ScrollViewer Grid.Row="2" Grid.Column="2" Grid.RowSpan="2" Margin="0,15,0,0">
+                <StackPanel x:Name="friendsStackPanel"></StackPanel>
+            </ScrollViewer>
+        </Grid>
+
+        <Grid x:Name="preGameGrid" Visibility="Hidden" Margin="57,80,35,30" Width="950" HorizontalAlignment="Center" VerticalAlignment="Stretch">
+            
+        </Grid>
+
+        <Grid x:Name="postGameGrid" Visibility="Hidden" Margin="57,80,35,30" Width="950" HorizontalAlignment="Center" VerticalAlignment="Stretch">
+            
         </Grid>
 	</Grid>
 </Window>
