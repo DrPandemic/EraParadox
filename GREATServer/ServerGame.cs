@@ -538,16 +538,32 @@ namespace GREATServer
 					foreach (ServerClient client in Clients.Values) {
 						var clientRect = client.Champion.CreateCollisionRectangle();
 						Vec2 clientCenter = Rect.Center(clientRect);
-						if (t.CanShoot(now) && // not on cooldown
+						if (t.CanPrepare(now) && // not on cooldown
 							s.Team == TeamsHelper.Opposite(client.Champion.Team) && // is enemy
 						    client.ChampStats.Alive && // is alive
 						    Utilities.InRange(towerCenter, clientCenter, Tower.RANGE)) { // in range
 
-							CastTowerSpell(s.Team, towerCenter, clientCenter);
-							t.OnShot(now);
+							if (!t.IsPreparing()) {
+								t.StartPreparation();
+								PrepareTower(s.Team, s.Type);
+							} else if (t.CanShoot(now)) {
+								CastTowerSpell(s.Team, towerCenter, clientCenter);
+								t.OnShot(now);
+							}
 						}
 					}
 				}
+			});
+		}
+		void PrepareTower(Teams team, StructureTypes type)
+		{
+			AddRemarkableEvent(ServerCommand.TowerPreparingToShoot,
+			                   (msg) => {
+				bool left = team == Teams.Left;
+				byte typ = (byte)type;
+
+				msg.Write(left);
+				msg.Write(typ);
 			});
 		}
 		void CastTowerSpell(Teams team, Vec2 origin, Vec2 target)

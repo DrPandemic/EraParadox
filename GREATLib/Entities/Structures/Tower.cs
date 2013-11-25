@@ -32,9 +32,11 @@ namespace GREATLib.Entities.Structures
 
 		public const float RANGE = 600f;
 		public const float PROJECTILE_RANGE = RANGE * 1.3f;
-		public static readonly TimeSpan COOLDOWN = TimeSpan.FromSeconds(2);
+		public static readonly TimeSpan COOLDOWN = TimeSpan.FromSeconds(1.3);
+		public static readonly TimeSpan SHOT_PREPARATION_TIME = TimeSpan.FromSeconds(0.5);
 
 		private float TimeOfLastShot { get; set; }
+		private bool Preparing { get; set; }
 
 		const float SPAWN_RATIO_FROM_TOP = 0.1f;
 		public Vec2 SpellSpawnPosition {
@@ -56,13 +58,27 @@ namespace GREATLib.Entities.Structures
         {
 			Debug.Assert(StructureHelper.IsTower(type));
 			TimeOfLastShot = 0f;
+			Preparing = false;
         }
 
 		public void OnShot(float time)
 		{
 			TimeOfLastShot = time;
+			Preparing = false;
 		}
 		public bool CanShoot(float now)
+		{
+			return now - TimeOfLastShot >= COOLDOWN.TotalSeconds + SHOT_PREPARATION_TIME.TotalSeconds;
+		}
+		public bool IsPreparing()
+		{
+			return Preparing;
+		}
+		public void StartPreparation()
+		{
+			Preparing = true;
+		}
+		public bool CanPrepare(float now)
 		{
 			return now - TimeOfLastShot >= COOLDOWN.TotalSeconds;
 		}

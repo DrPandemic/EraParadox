@@ -79,6 +79,11 @@ namespace GREATLib.Network
 		/// The game has ended.
 		/// </summary>
 		, EndOfGame
+
+		/// <summary>
+		/// A tower will soon shoot.
+		/// </summary>
+		, TowerPreparingToShoot
     }
 }
 

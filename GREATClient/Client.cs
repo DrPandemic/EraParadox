@@ -386,6 +386,11 @@ namespace GREATClient
 						data = new EndOfGameEventData(msg.ReadBoolean() ? Teams.Left : Teams.Right);
 						break;
 
+					case ServerCommand.TowerPreparingToShoot:
+						data = new TowerPreparingToShootEventData(msg.ReadBoolean() ? Teams.Left : Teams.Right,
+						                                          (StructureTypes)msg.ReadByte());
+						break;
+
 					default:
 						Debug.Fail("Unknown server command when updating (unknown remarkable event)");
 						break;
@@ -507,6 +512,18 @@ namespace GREATClient
 			: base(ServerCommand.EndOfGame)
 		{
 			Winner = winner;
+		}
+	}
+	public class TowerPreparingToShootEventData : RemarkableEventData
+	{
+		public Teams Team { get; private set; }
+		public StructureTypes Type { get; private set; }
+
+		public TowerPreparingToShootEventData(Teams team, StructureTypes type)
+			: base(ServerCommand.TowerPreparingToShoot)
+		{
+			Team = team;
+			Type = type;
 		}
 	}
 }

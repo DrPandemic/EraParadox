@@ -34,7 +34,7 @@ namespace GREATClient.GameContent
 		/// <summary>
 		/// The alert duration in ms.
 		/// </summary>
-		static int AlertDurationMs = 500;
+		readonly int AlertDurationMs = (int)GREATLib.Entities.Structures.Tower.SHOT_PREPARATION_TIME.TotalMilliseconds;
 
 		/// <summary>
 		/// Gets or sets a value indicating whether this <see cref="GREATClient.GameContent.DrawableTower"/> is in alert mode.

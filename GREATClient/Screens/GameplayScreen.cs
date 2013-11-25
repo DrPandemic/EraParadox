@@ -301,7 +301,8 @@ namespace GREATClient.Screens
 		/// </summary>
 		void HandleInput()
 		{
-			if (OurChampion != null && OurChampion.Champion.Alive) {
+			if (OurChampion != null && OurChampion.Champion.Alive &&
+			    !WinLoseScreen.Visible) {
 				InputTypeForAction.ForEach(pair =>
 				{
 					if (inputManager.IsActionFired(pair.Key)) {
@@ -369,6 +370,10 @@ namespace GREATClient.Screens
 						OnEndOfGame((EndOfGameEventData)r);
 						break;
 
+					case ServerCommand.TowerPreparingToShoot:
+						OnTowerPreparingToShoot((TowerPreparingToShootEventData)r);
+						break;
+
 					default:
 						Debug.Fail("Unknown server command (unknown remarkable event).");
 						break;
@@ -376,6 +381,16 @@ namespace GREATClient.Screens
 			});
 
 			RemarkableEvents.Clear();
+		}
+		void OnTowerPreparingToShoot(TowerPreparingToShootEventData e)
+		{
+			var structure = GetStructure(e.Team, e.Type);
+			if (structure != null) {
+				var tower = structure as DrawableTower;
+				if (tower != null) {
+					tower.WillShoot();
+				}
+			}
 		}
 		void OnStructureDestroyed(StructureDestroyedEventData e)
 		{
