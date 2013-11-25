@@ -29,7 +29,7 @@ namespace GREATClient.BaseClass.Particle
 		public SmokeSystem()
 		{
 			// Particles settings
-			ParticleFile = "smoke";
+			ParticleFile = "MapObjects/smoke";
 			ParticleInitialVelocity = new Vector2(-10, -100);
 			ParticleForce = new Vector2(-5, 2);
 			ParticleLifeTimeRandomizer = 0.3f;

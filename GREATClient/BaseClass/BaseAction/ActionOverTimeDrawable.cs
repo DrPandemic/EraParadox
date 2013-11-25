@@ -28,9 +28,10 @@ namespace GREATClient.BaseClass.BaseAction
 		public ActionOverTimeDrawable(TimeSpan duration) : base(duration)
         { }
 
+
 		protected override void TargetChanged()
 		{
-			if (!(Target != null && Target is Drawable)) {
+			if (!(Target != null && Target is Drawable) && Target != null) {
 				Stop();
 				Debug.Fail("The target should have been a Drawable.");
 			}

@@ -34,7 +34,7 @@ namespace GREATClient.BaseClass
 			set {  Effects = value ? SpriteEffects.FlipHorizontally :SpriteEffects.None; }
 		}
 
-		public DrawableTriangle(bool ascendant) : base("triangle")
+		public DrawableTriangle(bool ascendant) : base("Base/triangle")
         {
 			Ascendant=ascendant;
         }

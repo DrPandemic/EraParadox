@@ -23,6 +23,7 @@ using GREATClient.BaseClass;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
+using GREATClient.GameContent;
 using GameContent;
 using GREATClient.BaseClass.BaseAction;
 
@@ -46,7 +47,7 @@ namespace GREATClient.Display
 
 		DrawableImage MoneyBackground { get; set; }
 		//DrawableImage ObjectBackground { get; set; }
-		//DrawableImage StatBackground { get; set; }
+		DrawableImage ScoreBackground { get; set; }
 
 		SpellMenu UISpellMenu { get; set; }
 
@@ -57,7 +58,14 @@ namespace GREATClient.Display
 		/// <value>The state of the champion.</value>
 		CurrentChampionState ChampionState { get; set; }
 
-        public GameUI(CurrentChampionState ccs, PingCounter ping)
+		DrawableLabel Kills { get; set; }
+		DrawableLabel Deaths { get; set; }
+		DrawableLabel TeamKills { get; set; }
+		DrawableLabel TeamDeaths { get; set; }
+
+		GameScore GameScore { get; set; }
+
+        public GameUI(CurrentChampionState ccs, PingCounter ping, GameScore score)
         {
 			ChampionState = ccs;
 
@@ -85,15 +93,18 @@ namespace GREATClient.Display
 			Resource.RelativeOrigin = new Vector2(0f,1f);
 			//AddChild(Resource);
 
+			ScoreBackground = new DrawableImage("UIObjects/boxBackground");
+			AddChild(ScoreBackground);
 			MoneyBackground = new DrawableImage("UIObjects/boxBackground");
 			AddChild(MoneyBackground);
 			/*ObjectBackground = new DrawableImage("UIObjects/boxBackground");
-			AddChild(ObjectBackground);
-			StatBackground = new DrawableImage("UIObjects/boxBackground");
-			AddChild(StatBackground);*/
+			AddChild(ObjectBackground);*/
+
 
 			UISpellMenu = new SpellMenu(ChampionState);
 			AddChild(UISpellMenu,3);
+
+			GameScore = score;
         }
 
 		protected override void OnLoad(ContentManager content, GraphicsDevice gd)
@@ -121,13 +132,16 @@ namespace GREATClient.Display
 			UIFPSCounter.SetPositionRelativeToObject(MoneyBackground, new Vector2(20, 10));
 			UIPingCounter.SetPositionRelativeToObject(UIFPSCounter, new Vector2(200, 0));
 
+			ScoreBackground.SetPositionRelativeToObject(MoneyBackground, new Vector2(0,-MoneyBackground.Texture.Height+5));
+
 			SetLifeAndResource();
+			SetScore();
 		}
 
 		protected override void OnUpdate(GameTime dt)
 		{
 			SetLifeAndResource();
-			UpdateSpellCooldowns();
+			UpdateScore();
 		}
 
 		/// <summary>
@@ -150,10 +164,42 @@ namespace GREATClient.Display
 			ResourceDropShadow.Scale = v;
 		}
 
-		private void UpdateSpellCooldowns()
-		{
+		private void SetScore() {
+			Kills = new DrawableLabel() { Text = "0"};
+			Deaths = new DrawableLabel() { Text = "0"};
+			TeamKills = new DrawableLabel() { Text = "0", Tint = Color.Green};
+			TeamDeaths = new DrawableLabel() { Text = "0", Tint = Color.Red};
 
+			AddChild(Kills,3);
+			AddChild(Deaths,3);
+			AddChild(TeamKills,3);
+			AddChild(TeamDeaths,3);
+
+			Kills.SetPositionRelativeToObject(ScoreBackground, new Vector2(20, 10));
+			Deaths.SetPositionRelativeToObject(Kills, new Vector2(70, 0));
+			TeamKills.SetPositionRelativeToObject(Deaths, new Vector2(120, 0));
+			TeamDeaths.SetPositionRelativeToObject(TeamKills, new Vector2(70, 0));
+
+			DrawableImage killIcon = new DrawableImage("UIObjects/killIcon");
+			DrawableImage deathIcon = new DrawableImage("UIObjects/deathIcon");
+			DrawableImage teamKillIcon = new DrawableImage("UIObjects/killIcon");
+
+			AddChild(killIcon,2);
+			AddChild(deathIcon,2);
+			AddChild(teamKillIcon,2);
+
+			killIcon.SetPositionRelativeToObject(Kills, new Vector2(23, -2));
+			deathIcon.SetPositionRelativeToObject(Deaths, new Vector2(23, -2));
+			teamKillIcon.SetPositionRelativeToObject(TeamKills, new Vector2(23, -2));
 		}
+
+		private void UpdateScore() {
+			Kills.Text = GameScore.PlayerKills.ToString();
+			Deaths.Text = GameScore.PlayerDeaths.ToString();
+			TeamKills.Text = GameScore.TeamKills.ToString();
+			TeamDeaths.Text = GameScore.TeamDeaths.ToString();
+		}
+
     }
 }
 

@@ -31,7 +31,7 @@ namespace GREATClient.GameContent
 		/// Gets or sets the information about a specific champion.
 		/// </summary>
 		/// <value>The infos.</value>
-		ChampionInfo Information { get; set; }
+		public ChampionInfo Information { get; private set; }
 
 		/// <summary>
 		/// Gets or sets the current animation.

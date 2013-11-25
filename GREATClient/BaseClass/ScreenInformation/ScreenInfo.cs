@@ -31,7 +31,7 @@ namespace GREATClient.BaseClass.ScreenInformation
 		/// <summary>
 		/// The XML file containing the screen information.
 		/// </summary>
-		public const string SCREEN_INFORMATION = "screen.xml";
+		public const string SCREEN_INFORMATION = "Settings/screen.xml";
 
 		[System.Xml.Serialization.XmlAttribute("windowWidth")]
 		public int WindowWidth { get; set; }

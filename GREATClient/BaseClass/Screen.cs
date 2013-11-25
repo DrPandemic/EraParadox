@@ -132,6 +132,7 @@ namespace GREATClient.BaseClass
 			this.Services.AddService(typeof(InputManager), new InputManager());
 			this.Services.AddService(typeof(ScreenService), new ScreenService(
 									(GraphicsDeviceManager)game.Services.GetService(typeof(IGraphicsDeviceService))));
+			this.Services.AddService(typeof(SoundService), new SoundService(Content));
 			Exit = false;
 			Game = game;
         }
@@ -147,7 +148,7 @@ namespace GREATClient.BaseClass
 			spriteBatch = new SpriteBatch(gd);
 			OnLoadContent();
 
-			Cursor = new DrawableImage("cursor");
+			Cursor = new DrawableImage("Base/cursor");
 			AddChild(Cursor,100);
 			((InputManager)Services.GetService(typeof(InputManager))).Cursor = Cursor;
 		}

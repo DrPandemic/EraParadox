@@ -1,5 +1,5 @@
 //
-//  ActionFadeBy.cs
+//  ActionTintBy.cs
 //
 //  Author:
 //       Jean-Samuel Aubry-Guzzi <bipbip500@gmail.com>
@@ -19,56 +19,55 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Diagnostics;
 using Microsoft.Xna.Framework;
+using System.Diagnostics;
 
 namespace GREATClient.BaseClass.BaseAction
 {
-    public class ActionFadeBy : ActionOverTime
+	public class ActionTintBy : ActionOverTimeDrawable
     {
 		/// <summary>
-		/// Gets or sets the alpha.
+		/// Gets or sets the color.
 		/// </summary>
-		/// <value>The alpha.</value>
-		protected float Alpha { get; set; }
+		/// <value>The color.</value>
+		protected Vector3 Color { get; set; }
 
 		/// <summary>
-		/// Gets or sets the initial alpha.
-		/// Is used to be able to reset the instance.
+		/// Gets or sets the initial color.
+		/// With that, we can reset to the initial color.
 		/// </summary>
-		/// <value>The initiallpha.</value>
-		protected float InitialAlpha { get; set; }
+		/// <value>The initial color.</value>
+		protected Color InitialColor { get; set; }
 
 		/// <summary>
-		/// Gets or sets the alpha change be millisecond.
+		/// Gets or sets the color change be millisecond.
 		/// </summary>
-		/// <value>The alpha change be millisecond.</value>
-		protected double AlphaChangeBeMillisecond { get; set; }
+		/// <value>The color change be millisecond.</value>
+		protected Vector3 ColorChangeBeMillisecond { get; set; }
 
-        public ActionFadeBy(TimeSpan duration, float alpha) : base(duration)
-        {
-			Alpha = alpha;
-			InitialAlpha = alpha;
-        }
+		public ActionTintBy(TimeSpan duration, Vector3 color) : base(duration)
+		{
+			Color = color / 255f;
+			InitialColor = new Color(color);
+		}
 
 		public override void Ready()
 		{
 			Debug.Assert(Target != null);
-
-			AlphaChangeBeMillisecond = Alpha / Duration.TotalMilliseconds;
+			ColorChangeBeMillisecond = Vector3.Divide(Color,(float)Duration.TotalMilliseconds);
 		}
 
 		public override void Reset()
 		{
-			Alpha = InitialAlpha;
+			Color = InitialColor.ToVector3();
 			base.Reset();
 		}
 
 		protected override void OnUpdate(GameTime dt)
 		{
 			Debug.Assert(Target != null);
-
-			(Target).Alpha += (float)(AlphaChangeBeMillisecond * dt.ElapsedGameTime.TotalMilliseconds);
+			Drawable Tar = (Drawable)Target;
+			Tar.Tint = new Color((Tar.Tint.ToVector3()) + (ColorChangeBeMillisecond * (float)dt.ElapsedGameTime.TotalMilliseconds));
 		}
     }
 }

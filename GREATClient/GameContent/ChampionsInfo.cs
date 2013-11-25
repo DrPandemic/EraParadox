@@ -70,6 +70,9 @@ namespace GREATClient.GameContent
 		[System.Xml.Serialization.XmlAttribute("frameheight")]
 		public int FrameHeight { get; set; }
 
+		[System.Xml.Serialization.XmlAttribute("portrait")]
+		public string Portait { get; set; }
+
 		[System.Xml.Serialization.XmlElement("description")]
 		public string Description { get; set; }
 
@@ -124,7 +127,7 @@ namespace GREATClient.GameContent
 
 		private void FillInfo()
 		{
-			const string CHAMPIONS_PATH = "Content/champions.xml";
+			const string CHAMPIONS_PATH = "Content/Settings/champions.xml";
 			Info = new Dictionary<ChampionTypes, ChampionInfo>();
 
 			ChampionInfoCollection champions = null;

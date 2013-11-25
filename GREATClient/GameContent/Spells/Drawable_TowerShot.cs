@@ -30,7 +30,7 @@ namespace GREATClient.GameContent.Spells
     {
 		public Drawable_TowerShot(ClientLinearSpell spell)
 			: base(spell,
-			       new DrawableImage("towershot"))
+			       new DrawableImage("MapObjects/towershot"))
 		{
 			Tint = Color.Purple;
 		}

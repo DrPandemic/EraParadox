@@ -61,7 +61,6 @@
     <Compile Include="Entities\Spells\LinearSpell.cs" />
     <Compile Include="Entities\ICharacter.cs" />
     <Compile Include="Entities\HorizontalDirection.cs" />
-    <Compile Include="Entities\Spells\SpellTypes.cs" />
     <Compile Include="Entities\Teams.cs" />
     <Compile Include="World\Tiles\MapLoader.cs" />
     <Compile Include="Entities\ILiving.cs" />
@@ -71,6 +70,7 @@
     <Compile Include="Entities\Structures\TeamStructures.cs" />
     <Compile Include="Entities\Structures\StructureTypes.cs" />
     <Compile Include="Entities\Structures\Tower.cs" />
+    <Compile Include="Entities\Spells\SpellTypes.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

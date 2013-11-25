@@ -29,7 +29,7 @@ namespace GREATClient.GameContent.Spells
     {
         public Drawable_ManMega_RocketRampage(ClientLinearSpell spell)
 			: base(spell,
-			       new DrawableImage("manmega_rocketrampage"))
+			       new DrawableImage("Champions/ManMega/manmega_rocketrampage"))
         {
 			Tint = Color.Red;
         }

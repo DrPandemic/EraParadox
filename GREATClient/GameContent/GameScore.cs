@@ -1,5 +1,5 @@
 //
-//  DrawableBuildingExplosion.cs
+//  GameScore.cs
 //
 //  Author:
 //       Jean-Samuel Aubry-Guzzi <bipbip500@gmail.com>
@@ -19,14 +19,22 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using GREATClient.BaseClass;
 
 namespace GREATClient.GameContent
 {
-    public class DrawableBuildingExplosion : DrawableSprite
+    public class GameScore
     {
-		public DrawableBuildingExplosion() : base("MapObjects/explosion",150,150,0,20f,10,1)
+		public int PlayerKills { get; set; }
+		public int PlayerDeaths { get; set; }
+		public int TeamKills { get; set; }
+		public int TeamDeaths { get; set; }
+
+        public GameScore()
         {
+			PlayerKills = 0;
+			PlayerDeaths = 0;
+			TeamKills = 0;
+			TeamDeaths = 0;
         }
     }
 }

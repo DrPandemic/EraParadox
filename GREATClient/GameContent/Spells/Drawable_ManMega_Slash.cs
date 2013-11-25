@@ -33,7 +33,7 @@ namespace GREATClient.GameContent.Spells
 
         public Drawable_ManMega_Slash(ClientLinearSpell spell)
 			: base(spell,
-			       new DrawableSprite("manmega_slashofdoom",32,32,0,30f,5,1))
+			       new DrawableSprite("Champions/ManMega/manmega_slashofdoom",32,32,0,30f,5,1))
         {
 			//TODO: refactor in DrawableMeleeSpell
 			RemoveWhenDeleted = false;
