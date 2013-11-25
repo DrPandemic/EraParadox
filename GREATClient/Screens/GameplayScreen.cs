@@ -379,9 +379,6 @@ namespace GREATClient.Screens
 		}
 		void OnStructureDestroyed(StructureDestroyedEventData e)
 		{
-			//var structure = GetStructure(e.Team, e.Type);
-			// TODO: tower eplosions here
-			// TODO: vocal/visual message here
 		}
 		void OnEndOfGame(EndOfGameEventData e)
 		{

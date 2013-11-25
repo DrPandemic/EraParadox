@@ -575,6 +575,11 @@ namespace GREATServer
 
 				UpdateChampionHealth(client);
 
+				// Check to go out of combat
+				if (client.ChampStats.ShouldGoOutOfCombat()) {
+					client.ChampStats.GoOutOfCombat();
+				}
+
 				client.Champion.Animation = client.Champion.GetAnim(!client.ChampStats.Alive, //TODO: replace with actual HP
 				                                                    Match.CurrentState.IsOnGround(client.Champion.ID),
 				                                                    client.ChampStats.IsCastingSpell(client.Champion.Type, PlayerActionType.Spell1),
@@ -729,6 +734,9 @@ namespace GREATServer
 				    client.Champion.CreateCollisionRectangle().Intersects(spellRect)) { // we hit him
 
 					client.ChampStats.Hurt(spell.Info.Value); // we hurt him
+					if (spell.Owner != null) {
+						client.ChampStats.GoInCombat(spell.Owner.ID);
+					}
 					if (spell.Info.OnActivation != null)
 						spell.Info.OnActivation(
 							new WorldInfoForSpell(client.Champion, spell.Velocity));

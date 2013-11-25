@@ -58,8 +58,8 @@ namespace GREATClient.Display
 					Tint = FirstIsAlly ? Color.Red : Color.Green});
 				AddChild(new DrawableImage("UIObjects/innerDeathCircle") {Position = new Vector2(Width - 75,5)});
 
-				AddChild(new DrawableImage(championsInfo.GetInfo(killer).Portait) {Position = new Vector2(Width - 75,5)});
-				AddChild(new DrawableImage(championsInfo.GetInfo(killed).Portait) {Position = new Vector2(5)});
+				AddChild(new DrawableImage(championsInfo.GetInfo(killed).Portait) {Position = new Vector2(Width - 75,5)});
+				AddChild(new DrawableImage(championsInfo.GetInfo(killer).Portait) {Position = new Vector2(5)});
 
 
 
