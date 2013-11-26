@@ -23,6 +23,8 @@ namespace GREATLauncher
         public SignInWindow()
         {
             InitializeComponent();
+
+            this.emailTextBox.Text = Properties.Settings.Default.email;
         }
 
         private void titleLabel_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -32,17 +34,40 @@ namespace GREATLauncher
 
         private async void signInButton_Click(object sender, RoutedEventArgs e)
         {
+            this.errorLabel.Content = "";
+
+            this.emailTextBox.IsEnabled = false;
+            this.passwordTextBox.IsEnabled = false;
+            this.rememberCheckBox.IsEnabled = false;
+
             this.signInButton.Visibility = Visibility.Hidden;
             this.signInMarqueeControl.Visibility = Visibility.Visible;
 
             ApiClient client = new ApiClient();
             if (await client.SignIn(this.emailTextBox.Text, this.passwordTextBox.Password)) {
+                Properties.Settings.Default.email = (this.rememberCheckBox.IsChecked.HasValue && (bool)this.rememberCheckBox.IsChecked) ? this.emailTextBox.Text : null;
+                Properties.Settings.Default.Save();
+                
                 new MainWindow(client).Show();
                 this.Close();
+            } else {
+                this.passwordTextBox.Password = null;
+                this.errorLabel.Content = "Invalid username and/or password";
             }
+
+            this.emailTextBox.IsEnabled = true;
+            this.passwordTextBox.IsEnabled = true;
+            this.rememberCheckBox.IsEnabled = true;
 
             this.signInMarqueeControl.Visibility = Visibility.Hidden;
             this.signInButton.Visibility = Visibility.Visible;
+        }
+
+        private void emailTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter) {
+                signInButton_Click(sender, e);
+            }
         }
     }
 }

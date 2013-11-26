@@ -35,8 +35,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.5.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="RestSharp">
+      <HintPath>..\packages\RestSharp.104.4.0\lib\net4\RestSharp.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -70,6 +70,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="PostControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ProgressBarControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -91,6 +95,9 @@
     </Compile>
     <Compile Include="MarqueeControl.xaml.cs">
       <DependentUpon>MarqueeControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PostControl.xaml.cs">
+      <DependentUpon>PostControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="ProgressBarControl.xaml.cs">
       <DependentUpon>ProgressBarControl.xaml</DependentUpon>

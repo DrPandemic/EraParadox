@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RestSharp;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,22 +7,12 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
-using Newtonsoft.Json;
 
 namespace GREATLauncher
 {
     public class ApiClient
     {
         private const string BASE_URI = "http://api.eraparadox.com/api/v1/";
-
-        private string token;
-        public string Token
-        {
-            get
-            {
-                return this.token;
-            }
-        }
 
         public class User
         {
@@ -38,127 +29,198 @@ namespace GREATLauncher
             }
         }
 
-        public async Task<bool> SignIn(string email, string password)
+        public class Post
         {
-            if (!String.IsNullOrEmpty(this.token)) throw new InvalidOperationException();
+            public int id { get; set; }
+            public string title { get; set; }
+            public string slug { get; set; }
+            public string content { get; set; }
+            public int user_id { get; set; }
+            public DateTime created_at { get; set; }
+            public DateTime updated_at { get; set; }
 
-            ASCIIEncoding enc = new ASCIIEncoding();
-            byte[] reqData = enc.GetBytes("email=" + HttpUtility.UrlEncode(email) + "&password=" + HttpUtility.UrlEncode(password));
-
-            try {
-                HttpWebRequest req = WebRequest.CreateHttp(BASE_URI + "sessions");
-                req.Method = "POST";
-                req.ContentType = "application/x-www-form-urlencoded";
-                req.ContentLength = reqData.Length;
-            
-                using (Stream reqStream = await req.GetRequestStreamAsync()) {
-                    reqStream.Write(reqData, 0, reqData.Length);
-                    reqStream.Flush();
-                    reqStream.Close();
-                }
-
-                using (HttpWebResponse resp = (HttpWebResponse)await req.GetResponseAsync()) {
-                    if (resp.StatusCode != HttpStatusCode.InternalServerError) {
-                        using (StreamReader respReader = new StreamReader(resp.GetResponseStream())) {
-                            string respData = respReader.ReadToEnd();
-                            respReader.Close();
-
-                            Dictionary<string, string> respJson = JsonConvert.DeserializeObject<Dictionary<string, string>>(respData);
-                            if (resp.StatusCode == HttpStatusCode.OK) {
-                                this.token = respJson["token"];
-                                return true;
-                            }
-                        }
-                    }
-                    resp.Close();
-                }
-            } catch (WebException) {
-
+            public override string ToString()
+            {
+                return this.title;
             }
-            return false;
         }
 
-        public async Task<bool> SignOut()
+        private class TokenAuthenticator : IAuthenticator
         {
-            if (String.IsNullOrEmpty(this.token)) throw new InvalidOperationException();
+            private string token;
 
-            try {
-                HttpWebRequest req = WebRequest.CreateHttp(BASE_URI + "sessions/" + this.token);
-                req.Method = "DELETE";
-
-                using (HttpWebResponse resp = (HttpWebResponse)await req.GetResponseAsync()) {
-                    if (resp.StatusCode != HttpStatusCode.InternalServerError) {
-                        using (StreamReader respReader = new StreamReader(resp.GetResponseStream())) {
-                            string respData = respReader.ReadToEnd();
-                            respReader.Close();
-
-                            Dictionary<string, string> respJson = JsonConvert.DeserializeObject<Dictionary<string, string>>(respData);
-                            if (resp.StatusCode == HttpStatusCode.OK) {
-                                this.token = null;
-                                return true;
-                            }
-                        }
-                    }
-                    resp.Close();
-                }
-            } catch (WebException) {
-
+            public TokenAuthenticator(string token)
+            {
+                this.token = token;
             }
-            return false;
+
+            public void Authenticate(IRestClient client, IRestRequest request)
+            {
+                request.AddParameter("auth_token", this.token, ParameterType.QueryString);
+            }
         }
 
-        public async Task<User> GetUser()
+        private RestClient client = new RestClient(BASE_URI);
+        private string token;
+
+        public Task<bool> SignIn(string email, string password)
         {
-            if (String.IsNullOrEmpty(this.token)) throw new InvalidOperationException();
+            TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
 
-            try {
-                HttpWebRequest req = WebRequest.CreateHttp(BASE_URI + "users/?auth_token=" + this.token);
-                req.Method = "GET";
+            RestRequest req = new RestRequest("sessions", Method.POST);
+            req.AddParameter("email", email);
+            req.AddParameter("password", password);
 
-                using (HttpWebResponse resp = (HttpWebResponse)await req.GetResponseAsync()) {
-                    if (resp.StatusCode != HttpStatusCode.InternalServerError) {
-                        using (StreamReader respReader = new StreamReader(resp.GetResponseStream())) {
-                            string respData = respReader.ReadToEnd();
-                            respReader.Close();
-
-                            if (resp.StatusCode == HttpStatusCode.OK) {
-                                return JsonConvert.DeserializeObject<User>(respData);
-                            }
-                        }
-                    }
-                    resp.Close();
+            this.client.ExecuteAsync<Dictionary<string, object>>(req, resp => {
+                if (resp.StatusCode == HttpStatusCode.OK) {
+                    this.token = resp.Data["token"].ToString();
+                    this.client.Authenticator = new TokenAuthenticator(this.token);
+                    tcs.SetResult(true);
+                } else {
+                    tcs.SetResult(false);
                 }
-            } catch (WebException) {
+            });
 
-            }
-            return null;
+            return tcs.Task;
         }
 
-        public async Task<User> GetUser(int id)
+        public Task<bool> SignOut()
         {
-            if (String.IsNullOrEmpty(this.token)) throw new InvalidOperationException();
+            TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
 
-            try {
-                HttpWebRequest req = WebRequest.CreateHttp(BASE_URI + "users/" + id.ToString() + "?auth_token=" + this.token);
-                req.Method = "GET";
+            RestRequest req = new RestRequest("sessions/{id}", Method.DELETE);
+            req.AddUrlSegment("id", this.token);
 
-                using (HttpWebResponse resp = (HttpWebResponse)await req.GetResponseAsync()) {
-                    if (resp.StatusCode != HttpStatusCode.InternalServerError) {
-                        using (StreamReader respReader = new StreamReader(resp.GetResponseStream())) {
-                            string respData = respReader.ReadToEnd();
-                            respReader.Close();
-
-                            if (resp.StatusCode == HttpStatusCode.OK) {
-                                return JsonConvert.DeserializeObject<User>(respData);
-                            }
-                        }
-                    }
-                    resp.Close();
+            this.client.ExecuteAsync(req, resp => {
+                if (resp.StatusCode == HttpStatusCode.OK) {
+                    this.token = null;
+                    this.client.Authenticator = null;
+                    tcs.SetResult(true);
+                } else {
+                    tcs.SetResult(false);
                 }
-            } catch (WebException) {
+            });
 
-            }
-            return null;
+            return tcs.Task;
+        }
+
+        public Task<User> GetUser()
+        {
+            TaskCompletionSource<User> tcs = new TaskCompletionSource<User>();
+
+            RestRequest req = new RestRequest("users", Method.GET);
+
+            this.client.ExecuteAsync<User>(req, resp => {
+                if (resp.StatusCode == HttpStatusCode.OK) {
+                    tcs.SetResult(resp.Data);
+                } else {
+                    tcs.SetResult(null);
+                }
+            });
+
+            return tcs.Task;
+        }
+
+        public Task<User> GetUser(int id)
+        {
+            TaskCompletionSource<User> tcs = new TaskCompletionSource<User>();
+
+            RestRequest req = new RestRequest("users/{id}", Method.GET);
+            req.AddUrlSegment("id", id.ToString());
+
+            this.client.ExecuteAsync<User>(req, resp => {
+                if (resp.StatusCode == HttpStatusCode.OK) {
+                    tcs.SetResult(resp.Data);
+                } else {
+                    tcs.SetResult(null);
+                }
+            });
+
+            return tcs.Task;
+        }
+
+        public Task<Post[]> GetPosts()
+        {
+            TaskCompletionSource<Post[]> tcs = new TaskCompletionSource<Post[]>();
+
+            RestRequest req = new RestRequest("posts", Method.GET);
+
+            this.client.ExecuteAsync<List<Post>>(req, resp => {
+                if (resp.StatusCode == HttpStatusCode.OK) {
+                    tcs.SetResult(resp.Data.ToArray());
+                } else {
+                    tcs.SetResult(null);
+                }
+            });
+
+            return tcs.Task;
+        }
+
+        public Task<Post> GetPost(int id)
+        {
+            TaskCompletionSource<Post> tcs = new TaskCompletionSource<Post>();
+
+            RestRequest req = new RestRequest("posts/{id}", Method.GET);
+            req.AddUrlSegment("id", id.ToString());
+
+            this.client.ExecuteAsync<Post>(req, resp => {
+                if (resp.StatusCode == HttpStatusCode.OK) {
+                    tcs.SetResult(resp.Data);
+                } else {
+                    tcs.SetResult(null);
+                }
+            });
+
+            return tcs.Task;
+        }
+
+        public Task<User[]> GetFriends()
+        {
+            TaskCompletionSource<User[]> tcs = new TaskCompletionSource<User[]>();
+
+            RestRequest req = new RestRequest("friends", Method.GET);
+
+            this.client.ExecuteAsync<List<User>>(req, resp => {
+                if (resp.StatusCode == HttpStatusCode.OK) {
+                    tcs.SetResult(resp.Data.ToArray());
+                } else {
+                    tcs.SetResult(null);
+                }
+            });
+
+            return tcs.Task;
+        }
+
+        public Task<bool> AddFriend(string username)
+        {
+            TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
+
+            RestRequest req = new RestRequest("friends", Method.POST);
+            req.AddParameter("username", username);
+
+            this.client.ExecuteAsync(req, resp => {
+                if (resp.StatusCode == HttpStatusCode.OK) {
+                    tcs.SetResult(true);
+                } else {
+                    tcs.SetResult(false);
+                }
+            });
+
+            return tcs.Task;
+        }
+
+        public Task<bool> RemoveFriend(int id)
+        {
+            TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
+
+            RestRequest req = new RestRequest("friends/{id}", Method.DELETE);
+            req.AddUrlSegment("id", id.ToString());
+
+            this.client.ExecuteAsync(req, reso => {
+
+            });
+
+            return tcs.Task;
         }
     }
 }

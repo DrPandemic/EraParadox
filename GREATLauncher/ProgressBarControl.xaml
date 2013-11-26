@@ -6,7 +6,7 @@
 	mc:Ignorable="d" x:Class="GREATLauncher.ProgressBarControl"
 	d:DesignWidth="200" d:DesignHeight="15" SizeChanged="UserControl_SizeChanged">
     <Grid>
-        <Border x:Name="progressBorder" Margin="0,0,35,0" Padding="1" BorderBrush="#FF1CEBFF" BorderThickness="1">
+        <Border x:Name="progressBorder" Margin="0,0,35,0" Padding="1">
             <Rectangle x:Name="progressRectangle" Fill="#FF1CEBFF" Margin="0,0,0,0" Width="196" HorizontalAlignment="Left"/>
         </Border>
         <Label x:Name="progressLabel" Content="100%" Margin="0,0,0,0" Padding="3,0" Width="35" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="#FF1CEBFF" FontSize="10"/>

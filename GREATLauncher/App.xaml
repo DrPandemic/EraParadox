@@ -11,6 +11,7 @@
 			<Setter Property="Padding" Value="5,3"/>
 			<Setter Property="Background" Value="#EE001A1C"/>
 			<Setter Property="BorderBrush" Value="#FF1CEBFF"/>
+            <Setter Property="BorderThickness" Value="1"/>
 			<Setter Property="Foreground" Value="#FF1CEBFF"/>
 			<Setter Property="CaretBrush" Value="#FF1CEBFF"/>
 			<Setter Property="HorizontalAlignment" Value="Left"/>
@@ -24,6 +25,7 @@
 			<Setter Property="Padding" Value="5,3"/>
 			<Setter Property="Background" Value="#EE001A1C"/>
 			<Setter Property="BorderBrush" Value="#FF1CEBFF"/>
+            <Setter Property="BorderThickness" Value="1"/>
 			<Setter Property="Foreground" Value="#FF1CEBFF"/>
 			<Setter Property="CaretBrush" Value="#FF1CEBFF"/>
 			<Setter Property="HorizontalAlignment" Value="Left"/>
@@ -36,6 +38,7 @@
 			<Setter Property="Padding" Value="20,3"/>
 			<Setter Property="Background" Value="#EE001A1C"/>
 			<Setter Property="BorderBrush" Value="#FF1CEBFF"/>
+            <Setter Property="BorderThickness" Value="1"/>
 			<Setter Property="Foreground" Value="#FF1CEBFF"/>
 			<Setter Property="HorizontalAlignment" Value="Left"/>
 			<Setter Property="VerticalAlignment" Value="Center"/>
@@ -46,21 +49,23 @@
 		<Style TargetType="{x:Type CheckBox}">
 			<Setter Property="Background" Value="#EE001A1C"/>
 			<Setter Property="BorderBrush" Value="#FF1CEBFF"/>
+            <Setter Property="BorderThickness" Value="1"/>
 			<Setter Property="Foreground" Value="#FF1CEBFF"/>
 			<Setter Property="HorizontalAlignment" Value="Left"/>
 			<Setter Property="VerticalAlignment" Value="Center"/>
 			<Setter Property="FocusVisualStyle" Value="{x:Null}"/>
 		</Style>
-		<Style TargetType="{x:Type Label}">
-			<Setter Property="Padding" Value="5,0"/>
-			<Setter Property="Foreground" Value="#FF1CEBFF"/>
-			<Setter Property="HorizontalAlignment" Value="Right"/>
-			<Setter Property="VerticalAlignment" Value="Center"/>
-			<Setter Property="FontFamily" Value="/GREATLauncher;component/#Electrolize"/>
-			<Setter Property="FontSize" Value="14"/>
-		</Style>
-		<Style TargetType="{x:Type ScrollViewer}">
+        <Style TargetType="{x:Type Label}">
+            <Setter Property="Padding" Value="5,0"/>
+            <Setter Property="Foreground" Value="#FF1CEBFF"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="FontFamily" Value="/GREATLauncher;component/#Electrolize"/>
+            <Setter Property="FontSize" Value="14"/>
+        </Style>
+        <Style TargetType="{x:Type Border}">
 			<Setter Property="BorderBrush" Value="#FF1CEBFF"/>
+            <Setter Property="BorderThickness" Value="1"/>
 		</Style>
     </Application.Resources>
 </Application>

@@ -5,7 +5,7 @@
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:local="clr-namespace:GREATLauncher"
 		x:Name="window" mc:Ignorable="d" x:Class="GREATLauncher.SignInWindow"
-        Title="EraParadox - Sign In" Width="532" Height="240" WindowStartupLocation="CenterScreen" Background="{x:Null}" AllowsTransparency="True" WindowStyle="None">
+        Title="EraParadox - Sign In" Width="532" Height="260" WindowStartupLocation="CenterScreen" Background="{x:Null}" AllowsTransparency="True" WindowStyle="None">
     <Window.Resources>
         <Storyboard x:Key="rotateGear">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(RotateTransform.Angle)" Storyboard.TargetName="gearImage" RepeatBehavior="Forever">
@@ -47,6 +47,7 @@
                 <RowDefinition/>
                 <RowDefinition/>
                 <RowDefinition/>
+                <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="2*"/>
@@ -54,17 +55,19 @@
             </Grid.ColumnDefinitions>
 
             <Label Content="Email"/>
-            <TextBox x:Name="emailTextBox" Grid.Column="1"/>
+            <TextBox x:Name="emailTextBox" Grid.Column="1" KeyDown="emailTextBox_KeyDown"/>
 
             <Label Content="Password" Grid.Row="1"/>
-            <PasswordBox x:Name="passwordTextBox" Grid.Row="1" Grid.Column="1"/>
+            <PasswordBox x:Name="passwordTextBox" Grid.Row="1" Grid.Column="1" KeyDown="emailTextBox_KeyDown"/>
 
             <Label Content="Remember me" Grid.Row="2"/>
-            <CheckBox x:Name="rememberCheckBox" Grid.Row="2" Grid.Column="1"/>
+            <CheckBox x:Name="rememberCheckBox" IsChecked="True" Grid.Row="2" Grid.Column="1"/>
 
             <Button x:Name="signInButton" Content="Sign in" Grid.Row="3" Grid.Column="1" Click="signInButton_Click"/>
             
             <local:MarqueeControl x:Name="signInMarqueeControl" Grid.Row="3" Grid.ColumnSpan="2" Width="150" Height="15" Visibility="Hidden"/>
+            
+            <Label x:Name="errorLabel" Content="" Foreground="Red" Grid.Row="4" Grid.ColumnSpan="2" HorizontalAlignment="Center"/>
         </Grid>
     </Grid>
 </Window>

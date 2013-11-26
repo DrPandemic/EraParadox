@@ -41,10 +41,6 @@
 			</Label.Effect>
 		</Label>
 		<Image x:Name="botImage" Margin="37,0,15,0" Source="panel_wide_bot.png" Width="990" Height="25" HorizontalAlignment="Center" VerticalAlignment="Bottom" d:IsLocked="True"/>
-
-        <Grid x:Name="loadingGrid" Margin="57,80,35,30" Width="950" HorizontalAlignment="Center" VerticalAlignment="Stretch">
-            <local:MarqueeControl x:Name="LoadingMarqueeControl" Width="150" Height="15"/>
-        </Grid>
         
 		<Grid x:Name="mainGrid" Visibility="Hidden" Margin="57,80,35,30" Width="950" HorizontalAlignment="Center" VerticalAlignment="Stretch">
             <Grid.RowDefinitions>
@@ -57,23 +53,52 @@
                 <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
             
-            <Label x:Name="welcomeLabel" FontSize="24" FontWeight="Bold" HorizontalAlignment="Left"/>
-            <Label x:Name="serverTimeLabel" Content="Server Time 00:00:00" FontSize="10" Grid.Column="1" VerticalAlignment="Top"/>
+            <Label x:Name="welcomeLabel" Content="Welcome" FontSize="26" FontWeight="Bold" Grid.ColumnSpan="2" HorizontalAlignment="Left"/>
             
-            <Border Grid.Row="2">
-                
-            </Border>
+            <Grid Margin="5" Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
 
-            <ScrollViewer Grid.Row="3">
-                <StackPanel x:Name="newsStackPanel">
-                    
-                </StackPanel>
-            </ScrollViewer>
+                <Label Content="Play" Padding="0" HorizontalAlignment="Left"/>
+                <Border Grid.Row="1">
+                    <Button Content="Quick Match" HorizontalAlignment="Center" Click="quickMatchButton_Click"/>
+                </Border>
+            </Grid>
+
+            <Grid Margin="5" Grid.Row="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                
+                <Label Content="News" Padding="0" HorizontalAlignment="Left"/>
+                <Border Grid.Row="1">
+                    <ScrollViewer>
+                        <StackPanel x:Name="blogStackPanel"></StackPanel>
+                    </ScrollViewer>
+                </Border>
+            </Grid>
             
-            <Label Content="Friend List" Grid.Row="2" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-            <ScrollViewer Grid.Row="2" Grid.Column="2" Grid.RowSpan="2" Margin="0,15,0,0">
-                <StackPanel x:Name="friendsStackPanel"></StackPanel>
-            </ScrollViewer>
+            <Grid Margin="5" Grid.Row="1" Grid.Column="1" Grid.RowSpan="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                    
+                <Label Content="Friends" Padding="0" HorizontalAlignment="Left"/>
+                <Border Grid.Row="1">
+                    <ScrollViewer Grid.Row="1">
+                        <StackPanel x:Name="friendsStackPanel"></StackPanel>
+                    </ScrollViewer>
+                </Border>
+                <TextBox x:Name="friendTextBox" Margin="0,0,50,0" Width="auto" Grid.Row="2" HorizontalAlignment="Stretch" KeyDown="friendTextBox_KeyDown"/>
+                <Button x:Name="addFriendButton" Content="Add" Padding="0,3" Width="50" Grid.Row="2" HorizontalAlignment="Right" Click="addFriendButton_Click"/>
+                
+                <local:MarqueeControl x:Name="friendMarqueeControl" Visibility="Hidden" Width="150" Height="10" Grid.Row="2" />
+            </Grid>
         </Grid>
 
         <Grid x:Name="preGameGrid" Visibility="Hidden" Margin="57,80,35,30" Width="950" HorizontalAlignment="Center" VerticalAlignment="Stretch">
@@ -83,5 +108,9 @@
         <Grid x:Name="postGameGrid" Visibility="Hidden" Margin="57,80,35,30" Width="950" HorizontalAlignment="Center" VerticalAlignment="Stretch">
             
         </Grid>
-	</Grid>
+
+        <Grid x:Name="loadingGrid" Margin="57,80,35,30" Width="950" HorizontalAlignment="Center" VerticalAlignment="Stretch">
+            <local:MarqueeControl x:Name="loadingMarqueeControl" Width="150" Height="15"/>
+        </Grid>
+    </Grid>
 </Window>

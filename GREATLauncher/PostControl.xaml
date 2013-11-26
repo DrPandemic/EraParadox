@@ -1,0 +1,18 @@
+﻿<UserControl
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	mc:Ignorable="d" x:Class="GREATLauncher.PostControl"
+	d:DesignWidth="400" d:DesignHeight="75"
+    MouseEnter="UserControl_MouseEnter" MouseLeave="UserControl_MouseLeave" MouseDoubleClick="UserControl_MouseDoubleClick">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        
+        <Label x:Name="titleLabel" Content="Title" FontWeight="Bold" Margin="5, 5, 5, 0" HorizontalAlignment="Left"/>
+        <Label x:Name="contentLabel" Content="Content" FontSize="12" Margin="5, 0, 5, 5" HorizontalAlignment="Left" Grid.Row="1"/>
+    </Grid>
+</UserControl>
