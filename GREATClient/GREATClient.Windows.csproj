@@ -459,5 +459,8 @@
     <Content Include="Content\Sounds\Effects\zero_revive.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Content\Sounds\Musics\SonOfARocket.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 </Project>

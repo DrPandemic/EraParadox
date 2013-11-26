@@ -104,19 +104,30 @@ namespace GREATClient.BaseClass
 
 		public CameraService CameraService { get; set; }
 
+		// The music player isn't working well on Windows, so we are doing a music
+		// player with sound effects.
+		SoundEffectInstance MusicPlayer { get; set; }
+
 		public SoundService(ContentManager content) {
 			MediaPlayer.IsRepeating = true;
 			Content = content;
 			CameraService = null;
+			MusicPlayer = null;
         }
 		public void StopMusic() {
-			MediaPlayer.Stop();
+			if(MusicPlayer != null) {
+				MusicPlayer.Stop();
+			}
 		}
 		public void PauseMusic() {
-			MediaPlayer.Pause();
+			if(MusicPlayer != null) {
+				MusicPlayer.Pause();
+			}
 		}
 		public void ResumeMusic() {
-			MediaPlayer.Resume();
+			if(MusicPlayer != null) {
+				MusicPlayer.Resume();
+			}
 		}
 		/// <summary>
 		/// Plaies the music.
@@ -124,7 +135,13 @@ namespace GREATClient.BaseClass
 		/// </summary>
 		/// <param name="musicName">Music name.</param>
 		public void PlayMusic(string musicName) {
-			MediaPlayer.Play(Content.Load<Song>(musicName));
+			MusicPlayer = Content.Load<SoundEffect>(musicName).CreateInstance();
+			MusicPlayer.Volume = 0.6f;
+			MusicPlayer.Pan = 0f;
+			MusicPlayer.Pitch = 0f;
+			MusicPlayer.Play();
+
+			MusicPlayer.IsLooped = true;
 		}
 		/*public void QueueMusics(params string[] list) {
 			SongCollection collection = new SongCollection();
@@ -134,7 +151,9 @@ namespace GREATClient.BaseClass
 			MediaPlayer.Play(collection);
 		}*/
 		public void ChangeMusicVolume(float volume) {
-			MediaPlayer.Volume = volume;
+			if(MusicPlayer != null) {
+				MusicPlayer.Volume = volume;
+			}
 		}
 		public void PlaySound(string soundName, float screenWidth, float screenHeight, Vector2? soundSource = null) {
 			SoundEffect effect = Content.Load<SoundEffect>(soundName);

@@ -153,6 +153,8 @@ namespace GREATClient.Screens
 
 			AddChild(Parallax,0);
 
+			((SoundService)Services.GetService(typeof(SoundService))).PlayMusic("Sounds/Musics/SonOfARocket");
+
 		}
 
 		void AddStructure(DrawableStructure structure)
