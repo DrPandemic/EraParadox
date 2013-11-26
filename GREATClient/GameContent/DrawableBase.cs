@@ -75,11 +75,11 @@ namespace GREATClient.GameContent
 			} else {
 				AddChild(new DrawableImage(RIGHT_IMAGE) {
 					RelativeOrigin = new Vector2(0.5f, 1f),
-					Position = new Vector2(0,20)
+					Position = new Vector2(5,5)
 				},3);
 				AddChild(Diamond = new DrawableImage("MapObjects/rbaseDiamond") {
 					RelativeOrigin = new Vector2(0.5f, 1f),
-					Position = new Vector2(5,-20)},2);
+					Position = new Vector2(5,-25)},2);
 			}
 
 			//Add the life bar
@@ -95,7 +95,7 @@ namespace GREATClient.GameContent
 
 			// Move the diamond
 			if(Diamond != null) {
-				float move = (float)Math.Cos(ticks/50f)/10;
+				float move = (float)Math.Cos(ticks/100f)/10;
 				Diamond.Position += new Vector2(0,move);
 				++ticks;
 			}
