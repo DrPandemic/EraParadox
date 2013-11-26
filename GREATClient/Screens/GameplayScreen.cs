@@ -91,6 +91,8 @@ namespace GREATClient.Screens
 
 		GameScore GameScore { get; set; }
 
+		SoundService Sound { get; set; }
+
         public GameplayScreen(ContentManager content, Game game, Client client)
 			: base(content, game)
         {
@@ -120,18 +122,13 @@ namespace GREATClient.Screens
 			KillDisplay = new KillDisplay(ChampionsInfo);
 
 			GameScore = new GameScore();
-        }
 
-		void test(object sender, EventArgs e) {
-			((SoundService)this.GetServices().GetService(typeof(SoundService))).PlaySound("Sounds/Effects/shell",new Vector2(0,100));
-			((SoundService)this.GetServices().GetService(typeof(SoundService))).PlayMusic("Sounds/Musics/Jinxed");
-		}
+			Sound = (SoundService)Services.GetService(typeof(SoundService));
+        }
 
 		protected override void OnLoadContent()
 		{
 			base.OnLoadContent();
-
-			inputManager.RegisterEvent(InputActions.ArrowUp, test);
 
 			ESCMenu menu = new ESCMenu();
 			AddChild(menu, 6);
@@ -289,6 +286,14 @@ namespace GREATClient.Screens
 			UpdateParallax();
 		}
 
+		void PlaySound(Sounds s, Vec2 source = null)
+		{
+			var screen = (ScreenService)Services.GetService(typeof(ScreenService));
+			Sound.PlaySound(SoundsHelper.GetSoundPath(s),
+			                screen.GameWindowSize.X, screen.GameWindowSize.Y,
+			                source != null ? (Vector2?)GameLibHelper.ToVector2(source) : null);
+		}
+
 		void UpdateParallax() {
 			Parallax.SetCurrentRatio(Camera.WorldPosition.X/(Match.World.Map.GetWidthTiles()*Tile.WIDTH) * 80,
 			                         Camera.WorldPosition.Y/(Match.World.Map.GetHeightTiles()*Tile.HEIGHT) * 100);
@@ -389,16 +394,28 @@ namespace GREATClient.Screens
 				var tower = structure as DrawableTower;
 				if (tower != null) {
 					tower.WillShoot();
+					PlaySound(tower.Structure.Team == Teams.Left ?
+					          Sounds.LeftTowerShot : Sounds.RightTowerShot,
+					          new Vec2(tower.Structure.Rectangle.X + tower.Structure.Rectangle.Width / 2f,
+					         		   tower.Structure.Rectangle.Y + tower.Structure.Rectangle.Height / 2f));
 				}
 			}
 		}
 		void OnStructureDestroyed(StructureDestroyedEventData e)
 		{
+			var s = GetStructure(e.Team, e.Type);
+			if (s != null)
+				PlaySound(Sounds.Explosion,
+				          new Vec2(s.Structure.Rectangle.X + s.Structure.Rectangle.Width / 2f,
+				                   s.Structure.Rectangle.Y + s.Structure.Rectangle.Height / 2f));
+
 		}
 		void OnEndOfGame(EndOfGameEventData e)
 		{
 			if (OurChampion != null) {
-				WinLoseScreen.Display(e.Winner == OurChampion.Champion.Team);
+				bool won = e.Winner == OurChampion.Champion.Team;
+				WinLoseScreen.Display(won);
+				PlaySound(won ? Sounds.Won : Sounds.Lost);
         	}
 		}
 		void OnStructureStatsChanged(StructureStatsChangedEventData e)
@@ -426,29 +443,45 @@ namespace GREATClient.Screens
 					killer = champ;
 				}
 			}
+			Debug.Assert(killed != null);
+			if (killed == null)
+				return;
 			if (OurChampion != null &&
 				e.ChampID == OurChampion.Champion.ID) { // we died
 				DeathScreen.DisplayScreen(e.RespawnTime);
 			}
 
-			if (killed != null && OurChampion != null) {
+			if (OurChampion != null) {
 				KillDisplay.Display(killer != null ? (ChampionTypes?)killer.Type : null,
 				                    killed.Type,
 				                    killed.Team != OurChampion.Champion.Team);
 			}
 
+			// Ideally, this would be part of the champion info and not in an horrible if here, but
+			// we are soon presenting and I am tired.
+			if (killed.Type == ChampionTypes.ManMega)
+				PlaySound(Sounds.ManMega_Death, killed.Position);
+			else if (killed.Type == ChampionTypes.Zoro)
+				PlaySound(Sounds.Zero_Death, killed.Position);
+
 			if (OurChampion != null) {
-				if (killed.ID == OurChampion.Champion.ID) {
+				if (killed.ID == OurChampion.Champion.ID) { // we died
 					GameScore.PlayerDeaths = (int)e.Deaths;
+					PlaySound(Sounds.YouDied);
+				} else if (killed.Team == OurChampion.Champion.Team) { // an ally died
+					PlaySound(Sounds.AllyDied);
+				} else { // enemy died
+					PlaySound(Sounds.EnemyDied);
 				}
 				if (killer != null &&
-				    killer.ID == OurChampion.Champion.ID) {
+				    killer.ID == OurChampion.Champion.ID) { // we killed someone
 					GameScore.PlayerKills = (int)e.Kills;
+					PlaySound(Sounds.YouKilled);
 				}
-				if (OurChampion.Champion.Team == Teams.Left) {
+				if (OurChampion.Champion.Team == Teams.Left) { // our team is on the left
 					GameScore.TeamKills = (int)e.LeftKills;
 					GameScore.TeamDeaths = (int)e.RightKills;
-				} else {
+				} else { // our team is on the right
 					GameScore.TeamKills = (int)e.RightKills;
 					GameScore.TeamDeaths = (int)e.LeftKills;
 				}
@@ -456,6 +489,19 @@ namespace GREATClient.Screens
 		}
 		void OnCastSpell(SpellCastEventData e)
 		{
+			//TODO: this should be refactored. I am tired.
+			switch (e.Type) {
+				case SpellTypes.ManMega_RocketRampage: PlaySound(Sounds.ManMega_1, e.Position); break;
+				case SpellTypes.ManMega_Slash: PlaySound(Sounds.ManMega_2, e.Position); break;
+				case SpellTypes.ManMega_HintOfASpark: PlaySound(Sounds.ManMega_3, e.Position); break;
+				case SpellTypes.ManMega_Shotgun: PlaySound(Sounds.ManMega_4, e.Position); break;
+
+				case SpellTypes.Zoro_Tooth: PlaySound(Sounds.Zero_1, e.Position); break;
+				case SpellTypes.Zoro_Slash: PlaySound(Sounds.Zero_2, e.Position); break;
+				case SpellTypes.Zoro_Double: PlaySound(Sounds.Zero_3, e.Position); break;
+				case SpellTypes.Zoro_Wall: PlaySound(Sounds.Zero_4, e.Position); break;
+			}
+
 			var s = GetSpellFromType(new ClientLinearSpell(e.ID, e.Type, e.Position, e.Time, e.Velocity, e.Range, e.Width));
 			Spells.Add(e.ID, s);
 			GameWorld.AddChild(s);
@@ -498,8 +544,16 @@ namespace GREATClient.Screens
 					}
 				});
 
-				if (OurChampion != null)
+				if (OurChampion != null) {
+					if (DeathScreen.Visible && OurChampion.Champion.Alive) { // we just spawned
+						//TODO: ideally, this would be in the champion info. I am tired.
+						if (OurChampion.Champion.Type == ChampionTypes.ManMega)
+							PlaySound(Sounds.ManMega_Revive);
+						else if (OurChampion.Champion.Type == ChampionTypes.Zoro)
+							PlaySound(Sounds.Zero_Revive);
+					}
 					DeathScreen.Visible = !OurChampion.Champion.Alive;
+				}
 			}
 		}
 

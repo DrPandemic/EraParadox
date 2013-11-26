@@ -56,6 +56,11 @@ namespace GameContent
 		{
 			return worldPos - WorldPosition;
 		}
+
+		public Vec2 GetTarget(float screenWidth, float screenHeight)
+		{
+			return WorldPosition + new Vec2(screenWidth / 2f, screenHeight / 2f);
+		}
     }
 }
 
