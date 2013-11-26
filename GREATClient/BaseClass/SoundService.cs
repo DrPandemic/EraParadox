@@ -56,7 +56,8 @@ namespace GREATClient.BaseClass
 		RightTowerShot,
 		Explosion,
 
-		OpenMenu
+		OpenMenu,
+		CloseMenu
 	}
 	public static class SoundsHelper
 	{
@@ -90,6 +91,7 @@ namespace GREATClient.BaseClass
 				case Sounds.Explosion: return "Sounds/Effects/explosion";
 
 				case Sounds.OpenMenu: return "Sounds/Effects/openmenu";
+				case Sounds.CloseMenu: return "Sounds/Effects/closemenu";
 			}
 
 			throw new NotImplementedException();
@@ -124,13 +126,13 @@ namespace GREATClient.BaseClass
 		public void PlayMusic(string musicName) {
 			MediaPlayer.Play(Content.Load<Song>(musicName));
 		}
-		public void QueueMusics(params string[] list) {
+		/*public void QueueMusics(params string[] list) {
 			SongCollection collection = new SongCollection();
 			foreach (string song in list) {
 				collection.Add(Content.Load<Song>(song));
 			}
 			MediaPlayer.Play(collection);
-		}
+		}*/
 		public void ChangeMusicVolume(float volume) {
 			MediaPlayer.Volume = volume;
 		}
