@@ -144,7 +144,7 @@ namespace GREATClient.BaseClass
 				// f(x) = -x/2000 + 1
 				Vector2 target = GameLibHelper.ToVector2(CameraService.GetTarget(screenWidth, screenHeight));
 				float volume = - (float)Math.Sqrt((target.X-soundSource.Value.X) * (target.X-soundSource.Value.X) + 
-				                                  (target.Y-soundSource.Value.Y) * (target.Y-soundSource.Value.Y)) /2000 + 1;
+				                                  (target.Y-soundSource.Value.Y) * (target.Y-soundSource.Value.Y)) /1000 + 1;
 				volume = Math.Max(volume,0);
 
 				effect.Play(volume, 0f, 0f);
