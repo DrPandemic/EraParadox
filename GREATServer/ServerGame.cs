@@ -775,11 +775,11 @@ namespace GREATServer
 		/// <summary>
 		/// Adds the client to the current game.
 		/// </summary>
-		public void AddClient(NetConnection connection)
+		public void AddClient(NetConnection connection, ChampionTypes champ)
 		{
 			ILogger.Log("New player added to the game.", LogPriority.High);
 
-			ServerChampion champion = CreateRandomChampion();
+			ServerChampion champion = CreateChampion(champ);
 			ServerClient client = new ServerClient(connection, champion);
 
 			// Send to the client that asked to join, along with the info of the current players
@@ -850,15 +850,14 @@ namespace GREATServer
 		}
 
 		/// <summary>
-		/// Creates a random champion at a random starting position (mainly used
-		/// for testing purposes).
+		/// Creates a champion.
 		/// </summary>
-		ServerChampion CreateRandomChampion()
+		ServerChampion CreateChampion(ChampionTypes champ)
 		{
 			var team = GetSmallestTeam();
 			return new ServerChampion(IDGenerator.GenerateID(),
 			                          GetSpawnPosition(team),
-			                          RandomChampionType(),
+			                          champ,
 			                          team);
 		}
 		Vec2 GetSpawnPosition(Teams team)
@@ -908,6 +907,15 @@ namespace GREATServer
 			switch (command) {
 				case ClientCommand.ActionPackage:
 					OnActionPackage(message);
+					break;
+
+				case ClientCommand.StartGame:
+					try {
+						ChampionTypes champ = (ChampionTypes)message.ReadUInt32();
+						AddClient(message.SenderConnection, champ);
+					} catch (Exception e) {
+						ILogger.Log("Start game packet badly formatted: " + e.ToString(), LogPriority.Error);
+					}
 					break;
 
 				default:
