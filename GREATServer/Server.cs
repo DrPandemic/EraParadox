@@ -72,7 +72,7 @@ namespace GREATServer
 			server.UPnP.ForwardPort(server.Port, "GREAT Server");
 
 			Time = 0.0;
-			//TODO: Temporary game initialization.
+
 			Game = new ServerGame(server);
 			LastUpdateTime = GetTime().TotalSeconds;
 		}
@@ -100,7 +100,6 @@ namespace GREATServer
 						NetConnectionStatus status = (NetConnectionStatus)msg.ReadByte();
 						if (status == NetConnectionStatus.Connected) {
 							Console.WriteLine(NetUtility.ToHexString(msg.SenderConnection.RemoteUniqueIdentifier) + " connected!");
-							OnConnection(msg.SenderConnection);
 						}
 						else if (status == NetConnectionStatus.Disconnecting) {
 							Console.WriteLine(NetUtility.ToHexString(msg.SenderConnection.RemoteUniqueIdentifier) + " disconnected!");
@@ -113,7 +112,6 @@ namespace GREATServer
 						Console.WriteLine(msg.ReadString());
 						break;
 					case NetIncomingMessageType.Data:
-						// TODO: update all the games instead of just one.
 						Game.OnDataReceived(msg);
 						break;
 					default:
@@ -129,15 +127,6 @@ namespace GREATServer
 			LastUpdateTime = time;
 
 			Time += dt;
-		}
-
-		/// <summary>
-		/// Called when a client connects to the server.
-		/// </summary>
-		void OnConnection(NetConnection connection)
-		{
-			//TODO: check which game to join instead of just the first
-			Game.AddClient(connection);
 		}
 	}
 }

@@ -72,6 +72,9 @@ namespace GREATServer
 		/// </summary>
 		List<KeyValuePair<ServerCommand, Action<NetBuffer>>> RemarkableEvents { get; set; }
 
+		uint LeftKills { get; set; }
+		uint RightKills { get; set; }
+
 
         public ServerGame(NetServer server)
         {
@@ -86,6 +89,8 @@ namespace GREATServer
 
 			TimeSinceLastCorrection = 0.0;
 			TimeSinceLastGameHistory = 0.0;
+
+			LeftKills = RightKills = 0;
         }
 
 		/// <summary>
@@ -533,16 +538,32 @@ namespace GREATServer
 					foreach (ServerClient client in Clients.Values) {
 						var clientRect = client.Champion.CreateCollisionRectangle();
 						Vec2 clientCenter = Rect.Center(clientRect);
-						if (t.CanShoot(now) && // not on cooldown
+						if (t.CanPrepare(now) && // not on cooldown
 							s.Team == TeamsHelper.Opposite(client.Champion.Team) && // is enemy
 						    client.ChampStats.Alive && // is alive
 						    Utilities.InRange(towerCenter, clientCenter, Tower.RANGE)) { // in range
 
-							CastTowerSpell(s.Team, towerCenter, clientCenter);
-							t.OnShot(now);
+							if (!t.IsPreparing()) {
+								t.StartPreparation();
+								PrepareTower(s.Team, s.Type);
+							} else if (t.CanShoot(now)) {
+								CastTowerSpell(s.Team, towerCenter, clientCenter);
+								t.OnShot(now);
+							}
 						}
 					}
 				}
+			});
+		}
+		void PrepareTower(Teams team, StructureTypes type)
+		{
+			AddRemarkableEvent(ServerCommand.TowerPreparingToShoot,
+			                   (msg) => {
+				bool left = team == Teams.Left;
+				byte typ = (byte)type;
+
+				msg.Write(left);
+				msg.Write(typ);
 			});
 		}
 		void CastTowerSpell(Teams team, Vec2 origin, Vec2 target)
@@ -569,6 +590,11 @@ namespace GREATServer
 				}
 
 				UpdateChampionHealth(client);
+
+				// Check to go out of combat
+				if (client.ChampStats.ShouldGoOutOfCombat()) {
+					client.ChampStats.GoOutOfCombat();
+				}
 
 				client.Champion.Animation = client.Champion.GetAnim(!client.ChampStats.Alive, //TODO: replace with actual HP
 				                                                    Match.CurrentState.IsOnGround(client.Champion.ID),
@@ -598,9 +624,37 @@ namespace GREATServer
 
 				if (!client.ChampStats.Alive) { // the player died!
 					client.ChampStats.RevivalTime = Server.Instance.GetTime().TotalSeconds + GetRespawnTime().TotalSeconds;
+
+					uint kills = 0;
+					++client.ChampStats.Deaths;
+					if (client.ChampStats.Killer.HasValue) {
+						ServerClient killer = null;
+						foreach (ServerClient c in Clients.Values) {
+							if (c.Champion.ID == client.ChampStats.Killer.Value) {
+								killer = c;
+							}
+						}
+
+						if (killer != null) {
+							++killer.ChampStats.Kills;
+							if (killer.Champion.Team == Teams.Left)
+								++LeftKills;
+							else if (killer.Champion.Team == Teams.Right)
+								++RightKills;
+
+							kills = killer.ChampStats.Kills;
+						}
+					}
+
+
 					AddRemarkableEvent(ServerCommand.ChampionDied,
 					                   (msg) => {
 						msg.Write(client.Champion.ID);
+						msg.Write(client.ChampStats.Killer ?? IDGenerator.NO_ID);
+						msg.Write(kills);
+						msg.Write(client.ChampStats.Deaths);
+						msg.Write(LeftKills);
+						msg.Write(RightKills);
 						msg.Write((ushort)GetRespawnTime().TotalSeconds);
 					});
 				}
@@ -696,6 +750,9 @@ namespace GREATServer
 				    client.Champion.CreateCollisionRectangle().Intersects(spellRect)) { // we hit him
 
 					client.ChampStats.Hurt(spell.Info.Value); // we hurt him
+					if (spell.Owner != null) {
+						client.ChampStats.GoInCombat(spell.Owner.ID);
+					}
 					if (spell.Info.OnActivation != null)
 						spell.Info.OnActivation(
 							new WorldInfoForSpell(client.Champion, spell.Velocity));
@@ -718,11 +775,11 @@ namespace GREATServer
 		/// <summary>
 		/// Adds the client to the current game.
 		/// </summary>
-		public void AddClient(NetConnection connection)
+		public void AddClient(NetConnection connection, ChampionTypes champ)
 		{
 			ILogger.Log("New player added to the game.", LogPriority.High);
 
-			ServerChampion champion = CreateRandomChampion();
+			ServerChampion champion = CreateChampion(champ);
 			ServerClient client = new ServerClient(connection, champion);
 
 			// Send to the client that asked to join, along with the info of the current players
@@ -793,15 +850,14 @@ namespace GREATServer
 		}
 
 		/// <summary>
-		/// Creates a random champion at a random starting position (mainly used
-		/// for testing purposes).
+		/// Creates a champion.
 		/// </summary>
-		ServerChampion CreateRandomChampion()
+		ServerChampion CreateChampion(ChampionTypes champ)
 		{
 			var team = GetSmallestTeam();
 			return new ServerChampion(IDGenerator.GenerateID(),
 			                          GetSpawnPosition(team),
-			                          RandomChampionType(),
+			                          champ,
 			                          team);
 		}
 		Vec2 GetSpawnPosition(Teams team)
@@ -851,6 +907,15 @@ namespace GREATServer
 			switch (command) {
 				case ClientCommand.ActionPackage:
 					OnActionPackage(message);
+					break;
+
+				case ClientCommand.StartGame:
+					try {
+						ChampionTypes champ = (ChampionTypes)message.ReadUInt32();
+						AddClient(message.SenderConnection, champ);
+					} catch (Exception e) {
+						ILogger.Log("Start game packet badly formatted: " + e.ToString(), LogPriority.Error);
+					}
 					break;
 
 				default:

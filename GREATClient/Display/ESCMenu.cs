@@ -27,6 +27,7 @@ using Microsoft.Xna.Framework;
 using GREATClient.BaseClass.Input;
 using System.Diagnostics;
 using GREATClient.BaseClass.BaseAction;
+using GREATClient.BaseClass.ScreenInformation;
 
 namespace GREATClient.Display
 {
@@ -297,6 +298,11 @@ namespace GREATClient.Display
 
 		public void OpenOrCloseMainMenu(object sender, EventArgs e)
 		{
+			var screen = (ScreenService)GetServices().GetService(typeof(ScreenService));
+			var sound = (SoundService)GetServices().GetService(typeof(SoundService));
+			sound.PlaySound(SoundsHelper.GetSoundPath(Sounds.OpenMenu),
+			                screen.GameWindowSize.X, screen.GameWindowSize.Y);
+
 			if (State == MenuState.AllClosed) {
 				State = MenuState.MainOpened;
 				MainBackgroundLayer.Visible = true;

@@ -32,6 +32,8 @@ namespace GREATLib.Network
 		/// Here are the actions (inputs) that I want to do.
 		/// </summary>
 		ActionPackage = 0
+
+		, StartGame
     }
 }
 

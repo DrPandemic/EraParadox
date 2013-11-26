@@ -36,6 +36,9 @@ namespace GREATClient
 {
 	public sealed class Client
 	{
+		public static string IP { get; set; }
+		public static int Champion { get; set; }
+
 		static volatile Client instance;
 		static object syncInstance = new object();
 		public static Client Instance
@@ -80,10 +83,10 @@ namespace GREATClient
 		public void Start()
 		{
 			this.client.Start();
-			client.UPnP.ForwardPort(client.Port, "GREAT Client");
+			//client.UPnP.ForwardPort(client.Port, "GREAT Client");
 			client.DiscoverLocalPeers(14242);
 			// If the discover cluster-fucks on localhost, use that line instead
-			//client.Connect("172.17.104.127", 14242);
+			client.Connect(IP, 14242);
 		}
 
 		public void Stop()
@@ -106,6 +109,10 @@ namespace GREATClient
 						NetConnectionStatus status = (NetConnectionStatus)msg.ReadByte();
 						if (status == NetConnectionStatus.Connected) {
 							Console.WriteLine(NetUtility.ToHexString(msg.SenderConnection.RemoteUniqueIdentifier) + " connected!");
+							SendCommand(ClientCommand.StartGame, (m) => {
+								uint desiredChamp = (uint)Champion;
+								m.Write(desiredChamp);
+							});
 						}
 						break;
 					case NetIncomingMessageType.VerboseDebugMessage:
@@ -219,29 +226,38 @@ namespace GREATClient
 		/// </summary>
 		public void SendPlayerActionPackage(IEnumerable<PlayerAction> actions)
 		{
-			NetOutgoingMessage msg = client.CreateMessage();
-			msg.Write((byte)ClientCommand.ActionPackage);
+			SendCommand(ClientCommand.ActionPackage, (msg) => {
+				foreach (PlayerAction action in actions) {
+					ulong id = action.ID;
+					float time = action.Time;
+					byte type = (byte)action.Type;
+					float x = action.Position.X;
+					float y = action.Position.Y;
 
-			foreach (PlayerAction action in actions) {
-				ulong id = action.ID;
-				float time = action.Time;
-				byte type = (byte)action.Type;
-				float x = action.Position.X;
-				float y = action.Position.Y;
+					msg.Write(id);
+					msg.Write(time);
+					msg.Write(type);
+					msg.Write(x);
+					msg.Write(y);
 
-				msg.Write(id);
-				msg.Write(time);
-				msg.Write(type);
-				msg.Write(x);
-				msg.Write(y);
-
-				if (ActionTypeHelper.IsSpell(action.Type)) {
-					Debug.Assert(action.Target != null, "Trying to us target on non-spell action.");
-					float tx = action.Target.X;
-					float ty = action.Target.Y;
-					msg.Write(tx);
-					msg.Write(ty);
+					if (ActionTypeHelper.IsSpell(action.Type)) {
+						Debug.Assert(action.Target != null, "Trying to us target on non-spell action.");
+						float tx = action.Target.X;
+						float ty = action.Target.Y;
+						msg.Write(tx);
+						msg.Write(ty);
+					}
 				}
+			});
+		}
+		private void SendCommand(ClientCommand command,
+		                         Action<NetBuffer> setValues)
+		{
+			NetOutgoingMessage msg = client.CreateMessage();
+			msg.Write((byte)command);
+
+			if (setValues != null) {
+				setValues(msg);
 			}
 
 			client.SendMessage(msg, NetDeliveryMethod.ReliableOrdered);
@@ -365,7 +381,10 @@ namespace GREATClient
 						break;
 
 					case ServerCommand.ChampionDied:
-						data = new ChampionDiedEventData(msg.ReadUInt64(), TimeSpan.FromSeconds(msg.ReadUInt16()));
+						data = new ChampionDiedEventData(msg.ReadUInt64(),
+						                                 msg.ReadUInt64(),
+						                                 msg.ReadUInt32(), msg.ReadUInt32(), msg.ReadUInt32(), msg.ReadUInt32(),
+						                                 TimeSpan.FromSeconds(msg.ReadUInt16()));
 						break;
 
 					case ServerCommand.StructureStatsChanged:
@@ -381,6 +400,11 @@ namespace GREATClient
 
 					case ServerCommand.EndOfGame:
 						data = new EndOfGameEventData(msg.ReadBoolean() ? Teams.Left : Teams.Right);
+						break;
+
+					case ServerCommand.TowerPreparingToShoot:
+						data = new TowerPreparingToShootEventData(msg.ReadBoolean() ? Teams.Left : Teams.Right,
+						                                          (StructureTypes)msg.ReadByte());
 						break;
 
 					default:
@@ -451,11 +475,25 @@ namespace GREATClient
 	public class ChampionDiedEventData : RemarkableEventData
 	{
 		public ulong ChampID { get; private set; }
+		public ulong? Killer { get; private set; }
+		public uint Kills { get; private set; }
+		public uint Deaths { get; private set; }
+		public uint LeftKills { get; private set; }
+		public uint RightKills { get; private set; }
 		public TimeSpan RespawnTime { get; private set; }
-		public ChampionDiedEventData(ulong id, TimeSpan respawn)
+		public ChampionDiedEventData(ulong id, ulong killer,
+		                             uint kills, uint deaths, uint leftKills, uint rightKills,
+		                             TimeSpan respawn)
 			: base(ServerCommand.ChampionDied)
 		{
 			ChampID = id;
+			Killer = killer != IDGenerator.NO_ID ? (ulong?)killer : null;
+
+			Kills = kills;
+			Deaths = deaths;
+			LeftKills = leftKills;
+			RightKills = rightKills;
+
 			RespawnTime = respawn;
 		}
 	}
@@ -490,6 +528,18 @@ namespace GREATClient
 			: base(ServerCommand.EndOfGame)
 		{
 			Winner = winner;
+		}
+	}
+	public class TowerPreparingToShootEventData : RemarkableEventData
+	{
+		public Teams Team { get; private set; }
+		public StructureTypes Type { get; private set; }
+
+		public TowerPreparingToShootEventData(Teams team, StructureTypes type)
+			: base(ServerCommand.TowerPreparingToShoot)
+		{
+			Team = team;
+			Type = type;
 		}
 	}
 }

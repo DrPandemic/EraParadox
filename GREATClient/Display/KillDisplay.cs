@@ -58,8 +58,8 @@ namespace GREATClient.Display
 					Tint = FirstIsAlly ? Color.Red : Color.Green});
 				AddChild(new DrawableImage("UIObjects/innerDeathCircle") {Position = new Vector2(Width - 75,5)});
 
-				AddChild(new DrawableImage(championsInfo.GetInfo(killer).Portait) {Position = new Vector2(Width - 75,5)});
-				AddChild(new DrawableImage(championsInfo.GetInfo(killed).Portait) {Position = new Vector2(5)});
+				AddChild(new DrawableImage(championsInfo.GetInfo(killed).Portait) {Position = new Vector2(Width - 75,5)});
+				AddChild(new DrawableImage(championsInfo.GetInfo(killer).Portait) {Position = new Vector2(5)});
 
 
 
@@ -151,8 +151,9 @@ namespace GREATClient.Display
 			base.OnUpdate(dt);
 		}
 
-		public void Display(ChampionTypes killer, ChampionTypes killed, bool FirstIsAlly) {
-			Kill kill = new Kill(killer,killed,FirstIsAlly, ChampionsInfo);
+		public void Display(ChampionTypes? killer, ChampionTypes killed, bool FirstIsAlly) {
+			//TODO: handle tower kills (killer == null)
+			Kill kill = new Kill(killer ?? ChampionTypes.ManMega /*TODO: remove this temporary check*/,killed,FirstIsAlly, ChampionsInfo);
 			kill.Position = new Vector2(Kill.Width + ScreenOffset, 0);
 			kill.Alpha = 0;
 			KillsToBeAdded.Add(kill);

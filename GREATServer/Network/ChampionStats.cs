@@ -29,14 +29,25 @@ namespace GREATServer.Network
 {
     public class ChampionStats : ILiving
     {
+		static readonly TimeSpan TIME_FOR_OUT_OF_COMBAT = TimeSpan.FromSeconds(10.0);
+
 		Dictionary<SpellTypes, float> LastSpellUses { get; set; }
 		public double RevivalTime { get; set; }
+		public ulong? Killer { get; set; }
+		public double TimeWhenLastEnemyHurtUs { get; set; }
+		public uint Kills { get; set; }
+		public uint Deaths { get; set; }
+		public bool InCombat { get { return Killer.HasValue; } }
 
         public ChampionStats(float maxhp)
 			: base(maxhp)
         {
 			LastSpellUses = new Dictionary<SpellTypes, float>();
 			RevivalTime = double.MaxValue;
+			Killer = null;
+			Kills = 0;
+			Deaths = 0;
+			TimeWhenLastEnemyHurtUs = 0.0;
         }
 
 		public void UsedSpell(SpellTypes spell)
@@ -67,6 +78,20 @@ namespace GREATServer.Network
 			return lastUse == TimeSpan.Zero ? false : 
 				lastUse.TotalSeconds + SpellsHelper.Info(spell).Cooldown.TotalSeconds > 
 					Server.Instance.GetTime().TotalSeconds;
+		}
+		public bool ShouldGoOutOfCombat()
+		{
+			return InCombat &&
+				TimeWhenLastEnemyHurtUs + TIME_FOR_OUT_OF_COMBAT.TotalSeconds <= Server.Instance.GetTime().TotalSeconds;
+		}
+		public void GoOutOfCombat()
+		{
+			Killer = null;
+		}
+		public void GoInCombat(ulong enemy)
+		{
+			Killer = (ulong?)enemy;
+			TimeWhenLastEnemyHurtUs = Server.Instance.GetTime().TotalSeconds;
 		}
     }
 }
