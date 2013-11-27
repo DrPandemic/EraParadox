@@ -40,6 +40,7 @@ using GREATClient.BaseClass.ScreenInformation;
 using GREATClient.GameContent.Spells;
 using GREATLib.Entities.Structures;
 using GREATLib.Entities.Champions;
+using System.Timers;
 
 namespace GREATClient.Screens
 {
@@ -419,6 +420,10 @@ namespace GREATClient.Screens
 				WinLoseScreen.Display(won);
 				PlaySound(won ? Sounds.Won : Sounds.Lost);
         	}
+
+			Timer t = new Timer(3000);
+			t.Elapsed += (sender, ev) => Exit = true;
+			t.Start();
 		}
 		void OnStructureStatsChanged(StructureStatsChangedEventData e)
 		{

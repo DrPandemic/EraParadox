@@ -27,6 +27,7 @@ namespace GREATServer
 {
 	public class Server
 	{
+		public static bool Exit = false;
 		public static int Port { get; set; }
 
 		static volatile Server instance;

@@ -525,6 +525,10 @@ namespace GREATServer
 								bool winnerIsLeft = TeamsHelper.Opposite(s.Team) == Teams.Left;
 								msg.Write(winnerIsLeft);
 							});
+
+							Timer t = new Timer(3000);
+							t.Elapsed += (sender, e) => Server.Exit = true;
+							t.Start();
 						}
 					}
 				}

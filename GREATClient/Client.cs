@@ -37,7 +37,7 @@ namespace GREATClient
 	public sealed class Client
 	{
 		public static string IP { get; set; }
-		public static string Port { get; set; }
+		public static int Port { get; set; }
 		public static int Champion { get; set; }
 
 		static volatile Client instance;
