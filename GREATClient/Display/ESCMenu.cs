@@ -93,10 +93,10 @@ namespace GREATClient.Display
 				new DrawableLabel() {Text = "Video settings", RelativeOrigin = new Vector2(0.5f,0.0f), Tint = Color.Aquamarine}) 
 			{ ClickAction = () => OpenVideo() };
 
-			MenuItem main2 = new MenuItem(new DrawableLabel() {Text = "Audio settings" , RelativeOrigin = new Vector2(0.5f,0.0f)},
+			MenuItem main2 = new MenuItem(new DrawableLabel() {Text = "Audio settings" , RelativeOrigin = new Vector2(0.5f,0.0f), Tint = Color.Gray},
 				new DrawableLabel() {Text = "Audio settings", RelativeOrigin = new Vector2(0.5f,0.0f), Tint = Color.Chocolate},
 				new DrawableLabel() {Text = "Audio settings", RelativeOrigin = new Vector2(0.5f,0.0f), Tint = Color.Aquamarine}) 
-			{ ClickAction = () => OpenAudio() };
+			{ /*ClickAction = () => OpenAudio()*/ };
 
 			MenuItem main3 = new MenuItem(new DrawableLabel() {Text = "Return to Game", RelativeOrigin = new Vector2(0.5f,0.0f)},
 				new DrawableLabel() {Text = "Return to Game", RelativeOrigin = new Vector2(0.5f,0.0f), Tint = Color.Chocolate},

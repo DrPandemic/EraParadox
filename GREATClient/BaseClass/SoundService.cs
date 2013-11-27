@@ -136,7 +136,7 @@ namespace GREATClient.BaseClass
 		/// <param name="musicName">Music name.</param>
 		public void PlayMusic(string musicName) {
 			MusicPlayer = Content.Load<SoundEffect>(musicName).CreateInstance();
-			MusicPlayer.Volume = 0.6f;
+			MusicPlayer.Volume = 0.45f;
 			MusicPlayer.Pan = 0f;
 			MusicPlayer.Pitch = 0f;
 			MusicPlayer.Play();
