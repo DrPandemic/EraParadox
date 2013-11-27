@@ -37,6 +37,7 @@ namespace GREATClient
 	public sealed class Client
 	{
 		public static string IP { get; set; }
+		public static int Port { get; set; }
 		public static int Champion { get; set; }
 
 		static volatile Client instance;
@@ -84,9 +85,9 @@ namespace GREATClient
 		{
 			this.client.Start();
 			//client.UPnP.ForwardPort(client.Port, "GREAT Client");
-			client.DiscoverLocalPeers(14242);
+			//client.DiscoverLocalPeers(14242);
 			// If the discover cluster-fucks on localhost, use that line instead
-			client.Connect(IP, 14242);
+			client.Connect(IP, Port);
 		}
 
 		public void Stop()

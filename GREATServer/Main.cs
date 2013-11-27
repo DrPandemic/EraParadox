@@ -32,10 +32,18 @@ namespace GREATServer
 
 		public static void Main(string[] args)
 		{
+			int port = 14242;
+			if (args.Length > 0) {
+				int.TryParse(args[0], out port);
+			}
+
+			Server.Port = port;
+
 			server = Server.Instance;
 			server.Start();
 
-			while (!Console.KeyAvailable || Console.ReadKey().Key != ConsoleKey.Q) {
+			while ((!Console.KeyAvailable || Console.ReadKey().Key != ConsoleKey.Q) &&
+			       !Server.Exit) {
 				server.Update(SLEEP_TIME.TotalSeconds);
 				Thread.Sleep(SLEEP_TIME);
 			}

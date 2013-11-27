@@ -525,6 +525,10 @@ namespace GREATServer
 								bool winnerIsLeft = TeamsHelper.Opposite(s.Team) == Teams.Left;
 								msg.Write(winnerIsLeft);
 							});
+
+							Timer t = new Timer(3000);
+							t.Elapsed += (sender, e) => Server.Exit = true;
+							t.Start();
 						}
 					}
 				}
@@ -882,9 +886,11 @@ namespace GREATServer
 				teams[client.Champion.Team]++;
 			}
 
-			KeyValuePair<Teams, int> min = Utilities.MakePair(RandomTeam(), int.MaxValue);
+			KeyValuePair<Teams, int> min = Utilities.MakePair(Teams.Left, int.MaxValue); // team not important: will be overridden
 			foreach (var pair in teams) {
 				if (pair.Value < min.Value) {
+					min = new KeyValuePair<Teams, int>(pair.Key, pair.Value);
+				} else if (pair.Value == min.Value && RandomBool()) {
 					min = new KeyValuePair<Teams, int>(pair.Key, pair.Value);
 				}
 			}
@@ -892,9 +898,9 @@ namespace GREATServer
 			return min.Key;
 		}
 
-		Teams RandomTeam()
+		bool RandomBool()
 		{
-			return random.Next(2) == 0 ? Teams.Left : Teams.Right;
+			return random.Next(2) == 0;
 		}
 
 		/// <summary>
