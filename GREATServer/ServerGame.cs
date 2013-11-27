@@ -48,6 +48,8 @@ namespace GREATServer
 
 		static readonly TimeSpan MIN_TIME_BETWEEN_ACTIONS = TimeSpan.FromMilliseconds(10.0);
 
+		static readonly TimeSpan MAX_IDLE_TIME = TimeSpan.FromMinutes(2);
+
 		Random random = new Random();
 
 		NetServer NetServer { get; set; }
@@ -125,6 +127,12 @@ namespace GREATServer
 
 			// Store the current game state in our history to redo certain player actions.
 			StoreGameState(deltaTime);
+
+			// No clients for too long, kill the server.
+			if (Clients.Count == 0 &&
+			    Server.Instance.GetTime() > MAX_IDLE_TIME) {
+				Server.Exit = true;
+			}
 		}
 
 		void StoreGameState(double dt)
