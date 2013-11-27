@@ -198,6 +198,8 @@ namespace GREATClient.Screens
 
 			AddChampionToGame(e.OurData, true);
 
+			PlayChampionReviveSound(); // play our champion's spawn sound
+
 			foreach (PlayerData remote in e.RemotePlayers) {
 				AddChampionToGame(remote, false);
 			}
@@ -560,15 +562,20 @@ namespace GREATClient.Screens
 
 				if (OurChampion != null) {
 					if (DeathScreen.Visible && OurChampion.Champion.Alive) { // we just spawned
-						//TODO: ideally, this would be in the champion info. I am tired.
-						if (OurChampion.Champion.Type == ChampionTypes.ManMega)
-							PlaySound(Sounds.ManMega_Revive);
-						else if (OurChampion.Champion.Type == ChampionTypes.Zoro)
-							PlaySound(Sounds.Zero_Revive);
+						PlayChampionReviveSound();
 					}
 					DeathScreen.Visible = !OurChampion.Champion.Alive;
 				}
 			}
+		}
+
+		void PlayChampionReviveSound()
+		{
+			//TODO: ideally, this would be in the champion info. I am tired.
+			if (OurChampion.Champion.Type == ChampionTypes.ManMega)
+				PlaySound(Sounds.ManMega_Revive);
+			else if (OurChampion.Champion.Type == ChampionTypes.Zoro)
+				PlaySound(Sounds.Zero_Revive);
 		}
 
 		/// <summary>
