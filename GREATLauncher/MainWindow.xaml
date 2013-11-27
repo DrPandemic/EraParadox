@@ -102,7 +102,43 @@
         </Grid>
 
         <Grid x:Name="preGameGrid" Visibility="Hidden" Margin="57,80,35,30" Width="950" HorizontalAlignment="Center" VerticalAlignment="Stretch">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+        
+            <Label Content="Lobby" FontSize="26" FontWeight="Bold" HorizontalAlignment="Left"/>
+            <Label x:Name="statusLabel" Content="Waiting for players..." Grid.Column="1" HorizontalAlignment="Center"/>
+            <local:MarqueeControl x:Name="preGameMarqueeControl" Width="150" Height="15" Grid.Column="2"/>
+
+            <Label Content="Players" Padding="5,5,5,0" Grid.Row="1" HorizontalAlignment="Left"/>
+            <Border Margin="5,0,5,5" Grid.Row="2">
+                <ScrollViewer Grid.Row="1">
+                    <StackPanel x:Name="playersStackPanel"></StackPanel>
+                </ScrollViewer>
+            </Border>
             
+            <Label Content="Character Selection" Padding="5,5,5,0" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left"/>
+            <Border Margin="5,0,5,5" Grid.Row="2" Grid.Column="1">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+
+                    <local:ChampionControl x:Name="manmegaChampionControl" Source="manmega_face.png" Champion="Mega Man" IsSelected="True" Width="100" Height="100" MouseLeftButtonDown="manmegaChampionControl_MouseLeftButtonDown"/>
+                    <local:ChampionControl x:Name="zoroChampionControl" Source="zoro_face.png" Champion="Zero" Width="100" Height="100" Grid.Column="1" MouseLeftButtonDown="zoroChampionControl_MouseLeftButtonDown"/>
+                </Grid>
+            </Border>
+
+            <Button x:Name="forceStartButton" Content="Vote Force Start" Grid.Row="3" Grid.Column="2" HorizontalAlignment="Center" Click="forceStartButton_Click"/>
         </Grid>
 
         <Grid x:Name="postGameGrid" Visibility="Hidden" Margin="57,80,35,30" Width="950" HorizontalAlignment="Center" VerticalAlignment="Stretch">

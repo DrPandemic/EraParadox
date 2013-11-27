@@ -45,6 +45,34 @@ namespace GREATLauncher
             }
         }
 
+        public class Server
+        {
+            public int id { get; set; }
+            public string host { get; set; }
+            public int port { get; set; }
+            public string status { get; set; }
+            public int game_id { get; set; }
+            public DateTime created_at { get; set; }
+            public DateTime updated_at { get; set; }
+
+            public override string ToString()
+            {
+                return this.host + ":" + this.port;
+            }
+        }
+
+        public class Game
+        {
+            public int id { get; set; }
+            public string status { get; set; }
+            public int player_count { get; set; }
+            public int force_start { get; set; }
+            public List<User> users { get; set; }
+            public Server server { get; set; }
+            public DateTime created_at { get; set; }
+            public DateTime updated_at { get; set; }
+        }
+
         private class TokenAuthenticator : IAuthenticator
         {
             private string token;
@@ -139,15 +167,15 @@ namespace GREATLauncher
             return tcs.Task;
         }
 
-        public Task<Post[]> GetPosts()
+        public Task<List<Post>> GetPosts()
         {
-            TaskCompletionSource<Post[]> tcs = new TaskCompletionSource<Post[]>();
+            TaskCompletionSource<List<Post>> tcs = new TaskCompletionSource<List<Post>>();
 
             RestRequest req = new RestRequest("posts", Method.GET);
 
             this.client.ExecuteAsync<List<Post>>(req, resp => {
                 if (resp.StatusCode == HttpStatusCode.OK) {
-                    tcs.SetResult(resp.Data.ToArray());
+                    tcs.SetResult(resp.Data);
                 } else {
                     tcs.SetResult(null);
                 }
@@ -174,15 +202,15 @@ namespace GREATLauncher
             return tcs.Task;
         }
 
-        public Task<User[]> GetFriends()
+        public Task<List<User>> GetFriends()
         {
-            TaskCompletionSource<User[]> tcs = new TaskCompletionSource<User[]>();
+            TaskCompletionSource<List<User>> tcs = new TaskCompletionSource<List<User>>();
 
             RestRequest req = new RestRequest("friends", Method.GET);
 
             this.client.ExecuteAsync<List<User>>(req, resp => {
                 if (resp.StatusCode == HttpStatusCode.OK) {
-                    tcs.SetResult(resp.Data.ToArray());
+                    tcs.SetResult(resp.Data);
                 } else {
                     tcs.SetResult(null);
                 }
@@ -191,7 +219,7 @@ namespace GREATLauncher
             return tcs.Task;
         }
 
-        public Task<bool> AddFriend(string username)
+        public Task<bool> CreateFriend(string username)
         {
             TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
 
@@ -209,15 +237,73 @@ namespace GREATLauncher
             return tcs.Task;
         }
 
-        public Task<bool> RemoveFriend(int id)
+        public Task<bool> DestroyFriend(int id)
         {
             TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
 
             RestRequest req = new RestRequest("friends/{id}", Method.DELETE);
             req.AddUrlSegment("id", id.ToString());
 
-            this.client.ExecuteAsync(req, reso => {
+            this.client.ExecuteAsync(req, resp => {
+                if (resp.StatusCode == HttpStatusCode.OK) {
+                    tcs.SetResult(true);
+                } else {
+                    tcs.SetResult(false);
+                }
+            });
 
+            return tcs.Task;
+        }
+
+        public Task<Game> GetGame()
+        {
+            TaskCompletionSource<Game> tcs = new TaskCompletionSource<Game>();
+
+            RestRequest req = new RestRequest("games", Method.GET);
+
+            this.client.ExecuteAsync<Game>(req, resp => {
+                if (resp.StatusCode == HttpStatusCode.OK) {
+                    tcs.SetResult(resp.Data);
+                } else {
+                    tcs.SetResult(null);
+                }
+            });
+
+            return tcs.Task;
+        }
+
+        public Task<Game> GetGame(int id)
+        {
+            TaskCompletionSource<Game> tcs = new TaskCompletionSource<Game>();
+
+            RestRequest req = new RestRequest("games/{id}", Method.GET);
+            req.AddUrlSegment("id", id.ToString());
+
+            this.client.ExecuteAsync<Game>(req, resp => {
+                if (resp.StatusCode == HttpStatusCode.OK) {
+                    tcs.SetResult(resp.Data);
+                } else {
+                    tcs.SetResult(null);
+                }
+            });
+
+            return tcs.Task;
+        }
+
+        public Task<Game> UpdateGame(int id, int vote)
+        {
+            TaskCompletionSource<Game> tcs = new TaskCompletionSource<Game>();
+
+            RestRequest req = new RestRequest("games/{id}", Method.PUT);
+            req.AddUrlSegment("id", id.ToString());
+            req.AddParameter("vote", vote.ToString());
+
+            this.client.ExecuteAsync<Game>(req, resp => {
+                if (resp.StatusCode == HttpStatusCode.OK) {
+                    tcs.SetResult(resp.Data);
+                } else {
+                    tcs.SetResult(null);
+                }
             });
 
             return tcs.Task;

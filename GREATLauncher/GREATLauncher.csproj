@@ -58,7 +58,11 @@
     <ApplicationDefinition Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
     </ApplicationDefinition>
-    <Page Include="FriendControl.xaml">
+    <Page Include="ChampionControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PlayerControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -87,8 +91,11 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="FriendControl.xaml.cs">
-      <DependentUpon>FriendControl.xaml</DependentUpon>
+    <Compile Include="ChampionControl.xaml.cs">
+      <DependentUpon>ChampionControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PlayerControl.xaml.cs">
+      <DependentUpon>PlayerControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -144,6 +151,12 @@
     <Resource Include="panel_wide_bg.png" />
     <Resource Include="panel_wide_bot.png" />
     <Resource Include="panel_wide_header.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="manmega_face.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="zoro_face.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

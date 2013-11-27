@@ -14,9 +14,9 @@ using System.Windows.Shapes;
 namespace GREATLauncher
 {
 	/// <summary>
-	/// Interaction logic for FriendControl.xaml
+	/// Interaction logic for PlayerControl.xaml
 	/// </summary>
-	public partial class FriendControl : UserControl
+	public partial class PlayerControl : UserControl
 	{
         private ApiClient.User user;
         public ApiClient.User User {
@@ -43,7 +43,7 @@ namespace GREATLauncher
             }
         }
 
-		public FriendControl(ApiClient.User user, bool online = false)
+		public PlayerControl(ApiClient.User user, bool online = false)
 		{
             this.user = user;
 
