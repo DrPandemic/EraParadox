@@ -56,7 +56,8 @@ namespace GREATClient.BaseClass
 		RightTowerShot,
 		Explosion,
 
-		OpenMenu
+		OpenMenu,
+		CloseMenu
 	}
 	public static class SoundsHelper
 	{
@@ -90,6 +91,7 @@ namespace GREATClient.BaseClass
 				case Sounds.Explosion: return "Sounds/Effects/explosion";
 
 				case Sounds.OpenMenu: return "Sounds/Effects/openmenu";
+				case Sounds.CloseMenu: return "Sounds/Effects/closemenu";
 			}
 
 			throw new NotImplementedException();
@@ -102,19 +104,30 @@ namespace GREATClient.BaseClass
 
 		public CameraService CameraService { get; set; }
 
+		// The music player isn't working well on Windows, so we are doing a music
+		// player with sound effects.
+		SoundEffectInstance MusicPlayer { get; set; }
+
 		public SoundService(ContentManager content) {
 			MediaPlayer.IsRepeating = true;
 			Content = content;
 			CameraService = null;
+			MusicPlayer = null;
         }
 		public void StopMusic() {
-			MediaPlayer.Stop();
+			if(MusicPlayer != null) {
+				MusicPlayer.Stop();
+			}
 		}
 		public void PauseMusic() {
-			MediaPlayer.Pause();
+			if(MusicPlayer != null) {
+				MusicPlayer.Pause();
+			}
 		}
 		public void ResumeMusic() {
-			MediaPlayer.Resume();
+			if(MusicPlayer != null) {
+				MusicPlayer.Resume();
+			}
 		}
 		/// <summary>
 		/// Plaies the music.
@@ -122,17 +135,25 @@ namespace GREATClient.BaseClass
 		/// </summary>
 		/// <param name="musicName">Music name.</param>
 		public void PlayMusic(string musicName) {
-			MediaPlayer.Play(Content.Load<Song>(musicName));
+			MusicPlayer = Content.Load<SoundEffect>(musicName).CreateInstance();
+			MusicPlayer.Volume = 0.6f;
+			MusicPlayer.Pan = 0f;
+			MusicPlayer.Pitch = 0f;
+			MusicPlayer.Play();
+
+			MusicPlayer.IsLooped = true;
 		}
-		public void QueueMusics(params string[] list) {
+		/*public void QueueMusics(params string[] list) {
 			SongCollection collection = new SongCollection();
 			foreach (string song in list) {
 				collection.Add(Content.Load<Song>(song));
 			}
 			MediaPlayer.Play(collection);
-		}
+		}*/
 		public void ChangeMusicVolume(float volume) {
-			MediaPlayer.Volume = volume;
+			if(MusicPlayer != null) {
+				MusicPlayer.Volume = volume;
+			}
 		}
 		public void PlaySound(string soundName, float screenWidth, float screenHeight, Vector2? soundSource = null) {
 			SoundEffect effect = Content.Load<SoundEffect>(soundName);
@@ -142,7 +163,7 @@ namespace GREATClient.BaseClass
 				// f(x) = -x/2000 + 1
 				Vector2 target = GameLibHelper.ToVector2(CameraService.GetTarget(screenWidth, screenHeight));
 				float volume = - (float)Math.Sqrt((target.X-soundSource.Value.X) * (target.X-soundSource.Value.X) + 
-				                                  (target.Y-soundSource.Value.Y) * (target.Y-soundSource.Value.Y)) /2000 + 1;
+				                                  (target.Y-soundSource.Value.Y) * (target.Y-soundSource.Value.Y)) /1000 + 1;
 				volume = Math.Max(volume,0);
 
 				effect.Play(volume, 0f, 0f);

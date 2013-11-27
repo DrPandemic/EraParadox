@@ -74,8 +74,8 @@ namespace GREATClient.Display
 			UIPingCounter = ping;
 			AddChild(UIPingCounter,2);
 
-			Map = new DrawableImage("UIObjects/map");
-			AddChild(Map);
+			/*Map = new DrawableImage("UIObjects/map");
+			AddChild(Map);*/
 			SpellBackground = new DrawableImage("UIObjects/spellBackground");
 			AddChild(SpellBackground);
 
@@ -109,12 +109,14 @@ namespace GREATClient.Display
 
 		protected override void OnLoad(ContentManager content, GraphicsDevice gd)
 		{
-			Map.SetPositionRelativeToScreen(ScreenBound.BottomRight, 
-			                                new Vector2(- Map.Texture.Width - 10, - Map.Texture.Height - 10));
+			/*Map.SetPositionRelativeToScreen(ScreenBound.BottomRight, 
+			                                new Vector2(- Map.Texture.Width - 10, - Map.Texture.Height - 10));*/
 			//Resource.SetPositionRelativeToObject(Map, new Vector2(-Resource.Texture.Width - 8, 
 			                                                 //  Map.Texture.Height - 8), false);
-			Life.SetPositionRelativeToObject(Map, new Vector2(-Life.Texture.Width - 8, 
-			                                                    Map.Texture.Height - 8), false);
+			Life.SetPositionRelativeToScreen(ScreenBound.BottomRight, 
+			                                 new Vector2(- Life.Texture.Width - 10, - 10));
+			/*Life.SetPositionRelativeToObject(Map, new Vector2(-Life.Texture.Width - 8, 
+			                                                    Map.Texture.Height - 8), false);*/
 			/*Life.SetPositionRelativeToObject(Resource, new Vector2(-Life.Texture.Width - 8, 
 			                                                       0), false);*/
 
