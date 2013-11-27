@@ -47,7 +47,7 @@ namespace GREATLauncher
                     this.zoroChampionControl.IsEnabled = false;
                     this.gameUpdater.Stop();
 
-                    Process p = Process.Start("cmd.exe", "/k echo " + this.game.server.host + " " + this.game.server.port + " " + ((this.zoroChampionControl.IsSelected) ? 1 : 0));
+                    Process p = Process.Start(@"GREATClient\bin\GREATClient.exe", this.game.server.host + " " + this.game.server.port + " " + ((this.zoroChampionControl.IsSelected) ? 1 : 0));
                     p.WaitForInputIdle();
                     p.WaitForExit(10000);
 
