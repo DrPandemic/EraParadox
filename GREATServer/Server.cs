@@ -27,6 +27,8 @@ namespace GREATServer
 {
 	public class Server
 	{
+		public static int Port { get; set; }
+
 		static volatile Server instance;
 		static object syncInstance = new object();
 		public static Server Instance
@@ -53,7 +55,7 @@ namespace GREATServer
 		{
 			NetPeerConfiguration config = new NetPeerConfiguration("GREAT");
 			config.EnableMessageType(NetIncomingMessageType.DiscoveryRequest);
-			config.Port = 14242;
+			config.Port = Port;
 			config.EnableUPnP = true;
 
 #if DEBUG
