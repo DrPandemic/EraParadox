@@ -43,9 +43,13 @@ namespace GREATLauncher
                 } else if (this.game.status == "started" && this.statusLabel.Content.ToString() != "Game is starting...") {
                     this.statusLabel.Content = "Game is starting...";
                     this.forceStartButton.IsEnabled = false;
+                    this.manmegaChampionControl.IsEnabled = false;
+                    this.zoroChampionControl.IsEnabled = false;
                     this.gameUpdater.Stop();
 
-                    Process.Start("cmd.exe", "/k echo " + this.game.server.host + " " + this.game.server.port + " " + ((this.zoroChampionControl.IsSelected) ? 1 : 0));
+                    Process p = Process.Start("cmd.exe", "/k echo " + this.game.server.host + " " + this.game.server.port + " " + ((this.zoroChampionControl.IsSelected) ? 1 : 0));
+                    p.WaitForInputIdle();
+                    p.WaitForExit(10000);
 
                     this.preGameGrid.Visibility = Visibility.Hidden;
                     this.mainGrid.Visibility = Visibility.Visible;
@@ -89,6 +93,8 @@ namespace GREATLauncher
             this.loadingGrid.Visibility = Visibility.Visible;
 
             this.statusLabel.Content = "Waiting for players...";
+            this.manmegaChampionControl.IsEnabled = true;
+            this.zoroChampionControl.IsEnabled = true;
             this.forceStartButton.IsEnabled = true;
 
             this.game = await this.client.GetGame();
