@@ -424,7 +424,7 @@ namespace GREATClient.Screens
 				PlaySound(won ? Sounds.Won : Sounds.Lost);
         	}
 
-			Timer t = new Timer(3000);
+			Timer t = new Timer(4500);
 			t.Elapsed += (sender, ev) => Exit = true;
 			t.Start();
 		}
