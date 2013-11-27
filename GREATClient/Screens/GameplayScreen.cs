@@ -58,6 +58,7 @@ namespace GREATClient.Screens
 
 
 		const bool CORRECTIONS_ENABLED = false;
+		static readonly TimeSpan VOICE_SOUND_DELAY = TimeSpan.FromSeconds(1);
 
 		static readonly TimeSpan SEND_INPUTS_TO_SERVER_INTERVAL = TimeSpan.FromMilliseconds(30.0);
 
@@ -474,16 +475,16 @@ namespace GREATClient.Screens
 			if (OurChampion != null) {
 				if (killed.ID == OurChampion.Champion.ID) { // we died
 					GameScore.PlayerDeaths = (int)e.Deaths;
-					PlaySound(Sounds.YouDied);
+					DelayedPlaySound(Sounds.YouDied, VOICE_SOUND_DELAY);
 				} else if (killed.Team == OurChampion.Champion.Team) { // an ally died
-					PlaySound(Sounds.AllyDied);
+					DelayedPlaySound(Sounds.AllyDied, VOICE_SOUND_DELAY);
 				} else { // enemy died
-					PlaySound(Sounds.EnemyDied);
+					DelayedPlaySound(Sounds.EnemyDied, VOICE_SOUND_DELAY);
 				}
 				if (killer != null &&
 				    killer.ID == OurChampion.Champion.ID) { // we killed someone
 					GameScore.PlayerKills = (int)e.Kills;
-					PlaySound(Sounds.YouKilled);
+					DelayedPlaySound(Sounds.YouKilled, VOICE_SOUND_DELAY);
 				}
 				if (OurChampion.Champion.Team == Teams.Left) { // our team is on the left
 					GameScore.TeamKills = (int)e.LeftKills;
@@ -493,6 +494,12 @@ namespace GREATClient.Screens
 					GameScore.TeamDeaths = (int)e.LeftKills;
 				}
 			}
+		}
+		void DelayedPlaySound(Sounds s, TimeSpan delay)
+		{
+			Timer t = new Timer(delay.TotalMilliseconds);
+			t.Elapsed += (sender, e) => { PlaySound(s); t.Close(); };
+			t.Start();
 		}
 		void OnCastSpell(SpellCastEventData e)
 		{
