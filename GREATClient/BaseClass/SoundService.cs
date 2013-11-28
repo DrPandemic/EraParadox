@@ -104,6 +104,9 @@ namespace GREATClient.BaseClass
 
 		public CameraService CameraService { get; set; }
 
+		bool MusicCrashed { get; set; }
+		string MusicNameWhenCrashed { get; set; }
+
 		// The music player isn't working well on Windows, so we are doing a music
 		// player with sound effects.
 		SoundEffectInstance MusicPlayer { get; set; }
@@ -113,6 +116,8 @@ namespace GREATClient.BaseClass
 			Content = content;
 			CameraService = null;
 			MusicPlayer = null;
+			MusicCrashed = false;
+			MusicNameWhenCrashed = "";
         }
 		public void StopMusic() {
 			if(MusicPlayer != null) {
@@ -135,13 +140,18 @@ namespace GREATClient.BaseClass
 		/// </summary>
 		/// <param name="musicName">Music name.</param>
 		public void PlayMusic(string musicName) {
-			MusicPlayer = Content.Load<SoundEffect>(musicName).CreateInstance();
-			MusicPlayer.Volume = 0.45f;
-			MusicPlayer.Pan = 0f;
-			MusicPlayer.Pitch = 0f;
-			MusicPlayer.Play();
+			try {
+				MusicPlayer = Content.Load<SoundEffect>(musicName).CreateInstance();
+				MusicPlayer.Volume = 0.45f;
+				MusicPlayer.Pan = 0f;
+				MusicPlayer.Pitch = 0f;			
+				MusicPlayer.IsLooped = true;
+				MusicPlayer.Play();
+			} catch(Exception) {
+				MusicCrashed = true;
+				MusicNameWhenCrashed = musicName;
+			}
 
-			MusicPlayer.IsLooped = true;
 		}
 		/*public void QueueMusics(params string[] list) {
 			SongCollection collection = new SongCollection();
@@ -156,17 +166,26 @@ namespace GREATClient.BaseClass
 			}
 		}
 		public void PlaySound(string soundName, float screenWidth, float screenHeight, Vector2? soundSource = null) {
-			SoundEffect effect = Content.Load<SoundEffect>(soundName);
-			if (soundSource == null) {
-				effect.Play(1f, 0f, 0f);
-			} else {
-				// f(x) = -x/2000 + 1
-				Vector2 target = GameLibHelper.ToVector2(CameraService.GetTarget(screenWidth, screenHeight));
-				float volume = - (float)Math.Sqrt((target.X-soundSource.Value.X) * (target.X-soundSource.Value.X) + 
-				                                  (target.Y-soundSource.Value.Y) * (target.Y-soundSource.Value.Y)) /1000 + 1;
-				volume = Math.Max(volume,0);
+			// If the music crashed, try to restart it. 
+			if(MusicCrashed) {
+				MusicCrashed = false;
+				PlayMusic(MusicNameWhenCrashed);
+			}
 
-				effect.Play(volume, 0f, 0f);
+			try {
+				SoundEffect effect = Content.Load<SoundEffect>(soundName);
+				if (soundSource == null) {
+					effect.Play(1f, 0f, 0f);
+				} else {
+					// f(x) = -x/2000 + 1
+					Vector2 target = GameLibHelper.ToVector2(CameraService.GetTarget(screenWidth, screenHeight));
+					float volume = - (float)Math.Sqrt((target.X-soundSource.Value.X) * (target.X-soundSource.Value.X) + 
+					                                  (target.Y-soundSource.Value.Y) * (target.Y-soundSource.Value.Y)) /1000 + 1;
+					volume = Math.Max(volume,0);
+
+					effect.Play(volume, 0f, 0f);
+				}
+			} catch(Exception) {
 			}
 		}
     }
